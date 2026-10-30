@@ -1,6 +1,6 @@
 //
 //  SystemCaptionAppearance.swift
-//  Silo (iOS + tvOS + macOS)
+//  WeFlix (iOS + tvOS + macOS)
 //
 //  Maps Apple's Media Accessibility caption preferences (Settings →
 //  Accessibility → Subtitles & Captioning) onto `SubtitleAppearance` so
@@ -8,10 +8,10 @@
 //
 //  Every value returned by MediaAccessibility participates in the mapped
 //  appearance. Apple's `.useContentIfAvailable` behavior still requires the
-//  returned value when content does not supply one. Silo-controlled text
+//  returned value when content does not supply one. WeFlix-controlled text
 //  tracks intentionally have no competing authored style while "Use Device
 //  Settings" is enabled, so dropping those fallback values would replace the
-//  selected system profile with Silo's defaults.
+//  selected system profile with WeFlix's defaults.
 //
 
 import CoreGraphics
@@ -22,7 +22,7 @@ import MediaAccessibility
 enum SystemCaptionAppearance {
 
     /// Raw values read from MediaAccessibility. `nil` means the framework did
-    /// not provide a value Silo can map. Split from the mapping so tests can
+    /// not provide a value WeFlix can map. Split from the mapping so tests can
     /// exercise the mapping without touching process-wide accessibility state.
     struct Snapshot: Equatable {
         var foregroundColorHex: String?
@@ -143,7 +143,7 @@ enum SystemCaptionAppearance {
         return result
     }
 
-    /// Resolve a value for Silo's explicit "Use Device Settings" mode.
+    /// Resolve a value for WeFlix's explicit "Use Device Settings" mode.
     ///
     /// `.useContentIfAvailable` is a precedence rule, not an absent value:
     /// Apple's contract says to use the returned preference when the content
@@ -238,7 +238,7 @@ enum SystemCaptionAppearance {
     }
 
     /// Map the system's relative character size (1.0 = default) onto our
-    /// preset ladder, anchoring 1.0 at the Silo default preset.
+    /// preset ladder, anchoring 1.0 at the WeFlix default preset.
     static func fontSizePreset(forRelativeSize relative: Double) -> SubtitleFontSizePreset {
         let anchors: [(preset: SubtitleFontSizePreset, relative: Double)] = [
             (.small, 0.6),

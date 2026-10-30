@@ -1,6 +1,6 @@
 import SwiftUI
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 /// A revoked session sends the person to sign-in. Signing back in as the same
 /// profile of the same account returns them to the screens they were on;

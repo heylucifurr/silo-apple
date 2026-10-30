@@ -55,13 +55,13 @@ class HomeViewModel {
 
     init(
         dismissContinueWatching: @escaping DismissContinueWatching = { contentId, progressUpdatedAt in
-            try await SiloAPI.shared.dismissContinueWatchingItem(
+            try await WeFlixAPI.shared.dismissContinueWatchingItem(
                 contentId: contentId,
                 progressUpdatedAt: progressUpdatedAt
             )
         },
         dismissNextUp: @escaping DismissNextUp = { contentId, seriesId in
-            try await SiloAPI.shared.dismissNextUpItem(
+            try await WeFlixAPI.shared.dismissNextUpItem(
                 contentId: contentId,
                 seriesId: seriesId
             )

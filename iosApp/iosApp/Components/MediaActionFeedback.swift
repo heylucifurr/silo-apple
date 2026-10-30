@@ -51,7 +51,7 @@ enum PersonalStateNotice: Equatable {
         }
     }
 
-    static let heldMessage = "Silo sent this change but the server didn't answer, so it won't be sent again. "
+    static let heldMessage = "weflix sent this change but the server didn't answer, so it won't be sent again. "
         + "Discard the held change to reload this item and try again."
 
     var title: String {

@@ -4,7 +4,7 @@ struct ProfileLaunchState: Codable, Equatable, Sendable {
     var behavior: ProfileLaunchBehavior = .automatic
     var rememberedByServerID: [String: RememberedProfile] = [:]
     var selectionRequiredServerIDs: Set<String> = []
-    /// The start of the current interval away from Silo. Persisting this in
+    /// The start of the current interval away from WeFlix. Persisting this in
     /// the current device-user domain makes timed policies independent of
     /// whether the process survives in the background.
     var backgroundedAt: Date? = nil

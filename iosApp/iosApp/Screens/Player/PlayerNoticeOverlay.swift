@@ -8,9 +8,9 @@ enum PlayerNoticeTone {
     var accentColor: Color {
         switch self {
         case .info:
-            return .siloPrimary
+            return .weFlixPrimary
         case .warning:
-            return .siloWarning
+            return .weFlixWarning
         }
     }
 
@@ -47,8 +47,8 @@ struct PlayerNoticeOverlay: View {
             detail: notice.message.isEmpty ? nil : notice.message
         )
         .playerNoticeCard()
-        .padding(.horizontal, SiloTheme.safePadding)
-        .padding(.top, SiloTheme.safePadding)
+        .padding(.horizontal, WeFlixTheme.safePadding)
+        .padding(.top, WeFlixTheme.safePadding)
         .transition(
             .move(edge: .top)
             .combined(with: .opacity)
@@ -111,7 +111,7 @@ private struct PlayerNoticeCardHeader: View {
             VStack(alignment: .leading, spacing: PlayerNoticeCardMetrics.lineSpacing) {
                 Text(title)
                     .font(PlayerNoticeCardMetrics.titleFont)
-                    .foregroundStyle(Color.siloOnSurface)
+                    .foregroundStyle(Color.weFlixOnSurface)
                     .fixedSize(horizontal: false, vertical: true)
                 if let detail {
                     Text(detail)
@@ -136,7 +136,7 @@ extension View {
                 .padding(.vertical, PlayerNoticeCardMetrics.verticalPadding)
                 .background {
                     Color.clear
-                        .siloPlayerGlass(in: PlayerNoticeCardMetrics.shape, tint: .black.opacity(0.5))
+                        .weFlixPlayerGlass(in: PlayerNoticeCardMetrics.shape, tint: .black.opacity(0.5))
                         .overlay(alignment: .bottom) {
                             if let countdown {
                                 PlayerPillCountdownTrack(pill: countdown)
@@ -289,8 +289,8 @@ struct PlayerBufferingPillCard<Actions: View>: View {
 /// Mark the pill with ``SwiftUI/View/playerNoticeStackPill()``.
 struct PlayerNoticeStack: Layout {
     /// The highest the pill's top edge may sit, in the stack's space.
-    var pillMinY: CGFloat = SiloTheme.safePadding
-    var spacing: CGFloat = SiloTheme.smallPadding
+    var pillMinY: CGFloat = WeFlixTheme.safePadding
+    var spacing: CGFloat = WeFlixTheme.smallPadding
 
     func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
         let frames = frames(of: subviews, width: proposal.width)

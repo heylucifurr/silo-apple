@@ -142,7 +142,7 @@ struct CreateProfileView: View {
     #if os(tvOS)
     private var tvOSLayout: some View {
         ZStack {
-            Color.siloBackground.ignoresSafeArea()
+            Color.weFlixBackground.ignoresSafeArea()
             RadialGradient(
                 colors: [Color.white.opacity(0.06), Color.black.opacity(0)],
                 center: .center,
@@ -264,7 +264,7 @@ struct CreateProfileView: View {
 
             section(title: "Name") {
                 TextField("Profile name", text: $name)
-                    .textFieldStyle(SiloTextFieldStyle())
+                    .textFieldStyle(WeFlixTextFieldStyle())
                     .focused($focusedField, equals: .name)
                     .autocorrectionDisabled()
                     #if !os(macOS)
@@ -275,7 +275,7 @@ struct CreateProfileView: View {
 
             section(title: "PIN (optional)") {
                 TextField("4-digit PIN", text: $pin)
-                    .textFieldStyle(SiloTextFieldStyle())
+                    .textFieldStyle(WeFlixTextFieldStyle())
                     .focused($focusedField, equals: .pin)
                     .autocorrectionDisabled()
                     .onChange(of: pin) { _, newValue in
@@ -312,7 +312,7 @@ struct CreateProfileView: View {
                 guard !isLoading else { return }
                 Task { await createProfile() }
             }
-            .buttonStyle(SiloPrimaryButtonStyle(isLoading: isLoading))
+            .buttonStyle(WeFlixPrimaryButtonStyle(isLoading: isLoading))
             // Gate validity via .disabled, but not the in-flight state: disabling
             // the focused button mid-create bounces focus to a neighbour. The
             // spinner label signals progress and re-entry is guarded above.
@@ -346,10 +346,10 @@ struct CreateProfileView: View {
     private var iOSLayout: some View {
         NavigationStack {
             ZStack {
-                SiloPageBackdrop()
+                WeFlixPageBackdrop()
 
                 ScrollView {
-                    VStack(spacing: SiloTheme.largePadding) {
+                    VStack(spacing: WeFlixTheme.largePadding) {
                         ProfileTile(profile: previewProfile, action: {})
                             .allowsHitTesting(false)
                             .disabled(true)
@@ -362,8 +362,8 @@ struct CreateProfileView: View {
                             VStack(alignment: .leading, spacing: 10) {
                                 HStack {
                                     Text("Avatar")
-                                        .font(.siloCaption)
-                                        .foregroundColor(.siloSecondaryText)
+                                        .font(.weFlixCaption)
+                                        .foregroundColor(.weFlixSecondaryText)
                                     Spacer()
                                     shuffleButton
                                 }
@@ -373,10 +373,10 @@ struct CreateProfileView: View {
 
                         VStack(alignment: .leading, spacing: 6) {
                             Text("Name")
-                                .font(.siloCaption)
-                                .foregroundColor(.siloSecondaryText)
+                                .font(.weFlixCaption)
+                                .foregroundColor(.weFlixSecondaryText)
                             TextField("Profile name", text: $name)
-                                .textFieldStyle(SiloTextFieldStyle())
+                                .textFieldStyle(WeFlixTextFieldStyle())
                                 .focused($focusedField, equals: .name)
                                 .autocorrectionDisabled()
                                 #if !os(macOS)
@@ -386,10 +386,10 @@ struct CreateProfileView: View {
 
                         VStack(alignment: .leading, spacing: 6) {
                             Text("PIN (optional)")
-                                .font(.siloCaption)
-                                .foregroundColor(.siloSecondaryText)
+                                .font(.weFlixCaption)
+                                .foregroundColor(.weFlixSecondaryText)
                             TextField("4-digit PIN", text: $pin)
-                                .textFieldStyle(SiloTextFieldStyle())
+                                .textFieldStyle(WeFlixTextFieldStyle())
                                 .focused($focusedField, equals: .pin)
                                 #if !os(macOS)
                                 .keyboardType(.numberPad)
@@ -400,22 +400,22 @@ struct CreateProfileView: View {
                                 }
                             if !ProfilePIN.isAcceptableForCreate(pin) {
                                 Text(Self.incompletePINHint)
-                                    .font(.siloCaption)
-                                    .foregroundColor(.siloSecondaryText)
+                                    .font(.weFlixCaption)
+                                    .foregroundColor(.weFlixSecondaryText)
                             }
                         }
 
                         Toggle(isOn: $isChild) {
                             VStack(alignment: .leading, spacing: 2) {
                                 Text("Child Profile")
-                                    .font(.siloBody)
-                                    .foregroundColor(.siloOnSurface)
+                                    .font(.weFlixBody)
+                                    .foregroundColor(.weFlixOnSurface)
                                 Text("Restricts content to kid-friendly ratings")
-                                    .font(.siloCaption)
-                                    .foregroundColor(.siloSecondaryText)
+                                    .font(.weFlixCaption)
+                                    .foregroundColor(.weFlixSecondaryText)
                             }
                         }
-                        .tint(.siloSwitchOn)
+                        .tint(.weFlixSwitchOn)
 
                         if isChild {
                             childAccessControls
@@ -425,48 +425,48 @@ struct CreateProfileView: View {
                             Toggle(isOn: requestsAllowedBinding) {
                                 VStack(alignment: .leading, spacing: 2) {
                                     Text(Self.requestsAllowedTitle)
-                                        .font(.siloBody)
-                                        .foregroundColor(.siloOnSurface)
+                                        .font(.weFlixBody)
+                                        .foregroundColor(.weFlixOnSurface)
                                     Text(Self.requestsAllowedHelp)
-                                        .font(.siloCaption)
-                                        .foregroundColor(.siloSecondaryText)
+                                        .font(.weFlixCaption)
+                                        .foregroundColor(.weFlixSecondaryText)
                                         .fixedSize(horizontal: false, vertical: true)
                                 }
                             }
-                            .tint(.siloSwitchOn)
+                            .tint(.weFlixSwitchOn)
                         }
 
                         Button("Create Profile") {
                             Task { await createProfile() }
                         }
-                        .siloPrimaryButton(isLoading: isLoading)
+                        .weFlixPrimaryButton(isLoading: isLoading)
                         .disabled(
                             isLoading
                                 || name.trimmingCharacters(in: .whitespaces).isEmpty
                                 || !ProfilePIN.isAcceptableForCreate(pin)
                         )
                     }
-                    .padding(.horizontal, SiloTheme.largePadding)
-                    .padding(.vertical, SiloTheme.largePadding)
+                    .padding(.horizontal, WeFlixTheme.largePadding)
+                    .padding(.vertical, WeFlixTheme.largePadding)
                 }
             }
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") { dismiss() }
-                        .foregroundColor(.siloPrimary)
+                        .foregroundColor(.weFlixPrimary)
                 }
             }
             .navigationTitle("New Profile")
-            .siloNavigationTitleDisplayMode(.inline)
-            .siloToolbarColorSchemeDark()
+            .weFlixNavigationTitleDisplayMode(.inline)
+            .weFlixToolbarColorSchemeDark()
         }
     }
 
     private var stylePickerRow: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text("Style")
-                .font(.siloCaption)
-                .foregroundColor(.siloSecondaryText)
+                .font(.weFlixCaption)
+                .foregroundColor(.weFlixSecondaryText)
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 8) {
                     ForEach(ProfileAvatarPresets.styles) { style in
@@ -516,8 +516,8 @@ struct CreateProfileView: View {
         VStack(alignment: .leading, spacing: 14) {
             VStack(alignment: .leading, spacing: 7) {
                 Text("Maximum content rating")
-                    .font(.siloCaption)
-                    .foregroundStyle(Color.siloSecondaryText)
+                    .font(.weFlixCaption)
+                    .foregroundStyle(Color.weFlixSecondaryText)
                 Picker("Maximum content rating", selection: $maxContentRating) {
                     ForEach(Self.contentRatings, id: \.value) { option in
                         Text(option.label).tag(option.value)
@@ -527,17 +527,17 @@ struct CreateProfileView: View {
             }
 
             Toggle("Restrict libraries", isOn: $libraryRestrictionsEnabled)
-                .tint(.siloSwitchOn)
+                .tint(.weFlixSwitchOn)
 
             if libraryRestrictionsEnabled {
                 if case .loading = libraryLoad {
                     ProgressView("Loading libraries…")
-                        .font(.siloCaption)
+                        .font(.weFlixCaption)
                 } else if case .failed(let message) = libraryLoad {
                     VStack(alignment: .leading, spacing: 8) {
                         Text("Couldn't load libraries. \(message)")
-                            .font(.siloCaption)
-                            .foregroundStyle(Color.siloSecondaryText)
+                            .font(.weFlixCaption)
+                            .foregroundStyle(Color.weFlixSecondaryText)
                         // Not `.disabled` while retrying: that would move focus
                         // off the button, which is what keeping it mounted avoids.
                         Button {
@@ -557,13 +557,13 @@ struct CreateProfileView: View {
                     }
                 } else if libraries.isEmpty {
                     Text("No libraries are available to assign.")
-                        .font(.siloCaption)
-                        .foregroundStyle(Color.siloSecondaryText)
+                        .font(.weFlixCaption)
+                        .foregroundStyle(Color.weFlixSecondaryText)
                 } else {
                     VStack(alignment: .leading, spacing: 8) {
                         Text("Allowed libraries")
-                            .font(.siloCaption)
-                            .foregroundStyle(Color.siloSecondaryText)
+                            .font(.weFlixCaption)
+                            .foregroundStyle(Color.weFlixSecondaryText)
                         ForEach(libraries) { library in
                             Toggle(
                                 library.name,
@@ -578,14 +578,14 @@ struct CreateProfileView: View {
                                     }
                                 )
                             )
-                            .tint(.siloSwitchOn)
+                            .tint(.weFlixSwitchOn)
                         }
                     }
                 }
             }
         }
         .padding(14)
-        .background(Color.siloSurfaceElevated, in: RoundedRectangle(cornerRadius: 12))
+        .background(Color.weFlixSurfaceElevated, in: RoundedRectangle(cornerRadius: 12))
     }
 
     /// Records a hand-made change so the Child Profile preset keeps it.
@@ -655,7 +655,7 @@ struct CreateProfileView: View {
             #if os(tvOS)
             .font(.system(size: 18, weight: .medium))
             #else
-            .font(.siloCaption)
+            .font(.weFlixCaption)
             #endif
         }
         .buttonStyle(GhostChipButtonStyle())
@@ -683,7 +683,7 @@ struct CreateProfileView: View {
         }
         defer { isRetryingLibraries = false }
         do {
-            libraries = try await SiloAPI.shared.libraries().libraries
+            libraries = try await WeFlixAPI.shared.libraries().libraries
             libraryLoad = .loaded
         } catch {
             libraryLoad = .failed(ErrorState(error).message)
@@ -693,7 +693,7 @@ struct CreateProfileView: View {
     /// A failed read leaves the switch hidden and the support unknown, so
     /// submit reads it again before creating the profile.
     private func loadRequestsSupport() async {
-        if let list = try? await SiloAPI.shared.householdProfileList() {
+        if let list = try? await WeFlixAPI.shared.householdProfileList() {
             requestsAllowedSupported = list.requestsAllowedSupported
         }
     }
@@ -785,7 +785,7 @@ struct CreateProfileFailure: Equatable {
         case .unconfirmed:
             self.init(
                 title: "Profile May Have Been Created",
-                message: "Silo didn't get an answer from the server. Check the profile list before trying again.",
+                message: "weflix didn't get an answer from the server. Check the profile list before trying again.",
                 closesForm: true
             )
             return
@@ -865,15 +865,15 @@ private struct StyleChip: View {
             #if os(tvOS)
             .focusEffectDisabled()
             #endif
-            .animation(.easeOut(duration: SiloTheme.fastDuration), value: isFocused)
-            .animation(.easeOut(duration: SiloTheme.fastDuration), value: isSelected)
+            .animation(.easeOut(duration: WeFlixTheme.fastDuration), value: isFocused)
+            .animation(.easeOut(duration: WeFlixTheme.fastDuration), value: isSelected)
             .accessibilityLabel(style.label)
             .accessibilityHint(style.summary)
             .accessibilityAddTraits(.isButton)
     }
 
     private var foreground: Color {
-        if isSelected { return Color.siloBackground }
+        if isSelected { return Color.weFlixBackground }
         return Color.white.opacity(isFocused ? 1.0 : 0.75)
     }
 
@@ -929,8 +929,8 @@ private struct PresetCell: View {
             #if os(tvOS)
             .focusEffectDisabled()
             #endif
-            .animation(.easeOut(duration: SiloTheme.fastDuration), value: isFocused)
-            .animation(.easeOut(duration: SiloTheme.fastDuration), value: isSelected)
+            .animation(.easeOut(duration: WeFlixTheme.fastDuration), value: isFocused)
+            .animation(.easeOut(duration: WeFlixTheme.fastDuration), value: isSelected)
             .accessibilityLabel("Avatar \(preset.seed)")
             .accessibilityAddTraits(.isButton)
     }
@@ -991,7 +991,7 @@ private struct ProfileSwitchRow: View {
         .focused($isFocused)
         .onTapGesture { isOn.toggle() }
         .focusEffectDisabled()
-        .animation(.easeOut(duration: SiloTheme.fastDuration), value: isFocused)
+        .animation(.easeOut(duration: WeFlixTheme.fastDuration), value: isFocused)
         .animation(.spring(response: 0.28, dampingFraction: 0.75), value: isOn)
         .accessibilityElement(children: .combine)
         .accessibilityAddTraits(.isButton)
@@ -1006,7 +1006,7 @@ private struct ProfileSwitchRow: View {
                 .fill(isOn ? Color.white : Color.white.opacity(0.2))
                 .frame(width: switchWidth, height: switchHeight)
             Circle()
-                .fill(isOn ? Color.siloBackground : Color.white)
+                .fill(isOn ? Color.weFlixBackground : Color.white)
                 .frame(width: puckSize, height: puckSize)
                 .padding(4)
         }

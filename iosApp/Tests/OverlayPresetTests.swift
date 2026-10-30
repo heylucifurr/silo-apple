@@ -1,6 +1,6 @@
 import SwiftUI
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 final class OverlayPresetTests: XCTestCase {
     func testAccentBackgroundsPreserveStraightAlphaSRGBRecipes() {

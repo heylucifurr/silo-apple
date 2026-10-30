@@ -1,5 +1,5 @@
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 /// External ratings: the server's `ratings` row on item detail, the IMDb/TMDB
 /// fallback for older servers, the one-rating card summary, and the poster

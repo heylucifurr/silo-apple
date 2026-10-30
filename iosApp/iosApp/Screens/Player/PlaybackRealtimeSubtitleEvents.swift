@@ -1,6 +1,6 @@
 //
 //  PlaybackRealtimeSubtitleEvents.swift
-//  Silo (iOS + tvOS)
+//  WeFlix (iOS + tvOS)
 //
 //  Typed decoders for the five AI subtitle live-streaming events that ride
 //  the existing playback control websocket (Milestone 4). The generic
@@ -22,7 +22,7 @@
 //
 //  Cue `start`/`end` are **absolute media-time seconds**; `text` may carry
 //  `\n` line breaks. They are kept as raw `Double` seconds + raw `String`
-//  text here. The live-track sink normalizes and deduplicates them on Silo's
+//  text here. The live-track sink normalizes and deduplicates them on WeFlix's
 //  source timeline before the Aether-clocked overlay consumes them.
 //
 
@@ -36,7 +36,7 @@ struct PlaybackRealtimeSubtitleCue: Equatable {
     /// Absolute cue end in media-time seconds.
     let end: Double
     /// Cue text; may contain `\n` line breaks and remains normalized text in
-    /// Silo's Aether-clocked presentation overlay.
+    /// WeFlix's Aether-clocked presentation overlay.
     let text: String
 }
 

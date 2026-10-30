@@ -23,7 +23,7 @@ enum HiddenLibraryPreference {
         defaults: SharedDefaults = .shared,
         requestIdentity: @MainActor () -> HTTPRequestIdentity? = SeekIntervalPreferences.activeRequestIdentity,
         read: (HTTPRequestIdentity?) async throws -> EffectiveSettingValuesResponse = {
-            try await SiloAPI.shared.getEffectiveValues(
+            try await WeFlixAPI.shared.getEffectiveValues(
                 keys: [.uiDisabledLibraryIds],
                 requestIdentity: $0
             )

@@ -26,11 +26,11 @@ enum DownloadError: LocalizedError {
         case .registrationAlreadyInFlight: return "This download is already being prepared."
         case .scopeChangedDuringRegistration: return "The active profile changed before the download could start."
         case .registryChanged: return "This download changed on the server. Try again."
-        case .registrationUncertain: return "Silo couldn't confirm the download started. It will appear in Downloads if the server created it."
+        case .registrationUncertain: return "weflix couldn't confirm the download started. It will appear in Downloads if the server created it."
         case .monitoringScopeChanged: return "The active profile changed before monitoring could be saved."
         case .monitorChanged: return "Monitoring for this series changed on the server. Try again."
         case .monitorRemoved: return "This series is no longer monitored."
-        case .monitoringUncertain: return "Silo couldn't confirm the monitoring change. Check this series again once you're back online."
+        case .monitoringUncertain: return "weflix couldn't confirm the monitoring change. Check this series again once you're back online."
         }
     }
 }
@@ -1100,7 +1100,7 @@ final class DownloadManager {
     func refreshCapability() async {
         guard let owner = await captureScopeOwner() else { return }
         do {
-            let capability = try await SiloAPI.shared.apiV2Client.downloadCapability(auth: owner.auth)
+            let capability = try await WeFlixAPI.shared.apiV2Client.downloadCapability(auth: owner.auth)
             guard isCurrent(owner) else { return }
             file.capability = capability
             file.capabilityFetchedAt = Date()
@@ -1212,7 +1212,7 @@ final class DownloadManager {
                     caps: DownloadCaps.current(),
                     expected: createGuard(forLeafId: registrationContentId)
                 )
-                let created = try await SiloAPI.shared.apiV2Client.createDownloads(request, auth: owner.auth)
+                let created = try await WeFlixAPI.shared.apiV2Client.createDownloads(request, auth: owner.auth)
                 guard isCurrent(owner) else { throw DownloadError.scopeChangedDuringRegistration }
                 applyCreatedEntries(
                     created.items,
@@ -1247,7 +1247,7 @@ final class DownloadManager {
         var cursors: Set<String> = []
         var registered = 0
         for _ in 0..<APIv2Client.downloadRegistryMaxPages {
-            let page = try await SiloAPI.shared.apiV2Client.createDownloads(request, cursor: cursor, auth: owner.auth)
+            let page = try await WeFlixAPI.shared.apiV2Client.createDownloads(request, cursor: cursor, auth: owner.auth)
             guard isCurrent(owner) else { throw DownloadError.scopeChangedDuringRegistration }
             applyCreatedEntries(page.items, displayTitle: nil, displaySubtitle: nil, type: nil,
                 seriesId: seriesId, posterThumbhash: nil)
@@ -1612,7 +1612,7 @@ final class DownloadManager {
         }
         let manifest: OfflineManifest
         do {
-            manifest = try await SiloAPI.shared.apiV2Client.downloadManifest(id: recordId, auth: owner.auth)
+            manifest = try await WeFlixAPI.shared.apiV2Client.downloadManifest(id: recordId, auth: owner.auth)
         } catch {
             // A reconcile may have failed or revoked the record meanwhile.
             guard pipelineIsCurrent(recordId, token, owner),
@@ -1763,7 +1763,7 @@ final class DownloadManager {
             guard let path = entry.path else { continue }
             let data: Data
             do {
-                data = try await SiloAPI.shared.apiV2Client.downloadAsset(path: path, downloadId: recordId,
+                data = try await WeFlixAPI.shared.apiV2Client.downloadAsset(path: path, downloadId: recordId,
                     auth: owner.auth)
             } catch {
                 Self.logger.warning("download artwork fetch failed: \(String(describing: error), privacy: .public)")
@@ -1809,7 +1809,7 @@ final class DownloadManager {
             let data: Data
             let entityTag: String?
             do {
-                let result = try await SiloAPI.shared.apiV2Client.revalidateDownloadSubtitle(
+                let result = try await WeFlixAPI.shared.apiV2Client.revalidateDownloadSubtitle(
                     path: subtitle.fetchUrl, downloadId: recordId, entityTag: nil, auth: owner.auth)
                 guard case .changed(let body, let tag) = result else { continue }
                 data = body
@@ -1869,7 +1869,7 @@ final class DownloadManager {
                   !restartOwners.fetchesAssets(record.id) else { continue }
             let manifest: OfflineManifest
             do {
-                manifest = try await SiloAPI.shared.apiV2Client.downloadManifest(id: record.id, auth: owner.auth)
+                manifest = try await WeFlixAPI.shared.apiV2Client.downloadManifest(id: record.id, auth: owner.auth)
             } catch {
                 Self.logger.warning("saved subtitle manifest read failed: \(String(describing: error), privacy: .public)")
                 // Only an unanswered read is retried at the next activation; a
@@ -1894,7 +1894,7 @@ final class DownloadManager {
             for subtitle in refreshes {
                 let result: DownloadSubtitleRevalidation
                 do {
-                    result = try await SiloAPI.shared.apiV2Client.revalidateDownloadSubtitle(
+                    result = try await WeFlixAPI.shared.apiV2Client.revalidateDownloadSubtitle(
                         path: subtitle.fetchUrl, downloadId: record.id,
                         entityTag: file.records[record.id]?.subtitleEntityTags?[subtitle.fetchUrl], auth: owner.auth)
                 } catch {
@@ -2104,8 +2104,8 @@ final class DownloadManager {
     }
     #endif
 
-    /// Silo is on screen: progress the user hid from the Lock Screen comes
-    /// back as Silo's own Live Activity, which only the foreground can start.
+    /// WeFlix is on screen: progress the user hid from the Lock Screen comes
+    /// back as WeFlix's own Live Activity, which only the foreground can start.
     func sceneDidBecomeActive() {
         #if os(iOS)
         DownloadContinuedProcessing.shared.clearDismissal()
@@ -2151,7 +2151,7 @@ final class DownloadManager {
         return nil
     }
 
-    /// Keeps Silo running with live system progress for a download the user
+    /// Keeps WeFlix running with live system progress for a download the user
     /// just started (iOS 26 and later). Call only from the user's action.
     private func beginContinuedProcessing(title: String?) {
         #if os(iOS)
@@ -2450,7 +2450,7 @@ final class DownloadManager {
         case let .retry(keepResumeData, refreshToken):
             if !keepResumeData { record.bytesDownloaded = 0 }
             if cause == .forceQuit {
-                // Closing Silo from the app switcher cancels every transfer;
+                // Closing WeFlix from the app switcher cancels every transfer;
                 // that isn't the download failing. Resume it now.
                 record.localStatus = .queued
                 file.records[record.id] = record
@@ -2646,7 +2646,7 @@ final class DownloadManager {
         if !restartOwners.handoffPending(by: deadline) {
             endHandoffBackgroundTask()
         } else if handoffBackgroundTask == .invalid {
-            handoffBackgroundTask = UIApplication.shared.beginBackgroundTask(withName: "SiloDownloadHandoff") {
+            handoffBackgroundTask = UIApplication.shared.beginBackgroundTask(withName: "WeFlixDownloadHandoff") {
                 // iOS calls this on the main thread.
                 MainActor.assumeIsolated { DownloadManager.shared.endHandoffBackgroundTask() }
             }
@@ -2691,7 +2691,7 @@ final class DownloadManager {
         guard downloadsEnabled, let owner = await captureScopeOwner() else { return }
         let listed: [APIv2DownloadEntry]
         do {
-            listed = try await SiloAPI.shared.apiV2Client.listDownloads(auth: owner.auth)
+            listed = try await WeFlixAPI.shared.apiV2Client.listDownloads(auth: owner.auth)
         } catch {
             Self.logger.warning("download registry read failed: \(String(describing: error), privacy: .public)")
             return
@@ -2869,7 +2869,7 @@ final class DownloadManager {
                 for id in batch {
                     group.addTask {
                         do {
-                            return (id, .success(try await SiloAPI.shared.apiV2Client.downloadManifest(id: id, auth: auth)))
+                            return (id, .success(try await WeFlixAPI.shared.apiV2Client.downloadManifest(id: id, auth: auth)))
                         } catch {
                             return (id, .failure(error))
                         }
@@ -3019,7 +3019,7 @@ final class DownloadManager {
               let id = (file.pendingServerDeletes ?? []).subtracting(attempted).sorted().first {
             attempted.insert(id)
             do {
-                try await SiloAPI.shared.apiV2Client.deleteDownload(id: id, auth: owner.auth)
+                try await WeFlixAPI.shared.apiV2Client.deleteDownload(id: id, auth: owner.auth)
             } catch where Self.isNotFound(error) {
                 // Already gone.
             } catch {
@@ -3095,7 +3095,7 @@ final class DownloadManager {
             guard isCurrent(owner), let event = file.records[id]?.pendingStatusEvent else { continue }
             var failure: Error?
             do {
-                _ = try await SiloAPI.shared.apiV2Client.reportDownloadStatus(id: id, event: event, auth: owner.auth)
+                _ = try await WeFlixAPI.shared.apiV2Client.reportDownloadStatus(id: id, event: event, auth: owner.auth)
             } catch {
                 failure = error
                 Self.logger.warning("download status report failed: \(String(describing: error), privacy: .public)")
@@ -3318,7 +3318,7 @@ final class DownloadManager {
     /// it.
     private func sendCreate(_ request: CreateSubscriptionRequest, seriesTitle: String?, owner: ScopeOwner) async throws {
         do {
-            let created = try await SiloAPI.shared.apiV2Client.createDownloadSubscription(request, auth: owner.auth)
+            let created = try await WeFlixAPI.shared.apiV2Client.createDownloadSubscription(request, auth: owner.auth)
             guard isCurrent(owner) else { throw DownloadError.monitoringScopeChanged }
             upsertSubscription(created, seriesTitle: seriesTitle, fromCreate: true)
             persist()
@@ -3368,7 +3368,7 @@ final class DownloadManager {
         )
         let updated: ServerSubscription
         do {
-            updated = try await SiloAPI.shared.apiV2Client.updateDownloadSubscription(
+            updated = try await WeFlixAPI.shared.apiV2Client.updateDownloadSubscription(
                 id: id, etag: existing.etag, patch: patch, auth: owner.auth)
         } catch {
             guard isCurrent(owner) else { throw DownloadError.monitoringScopeChanged }
@@ -3449,7 +3449,7 @@ final class DownloadManager {
             var landed = true
             var keepPending = false
             do {
-                try await SiloAPI.shared.apiV2Client.deleteDownloadSubscription(
+                try await WeFlixAPI.shared.apiV2Client.deleteDownloadSubscription(
                     id: id, etag: next.value.isEmpty ? nil : next.value, auth: owner.auth)
             } catch {
                 landed = false
@@ -3484,7 +3484,7 @@ final class DownloadManager {
         let started = subscriptionWrites.generation
         let listed: [ServerSubscription]
         do {
-            listed = try await SiloAPI.shared.apiV2Client.listDownloadSubscriptions(auth: owner.auth)
+            listed = try await WeFlixAPI.shared.apiV2Client.listDownloadSubscriptions(auth: owner.auth)
         } catch {
             Self.logger.warning("monitor list read failed: \(String(describing: error), privacy: .public)")
             return false
@@ -3599,7 +3599,7 @@ final class DownloadManager {
         guard file.legacyRowsPending != true, !legacyRemovalIncomplete else { return (0, true, false) }
         let outcome: DownloadSubscriptionSyncOutcome
         do {
-            outcome = try await SiloAPI.shared.apiV2Client.syncDownloadSubscription(
+            outcome = try await WeFlixAPI.shared.apiV2Client.syncDownloadSubscription(
                 id: id, etag: monitor.etag, auth: owner.auth)
         } catch {
             Self.logger.warning("monitor sync failed: \(String(describing: error), privacy: .public)")
@@ -3762,7 +3762,7 @@ final class DownloadManager {
             persist()
             await saveChain?.value
 
-            let outcome = await SiloAPI.shared.apiV2Client.syncProgress(batch.compactMap(\.syncItem), auth: owner.auth)
+            let outcome = await WeFlixAPI.shared.apiV2Client.syncProgress(batch.compactMap(\.syncItem), auth: owner.auth)
             progressUploadsInFlight.subtract(ids)
             guard isCurrent(owner) else {
                 // A batch that was sent stays dispatched in the old scope's
@@ -3836,7 +3836,7 @@ final class DownloadManager {
         let startedAt = Date()
         let outcome: Result<[APIv2ProgressEntry], Error>
         do {
-            outcome = .success(try await SiloAPI.shared.apiV2Client.listAllProgress(auth: owner.auth))
+            outcome = .success(try await WeFlixAPI.shared.apiV2Client.listAllProgress(auth: owner.auth))
         } catch {
             Self.logger.warning("watch state read failed: \(String(describing: error), privacy: .public)")
             outcome = .failure(error)

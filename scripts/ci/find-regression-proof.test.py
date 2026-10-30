@@ -51,7 +51,7 @@ def environment():
     toolchains = {scheme: {"xcode_version": "27.0", "xcode_build": "27A123",
                           "sdk_version": "27.0", "sdk_build": "27A123", "architecture": "arm64"}
                   for scheme in proof.SCHEMES}
-    for scheme in ("Silo", "SiloTV"):
+    for scheme in ("WeFlix", "WeFlixTV"):
         toolchains[scheme].update(runtime_version="27.0", runtime_build="24A123")
     return {"GH_TOKEN": "test-token", "GH_REPOSITORY": REPOSITORY, "TARGET_SHA": SHA,
             "EXPECTED_FINGERPRINT": TREE, "EXPECTED_LOCK_SHA256": LOCK,
@@ -78,7 +78,7 @@ class FakeGitHub:
         toolchains = json.loads(environment()["EXPECTED_TOOLCHAIN_JSON"])
         for number, scheme in enumerate(proof.SCHEMES):
             names = ["Build player", "Record regression proof", "Upload regression proof"]
-            if scheme != "SiloMac":
+            if scheme != "WeFlixMac":
                 names.append("Run complete simulator suite")
             self.jobs.append({"id": number + 1000, "run_id": 100, "head_sha": SHA,
                               "name": f"Regression ({scheme})", "status": "completed",
@@ -170,10 +170,10 @@ class RegressionProofTests(unittest.TestCase):
         runtimes = {"runtimes": [
             {"identifier": "com.apple.CoreSimulator.SimRuntime.iOS-27-0", "version": "27.0",
              "buildversion": "24A123", "isAvailable": True,
-             "supportedDeviceTypes": [{"identifier": build_metadata.TEST_SIMULATORS["Silo"][1]}]},
+             "supportedDeviceTypes": [{"identifier": build_metadata.TEST_SIMULATORS["WeFlix"][1]}]},
             {"identifier": "com.apple.CoreSimulator.SimRuntime.tvOS-27-0", "version": "27.0",
              "buildversion": "24T123", "isAvailable": True,
-             "supportedDeviceTypes": [{"identifier": build_metadata.TEST_SIMULATORS["SiloTV"][1]}]}]}
+             "supportedDeviceTypes": [{"identifier": build_metadata.TEST_SIMULATORS["WeFlixTV"][1]}]}]}
 
         def measured_command(*args, cwd=None):
             if args == ("xcodebuild", "-version"):
@@ -196,7 +196,7 @@ class RegressionProofTests(unittest.TestCase):
             self.assertEqual(result["source_dirty"], "false")
             producer_env = {"GITHUB_EVENT_NAME": "push", "GITHUB_REF_NAME": "main",
                             "GITHUB_SHA": result["source_sha"], "GITHUB_REPOSITORY": REPOSITORY,
-                            "GITHUB_RUN_ID": "100", "GITHUB_RUN_ATTEMPT": "2", "SILO_FULL_SUITE": "true"}
+                            "GITHUB_RUN_ID": "100", "GITHUB_RUN_ATTEMPT": "2", "WEFLIX_FULL_SUITE": "true"}
             self.env.update(TARGET_SHA=result["source_sha"], EXPECTED_FINGERPRINT=result["fingerprint"],
                             EXPECTED_LOCK_SHA256=result["lock_sha256"],
                             EXPECTED_TOOLCHAIN_JSON=result["toolchain_json"])
@@ -328,7 +328,7 @@ class RegressionProofTests(unittest.TestCase):
         mismatches = {"schema_version": 2, "repository": "attacker/silo-apple",
                       "workflow_path": ".github/workflows/other.yml", "event": "workflow_dispatch",
                       "branch": "feature", "sha": "f" * 40, "run_id": 99, "run_attempt": 1,
-                      "scheme": "SiloTV", "fingerprint": "d" * 40,
+                      "scheme": "WeFlixTV", "fingerprint": "d" * 40,
                       "dependency_lock_sha256": "d" * 64,
                       "frozen_dependencies": False, "full_suite": False}
         for field, value in mismatches.items():
@@ -396,7 +396,7 @@ class RegressionProofTests(unittest.TestCase):
         for attempt in (1, 3):
             with self.subTest(attempt=attempt):
                 self.api = FakeGitHub()
-                self.api.artifacts[0]["name"] = f"apple-regression-proof-Silo-{attempt}"
+                self.api.artifacts[0]["name"] = f"apple-regression-proof-WeFlix-{attempt}"
                 self.rejected("Missing")
 
     def test_invalid_oversized_or_ambiguous_zip_cannot_be_proof(self):
@@ -471,7 +471,7 @@ class RegressionProofTests(unittest.TestCase):
 
     def test_missing_expected_simulator_runtime_never_assumes_sdk_equivalence(self):
         values = json.loads(self.env["EXPECTED_TOOLCHAIN_JSON"])
-        del values["Silo"]["runtime_build"]
+        del values["WeFlix"]["runtime_build"]
         self.env["EXPECTED_TOOLCHAIN_JSON"] = json.dumps(values)
         self.rejected("toolchain")
         self.assertEqual(self.api.calls, [])
@@ -508,7 +508,7 @@ class RegressionProofTests(unittest.TestCase):
         self.assertTrue(self.lookup()["reusable"])
 
     def test_json_duplicate_fields_are_rejected(self):
-        self.env["EXPECTED_TOOLCHAIN_JSON"] = '{"Silo":{},"Silo":{}}'
+        self.env["EXPECTED_TOOLCHAIN_JSON"] = '{"WeFlix":{},"WeFlix":{}}'
         self.rejected("Duplicate")
 
     def test_main_always_emits_false_outputs_and_success_status_for_fallback(self):

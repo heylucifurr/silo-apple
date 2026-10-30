@@ -1,9 +1,9 @@
 #if os(iOS) || os(tvOS)
 import Foundation
 
-/// `silo://search?q=<term>` opens Search with `term` filled in.
+/// `weflix://search?q=<term>` opens Search with `term` filled in.
 ///
-/// Siri's in-app search (`SearchInSiloIntent`) hands its term to the app
+/// Siri's in-app search (`SearchInWeFlixIntent`) hands its term to the app
 /// through this link, so a Siri request shares the authentication,
 /// profile-lock, and cold-launch queueing every other link gets in
 /// `ContentView`.
@@ -13,7 +13,7 @@ enum SiriSearchLink {
 
     static func url(term: String) -> URL? {
         var components = URLComponents()
-        components.scheme = SiloURLScheme.current
+        components.scheme = WeFlixURLScheme.current
         components.host = host
         components.queryItems = [URLQueryItem(name: termQueryItem, value: term)]
         return components.url
@@ -22,7 +22,7 @@ enum SiriSearchLink {
     /// The trimmed search term, empty when the link carries none, or nil
     /// when `url` is not a search link.
     static func term(from url: URL) -> String? {
-        guard SiloURLScheme.isAppURL(url),
+        guard WeFlixURLScheme.isAppURL(url),
               url.host?.lowercased() == host,
               let components = URLComponents(url: url, resolvingAgainstBaseURL: false) else {
             return nil

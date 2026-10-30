@@ -1,6 +1,6 @@
 import Foundation
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 /// A v1-only server and a server that refuses this app version must read as
 /// "update", on every surface that explains a failed server call, and must
@@ -38,7 +38,7 @@ final class UpdateRequirementTests: XCTestCase {
             ("v1 410 envelope", HTTPError.http(statusCode: 410, body: #"{"error":"expired","message":"gone"}"#), nil),
             ("v1 bare 410", HTTPError.http(statusCode: 410, body: nil), nil),
             ("upgrade problem on another status", HTTPError.http(statusCode: 400, body: Self.upgradeProblem), nil),
-            // A v1 path answering Go's 404 does not prove a v1-only Silo server.
+            // A v1 path answering Go's 404 does not prove a v1-only WeFlix server.
             ("v1 legacy 404", HTTPError.http(statusCode: 404, body: Self.legacyNotFound), nil),
             ("transport", HTTPError.network(underlying: URLError(.cannotConnectToHost)), nil),
             ("cancellation", CancellationError(), nil),
@@ -195,7 +195,7 @@ final class UpdateRequirementTests: XCTestCase {
 
     @MainActor
     func testServerAddExplainsVersionMismatchInsteadOfUnreachable() async {
-        let unreachable = "Could not reach a Silo server at that address."
+        let unreachable = "Could not reach a weflix server at that address."
         let cases: [(String, [String: CandidateReply], String)] = [
             ("v1-only server", ["https:0": .legacyNotFound, "http:0": .legacyNotFound, "http:8090": .legacyNotFound],
              UpdateRequirement.serverMessage),

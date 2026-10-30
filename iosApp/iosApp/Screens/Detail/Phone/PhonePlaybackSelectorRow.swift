@@ -89,7 +89,7 @@ struct PhonePlaybackSelectorSkeleton: View {
 
     private func icon(_ kind: PhonePlaybackSelectorKind) -> some View {
         Image(systemName: kind.icon)
-            .siloScaledFont(size: 13, weight: .semibold, relativeTo: .footnote)
+            .weFlixScaledFont(size: 13, weight: .semibold, relativeTo: .footnote)
             .foregroundStyle(Color.white.opacity(0.24))
             .frame(width: iconWidth, alignment: .leading)
     }
@@ -101,10 +101,10 @@ struct PhonePlaybackSelectorSkeleton: View {
             HStack(spacing: PhonePlaybackSelectorMetrics.iconSpacing) {
                 icon(kind)
                 Text(kind.title)
-                    .siloScaledFont(size: 14, weight: .medium, relativeTo: .subheadline)
+                    .weFlixScaledFont(size: 14, weight: .medium, relativeTo: .subheadline)
             }
             Text("Loading")
-                .siloScaledFont(size: 14, weight: .semibold, relativeTo: .subheadline)
+                .weFlixScaledFont(size: 14, weight: .semibold, relativeTo: .subheadline)
         }
         .foregroundStyle(Color.white.opacity(0.16))
         .redacted(reason: .placeholder)
@@ -305,20 +305,20 @@ struct PhonePlaybackSelectorRow: View {
 
     private func selectorIcon(_ kind: PhonePlaybackSelectorKind) -> some View {
         Image(systemName: kind.icon)
-            .siloScaledFont(size: 13, weight: .semibold, relativeTo: .footnote)
+            .weFlixScaledFont(size: 13, weight: .semibold, relativeTo: .footnote)
             .foregroundColor(.white.opacity(0.55))
             .frame(width: iconWidth, alignment: .leading)
     }
 
     private func selectorTitle(_ kind: PhonePlaybackSelectorKind) -> some View {
         Text(kind.title)
-            .siloScaledFont(size: 14, weight: .medium, relativeTo: .subheadline)
+            .weFlixScaledFont(size: 14, weight: .medium, relativeTo: .subheadline)
             .foregroundColor(.white.opacity(0.72))
     }
 
     private func selectorValue(_ kind: PhonePlaybackSelectorKind) -> some View {
         Text(value(for: kind))
-            .siloScaledFont(size: 14, weight: .semibold, relativeTo: .subheadline)
+            .weFlixScaledFont(size: 14, weight: .semibold, relativeTo: .subheadline)
             .foregroundColor(.white)
     }
 
@@ -326,7 +326,7 @@ struct PhonePlaybackSelectorRow: View {
     private func selectorChevron(_ kind: PhonePlaybackSelectorKind) -> some View {
         if isInteractive(kind) {
             Image(systemName: "chevron.right")
-                .siloScaledFont(size: 11, weight: .bold, relativeTo: .caption2)
+                .weFlixScaledFont(size: 11, weight: .bold, relativeTo: .caption2)
                 .foregroundColor(.white.opacity(0.35))
         }
     }
@@ -511,7 +511,7 @@ private struct PhonePlaybackSelectorSheet: View {
             .listStyle(.insetGrouped)
             #endif
             .scrollContentBackground(.hidden)
-            .siloSheetBackground(legacyColor: .siloBackground)
+            .weFlixSheetBackground(legacyColor: .weFlixBackground)
             .task { await loadPreferredSubtitleLanguage() }
             .navigationTitle(kind.title)
             #if !os(macOS)
@@ -521,12 +521,12 @@ private struct PhonePlaybackSelectorSheet: View {
                 #if os(macOS)
                 ToolbarItem {
                     Button("Done") { dismiss() }
-                        .tint(.siloOnSurface)
+                        .tint(.weFlixOnSurface)
                 }
                 #else
                 ToolbarItem(placement: .topBarTrailing) {
                     Button("Done") { dismiss() }
-                        .tint(.siloOnSurface)
+                        .tint(.weFlixOnSurface)
                 }
                 #endif
             }
@@ -699,21 +699,21 @@ private struct PhonePlaybackSelectorSheet: View {
             HStack(alignment: .top, spacing: 12) {
                 VStack(alignment: .leading, spacing: 4) {
                     Text(title)
-                        .siloScaledFont(size: 16, weight: .semibold, relativeTo: .callout)
-                        .foregroundColor(.siloOnSurface)
+                        .weFlixScaledFont(size: 16, weight: .semibold, relativeTo: .callout)
+                        .foregroundColor(.weFlixOnSurface)
                         .lineLimit(2)
                     if let detail, !detail.isEmpty {
                         Text(detail)
-                            .font(.siloCaption)
-                            .foregroundColor(.siloSecondaryText)
+                            .font(.weFlixCaption)
+                            .foregroundColor(.weFlixSecondaryText)
                             .lineLimit(2)
                     }
                 }
                 Spacer(minLength: 8)
                 if isSelected {
                     Image(systemName: "checkmark")
-                        .siloScaledFont(size: 14, weight: .bold, relativeTo: .subheadline)
-                        .foregroundColor(.siloOnSurface)
+                        .weFlixScaledFont(size: 14, weight: .bold, relativeTo: .subheadline)
+                        .foregroundColor(.weFlixOnSurface)
                 }
             }
             .padding(.vertical, isCompactPopover ? 10 : 4)
@@ -723,7 +723,7 @@ private struct PhonePlaybackSelectorSheet: View {
         .buttonStyle(.plain)
         .disabled(!isEnabled)
         .opacity(isEnabled ? 1 : 0.56)
-        .listRowBackground(Color.siloSurfaceVariant)
+        .listRowBackground(Color.weFlixSurfaceVariant)
     }
 }
 #endif

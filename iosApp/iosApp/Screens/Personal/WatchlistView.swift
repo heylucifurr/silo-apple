@@ -84,7 +84,7 @@ struct WatchlistView: View {
                 #endif
             }
         }
-        .siloPageBackground()
+        .weFlixPageBackground()
         .modifier(PersonalListNavigationChrome(title: showsNavigationTitle ? "Watchlist" : nil))
         .task {
             await loadWatchlist()
@@ -118,7 +118,7 @@ struct WatchlistView: View {
                     }
                 }
             }
-            .padding(SiloTheme.padding)
+            .padding(WeFlixTheme.padding)
         }
         .reportsPageChromeScroll()
         #else
@@ -150,7 +150,7 @@ struct WatchlistView: View {
                     .frame(maxWidth: .infinity)
                 }
             }
-            .padding(SiloTheme.padding)
+            .padding(WeFlixTheme.padding)
         }
         .reportsPageChromeScroll()
         #endif
@@ -163,7 +163,7 @@ struct WatchlistView: View {
                 if usesTVTopMenu {
                     Text("Watchlist")
                         .font(.system(size: 64, weight: .bold))
-                        .foregroundStyle(Color.siloOnSurface)
+                        .foregroundStyle(Color.weFlixOnSurface)
                 }
 
                 LazyVGrid(columns: columns, alignment: .leading, spacing: 60) {
@@ -187,7 +187,7 @@ struct WatchlistView: View {
                             cardWidthOverride: tvCardWidthOverride,
                             onUserStateChanged: { state in
                                 guard !state.inWatchlist else { return }
-                                withAnimation(.easeInOut(duration: SiloTheme.normalDuration)) {
+                                withAnimation(.easeInOut(duration: WeFlixTheme.normalDuration)) {
                                     items.removeAll { $0.contentId == item.contentId }
                                 }
                             }
@@ -202,9 +202,9 @@ struct WatchlistView: View {
                 }
                 .focusSection()
             }
-            .padding(.horizontal, SiloTheme.safePadding)
-            .padding(.top, usesTVTopMenu ? TVTopMenuLayout.contentTopInset : SiloTheme.smallPadding)
-            .padding(.bottom, SiloTheme.safePadding)
+            .padding(.horizontal, WeFlixTheme.safePadding)
+            .padding(.top, usesTVTopMenu ? TVTopMenuLayout.contentTopInset : WeFlixTheme.smallPadding)
+            .padding(.bottom, WeFlixTheme.safePadding)
         }
         .modifier(TVMenuEntryScroll(request: focusRequest, isTopMenuFocused: isTopMenuFocused, onReady: applyFocusRequest))
     }
@@ -213,7 +213,7 @@ struct WatchlistView: View {
     /// preference is changed—`MediaCard` applies that scale after overrides.
     /// Eight 176-point posters plus 40-point gaps fit the tvOS safe width.
     private var tvCardWidthOverride: CGFloat {
-        SiloTheme.Skyline.densePosterCardWidth
+        WeFlixTheme.Skyline.densePosterCardWidth
             / uiCustomization.cardPresentation.posterSize.scale
     }
 
@@ -243,7 +243,7 @@ struct WatchlistView: View {
 
     private func playAction(for item: BrowseItem) -> (() -> Void)? {
         #if os(tvOS)
-        guard SiloMediaType.isDirectlyPlayable(item.type) else { return nil }
+        guard WeFlixMediaType.isDirectlyPlayable(item.type) else { return nil }
         return {
             router.presentPlayer(
                 contentId: item.contentId,
@@ -266,7 +266,7 @@ struct WatchlistView: View {
         }
         error = nil
         do {
-            let response = try await SiloAPI.shared.watchlist()
+            let response = try await WeFlixAPI.shared.watchlist()
             ResponseCache.shared.set(response, for: CacheKey.watchlist)
             items = response.items
         } catch let err {

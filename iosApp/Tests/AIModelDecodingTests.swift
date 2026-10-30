@@ -1,6 +1,6 @@
 //
 //  AIModelDecodingTests.swift
-//  SiloTests
+//  WeFlixTests
 //
 //  Tests for the stored-subtitle handoff values in `AIModels.swift`: the
 //  synthesized player descriptor (URL, combined ordinal, extension) and the
@@ -10,7 +10,7 @@
 
 import XCTest
 import Foundation
-@testable import Silo
+@testable import WeFlix
 
 final class AIModelDecodingTests: XCTestCase {
 

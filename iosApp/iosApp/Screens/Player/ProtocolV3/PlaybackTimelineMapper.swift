@@ -2,7 +2,7 @@ import Foundation
 
 /// The engine-facing interpretation of Playback Protocol V3's timeline.
 ///
-/// Aether's load and clock use the transport/player axis. Silo progress,
+/// Aether's load and clock use the transport/player axis. WeFlix progress,
 /// chapters, markers, and server commands use the source-media axis. Keeping
 /// this conversion in one value prevents an HLS reanchor from leaking into the
 /// rest of the player as an ad-hoc offset.

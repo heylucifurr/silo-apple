@@ -1,5 +1,5 @@
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 /// A server typed or pasted with a mixed-case host is the same server.
 @MainActor
@@ -46,8 +46,8 @@ final class ServerHostCaseTests: XCTestCase {
         viewModel.useRecent("https://Media.Example.com")
         XCTAssertEqual(try viewModel.buildCandidateURLs().first, "https://Media.Example.com")
 
-        viewModel.host = "HTTPS://Media.Example.COM/Silo"
-        XCTAssertEqual(try viewModel.buildCandidateURLs().first, "https://Media.Example.COM/Silo")
+        viewModel.host = "HTTPS://Media.Example.COM/WeFlix"
+        XCTAssertEqual(try viewModel.buildCandidateURLs().first, "https://Media.Example.COM/WeFlix")
     }
 
     private func entry(_ url: String) -> ServerEntry {

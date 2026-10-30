@@ -65,7 +65,7 @@ struct DiscoveredServerList: View {
 
         var body: some View {
             ProgressView()
-                .tint(isFocused ? .black : Color.siloOnSurface)
+                .tint(isFocused ? .black : Color.weFlixOnSurface)
         }
     }
     #else
@@ -73,7 +73,7 @@ struct DiscoveredServerList: View {
         VStack(alignment: .leading, spacing: 0) {
             Text("Found nearby")
                 .font(.system(size: 15, weight: .semibold))
-                .foregroundStyle(Color.siloOnSurface.opacity(0.62))
+                .foregroundStyle(Color.weFlixOnSurface.opacity(0.62))
                 .padding(.leading, 2)
                 .padding(.bottom, 10)
             ServerPickerList(Array(servers.prefix(4))) { server in
@@ -136,11 +136,11 @@ struct ServerPickerRow: View {
                 VStack(alignment: .leading, spacing: 2) {
                     Text(name)
                         .font(.system(size: 16, weight: .semibold))
-                        .foregroundStyle(Color.siloOnSurface)
+                        .foregroundStyle(Color.weFlixOnSurface)
                         .lineLimit(1)
                     Text(detail)
                         .font(.system(size: 13))
-                        .foregroundStyle(Color.siloOnSurface.opacity(0.4))
+                        .foregroundStyle(Color.weFlixOnSurface.opacity(0.4))
                         .lineLimit(1)
                         .truncationMode(.middle)
                 }
@@ -151,7 +151,7 @@ struct ServerPickerRow: View {
                 } else {
                     Image(systemName: "chevron.right")
                         .font(.system(size: 13, weight: .semibold))
-                        .foregroundStyle(Color.siloOnSurface.opacity(0.4))
+                        .foregroundStyle(Color.weFlixOnSurface.opacity(0.4))
                 }
             }
             .padding(.horizontal, 14)

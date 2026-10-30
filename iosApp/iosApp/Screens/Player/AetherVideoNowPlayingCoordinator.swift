@@ -7,10 +7,10 @@ import UIKit
 #endif
 
 /// Arbitrates the process-wide `MPRemoteCommandCenter.shared()` and
-/// `MPNowPlayingInfoCenter.default()` between every Silo owner that can bind
+/// `MPNowPlayingInfoCenter.default()` between every WeFlix owner that can bind
 /// them at the same time: video's software-renderer fallback route, the
 /// audiobook software route (and every audiobook route on macOS), and
-/// SiloControl remote-media sessions.
+/// WeFlixControl remote-media sessions.
 ///
 /// Both centers are process-wide, so an owner tearing its binding down would
 /// otherwise disable every shared transport command and clear shared metadata
@@ -36,7 +36,7 @@ final class SharedNowPlayingArbiter {
 
     private init() {}
 
-    /// Every transport command any Silo owner can enable. Enabling is part of
+    /// Every transport command any WeFlix owner can enable. Enabling is part of
     /// a binding, so a command left enabled after its targets are gone keeps
     /// advertising a transport nobody drives.
     static func disableTransportCommands(on center: MPRemoteCommandCenter) {
@@ -106,7 +106,7 @@ final class SharedNowPlayingArbiter {
     }
 }
 
-/// Owns Silo video's system-media publication and command routing.
+/// Owns WeFlix video's system-media publication and command routing.
 ///
 /// Native Aether video uses the `MPNowPlayingSession` bound to Aether's
 /// `AVPlayer`. Aether's software renderer has no player-scoped session, so it
@@ -119,9 +119,9 @@ final class AetherVideoNowPlayingCoordinator {
         var play: () -> Void
         var pause: () -> Void
         var isPaused: () -> Bool
-        /// Silo source-media time, not Aether's transport-local player time.
+        /// WeFlix source-media time, not Aether's transport-local player time.
         var currentTime: () -> Double
-        /// Accepts a Silo source-media seek target.
+        /// Accepts a WeFlix source-media seek target.
         var seek: (Double) -> Void
         var stop: (() -> Void)?
         var next: (() -> Void)?
@@ -150,7 +150,7 @@ final class AetherVideoNowPlayingCoordinator {
     }
 
     private static let logger = Logger(
-        subsystem: Bundle.main.bundleIdentifier ?? "org.siloserver.silo",
+        subsystem: Bundle.main.bundleIdentifier ?? "me.weflix",
         category: "VideoNowPlaying"
     )
 
@@ -213,7 +213,7 @@ final class AetherVideoNowPlayingCoordinator {
             guard let session else { return }
             // Protocol V3 may expose a transport-local AVPlayer timeline with
             // a nonzero source offset. Manual publication is required so the
-            // system scrubber and its seek commands stay on Silo's source
+            // system scrubber and its seek commands stay on WeFlix's source
             // axis rather than Aether's player axis.
             session.automaticallyPublishesNowPlayingInfo = false
             commandCenter = session.remoteCommandCenter

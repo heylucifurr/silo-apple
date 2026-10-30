@@ -2,7 +2,7 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "Silo: Generate Xcode project",
+      "label": "WeFlix: Generate Xcode project",
       "type": "shell",
       "command": "xcodegen",
       "args": [
@@ -14,15 +14,15 @@
       "problemMatcher": []
     },
     {
-      "label": "Silo: Build iOS",
+      "label": "WeFlix: Build iOS",
       "type": "shell",
       "command": "xcodebuild",
       "args": [
         "build",
         "-project",
-        "Silo.xcodeproj",
+        "WeFlix.xcodeproj",
         "-scheme",
-        "Silo",
+        "WeFlix",
         "-destination",
         "generic/platform=iOS Simulator",
         "-derivedDataPath",
@@ -33,7 +33,7 @@
       "options": {
         "cwd": "${workspaceFolder}/iosApp"
       },
-      "dependsOn": "Silo: Generate Xcode project",
+      "dependsOn": "WeFlix: Generate Xcode project",
       "dependsOrder": "sequence",
       "group": {
         "kind": "build",
@@ -44,15 +44,15 @@
       ]
     },
     {
-      "label": "Silo: Build tvOS",
+      "label": "WeFlix: Build tvOS",
       "type": "shell",
       "command": "xcodebuild",
       "args": [
         "build",
         "-project",
-        "Silo.xcodeproj",
+        "WeFlix.xcodeproj",
         "-scheme",
-        "SiloTV",
+        "WeFlixTV",
         "-destination",
         "generic/platform=tvOS Simulator",
         "-derivedDataPath",
@@ -63,7 +63,7 @@
       "options": {
         "cwd": "${workspaceFolder}/iosApp"
       },
-      "dependsOn": "Silo: Generate Xcode project",
+      "dependsOn": "WeFlix: Generate Xcode project",
       "dependsOrder": "sequence",
       "group": "build",
       "problemMatcher": [
@@ -71,15 +71,15 @@
       ]
     },
     {
-      "label": "Silo: Build macOS",
+      "label": "WeFlix: Build macOS",
       "type": "shell",
       "command": "xcodebuild",
       "args": [
         "build",
         "-project",
-        "Silo.xcodeproj",
+        "WeFlix.xcodeproj",
         "-scheme",
-        "SiloMac",
+        "WeFlixMac",
         "-destination",
         "platform=macOS",
         "-derivedDataPath",
@@ -90,7 +90,7 @@
       "options": {
         "cwd": "${workspaceFolder}/iosApp"
       },
-      "dependsOn": "Silo: Generate Xcode project",
+      "dependsOn": "WeFlix: Generate Xcode project",
       "dependsOrder": "sequence",
       "group": "build",
       "problemMatcher": [
@@ -98,15 +98,15 @@
       ]
     },
     {
-      "label": "Silo: Test iOS",
+      "label": "WeFlix: Test iOS",
       "type": "shell",
       "command": "xcodebuild",
       "args": [
         "test",
         "-project",
-        "Silo.xcodeproj",
+        "WeFlix.xcodeproj",
         "-scheme",
-        "Silo",
+        "WeFlix",
         "-destination",
         "${input:iosTestDestination}",
         "-derivedDataPath",
@@ -117,7 +117,7 @@
       "options": {
         "cwd": "${workspaceFolder}/iosApp"
       },
-      "dependsOn": "Silo: Generate Xcode project",
+      "dependsOn": "WeFlix: Generate Xcode project",
       "dependsOrder": "sequence",
       "group": {
         "kind": "test",

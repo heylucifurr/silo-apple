@@ -1,6 +1,6 @@
 import Foundation
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 /// The v2 settings value writes on the wire: request shape without mutation
 /// ids, the exact success status and receipt checks, the owner fence, and how
@@ -11,7 +11,7 @@ final class SettingValueWritesTests: XCTestCase {
 
     private var stub: APIv2TestStub!
     private var tokenStore: TokenStore!
-    private var api: SiloAPI!
+    private var api: WeFlixAPI!
 
     override func setUp() async throws {
         try await super.setUp()
@@ -26,7 +26,7 @@ final class SettingValueWritesTests: XCTestCase {
         await tokenStore.setServerUrl("https://settings.example")
         await tokenStore.setProfileId(Self.profile)
         stub = APIv2TestStub()
-        api = SiloAPI(http: HTTPClient(session: stub.makeSession(), tokenStore: tokenStore), tokenStore: tokenStore)
+        api = WeFlixAPI(http: HTTPClient(session: stub.makeSession(), tokenStore: tokenStore), tokenStore: tokenStore)
     }
 
     private func receipt(
@@ -80,9 +80,9 @@ final class SettingValueWritesTests: XCTestCase {
         XCTAssertEqual(request.path, "/api/v2/settings/values/playback.subtitle_appearance")
         XCTAssertEqual(request.query, ["scope": "profile_device"], "profile_id is never sent")
         XCTAssertEqual(request.header("X-Profile-Id"), Self.profile)
-        XCTAssertEqual(request.header("X-Silo-Device-Id"), device.id)
-        XCTAssertEqual(request.header("X-Silo-Client-Family"), device.clientFamily)
-        XCTAssertNil(request.header("X-Silo-Mutation-Id"))
+        XCTAssertEqual(request.header("X-WeFlix-Device-Id"), device.id)
+        XCTAssertEqual(request.header("X-WeFlix-Client-Family"), device.clientFamily)
+        XCTAssertNil(request.header("X-WeFlix-Mutation-Id"))
         // The body schema is closed: exactly `value`, with the value's own
         // camelCase keys untouched.
         let body = try XCTUnwrap(request.body)
@@ -117,7 +117,7 @@ final class SettingValueWritesTests: XCTestCase {
         XCTAssertEqual(request.method, "PUT")
         XCTAssertEqual(request.path, "/api/v2/settings/values/nav.shortcuts/item")
         XCTAssertTrue(request.query.isEmpty)
-        XCTAssertNil(request.header("X-Silo-Mutation-Id"))
+        XCTAssertNil(request.header("X-WeFlix-Mutation-Id"))
         let object = try XCTUnwrap(JSONSerialization.jsonObject(with: XCTUnwrap(request.body)) as? [String: Any])
         XCTAssertEqual(Set(object.keys), ["item", "present"])
         XCTAssertEqual(object["present"] as? Bool, true)

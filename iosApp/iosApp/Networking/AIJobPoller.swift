@@ -2,7 +2,7 @@
 //  snapshot on a fixed cadence and stops once the job reaches a terminal
 //  state (`completed` / `failed` / `cancelled`).
 //
-//  The `fetch` closure is injected rather than the live ``SiloAI``
+//  The `fetch` closure is injected rather than the live ``WeFlixAI``
 //  facade so the poller is unit-testable headless — a fake `fetch` can
 //  return a scripted sequence of snapshots (see `AIJobPollerTests`). In
 //  production the controller passes `{ try await api.subtitleJob(id: $0, auth: auth) }`.

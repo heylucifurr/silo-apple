@@ -32,10 +32,10 @@ private struct PhoneMyRequestsView: View {
         .listStyle(.inset)
         #endif
         .scrollContentBackground(.hidden)
-        .siloPageBackground()
+        .weFlixPageBackground()
         .navigationTitle("My Requests")
-        .siloNavigationTitleDisplayMode(.large)
-        .siloToolbarColorSchemeDark()
+        .weFlixNavigationTitleDisplayMode(.large)
+        .weFlixToolbarColorSchemeDark()
         .toolbar {
             if viewModel.buckets.count > 1 {
                 ToolbarItem(placement: .primaryAction) { filterMenu }
@@ -101,8 +101,8 @@ private struct PhoneMyRequestsView: View {
             if let message = viewModel.actionErrorMessage {
                 fullRow {
                     Text(message)
-                        .font(.siloCaption)
-                        .foregroundColor(.siloSecondaryText)
+                        .font(.weFlixCaption)
+                        .foregroundColor(.weFlixSecondaryText)
                         .frame(maxWidth: .infinity, alignment: .center)
                 }
             }
@@ -119,7 +119,7 @@ private struct PhoneMyRequestsView: View {
                                 { router.navigate(to: .itemDetail(contentId: id)) }
                             }
                         )
-                        .listRowBackground(Color.siloGroupedCell)
+                        .listRowBackground(Color.weFlixGroupedCell)
                         .swipeActions(edge: .trailing, allowsFullSwipe: false) {
                             if isCancelable(record) {
                                 Button(role: .destructive) {
@@ -171,7 +171,7 @@ private struct PhoneMyRequestsView: View {
             Text("\(count)")
         }
         .font(.subheadline.weight(.medium))
-        .foregroundColor(.siloSecondaryText)
+        .foregroundColor(.weFlixSecondaryText)
         .textCase(nil)
     }
 }
@@ -200,11 +200,11 @@ struct MyRequestRow: View {
                     VStack(alignment: .leading, spacing: 0) {
                         Text(record.title)
                             .font(.system(size: 16, weight: .semibold))
-                            .foregroundColor(.siloOnSurface)
+                            .foregroundColor(.weFlixOnSurface)
                             .lineLimit(1)
                         Text(RequestRowCopy.meta(record, progress: progress))
                             .font(.caption)
-                            .foregroundColor(.siloSecondaryText)
+                            .foregroundColor(.weFlixSecondaryText)
                             .lineLimit(1)
                             .padding(.top, 2)
                         RequestStageTrack(progress: progress)
@@ -213,7 +213,7 @@ struct MyRequestRow: View {
                             progress: progress,
                             text: RequestRowCopy.status(record, progress: progress),
                             font: .caption.weight(.semibold),
-                            color: .siloOnSurface,
+                            color: .weFlixOnSurface,
                             lineLimit: 2
                         )
                         .padding(.top, 6)
@@ -240,7 +240,7 @@ struct MyRequestRow: View {
         } else {
             Image(systemName: "chevron.right")
                 .font(.footnote.weight(.semibold))
-                .foregroundColor(.siloSecondaryText.opacity(0.7))
+                .foregroundColor(.weFlixSecondaryText.opacity(0.7))
         }
     }
 }
@@ -253,11 +253,11 @@ private struct RequestRowPoster: View {
             if let url = RequestImageURL.build(path, size: .poster) {
                 AsyncImageView(url: url, targetSize: CGSize(width: 46, height: 69), contentMode: .fill)
             } else {
-                Color.siloSurfaceElevated
+                Color.weFlixSurfaceElevated
             }
         }
         .frame(width: 46, height: 69)
-        .clipShape(RoundedRectangle(cornerRadius: SiloTheme.smallCornerRadius, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: WeFlixTheme.smallCornerRadius, style: .continuous))
     }
 }
 
@@ -270,10 +270,10 @@ private struct RequestRowCapsuleButton: View {
         Button(action: action) {
             Label(title, systemImage: systemImage)
                 .font(.footnote.weight(.semibold))
-                .foregroundStyle(Color.siloOnSurface)
+                .foregroundStyle(Color.weFlixOnSurface)
                 .padding(.horizontal, 12)
                 .padding(.vertical, 7)
-                .background(Capsule().fill(Color.siloChromeSelectedFill))
+                .background(Capsule().fill(Color.weFlixChromeSelectedFill))
         }
         .buttonStyle(.borderless)
     }

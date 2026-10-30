@@ -3,7 +3,7 @@ import ImageIO
 import Nuke
 import UniformTypeIdentifiers
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 final class ServerTrickplayTests: XCTestCase {
     private func manifest(count: Int = 250, columns: Int64 = 10, sheets: [(Int, String)]? = nil) throws -> ServerTrickplay {

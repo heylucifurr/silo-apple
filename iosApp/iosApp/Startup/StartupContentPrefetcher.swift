@@ -138,13 +138,13 @@ enum StartupContentPrefetcher {
         #if os(iOS) || os(tvOS)
         let probe = PrefetchProbe.begin("home_sections", isOriginator: !homeSections.isInFlight)
         #endif
-        let task = homeSections.join { try await SiloAPI.shared.homeSections() }
+        let task = homeSections.join { try await WeFlixAPI.shared.homeSections() }
         let writeToken = homeSections.writeToken
         do {
             let read = try await task.value
             // The rows belong to the profile they were fetched for. Never
             // cache or show them once the session acts as someone else.
-            let isCurrentOwner = await SiloAPI.shared.isCurrentOwner(read.auth)
+            let isCurrentOwner = await WeFlixAPI.shared.isCurrentOwner(read.auth)
             try validateProfileScopedGeneration(profileGeneration)
             try validateHomeSectionsGeneration(homeGeneration)
             guard isCurrentOwner else { throw HTTPError.requestIdentityChanged }
@@ -311,7 +311,7 @@ enum StartupContentPrefetcher {
         #if os(iOS) || os(tvOS)
         let probe = PrefetchProbe.begin("recommendations", isOriginator: !recommendations.isInFlight)
         #endif
-        let task = recommendations.join { try await SiloAPI.shared.recommendationsDiscover() }
+        let task = recommendations.join { try await WeFlixAPI.shared.recommendationsDiscover() }
         let writeToken = recommendations.writeToken
         do {
             let response = try await task.value
@@ -346,7 +346,7 @@ enum StartupContentPrefetcher {
         #endif
         let task = userLibraries.join {
             async let hidden = HiddenLibraryPreference.hiddenLibraryIds()
-            let response = try await SiloAPI.shared.libraries()
+            let response = try await WeFlixAPI.shared.libraries()
             return LibrariesResponse(
                 libraries: HiddenLibraryPreference.visibleLibraries(response.libraries, hiding: await hidden)
             )
@@ -441,7 +441,7 @@ enum StartupContentPrefetcher {
         )
         let writeToken = ResponseCache.shared.writeToken
         Task {
-            guard let page = try? await SiloAPI.shared.catalogPage(query),
+            guard let page = try? await WeFlixAPI.shared.catalogPage(query),
                   profileScopedGeneration == generation else { return }
             ResponseCache.shared.set(
                 page.response,
@@ -456,7 +456,7 @@ enum StartupContentPrefetcher {
 
     private static func firstSeriesItem(in response: SectionsResponse) -> SectionItem? {
         for section in response.sections where !section.isFeatured && !section.items.isEmpty {
-            if let item = section.items.first(where: { SiloMediaType.isSeries($0.type) }) {
+            if let item = section.items.first(where: { WeFlixMediaType.isSeries($0.type) }) {
                 return item
             }
         }
@@ -486,13 +486,13 @@ enum StartupContentPrefetcher {
             isOriginator: !flight.isInFlight
         )
         #endif
-        let task = flight.join { try await SiloAPI.shared.librarySections(libraryId: libraryId) }
+        let task = flight.join { try await WeFlixAPI.shared.librarySections(libraryId: libraryId) }
         let writeToken = flight.writeToken
         do {
             let read = try await task.value
             // Sections belong to the profile they were fetched for. Never
             // cache or show them once the session acts as someone else.
-            let isCurrentOwner = await SiloAPI.shared.isCurrentOwner(read.auth)
+            let isCurrentOwner = await WeFlixAPI.shared.isCurrentOwner(read.auth)
             try validateProfileScopedGeneration(generation)
             guard isCurrentOwner else { throw HTTPError.requestIdentityChanged }
             flight.finish(task, value: nil)
@@ -553,7 +553,7 @@ enum StartupContentPrefetcher {
                 includeType: false,
                 enforcedScope: mediaScope
             )
-            return try await SiloAPI.shared.catalogPage(query)
+            return try await WeFlixAPI.shared.catalogPage(query)
         }
         let writeToken = flight.writeToken
         do {
@@ -718,7 +718,7 @@ enum StartupContentPrefetcher {
     /// uses: Skyline rows on tvOS, Home's rows or `SectionRow` elsewhere.
     private static func rowCardArtwork(for item: SectionItem, in section: ResolvedSection, onHome: Bool) -> CardArtwork? {
         #if os(tvOS)
-        return MediaRow.cardArtwork(for: item, layout: SectionRow.layout(for: section), cardWidth: SiloTheme.Skyline.densePosterCardWidth)
+        return MediaRow.cardArtwork(for: item, layout: SectionRow.layout(for: section), cardWidth: WeFlixTheme.Skyline.densePosterCardWidth)
         #else
         if onHome || section.isContinueWatchingSection {
             return HomeFeedRow.cardArtwork(for: item, in: section)

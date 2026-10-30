@@ -970,7 +970,7 @@ struct DownloadStoreFile: Codable, Sendable {
     /// never shown or synced here.
     var legacyMonitorIds: Set<String>? = nil
     /// Identifier of the background session the records' `taskIdentifier`
-    /// values belong to. Nil in stores written before the continuum → silo
+    /// values belong to. Nil in stores written before the continuum → weFlix
     /// rename moved transfers to a new session.
     var taskSessionIdentifier: String? = nil
 

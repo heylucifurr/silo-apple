@@ -35,7 +35,7 @@ final class CalendarViewModel {
     init(
         deviceTimeZone: @escaping () -> TimeZone = { .current },
         fetchWeek: @escaping FetchCalendarWeek = { start, end, filter, timezone in
-            try await SiloAPI.shared.calendarEvents(
+            try await WeFlixAPI.shared.calendarEvents(
                 start: start, end: end, filter: filter, timezone: timezone
             )
         }

@@ -82,7 +82,7 @@ struct AsyncImageView: View {
                 transaction: Transaction(
                     animation: reduceMotion || resolved.cached != nil
                         ? nil
-                        : .easeOut(duration: SiloTheme.fastDuration)
+                        : .easeOut(duration: WeFlixTheme.fastDuration)
                 )
             ) { state in
                 loadState(state, resolved: resolved, retryIsPending: retryIsPending, frame: frame)
@@ -282,8 +282,8 @@ enum ArtworkPlaceholderSymbol {
 
     static func forMediaType(_ type: String?) -> String {
         guard let type else { return fallback }
-        if SiloMediaType.isAudiobook(type) { return audiobook }
-        if SiloMediaType.isSeries(type) || SiloMediaType.isEpisode(type) { return television }
+        if WeFlixMediaType.isAudiobook(type) { return audiobook }
+        if WeFlixMediaType.isSeries(type) || WeFlixMediaType.isEpisode(type) { return television }
         switch type.trimmingCharacters(in: .whitespacesAndNewlines).lowercased() {
         // "season_premiere" is a calendar event type.
         case "season", "season_premiere":
@@ -311,7 +311,7 @@ private struct ArtworkPlaceholderGlyph: View {
     var body: some View {
         Canvas { context, size in
             var glyph = context.resolve(Image(systemName: symbol))
-            glyph.shading = .color(Color.siloOnSurface.opacity(0.3))
+            glyph.shading = .color(Color.weFlixOnSurface.opacity(0.3))
             context.draw(glyph, at: CGPoint(x: size.width / 2, y: size.height / 2))
         }
         .accessibilityHidden(true)

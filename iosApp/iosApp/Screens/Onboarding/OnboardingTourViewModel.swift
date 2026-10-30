@@ -19,7 +19,7 @@ protocol OnboardingTourAPI: Sendable {
     func updateProfile(profileId: String, body: UpdateProfileBody) async throws
 }
 
-extension SiloAPI: OnboardingTourAPI {
+extension WeFlixAPI: OnboardingTourAPI {
     nonisolated func onboardingRead(surface: String?) async throws -> APIv2OnboardingSession {
         try await apiV2Client.onboardingRead(surface: surface)
     }
@@ -43,7 +43,7 @@ private enum OnboardingTourError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .unsupportedSetting(let key):
-            return "This version of Silo cannot save the \(key) setting yet."
+            return "This version of weflix cannot save the \(key) setting yet."
         case .missingProfile:
             return "Select a profile before saving this setting."
         }
@@ -70,7 +70,7 @@ class OnboardingTourViewModel {
     /// `profile_field`; a `setting_choice` step naming any other target is
     /// dropped at load like an unknown kind, because it could not be saved.
     private static let supportedSettingTarget = "profile_field"
-    private static let logger = Logger(subsystem: "org.siloserver.silo", category: "onboarding")
+    private static let logger = Logger(subsystem: "me.weflix", category: "onboarding")
 
     var isLoading: Bool = true
     var steps: [OnboardingStep] = []
@@ -97,7 +97,7 @@ class OnboardingTourViewModel {
     private let activeProfileId: @MainActor () -> String?
 
     init(
-        api: any OnboardingTourAPI = SiloAPI.shared,
+        api: any OnboardingTourAPI = WeFlixAPI.shared,
         runtimeSettingsRefresher: (any OnboardingRuntimeSettingsRefreshing)? = nil,
         activeProfileId: @escaping @MainActor () -> String? = { AuthService.shared.profileId }
     ) {

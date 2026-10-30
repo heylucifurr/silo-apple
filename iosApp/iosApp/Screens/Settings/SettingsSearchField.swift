@@ -9,13 +9,13 @@ struct SettingsSearchField: View {
     var body: some View {
         HStack(spacing: 8) {
             Image(systemName: "magnifyingglass")
-                .foregroundStyle(Color.siloSecondaryText)
+                .foregroundStyle(Color.weFlixSecondaryText)
                 .accessibilityHidden(true)
 
             TextField("Search", text: $text)
                 .textInputAutocapitalization(.never)
                 .autocorrectionDisabled()
-                .foregroundStyle(Color.siloOnSurface)
+                .foregroundStyle(Color.weFlixOnSurface)
                 .accessibilityLabel("Search settings")
 
             if !text.isEmpty {
@@ -24,13 +24,13 @@ struct SettingsSearchField: View {
                 }
                 .labelStyle(.iconOnly)
                 .buttonStyle(.plain)
-                .foregroundStyle(Color.siloSecondaryText)
+                .foregroundStyle(Color.weFlixSecondaryText)
                 .frame(width: 44, height: 44)
             }
         }
         .padding(.horizontal, 14)
         .frame(minHeight: 44)
-        .background(Color.siloGroupedCell, in: Capsule())
+        .background(Color.weFlixGroupedCell, in: Capsule())
     }
 }
 #endif

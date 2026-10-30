@@ -185,7 +185,7 @@ struct MobilePlayerControls: View {
             Image(systemName: "xmark")
                 .font(.system(size: 14, weight: .semibold))
                 .foregroundStyle(.white)
-                .frame(width: SiloTheme.topBarIconHitSize, height: SiloTheme.topBarIconHitSize)
+                .frame(width: WeFlixTheme.topBarIconHitSize, height: WeFlixTheme.topBarIconHitSize)
         }
         .buttonStyle(MobilePlayerGlassButtonStyle())
         .accessibilityLabel("Close Player")
@@ -221,8 +221,8 @@ struct MobilePlayerControls: View {
                     viewModel.resumeAutoHide()
                 }
             }
-            .frame(width: SiloTheme.topBarIconHitSize, height: SiloTheme.topBarIconHitSize)
-            .siloPlayerGlass(in: Circle(), interactive: true)
+            .frame(width: WeFlixTheme.topBarIconHitSize, height: WeFlixTheme.topBarIconHitSize)
+            .weFlixPlayerGlass(in: Circle(), interactive: true)
         }
     }
 
@@ -502,7 +502,7 @@ struct MobilePlayerControls: View {
             }
             .foregroundStyle(.white)
             .padding(.horizontal, 12)
-            .frame(height: SiloTheme.topBarIconHitSize)
+            .frame(height: WeFlixTheme.topBarIconHitSize)
         }
         .menuStyle(.button)
         // Keep Auto at the top, reading down.
@@ -523,7 +523,7 @@ struct MobilePlayerControls: View {
         if let active = viewModel.activeQualityOption {
             return active.isAuto || active.resolution.isEmpty ? "Auto" : active.resolution
         }
-        return SiloQualityPresets.resolutionLabel(AppleQualityAxes.split(viewModel.activeQualityId).resolution)
+        return WeFlixQualityPresets.resolutionLabel(AppleQualityAxes.split(viewModel.activeQualityId).resolution)
     }
 
     // MARK: - Audio & Subtitles sheet
@@ -586,12 +586,12 @@ struct MobilePlayerControls: View {
             }
             .foregroundStyle(.white)
             .padding(.horizontal, 12)
-            .frame(height: SiloTheme.topBarIconHitSize)
+            .frame(height: WeFlixTheme.topBarIconHitSize)
         } else {
             Image(systemName: systemImage)
                 .font(.system(size: 14, weight: .semibold))
                 .foregroundStyle(.white)
-                .frame(width: SiloTheme.topBarIconHitSize, height: SiloTheme.topBarIconHitSize)
+                .frame(width: WeFlixTheme.topBarIconHitSize, height: WeFlixTheme.topBarIconHitSize)
         }
     }
 
@@ -609,7 +609,7 @@ struct MobilePlayerControls: View {
             }
             .foregroundStyle(.white)
             .padding(.horizontal, 12)
-            .frame(height: SiloTheme.topBarIconHitSize)
+            .frame(height: WeFlixTheme.topBarIconHitSize)
         }
         .buttonStyle(MobilePlayerGlassButtonStyle())
     }
@@ -643,7 +643,7 @@ struct MobilePlayerControls: View {
                     .font(.system(size: 14, weight: .semibold))
                     .foregroundStyle(.white)
                     .padding(.horizontal, 16)
-                    .frame(height: SiloTheme.topBarIconHitSize)
+                    .frame(height: WeFlixTheme.topBarIconHitSize)
                 }
                 .buttonStyle(MobilePlayerPillButtonStyle(pill: pill))
                 .accessibilityLabel(pill.kind.accessibilityLabel)
@@ -670,7 +670,7 @@ struct MobilePlayerControls: View {
                         .font(.system(size: 14, weight: .semibold))
                         .foregroundStyle(.black.opacity(0.85))
                         .padding(.horizontal, 16)
-                        .frame(height: SiloTheme.topBarIconHitSize)
+                        .frame(height: WeFlixTheme.topBarIconHitSize)
                 }
                 .buttonStyle(MobilePlayerGlassButtonStyle(tint: .white.opacity(0.9)))
                 .accessibilityLabel(viewModel.segmentSkipLabel)
@@ -692,7 +692,7 @@ struct MobilePlayerControls: View {
                 .font(.system(size: 14, weight: .semibold))
                 .foregroundStyle(.white)
                 .contentTransition(.symbolEffect(.replace))
-                .frame(width: SiloTheme.topBarIconHitSize, height: SiloTheme.topBarIconHitSize)
+                .frame(width: WeFlixTheme.topBarIconHitSize, height: WeFlixTheme.topBarIconHitSize)
         }
         .buttonStyle(MobilePlayerGlassButtonStyle(tint: tint))
     }
@@ -941,7 +941,7 @@ private struct MobilePlayerTimeline: View {
             }
         }
         .padding(7)
-        .siloPlayerGlass(in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+        .weFlixPlayerGlass(in: RoundedRectangle(cornerRadius: 14, style: .continuous))
         .fixedSize()
     }
 
@@ -1005,7 +1005,7 @@ struct MobilePlayerPillButtonStyle: ButtonStyle {
 
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .frame(minWidth: SiloTheme.topBarIconHitSize)
+            .frame(minWidth: WeFlixTheme.topBarIconHitSize)
             .background {
                 ZStack {
                     Capsule().fill(Color.black.opacity(0.65))
@@ -1033,7 +1033,7 @@ struct MobilePlayerPillButtonStyle: ButtonStyle {
 /// Chrome uses the 44pt default; the transport cluster passes larger sizes.
 struct MobilePlayerGlassButtonStyle: ButtonStyle {
     var tint: Color? = nil
-    var size: CGFloat = SiloTheme.topBarIconHitSize
+    var size: CGFloat = WeFlixTheme.topBarIconHitSize
 
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
@@ -1041,7 +1041,7 @@ struct MobilePlayerGlassButtonStyle: ButtonStyle {
             .frame(height: size)
             .opacity(configuration.isPressed ? 0.75 : 1)
             .contentShape(Capsule())
-            .siloPlayerGlass(in: Capsule(), tint: tint, interactive: true)
+            .weFlixPlayerGlass(in: Capsule(), tint: tint, interactive: true)
     }
 }
 
@@ -1050,7 +1050,7 @@ struct MobilePlayerGlassButtonStyle: ButtonStyle {
 /// tap/auto-hide state as the controls.
 struct MobilePlayerChromeVisibility: ViewModifier {
     /// Room the Next Up layout leaves above itself for the close button.
-    static let topClearance: CGFloat = SiloTheme.topBarIconHitSize + 32
+    static let topClearance: CGFloat = WeFlixTheme.topBarIconHitSize + 32
 
     let isVisible: Bool
 

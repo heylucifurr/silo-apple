@@ -1,5 +1,5 @@
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 /// The speed test's arithmetic, replayed against the vendored vectors'
 /// `probe_cases` (see `Fixtures/BufferingQuality/SOURCE`). Web and Android
@@ -120,7 +120,7 @@ final class BandwidthProbeDownloadTests: XCTestCase {
         var request = URLRequest(url: probeURL)
         request.setValue("Bearer secret", forHTTPHeaderField: "Authorization")
         request.setValue("p-1", forHTTPHeaderField: "X-Profile-Id")
-        request.setValue("device-1", forHTTPHeaderField: "X-Silo-Device-Id")
+        request.setValue("device-1", forHTTPHeaderField: "X-WeFlix-Device-Id")
         return request
     }
 
@@ -160,7 +160,7 @@ final class BandwidthProbeDownloadTests: XCTestCase {
         let proxied = try XCTUnwrap(stub.requests.last)
         XCTAssertNil(proxied.header("Authorization"))
         XCTAssertNil(proxied.header("X-Profile-Id"))
-        XCTAssertEqual(proxied.header("X-Silo-Device-Id"), "device-1")
+        XCTAssertEqual(proxied.header("X-WeFlix-Device-Id"), "device-1")
     }
 
     /// Failures are logged publicly, so they never carry the host.

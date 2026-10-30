@@ -154,7 +154,7 @@ struct LiveBandwidthProbeServer: BandwidthProbeServer {
             // Read afresh: the URL is on the origin the request arrived on,
             // which a local route can change, and the admin can change the
             // schedule.
-            capabilities = try await SiloAPI.shared.apiV2Client.playbackCapabilities(auth: auth)
+            capabilities = try await WeFlixAPI.shared.apiV2Client.playbackCapabilities(auth: auth)
         } catch APIv2Error.serverUpdateRequired {
             return nil
         }
@@ -178,7 +178,7 @@ struct LiveBandwidthProbeServer: BandwidthProbeServer {
 
     func storedReadings() async throws -> BandwidthStoredReadings {
         guard let auth = await profileAuth() else { throw NoProfile() }
-        let connection = try await SiloAPI.shared.apiV2Client.playbackConnection(auth: auth)
+        let connection = try await WeFlixAPI.shared.apiV2Client.playbackConnection(auth: auth)
         return BandwidthStoredReadings(
             probe: connection.probe.map {
                 BandwidthReading(kbps: $0.kbps, lowerBound: $0.lowerBound, measuredAt: $0.measuredAt,
@@ -201,7 +201,7 @@ struct LiveBandwidthProbeServer: BandwidthProbeServer {
         request.httpMethod = "GET"
         AppleDeviceIdentity.current.applyHeaders(to: &request)
         // The account's own credentials, refreshed when they have expired.
-        request.allHTTPHeaderFields = try await SiloAPI.shared.http.mediaRequestHeaders(
+        request.allHTTPHeaderFields = try await WeFlixAPI.shared.http.mediaRequestHeaders(
             expectedAuth: target.auth,
             baseHeaders: request.allHTTPHeaderFields ?? [:]
         )
@@ -210,7 +210,7 @@ struct LiveBandwidthProbeServer: BandwidthProbeServer {
 
     func report(_ measurement: BandwidthMeasurement, to target: BandwidthProbeTarget) async -> BandwidthReportResult {
         do {
-            try await SiloAPI.shared.apiV2Client.reportPlaybackBandwidthProbe(
+            try await WeFlixAPI.shared.apiV2Client.reportPlaybackBandwidthProbe(
                 APIv2PlaybackBandwidthProbeResult(
                     kbps: measurement.kbps,
                     bytes: measurement.bytes,
@@ -269,7 +269,7 @@ struct BandwidthProbeSession: Equatable, Sendable {
 /// server repo's `docs/design/2026-10-17-buffering-quality.md`, "Connection
 /// speed test" > "When to test".
 ///
-/// - **Check**: when a profile signs in, Silo returns to the foreground, or
+/// - **Check**: when a profile signs in, WeFlix returns to the foreground, or
 ///   the connection changes: another network, metering, or the local route
 ///   to this server coming or going. A check reads the server's speed-test
 ///   settings and its stored readings at once, so a playback start in the
@@ -283,7 +283,7 @@ struct BandwidthProbeSession: Equatable, Sendable {
 ///   reaches the current target.
 /// - **Not**: while media plays or starts (a video player loading or
 ///   playing, ``isMediaActive``, then ``playbackQuietPeriod`` for automatic
-///   tests), on a metered or cellular network, or with Silo in the
+///   tests), on a metered or cellular network, or with WeFlix in the
 ///   background, hidden or minimized. A test running when one of these begins
 ///   is cancelled and measured nothing.
 /// - **Failures** wait for the next check. A 429 holds automatic tests
@@ -329,7 +329,7 @@ final class BandwidthProbeScheduler {
         /// Signed out, or the server does not advertise `connection_speed_v1`
         /// with a probe URL.
         case notSupported
-        /// The network or server changed, or Silo left the foreground, before
+        /// The network or server changed, or WeFlix left the foreground, before
         /// the test finished.
         case interrupted
     }
@@ -406,7 +406,7 @@ final class BandwidthProbeScheduler {
     /// without saying so cannot hold tests off.
     @ObservationIgnored private let videoPlayers = NSHashTable<AnyObject>.weakObjects()
 
-    private static let logger = Logger(subsystem: "org.siloserver.silo", category: "BandwidthProbe")
+    private static let logger = Logger(subsystem: "me.weflix", category: "BandwidthProbe")
 
     init(server: BandwidthProbeServer, clock: PlayerPromptClock? = nil) {
         self.server = server
@@ -485,7 +485,7 @@ final class BandwidthProbeScheduler {
             let network = BandwidthProbeNetwork(path)
             Task { @MainActor in self?.networkChanged(network) }
         }
-        monitor.start(queue: DispatchQueue(label: "org.siloserver.silo.bandwidth-probe-path"))
+        monitor.start(queue: DispatchQueue(label: "me.weflix.bandwidth-probe-path"))
         pathMonitor = monitor
     }
 

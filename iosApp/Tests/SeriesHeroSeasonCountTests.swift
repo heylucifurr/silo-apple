@@ -1,5 +1,5 @@
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 /// The hero counts the seasons the library holds, not the provider's
 /// `season_count`, so it agrees with the season chips below it.

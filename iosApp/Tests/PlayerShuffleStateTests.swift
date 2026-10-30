@@ -1,6 +1,6 @@
 import Foundation
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 /// What the up-next screen offers during a shuffle, and how a multi-part item
 /// plays through before the shuffle moves on.

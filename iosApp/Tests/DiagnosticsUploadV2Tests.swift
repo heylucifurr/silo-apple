@@ -1,7 +1,7 @@
 #if os(iOS) || os(tvOS)
 import Foundation
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 private let reportsPath = "/api/v2/diagnostics/reports"
 private let uploadsPath = "/api/v2/diagnostics/reports/uploads"
@@ -49,7 +49,7 @@ final class DiagnosticsUploadV2Tests: XCTestCase {
     }
 
     func testA413WithoutAProblemDocumentCameFromAProxy() {
-        // nginx answers with an HTML page; Silo always sends problem+json.
+        // nginx answers with an HTML page; WeFlix always sends problem+json.
         XCTAssertEqual(DiagnosticsAPI.mapUploadError(.httpStatus(413)), .requestBlockedByProxy)
     }
 
@@ -178,7 +178,7 @@ final class DiagnosticsUploadV2Tests: XCTestCase {
             auth: owner
         )
 
-        XCTAssertEqual(response, DiagnosticsUploadResponse(reportId: "report-1", shortId: "SILO-SINGLE"))
+        XCTAssertEqual(response, DiagnosticsUploadResponse(reportId: "report-1", shortId: "WEFLIX-SINGLE"))
         let request = try XCTUnwrap(stub.handler.requests.first)
         XCTAssertEqual(request.method, "POST")
         XCTAssertEqual(request.path, reportsPath)
@@ -291,7 +291,7 @@ final class DiagnosticsUploadV2Tests: XCTestCase {
         let manifest = Data(#"{"schema_version":1,"report":{"b":1,"a":2}}"#.utf8)
         let response = try await api.uploadChunked(manifestData: manifest, bundleData: bundle, auth: owner)
 
-        XCTAssertEqual(response.shortID, "SILO-TEST12345678")
+        XCTAssertEqual(response.shortID, "WEFLIX-TEST12345678")
         let state = stub.state()
         XCTAssertEqual(state.chunkBodies.map(\.count), [4, 4, 2])
         XCTAssertEqual(Data(state.chunkBodies.joined()), bundle, "reassembled chunks must equal the bundle")
@@ -461,7 +461,7 @@ private final class DiagnosticsUploadStub: @unchecked Sendable {
                 await tokens.setProfileId("switched")
             }
             if let uploadFailure { throw uploadFailure }
-            return upload ?? .json(#"{"report_id":"report-1","short_id":"SILO-SINGLE"}"#, status: 201)
+            return upload ?? .json(#"{"report_id":"report-1","short_id":"WEFLIX-SINGLE"}"#, status: 201)
         }
         handler.route(StubURLProtocol.method("POST", path: uploadsPath)) { [self] request in
             mutate { $0.initBody = request.body }
@@ -486,7 +486,7 @@ private final class DiagnosticsUploadStub: @unchecked Sendable {
             if let completeFailure { throw completeFailure }
             if let complete { return complete }
             mutate { $0.completed = true }
-            return .json(#"{"report_id":"11111111-1111-1111-1111-111111111111","short_id":"SILO-TEST12345678"}"#, status: 201)
+            return .json(#"{"report_id":"11111111-1111-1111-1111-111111111111","short_id":"WEFLIX-TEST12345678"}"#, status: 201)
         }
         handler.route(StubURLProtocol.method("DELETE", path: "\(uploadsPath)/stub-session")) { [self] _ in
             mutate { $0.aborted = true }

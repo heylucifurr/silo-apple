@@ -1,6 +1,6 @@
 import Foundation
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 /// The v2 contract verdict in `ConnectionMonitor` is scoped to one server.
 /// A probe of a setup candidate, or one that outlives a server switch, must

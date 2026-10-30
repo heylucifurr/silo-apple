@@ -98,7 +98,7 @@ struct MediaCard: View {
     var aspect: MediaCardAspect = .poster
     /// Overrides the theme's default card width, before the poster-size
     /// preference scales it. Callers pass
-    /// `SiloTheme.Skyline.densePosterCardWidth` for Skyline's dense tvOS
+    /// `WeFlixTheme.Skyline.densePosterCardWidth` for Skyline's dense tvOS
     /// rows, or a width fitted to a grid's columns. The poster keeps its
     /// aspect ratio.
     var cardWidthOverride: CGFloat? = nil
@@ -130,11 +130,11 @@ struct MediaCard: View {
 
     /// The size a card draws its artwork at, at the current card-size setting.
     static func artworkSize(cardWidthOverride: CGFloat?, aspect: MediaCardAspect) -> CGSize {
-        let width = (cardWidthOverride ?? SiloTheme.posterCardWidth)
+        let width = (cardWidthOverride ?? WeFlixTheme.posterCardWidth)
             * UICustomizationPreferences.shared.cardPresentation.posterSize.scale
         switch aspect {
         case .poster:
-            return CGSize(width: width, height: width * (SiloTheme.posterCardHeight / SiloTheme.posterCardWidth))
+            return CGSize(width: width, height: width * (WeFlixTheme.posterCardHeight / WeFlixTheme.posterCardWidth))
         case .square:
             return CGSize(width: width, height: width)
         }
@@ -337,12 +337,12 @@ struct MediaCard: View {
                     Spacer()
                     ZStack {
                         Circle()
-                            .fill(Color.siloOnSurface)
+                            .fill(Color.weFlixOnSurface)
                             .frame(width: checkBadgeSize, height: checkBadgeSize)
                             .shadow(color: .black.opacity(0.3), radius: 4)
                         Image(systemName: "checkmark")
                             .font(.system(size: checkIconSize, weight: .bold))
-                            .foregroundColor(Color.siloBackground)
+                            .foregroundColor(Color.weFlixBackground)
                     }
                 }
                 .padding(checkBadgePadding)
@@ -356,7 +356,7 @@ struct MediaCard: View {
         .frame(width: cardWidth, height: cardHeight)
         // One mask for every layer, so overlays and the progress bar stay
         // inside the rounded corners.
-        .clipShape(RoundedRectangle(cornerRadius: SiloTheme.cornerRadius))
+        .clipShape(RoundedRectangle(cornerRadius: WeFlixTheme.cornerRadius))
     }
 
     private var isPlayed: Bool { personalState.isPlayed(userState) }
@@ -404,16 +404,16 @@ struct MediaCard: View {
 
     private func titleLabel(_ text: String) -> some View {
         Text(text)
-            .font(.siloCardTitle)
-            .foregroundColor(.siloOnSurface)
+            .font(.weFlixCardTitle)
+            .foregroundColor(.weFlixOnSurface)
     }
 
     @ViewBuilder
     private var yearText: some View {
         if let secondLine = subtitle ?? year.map(String.init) {
             Text(secondLine)
-                .font(.siloCardMetadata)
-                .foregroundColor(.siloSecondaryText)
+                .font(.weFlixCardMetadata)
+                .foregroundColor(.weFlixSecondaryText)
                 // One line, tail-truncated: an episode title must never wrap
                 // and push the row below it.
                 .lineLimit(1)
@@ -620,7 +620,7 @@ private struct TVMediaCardCaption: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
             Text(title)
-                .font(.siloPosterTitle)
+                .font(.weFlixPosterTitle)
                 .lineLimit(1)
                 .truncationMode(.tail)
                 .tvCardTitleFocus(isFocused: isFocused)
@@ -628,7 +628,7 @@ private struct TVMediaCardCaption: View {
 
             if let secondLine {
                 Text(secondLine)
-                    .font(.siloPosterMetadata)
+                    .font(.weFlixPosterMetadata)
                     .tvCardSubtitleFocus(isFocused: isFocused)
                     .lineLimit(1)
                     .truncationMode(.tail)

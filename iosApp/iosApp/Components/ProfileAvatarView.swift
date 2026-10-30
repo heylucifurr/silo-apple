@@ -9,8 +9,8 @@ struct ProfileAvatarView: View {
     var imageUrl: String? = nil
     let name: String
     var size: CGFloat
-    var backgroundColor: Color = .siloSurfaceVariant
-    var textColor: Color = .siloOnSurface
+    var backgroundColor: Color = .weFlixSurfaceVariant
+    var textColor: Color = .weFlixOnSurface
     @State private var loadedImageURL: String?
 
     var body: some View {
@@ -53,7 +53,7 @@ struct ProfileAvatarView: View {
         } else {
             Image(systemName: "person.fill")
                 .font(.system(size: size * 0.36))
-                .foregroundColor(.siloSecondaryText)
+                .foregroundColor(.weFlixSecondaryText)
         }
     }
 

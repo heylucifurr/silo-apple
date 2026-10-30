@@ -1,6 +1,6 @@
 //
 //  ProfileScopedSettingTransport.swift
-//  Silo (iOS + tvOS + macOS)
+//  WeFlix (iOS + tvOS + macOS)
 //
 //  The slice of the settings API that a store for a few profile-scoped keys
 //  needs: probe the contract, read effective values for its own keys, and
@@ -27,10 +27,10 @@ protocol ProfileScopedSettingTransport: AnyObject, Sendable {
     ) async throws
 }
 
-final class SiloProfileScopedSettingTransport: ProfileScopedSettingTransport {
-    private let api: SiloAPI
+final class WeFlixProfileScopedSettingTransport: ProfileScopedSettingTransport {
+    private let api: WeFlixAPI
 
-    init(api: SiloAPI = .shared) {
+    init(api: WeFlixAPI = .shared) {
         self.api = api
     }
 

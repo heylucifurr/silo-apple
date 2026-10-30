@@ -29,33 +29,33 @@ struct RemotePlaybackIdentityNotice: View {
 
     var body: some View {
         Label {
-            VStack(alignment: .leading, spacing: SiloTheme.smallPadding) {
+            VStack(alignment: .leading, spacing: WeFlixTheme.smallPadding) {
                 Text("Playing as \(profileLabel)")
-                    .font(.siloSubheadline)
-                    .foregroundStyle(Color.siloOnSurface)
+                    .font(.weFlixSubheadline)
+                    .foregroundStyle(Color.weFlixOnSurface)
                     .lineLimit(1)
 
                 Text(sourceLabel)
-                    .font(.siloBody)
-                    .foregroundStyle(Color.siloSecondaryText)
+                    .font(.weFlixBody)
+                    .foregroundStyle(Color.weFlixSecondaryText)
                     .lineLimit(1)
             }
         } icon: {
             Image(systemName: "iphone")
                 .font(.title3)
-                .foregroundStyle(Color.siloPrimary)
+                .foregroundStyle(Color.weFlixPrimary)
                 .accessibilityHidden(true)
         }
-        .padding(.horizontal, SiloTheme.padding)
-        .padding(.vertical, SiloTheme.spacing)
+        .padding(.horizontal, WeFlixTheme.padding)
+        .padding(.vertical, WeFlixTheme.spacing)
         .frame(maxWidth: 720)
-        .siloPlayerGlass(
-            in: RoundedRectangle(cornerRadius: SiloTheme.cardCornerRadius),
-            tint: Color.siloPrimary.opacity(0.24)
+        .weFlixPlayerGlass(
+            in: RoundedRectangle(cornerRadius: WeFlixTheme.cardCornerRadius),
+            tint: Color.weFlixPrimary.opacity(0.24)
         )
         .shadow(color: .black.opacity(0.28), radius: 24, y: 12)
-        .padding(.horizontal, SiloTheme.safePadding)
-        .padding(.top, SiloTheme.safePadding)
+        .padding(.horizontal, WeFlixTheme.safePadding)
+        .padding(.top, WeFlixTheme.safePadding)
         .allowsHitTesting(false)
         .accessibilityElement(children: .combine)
         .accessibilityLabel("Playing as \(profileLabel). \(sourceLabel).")

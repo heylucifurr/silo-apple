@@ -333,8 +333,8 @@ struct DownloadActionButton: View {
     private var noticeCaption: some View {
         if let startNotice {
             Text(startNotice)
-                .font(.siloCaption)
-                .foregroundColor(.siloOnSurface)
+                .font(.weFlixCaption)
+                .foregroundColor(.weFlixOnSurface)
                 .padding(.horizontal, 10)
                 .padding(.vertical, 6)
                 .background(.ultraThinMaterial, in: Capsule())
@@ -359,7 +359,7 @@ struct DownloadActionButton: View {
                     Circle().fill(Color.white.opacity(active ? 0.18 : 0.10))
                 )
             Text(captionText(for: record))
-                .siloScaledFont(size: 10, weight: .medium, relativeTo: .caption2)
+                .weFlixScaledFont(size: 10, weight: .medium, relativeTo: .caption2)
                 .foregroundColor(captionTint(for: record?.localStatus))
                 .phoneActionCaption()
         }

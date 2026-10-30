@@ -1,6 +1,6 @@
-# Rebuild Silo with a modified ASS library
+# Rebuild WeFlix with a modified ASS library
 
-This archive contains the tracked Silo app at `revisions.json`'s `app_revision`,
+This archive contains the tracked WeFlix app at `revisions.json`'s `app_revision`,
 its resolved Swift package sources, and the six native library source trees
 listed by SwiftLibass 1.4.0. The manifest records immutable source revisions
 and SHA-256 digests of downloaded archives. The app snapshot excludes untracked
@@ -33,12 +33,12 @@ Swift packages. The subtitle library sources listed below are already included.
 
    ```sh
    xcodegen generate
-   xcodebuild build -project Silo.xcodeproj -scheme Silo \
+   xcodebuild build -project WeFlix.xcodeproj -scheme WeFlix \
      -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO
    ```
 
-   Use scheme `SiloTV` and `generic/platform=tvOS Simulator` for tvOS, or
-   scheme `SiloMac` and `platform=macOS` for macOS. For a physical device,
+   Use scheme `WeFlixTV` and `generic/platform=tvOS Simulator` for tvOS, or
+   scheme `WeFlixMac` and `platform=macOS` for macOS. For a physical device,
    configure your own signing using `Signing/Local.xcconfig.sample` and the
    repository build instructions.
 

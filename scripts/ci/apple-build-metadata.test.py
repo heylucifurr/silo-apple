@@ -16,8 +16,8 @@ spec.loader.exec_module(metadata)
 QUALIFIED_SPM_LOCK = '40e3e0fbe264adac749a1f7db3f91a311e67f6419eeecad6bd4d88c07efd9410'
 QUALIFIED_SPM_PROJECT = 'b698ee86dc410c8ada9251778a655f5428b2ea663ccfc8ba1291f180aa472eca'
 QUALIFIED_SPM_TOOLCHAIN = '5e23d2022187a1fa502ad4a6'
-IPHONE = [{'identifier': metadata.TEST_SIMULATORS['Silo'][1]}]
-APPLE_TV = [{'identifier': metadata.TEST_SIMULATORS['SiloTV'][1]}]
+IPHONE = [{'identifier': metadata.TEST_SIMULATORS['WeFlix'][1]}]
+APPLE_TV = [{'identifier': metadata.TEST_SIMULATORS['WeFlixTV'][1]}]
 DUO = [{'identifier': 'com.apple.CoreSimulator.SimDeviceType.iPhone-Duo'}]
 
 
@@ -57,16 +57,16 @@ class MetadataTests(unittest.TestCase):
             with patch.object(metadata, 'command', return_value='a' * 40), \
                     patch.object(metadata, 'toolchains', side_effect=AssertionError('simulator query')), \
                     patch.object(metadata, 'device_toolchain', return_value=toolchain):
-                original = metadata.metadata(root, {}, device_scheme='Silo-device')
-                self.assertEqual(json.loads(original['toolchain_json']), {'Silo-device': toolchain})
+                original = metadata.metadata(root, {}, device_scheme='WeFlix-device')
+                self.assertEqual(json.loads(original['toolchain_json']), {'WeFlix-device': toolchain})
                 for key, value in [('xcode_version', '27.1'), ('xcode_build', '27B100'),
                                    ('architecture', 'x86_64'), ('sdk', 'appletvos'),
                                    ('sdk_version', '27.1'), ('sdk_build', '24A101')]:
                     with self.subTest(changed=key), patch.object(
                             metadata, 'device_toolchain', return_value={**toolchain, key: value}):
-                        changed = metadata.metadata(root, {}, device_scheme='Silo-device')
+                        changed = metadata.metadata(root, {}, device_scheme='WeFlix-device')
                         self.assertNotEqual(original['toolchain_key'], changed['toolchain_key'])
-                other = metadata.metadata(root, {}, device_scheme='SiloTV-device')
+                other = metadata.metadata(root, {}, device_scheme='WeFlixTV-device')
                 self.assertNotEqual(original['toolchain_key'], other['toolchain_key'])
 
     def test_device_metadata_rejects_missing_or_malformed_sdk_and_architecture(self):
@@ -82,12 +82,12 @@ class MetadataTests(unittest.TestCase):
             with self.subTest(args=args, value=value), patch.object(
                     metadata, 'command', side_effect=lambda *call: {**valid, args: value}[call]):
                 with self.assertRaisesRegex(ValueError, 'Device SDK or architecture'):
-                    metadata.device_toolchain('Silo-device')
+                    metadata.device_toolchain('WeFlix-device')
 
     def test_device_profiles_cannot_be_used_for_simulator_proof_or_benchmarks(self):
-        for option in ('--benchmark', '--proof=Silo'):
+        for option in ('--benchmark', '--proof=WeFlix'):
             with self.subTest(option=option), patch.object(sys, 'argv',
-                    ['metadata', '--device-scheme=Silo-device', option]), \
+                    ['metadata', '--device-scheme=WeFlix-device', option]), \
                     patch.object(metadata, 'metadata', side_effect=AssertionError('metadata queried')):
                 with self.assertRaises(SystemExit) as error:
                     metadata.main()
@@ -100,11 +100,11 @@ class MetadataTests(unittest.TestCase):
     def test_rejects_mutable_or_shell_source_and_unsafe_cache_namespace(self):
         for value in ('main', 'a' * 39, 'a' * 40 + '\n', '$(id)', '../other'):
             with self.subTest(value=value), self.assertRaises(ValueError):
-                metadata.validate_controls({'SILO_BENCHMARK_SOURCE_REF': value})
+                metadata.validate_controls({'WEFLIX_BENCHMARK_SOURCE_REF': value})
         for value in ('../cache', 'space here', 'A', 'a' * 33, 'v1\nkey=other'):
             with self.subTest(value=value), self.assertRaises(ValueError):
-                metadata.validate_controls({'SILO_CACHE_NAMESPACE': value})
-        self.assertEqual(metadata.validate_controls({'SILO_CACHE_NAMESPACE': 'bench-1'}), 'bench-1')
+                metadata.validate_controls({'WEFLIX_CACHE_NAMESPACE': value})
+        self.assertEqual(metadata.validate_controls({'WEFLIX_CACHE_NAMESPACE': 'bench-1'}), 'bench-1')
 
     def test_actual_cli_rejects_two_requested_refs_before_source_or_toolchain_work(self):
         with tempfile.TemporaryDirectory() as folder:
@@ -117,8 +117,8 @@ class MetadataTests(unittest.TestCase):
                             [sys.executable, str(Path(metadata.__file__).resolve()),
                              '--root', str(root / 'missing-source'), option],
                             cwd=root, env={'PATH': str(root / 'no-tools'),
-                                           'SILO_BASELINE_REF': baseline,
-                                           'SILO_BENCHMARK_SOURCE_REF': source},
+                                           'WEFLIX_BASELINE_REF': baseline,
+                                           'WEFLIX_BENCHMARK_SOURCE_REF': source},
                             capture_output=True, text=True)
                         self.assertNotEqual(result.returncode, 0)
                         self.assertIn('baseline_ref and benchmark_source_ref cannot be combined',
@@ -126,14 +126,14 @@ class MetadataTests(unittest.TestCase):
                         self.assertEqual(result.stdout, '')
 
     def test_actual_control_cli_preserves_single_ref_and_explicit_variant_inputs(self):
-        valid = [{}, {'SILO_BASELINE_REF': 'refs/tags/historical-baseline',
-                      'SILO_BENCH_VARIANT': 'baseline', 'SILO_CACHE_MODE': 'off'},
-                 {'SILO_BENCHMARK_SOURCE_REF': 'a' * 40, 'SILO_BENCH_VARIANT': 'optimized'},
-                 {'SILO_BENCHMARK_SOURCE_REF': 'a' * 40, 'SILO_BENCH_VARIANT': 'baseline',
-                  'SILO_CACHE_MODE': 'off'},
-                 {'SILO_BASELINE_REF': 'historical', 'SILO_BENCHMARK_SOURCE_REF': ''},
-                 {'SILO_BASELINE_REF': '', 'SILO_BENCHMARK_SOURCE_REF': 'a' * 40},
-                 {'SILO_BASELINE_REF': '', 'SILO_BENCHMARK_SOURCE_REF': ''}]
+        valid = [{}, {'WEFLIX_BASELINE_REF': 'refs/tags/historical-baseline',
+                      'WEFLIX_BENCH_VARIANT': 'baseline', 'WEFLIX_CACHE_MODE': 'off'},
+                 {'WEFLIX_BENCHMARK_SOURCE_REF': 'a' * 40, 'WEFLIX_BENCH_VARIANT': 'optimized'},
+                 {'WEFLIX_BENCHMARK_SOURCE_REF': 'a' * 40, 'WEFLIX_BENCH_VARIANT': 'baseline',
+                  'WEFLIX_CACHE_MODE': 'off'},
+                 {'WEFLIX_BASELINE_REF': 'historical', 'WEFLIX_BENCHMARK_SOURCE_REF': ''},
+                 {'WEFLIX_BASELINE_REF': '', 'WEFLIX_BENCHMARK_SOURCE_REF': 'a' * 40},
+                 {'WEFLIX_BASELINE_REF': '', 'WEFLIX_BENCHMARK_SOURCE_REF': ''}]
         with tempfile.TemporaryDirectory() as folder:
             root = Path(folder)
             for env in valid:
@@ -148,9 +148,9 @@ class MetadataTests(unittest.TestCase):
                     self.assertEqual(result.stderr, '')
 
     def test_shipping_metadata_rejects_diagnostic_probes_before_source_inspection(self):
-        metadata.validate_controls({'SILO_CACHE_PROBE': 'none'})
+        metadata.validate_controls({'WEFLIX_CACHE_PROBE': 'none'})
         for probe in ('fail_test', 'graph_only', '', 'NONE', 'none\nother=value'):
-            with self.subTest(probe=probe), patch.dict(os.environ, {'SILO_CACHE_PROBE': probe}, clear=True), \
+            with self.subTest(probe=probe), patch.dict(os.environ, {'WEFLIX_CACHE_PROBE': probe}, clear=True), \
                     patch.object(sys, 'argv', ['metadata', '--validate-controls']), \
                     patch.object(metadata, 'metadata', side_effect=AssertionError('Source inspection started')), \
                     patch.object(metadata, 'command', side_effect=AssertionError('Toolchain inspection started')):
@@ -201,9 +201,9 @@ class MetadataTests(unittest.TestCase):
             return '27.0'
         with patch.object(metadata, 'command', command):
             tools = metadata.toolchains()
-        self.assertEqual(tools['Silo']['runtime_build'], '24A100')
-        self.assertEqual(tools['SiloTV']['runtime_build'], '')
-        self.assertNotIn('runtime_build', tools['SiloMac'])
+        self.assertEqual(tools['WeFlix']['runtime_build'], '24A100')
+        self.assertEqual(tools['WeFlixTV']['runtime_build'], '')
+        self.assertNotIn('runtime_build', tools['WeFlixMac'])
 
     def runtime_inventory(self, **changes):
         return {'runtimes': [{**ios_runtime('27.0', '24A100'), **changes}]}
@@ -232,9 +232,9 @@ class MetadataTests(unittest.TestCase):
             capture = Path(folder) / 'runtimes.json'
             capture.write_text(json.dumps(inventory))
             with patch.object(metadata, 'command', side_effect=self.live_tool_command) as run:
-                tools = metadata.toolchains(capture, 'Silo', selected)
-        self.assertEqual(tools['Silo']['runtime_build'], '24A200')
-        self.assertEqual(tools['Silo']['xcode_build'], '27A266a')
+                tools = metadata.toolchains(capture, 'WeFlix', selected)
+        self.assertEqual(tools['WeFlix']['runtime_build'], '24A200')
+        self.assertEqual(tools['WeFlix']['xcode_build'], '27A266a')
         for sdk in metadata.SDKS.values():
             self.assertIn(('xcrun', '--sdk', sdk, '--show-sdk-version'),
                           [call.args for call in run.call_args_list])
@@ -243,25 +243,25 @@ class MetadataTests(unittest.TestCase):
 
     def test_prepared_runtime_rejects_missing_unavailable_ambiguous_and_stale_identity(self):
         identifier = 'com.apple.CoreSimulator.SimRuntime.iOS-27-0'
-        invalid = [({}, 'Silo', identifier), ({'runtimes': {}}, 'Silo', identifier),
-                   ({'runtimes': [None]}, 'Silo', identifier),
-                   (self.runtime_inventory(isAvailable=False), 'Silo', identifier),
-                   (self.runtime_inventory(isAvailable=1), 'Silo', identifier),
-                   (self.runtime_inventory(version='26.0'), 'Silo', identifier),
-                   (self.runtime_inventory(version='27.1'), 'Silo', identifier),
-                   (self.runtime_inventory(supportedDeviceTypes=DUO), 'Silo', identifier),
-                   (self.runtime_inventory(supportedDeviceTypes=None), 'Silo', identifier),
-                   (self.runtime_inventory(buildversion=''), 'Silo', identifier),
-                   (self.runtime_inventory(buildversion='24A100\nother=value'), 'Silo', identifier),
-                   (self.runtime_inventory(), 'SiloTV', identifier),
-                   (self.runtime_inventory(), 'SiloMac', identifier),
-                   (self.runtime_inventory(), 'Silo', ''),
-                   (self.runtime_inventory(), 'Silo', identifier + '-other'),
-                   ({'runtimes': self.runtime_inventory()['runtimes'] * 2}, 'Silo', identifier)]
+        invalid = [({}, 'WeFlix', identifier), ({'runtimes': {}}, 'WeFlix', identifier),
+                   ({'runtimes': [None]}, 'WeFlix', identifier),
+                   (self.runtime_inventory(isAvailable=False), 'WeFlix', identifier),
+                   (self.runtime_inventory(isAvailable=1), 'WeFlix', identifier),
+                   (self.runtime_inventory(version='26.0'), 'WeFlix', identifier),
+                   (self.runtime_inventory(version='27.1'), 'WeFlix', identifier),
+                   (self.runtime_inventory(supportedDeviceTypes=DUO), 'WeFlix', identifier),
+                   (self.runtime_inventory(supportedDeviceTypes=None), 'WeFlix', identifier),
+                   (self.runtime_inventory(buildversion=''), 'WeFlix', identifier),
+                   (self.runtime_inventory(buildversion='24A100\nother=value'), 'WeFlix', identifier),
+                   (self.runtime_inventory(), 'WeFlixTV', identifier),
+                   (self.runtime_inventory(), 'WeFlixMac', identifier),
+                   (self.runtime_inventory(), 'WeFlix', ''),
+                   (self.runtime_inventory(), 'WeFlix', identifier + '-other'),
+                   ({'runtimes': self.runtime_inventory()['runtimes'] * 2}, 'WeFlix', identifier)]
         with tempfile.TemporaryDirectory() as folder:
             capture = Path(folder) / 'runtimes.json'
             with self.assertRaises(FileNotFoundError):
-                metadata.prepared_runtimes(capture, 'Silo', identifier, '27.0')
+                metadata.prepared_runtimes(capture, 'WeFlix', identifier, '27.0')
             for inventory, scheme, selected in invalid:
                 with self.subTest(inventory=inventory, scheme=scheme, selected=selected):
                     capture.write_text(json.dumps(inventory))
@@ -270,12 +270,12 @@ class MetadataTests(unittest.TestCase):
             for text in ('{', '{"runtimes": [], "runtimes": []}'):
                 capture.write_text(text)
                 with self.subTest(text=text), self.assertRaises(ValueError):
-                    metadata.prepared_runtimes(capture, 'Silo', identifier, '27.0')
+                    metadata.prepared_runtimes(capture, 'WeFlix', identifier, '27.0')
             # A newer runtime that runs the device supersedes the selection.
             capture.write_text(json.dumps({'runtimes': [*self.runtime_inventory()['runtimes'],
                                                         ios_runtime('27.1', '24A200')]}))
             with self.assertRaises(ValueError):
-                metadata.prepared_runtimes(capture, 'Silo', identifier, '27.1')
+                metadata.prepared_runtimes(capture, 'WeFlix', identifier, '27.1')
 
     def test_changed_current_sdk_invalidates_the_prepared_runtime(self):
         with tempfile.TemporaryDirectory() as folder:
@@ -286,17 +286,17 @@ class MetadataTests(unittest.TestCase):
                     return '28.0'
                 return self.live_tool_command(*args)
             with patch.object(metadata, 'command', changed_sdk), self.assertRaises(ValueError):
-                metadata.toolchains(capture, 'Silo', 'com.apple.CoreSimulator.SimRuntime.iOS-27-0')
+                metadata.toolchains(capture, 'WeFlix', 'com.apple.CoreSimulator.SimRuntime.iOS-27-0')
 
     def test_tests_use_the_newest_runtime_in_the_sdk_release_that_runs_the_device(self):
         # Xcode 27.1's iOS 27.1 runtime runs only the iPhone Duo.
         runtimes = [ios_runtime('26.4', '23E100'), ios_runtime('27.0', '24A434'),
                     ios_runtime('27.1', '24A944', devices=DUO), ios_runtime('28.0', '25A100'),
                     ios_runtime('27.0.1', '24A500', isAvailable=False)]
-        self.assertEqual([runtime['buildversion'] for runtime in metadata.test_runtimes(runtimes, 'Silo', '27.1')],
+        self.assertEqual([runtime['buildversion'] for runtime in metadata.test_runtimes(runtimes, 'WeFlix', '27.1')],
                          ['24A434'])
-        self.assertEqual(metadata.test_runtimes(runtimes, 'Silo', '26.0'), [])
-        self.assertEqual(metadata.test_runtimes(runtimes, 'SiloTV', '27.1'), [])
+        self.assertEqual(metadata.test_runtimes(runtimes, 'WeFlix', '26.0'), [])
+        self.assertEqual(metadata.test_runtimes(runtimes, 'WeFlixTV', '27.1'), [])
 
         def sdk_27_1(*args):
             if args == ('xcrun', '--sdk', 'iphonesimulator', '--show-sdk-version'):
@@ -306,7 +306,7 @@ class MetadataTests(unittest.TestCase):
             return self.live_tool_command(*args)
         with patch.object(metadata, 'command', sdk_27_1):
             live = metadata.toolchains()
-        self.assertEqual((live['Silo']['sdk_version'], live['Silo']['runtime_version'], live['Silo']['runtime_build']),
+        self.assertEqual((live['WeFlix']['sdk_version'], live['WeFlix']['runtime_version'], live['WeFlix']['runtime_build']),
                          ('27.1', '27.0', '24A434'))
 
         # The release job's live discovery and the test job's prepared runtime agree.
@@ -314,14 +314,14 @@ class MetadataTests(unittest.TestCase):
             capture = Path(folder) / 'runtimes.json'
             capture.write_text(json.dumps({'runtimes': runtimes}))
             with patch.object(metadata, 'command', sdk_27_1):
-                simulator = metadata.test_simulator('Silo', capture)
-                prepared = metadata.toolchains(capture, 'Silo', simulator['runtime'])
+                simulator = metadata.test_simulator('WeFlix', capture)
+                prepared = metadata.toolchains(capture, 'WeFlix', simulator['runtime'])
             self.assertEqual(simulator, {'runtime': 'com.apple.CoreSimulator.SimRuntime.iOS-27-0',
                                          'device_type': 'com.apple.CoreSimulator.SimDeviceType.iPhone-17-Pro'})
-            self.assertEqual(prepared['Silo'], live['Silo'])
+            self.assertEqual(prepared['WeFlix'], live['WeFlix'])
             capture.write_text(json.dumps({'runtimes': runtimes[2:]}))
             with patch.object(metadata, 'command', sdk_27_1):
-                self.assertEqual(metadata.test_simulator('Silo', capture)['runtime'], '')
+                self.assertEqual(metadata.test_simulator('WeFlix', capture)['runtime'], '')
 
     def test_final_metadata_recomputes_source_config_dirty_and_all_sdk_builds(self):
         with tempfile.TemporaryDirectory() as folder:
@@ -333,7 +333,7 @@ class MetadataTests(unittest.TestCase):
             project.write_text('original project')
             capture = root / 'runtime.json'
             capture.write_text(json.dumps(self.runtime_inventory()))
-            env = {'SCHEME': 'Silo', 'SILO_TEST_RUNTIME_IDENTIFIER':
+            env = {'SCHEME': 'WeFlix', 'WEFLIX_TEST_RUNTIME_IDENTIFIER':
                    'com.apple.CoreSimulator.SimRuntime.iOS-27-0'}
             with patch.object(metadata, 'command', side_effect=self.live_tool_command):
                 original = metadata.metadata(root, env, capture)
@@ -357,8 +357,8 @@ class MetadataTests(unittest.TestCase):
                               [call.args for call in run.call_args_list])
 
     def test_only_final_benchmark_accepts_the_prepared_inventory(self):
-        env = {'SILO_PREPARED_SIMULATOR_RUNTIMES': '/tmp/owned-runtime-inventory.json'}
-        for arguments, expected in (([], None), (['--benchmark'], Path(env['SILO_PREPARED_SIMULATOR_RUNTIMES']))):
+        env = {'WEFLIX_PREPARED_SIMULATOR_RUNTIMES': '/tmp/owned-runtime-inventory.json'}
+        for arguments, expected in (([], None), (['--benchmark'], Path(env['WEFLIX_PREPARED_SIMULATOR_RUNTIMES']))):
             with self.subTest(arguments=arguments), patch.dict(os.environ, env, clear=True), \
                     patch.object(sys, 'argv', ['metadata', *arguments]), \
                     patch.object(metadata, 'metadata', return_value={}) as inspect, \
@@ -381,15 +381,15 @@ class MetadataTests(unittest.TestCase):
             subprocess.run(args, cwd=root, check=True, capture_output=True)
         return source
 
-    def proof_env(self, root, capture, scheme='Silo'):
+    def proof_env(self, root, capture, scheme='WeFlix'):
         return {'GITHUB_EVENT_NAME': 'push', 'GITHUB_REF_NAME': 'main',
                 'GITHUB_SHA': metadata.command('git', 'rev-parse', 'HEAD', cwd=root),
                 'GITHUB_REPOSITORY': 'Silo-Server/silo-apple', 'GITHUB_RUN_ID': '100',
-                'GITHUB_RUN_ATTEMPT': '1', 'SILO_FULL_SUITE': 'true', 'SCHEME': scheme,
-                'SILO_COMPILATION_CACHE_ENABLED': 'false', 'SILO_BENCHMARK_SOURCE_REF': '',
-                'SILO_PREPARED_SIMULATOR_RUNTIMES': str(capture),
-                'SILO_TEST_RUNTIME_IDENTIFIER': 'com.apple.CoreSimulator.SimRuntime.' +
-                    ('tvOS-27-0' if scheme == 'SiloTV' else 'iOS-27-0')}
+                'GITHUB_RUN_ATTEMPT': '1', 'WEFLIX_FULL_SUITE': 'true', 'SCHEME': scheme,
+                'WEFLIX_COMPILATION_CACHE_ENABLED': 'false', 'WEFLIX_BENCHMARK_SOURCE_REF': '',
+                'WEFLIX_PREPARED_SIMULATOR_RUNTIMES': str(capture),
+                'WEFLIX_TEST_RUNTIME_IDENTIFIER': 'com.apple.CoreSimulator.SimRuntime.' +
+                    ('tvOS-27-0' if scheme == 'WeFlixTV' else 'iOS-27-0')}
 
     def proof_inventory(self):
         return {'runtimes': [*self.runtime_inventory()['runtimes'],
@@ -426,9 +426,9 @@ class MetadataTests(unittest.TestCase):
                 self.assertEqual(value['toolchain']['architecture'], 'arm64')
                 self.assertEqual(value['toolchain']['sdk_build'], '24A100')
                 queried = ('xcrun', 'simctl', 'list', 'runtimes', '--json') in [call.args for call in run.call_args_list]
-                self.assertEqual(queried, scheme == 'SiloMac')
-                if scheme != 'SiloMac':
-                    self.assertEqual(value['toolchain']['runtime_build'], '24J100' if scheme == 'SiloTV' else '24A100')
+                self.assertEqual(queried, scheme == 'WeFlixMac')
+                if scheme != 'WeFlixMac':
+                    self.assertEqual(value['toolchain']['runtime_build'], '24J100' if scheme == 'WeFlixTV' else '24A100')
 
     def test_actual_cli_rejects_invalid_capture_partial_or_changed_source_without_emitting_proof(self):
         original_command = metadata.command
@@ -456,7 +456,7 @@ class MetadataTests(unittest.TestCase):
                 if case == 'dirty_source':
                     source.write_text('let testedValue = "uncommitted mutation"\n')
                 elif case == 'partial_suite':
-                    env['SILO_FULL_SUITE'] = 'false'
+                    env['WEFLIX_FULL_SUITE'] = 'false'
                 elif case == 'wrong_source':
                     env['GITHUB_SHA'] = 'f' * 40
                 elif case == 'untrusted_event':
@@ -470,11 +470,11 @@ class MetadataTests(unittest.TestCase):
                 elif case == 'unavailable_runtime':
                     capture.write_text(json.dumps(self.runtime_inventory(isAvailable=False)))
                 elif case == 'wrong_runtime':
-                    env['SILO_TEST_RUNTIME_IDENTIFIER'] = 'com.apple.CoreSimulator.SimRuntime.tvOS-27-0'
+                    env['WEFLIX_TEST_RUNTIME_IDENTIFIER'] = 'com.apple.CoreSimulator.SimRuntime.tvOS-27-0'
                 elif case == 'wrong_scheme':
-                    env['SCHEME'] = 'SiloTV'
+                    env['SCHEME'] = 'WeFlixTV'
                 with self.subTest(case=case), patch.dict(os.environ, env), \
-                        patch.object(sys, 'argv', ['metadata', '--root', str(root), '--proof', 'Silo',
+                        patch.object(sys, 'argv', ['metadata', '--root', str(root), '--proof', 'WeFlix',
                                                   '--output', str(output)]), \
                         patch.object(metadata, 'command', side_effect=command):
                     if case == 'dirty_source':
@@ -505,19 +505,19 @@ class MetadataTests(unittest.TestCase):
                 self.assertEqual(original_command('git', 'rev-parse', 'HEAD', cwd=root), clean['source_sha'])
                 self.assertEqual(original_command('git', 'rev-parse', 'HEAD^{tree}', cwd=root), clean['fingerprint'])
                 with self.assertRaisesRegex(ValueError, 'clean tracked source'):
-                    metadata.proof(clean, root, env, 'Silo')
+                    metadata.proof(clean, root, env, 'WeFlix')
 
     def test_cache_hit_claim_requires_actual_restore_hit(self):
         result = {'source_sha': 'a' * 40, 'cache_namespace': 'v1',
                   'lock_sha256': 'b' * 64, 'build_config_sha256': 'c' * 64,
-                  'toolchain_json': json.dumps({'Silo': {'xcode_build': '27A266a'}})}
-        env = {'PLATFORM': 'iOS', 'SILO_SPM_CACHE_HIT': 'false', 'SILO_CACHE_MODE': 'dependencies'}
+                  'toolchain_json': json.dumps({'WeFlix': {'xcode_build': '27A266a'}})}
+        env = {'PLATFORM': 'iOS', 'WEFLIX_SPM_CACHE_HIT': 'false', 'WEFLIX_CACHE_MODE': 'dependencies'}
         self.assertEqual(metadata.benchmark(result, env)['cache_regime'], 'cold')
         self.assertEqual(metadata.benchmark(result, env)['cache_probe'], 'none')
-        env['SILO_SPM_CACHE_HIT'] = 'true'
+        env['WEFLIX_SPM_CACHE_HIT'] = 'true'
         self.assertEqual(metadata.benchmark(result, env)['cache_regime'], 'warm')
-        env.update(SILO_SPM_CACHE_HIT='false', SILO_DERIVED_CACHE_HIT='false',
-                   SILO_DERIVED_CACHE_RESTORED='true', SILO_DERIVED_CACHE_KEY='prior-source-key')
+        env.update(WEFLIX_SPM_CACHE_HIT='false', WEFLIX_DERIVED_CACHE_HIT='false',
+                   WEFLIX_DERIVED_CACHE_RESTORED='true', WEFLIX_DERIVED_CACHE_KEY='prior-source-key')
         partial = metadata.benchmark(result, env)
         self.assertEqual(partial['cache_regime'], 'warm')
         self.assertFalse(partial['derived_cache_hit'])
@@ -526,18 +526,18 @@ class MetadataTests(unittest.TestCase):
         self.assertEqual(partial['derived_cache_key'], 'prior-source-key')
 
     def shared_spm_env(self):
-        return {'SILO_SPM_CACHE_PROFILE': 'shared_qualified',
+        return {'WEFLIX_SPM_CACHE_PROFILE': 'shared_qualified',
                 'GITHUB_EVENT_NAME': 'workflow_dispatch', 'GITHUB_REPOSITORY': 'Silo-Server/silo-apple',
-                'GITHUB_REF': 'refs/heads/fixture', 'SILO_BENCH_VARIANT': 'optimized',
-                'SILO_CACHE_MODE': 'dependencies', 'SCHEME': 'Silo', 'PLATFORM': 'iOS',
-                'SILO_SPM_CACHE_SAVE_OWNER': 'SiloMac'}
+                'GITHUB_REF': 'refs/heads/fixture', 'WEFLIX_BENCH_VARIANT': 'optimized',
+                'WEFLIX_CACHE_MODE': 'dependencies', 'SCHEME': 'WeFlix', 'PLATFORM': 'iOS',
+                'WEFLIX_SPM_CACHE_SAVE_OWNER': 'WeFlixMac'}
 
     def test_shared_spm_scope_requires_qualified_inputs_and_keeps_the_explicit_owner(self):
-        for scheme in ('Silo', 'SiloTV', 'SiloMac'):
+        for scheme in ('WeFlix', 'WeFlixTV', 'WeFlixMac'):
             for cache_mode in ('dependencies', 'derived_data'):
-                for owner in ('Silo', 'SiloTV', 'SiloMac'):
-                    env = {**self.shared_spm_env(), 'SCHEME': scheme, 'SILO_CACHE_MODE': cache_mode,
-                           'SILO_SPM_CACHE_SAVE_OWNER': owner}
+                for owner in ('WeFlix', 'WeFlixTV', 'WeFlixMac'):
+                    env = {**self.shared_spm_env(), 'SCHEME': scheme, 'WEFLIX_CACHE_MODE': cache_mode,
+                           'WEFLIX_SPM_CACHE_SAVE_OWNER': owner}
                     with self.subTest(scheme=scheme, cache_mode=cache_mode, owner=owner):
                         self.assertEqual(self.spm_scope(env, QUALIFIED_SPM_LOCK, QUALIFIED_SPM_PROJECT,
                                                                   QUALIFIED_SPM_TOOLCHAIN),
@@ -548,28 +548,28 @@ class MetadataTests(unittest.TestCase):
     def test_unqualified_shared_requests_fall_back_to_the_current_scheme_and_owner(self):
         cases = {'GITHUB_EVENT_NAME': ('pull_request', 'push', 'workflow_call', ''),
                  'GITHUB_REPOSITORY': ('other/silo-apple', ''),
-                 'SILO_BENCH_VARIANT': ('baseline', ''), 'SILO_CACHE_MODE': ('off', ''),
-                 'SCHEME': ('SiloDevice', ''), 'SILO_SPM_CACHE_SAVE_OWNER': ('SiloDevice', 'silo', '')}
+                 'WEFLIX_BENCH_VARIANT': ('baseline', ''), 'WEFLIX_CACHE_MODE': ('off', ''),
+                 'SCHEME': ('WeFlixDevice', ''), 'WEFLIX_SPM_CACHE_SAVE_OWNER': ('WeFlixDevice', 'weFlix', '')}
         for key, values in cases.items():
             for value in values:
                 env = {**self.shared_spm_env(), key: value}
-                current_scheme = env['SCHEME'] or 'Silo'
+                current_scheme = env['SCHEME'] or 'WeFlix'
                 with self.subTest(key=key, value=value):
                     self.assertEqual(self.spm_scope(env, QUALIFIED_SPM_LOCK, QUALIFIED_SPM_PROJECT,
                                                               QUALIFIED_SPM_TOOLCHAIN),
                         {'spm_cache_profile_requested': 'shared_qualified',
                          'spm_cache_profile_effective': 'scheme', 'spm_cache_scope': current_scheme,
                          'spm_cache_save_owner': current_scheme})
-        for omitted in ('GITHUB_EVENT_NAME', 'GITHUB_REPOSITORY', 'SILO_BENCH_VARIANT', 'SILO_CACHE_MODE',
-                        'SCHEME', 'SILO_SPM_CACHE_SAVE_OWNER'):
+        for omitted in ('GITHUB_EVENT_NAME', 'GITHUB_REPOSITORY', 'WEFLIX_BENCH_VARIANT', 'WEFLIX_CACHE_MODE',
+                        'SCHEME', 'WEFLIX_SPM_CACHE_SAVE_OWNER'):
             env = self.shared_spm_env()
             del env[omitted]
             with self.subTest(omitted=omitted):
                 self.assertEqual(self.spm_scope(env, QUALIFIED_SPM_LOCK, QUALIFIED_SPM_PROJECT,
                                                           QUALIFIED_SPM_TOOLCHAIN),
                     {'spm_cache_profile_requested': 'shared_qualified',
-                     'spm_cache_profile_effective': 'scheme', 'spm_cache_scope': 'Silo',
-                     'spm_cache_save_owner': 'Silo'})
+                     'spm_cache_profile_effective': 'scheme', 'spm_cache_scope': 'WeFlix',
+                     'spm_cache_save_owner': 'WeFlix'})
 
     def test_either_measured_graph_hash_mismatch_disables_shared_scope(self):
         for lock, project in (('a' * 64, QUALIFIED_SPM_PROJECT),
@@ -579,8 +579,8 @@ class MetadataTests(unittest.TestCase):
                 result = self.spm_scope(self.shared_spm_env(), lock, project, QUALIFIED_SPM_TOOLCHAIN)
                 self.assertEqual(result['spm_cache_profile_requested'], 'shared_qualified')
                 self.assertEqual(result['spm_cache_profile_effective'], 'scheme')
-                self.assertEqual(result['spm_cache_scope'], 'Silo')
-                self.assertEqual(result['spm_cache_save_owner'], 'Silo')
+                self.assertEqual(result['spm_cache_scope'], 'WeFlix')
+                self.assertEqual(result['spm_cache_save_owner'], 'WeFlix')
 
     def test_changed_or_missing_toolchain_key_disables_shared_scope(self):
         for key in ('0' * 24, '', QUALIFIED_SPM_TOOLCHAIN.upper()):
@@ -588,33 +588,33 @@ class MetadataTests(unittest.TestCase):
                 self.assertEqual(self.spm_scope(self.shared_spm_env(), QUALIFIED_SPM_LOCK,
                                                           QUALIFIED_SPM_PROJECT, key),
                     {'spm_cache_profile_requested': 'shared_qualified', 'spm_cache_profile_effective': 'scheme',
-                     'spm_cache_scope': 'Silo', 'spm_cache_save_owner': 'Silo'})
+                     'spm_cache_scope': 'WeFlix', 'spm_cache_save_owner': 'WeFlix'})
         missing = self.spm_scope(self.shared_spm_env(), QUALIFIED_SPM_LOCK, QUALIFIED_SPM_PROJECT)
         self.assertEqual(missing['spm_cache_profile_effective'], 'scheme')
-        self.assertEqual(missing['spm_cache_scope'], 'Silo')
-        self.assertEqual(missing['spm_cache_save_owner'], 'Silo')
+        self.assertEqual(missing['spm_cache_scope'], 'WeFlix')
+        self.assertEqual(missing['spm_cache_save_owner'], 'WeFlix')
 
     def test_scheme_profile_defaults_follow_the_current_scheme_or_platform(self):
-        for env, scheme in (({}, 'SiloMac'), ({'PLATFORM': 'iOS'}, 'Silo'),
-                            ({'PLATFORM': 'tvOS'}, 'SiloTV'), ({'PLATFORM': 'macOS'}, 'SiloMac'),
-                            ({'SCHEME': 'SiloTV', 'PLATFORM': 'iOS',
-                              'SILO_SPM_CACHE_SAVE_OWNER': 'SiloMac'}, 'SiloTV')):
+        for env, scheme in (({}, 'WeFlixMac'), ({'PLATFORM': 'iOS'}, 'WeFlix'),
+                            ({'PLATFORM': 'tvOS'}, 'WeFlixTV'), ({'PLATFORM': 'macOS'}, 'WeFlixMac'),
+                            ({'SCHEME': 'WeFlixTV', 'PLATFORM': 'iOS',
+                              'WEFLIX_SPM_CACHE_SAVE_OWNER': 'WeFlixMac'}, 'WeFlixTV')):
             with self.subTest(env=env):
                 self.assertEqual(self.spm_scope(env, QUALIFIED_SPM_LOCK, QUALIFIED_SPM_PROJECT,
                                                           QUALIFIED_SPM_TOOLCHAIN),
                     {'spm_cache_profile_requested': 'scheme', 'spm_cache_profile_effective': 'scheme',
                      'spm_cache_scope': scheme, 'spm_cache_save_owner': scheme})
-        env = {**self.shared_spm_env(), 'SILO_SPM_CACHE_PROFILE': 'scheme'}
+        env = {**self.shared_spm_env(), 'WEFLIX_SPM_CACHE_PROFILE': 'scheme'}
         self.assertEqual(self.spm_scope(env, QUALIFIED_SPM_LOCK, QUALIFIED_SPM_PROJECT,
                                                   QUALIFIED_SPM_TOOLCHAIN)['spm_cache_scope'],
-                         'Silo')
+                         'WeFlix')
 
     def test_same_repository_pr_main_push_and_inherited_release_events_can_share(self):
-        events = ({'GITHUB_EVENT_NAME': 'pull_request', 'SILO_PULL_REQUEST_HEAD_REPOSITORY': 'Silo-Server/silo-apple'},
+        events = ({'GITHUB_EVENT_NAME': 'pull_request', 'WEFLIX_PULL_REQUEST_HEAD_REPOSITORY': 'Silo-Server/silo-apple'},
                   {'GITHUB_EVENT_NAME': 'push', 'GITHUB_REF': 'refs/heads/main'},
-                  {'GITHUB_EVENT_NAME': 'push', 'GITHUB_REF': 'refs/heads/main', 'SILO_RELEASE_GATE': 'true'},
-                  {'GITHUB_EVENT_NAME': 'push', 'GITHUB_REF': 'refs/tags/v1.0', 'SILO_RELEASE_GATE': 'true'},
-                  {'GITHUB_EVENT_NAME': 'workflow_dispatch', 'SILO_RELEASE_GATE': 'true'})
+                  {'GITHUB_EVENT_NAME': 'push', 'GITHUB_REF': 'refs/heads/main', 'WEFLIX_RELEASE_GATE': 'true'},
+                  {'GITHUB_EVENT_NAME': 'push', 'GITHUB_REF': 'refs/tags/v1.0', 'WEFLIX_RELEASE_GATE': 'true'},
+                  {'GITHUB_EVENT_NAME': 'workflow_dispatch', 'WEFLIX_RELEASE_GATE': 'true'})
         for changes in events:
             with self.subTest(changes=changes):
                 result = self.spm_scope({**self.shared_spm_env(), **changes}, QUALIFIED_SPM_LOCK,
@@ -622,19 +622,19 @@ class MetadataTests(unittest.TestCase):
                 self.assertEqual(result['spm_cache_profile_effective'], 'shared_qualified')
 
     def test_fork_pr_non_main_push_and_tag_without_release_gate_fall_back(self):
-        events = ({'GITHUB_EVENT_NAME': 'pull_request', 'SILO_PULL_REQUEST_HEAD_REPOSITORY': 'fork/silo-apple'},
-                  {'GITHUB_EVENT_NAME': 'pull_request', 'SILO_PULL_REQUEST_HEAD_REPOSITORY': ''},
+        events = ({'GITHUB_EVENT_NAME': 'pull_request', 'WEFLIX_PULL_REQUEST_HEAD_REPOSITORY': 'fork/silo-apple'},
+                  {'GITHUB_EVENT_NAME': 'pull_request', 'WEFLIX_PULL_REQUEST_HEAD_REPOSITORY': ''},
                   {'GITHUB_EVENT_NAME': 'push', 'GITHUB_REF': 'refs/heads/feature'},
                   {'GITHUB_EVENT_NAME': 'push', 'GITHUB_REF': ''},
                   {'GITHUB_EVENT_NAME': 'push', 'GITHUB_REF': 'refs/tags/v1.0'},
-                  {'GITHUB_EVENT_NAME': 'push', 'GITHUB_REF': 'refs/tags/v1.0', 'SILO_RELEASE_GATE': 'false'},
-                  {'GITHUB_EVENT_NAME': 'push', 'GITHUB_REF': 'refs/tags/v1.0', 'SILO_RELEASE_GATE': 'TRUE'})
+                  {'GITHUB_EVENT_NAME': 'push', 'GITHUB_REF': 'refs/tags/v1.0', 'WEFLIX_RELEASE_GATE': 'false'},
+                  {'GITHUB_EVENT_NAME': 'push', 'GITHUB_REF': 'refs/tags/v1.0', 'WEFLIX_RELEASE_GATE': 'TRUE'})
         for changes in events:
             with self.subTest(changes=changes):
                 result = self.spm_scope({**self.shared_spm_env(), **changes}, QUALIFIED_SPM_LOCK,
                                         QUALIFIED_SPM_PROJECT, QUALIFIED_SPM_TOOLCHAIN)
                 self.assertEqual(result['spm_cache_profile_effective'], 'scheme')
-                self.assertEqual(result['spm_cache_save_owner'], 'Silo')
+                self.assertEqual(result['spm_cache_save_owner'], 'WeFlix')
 
     def test_dirty_or_unverified_source_falls_back(self):
         sources = (('', False), ('main', False), ('a' * 39, False), ('A' * 40, False), ('0' * 40, False),
@@ -672,7 +672,7 @@ class MetadataTests(unittest.TestCase):
 
     def test_unknown_spm_profile_fails_before_source_or_toolchain_inspection(self):
         for profile in ('shared', 'SHARED_QUALIFIED', 'shared_qualified\nother=value', ''):
-            env = {**self.shared_spm_env(), 'SILO_SPM_CACHE_PROFILE': profile}
+            env = {**self.shared_spm_env(), 'WEFLIX_SPM_CACHE_PROFILE': profile}
             with self.subTest(profile=profile), patch.dict(os.environ, env, clear=True), \
                     patch.object(sys, 'argv', ['metadata', '--validate-controls']), \
                     patch.object(metadata, 'metadata', side_effect=AssertionError('Source inspection started')), \
@@ -684,12 +684,12 @@ class MetadataTests(unittest.TestCase):
         result = {'source_sha': 'a' * 40, 'cache_namespace': 'v1', 'source_dirty': 'false',
                   'lock_sha256': QUALIFIED_SPM_LOCK, 'build_config_sha256': 'c' * 64,
                   'toolchain_key': QUALIFIED_SPM_TOOLCHAIN,
-                  'toolchain_json': json.dumps({'Silo': {'xcode_build': '27A266a'}}),
+                  'toolchain_json': json.dumps({'WeFlix': {'xcode_build': '27A266a'}}),
                   'spm_cache_profile_requested': 'shared_qualified'}
-        profiles = (('shared_qualified', 'shared-qualified-v1', 'SiloMac', QUALIFIED_SPM_PROJECT,
+        profiles = (('shared_qualified', 'shared-qualified-v1', 'WeFlixMac', QUALIFIED_SPM_PROJECT,
                      QUALIFIED_SPM_TOOLCHAIN),
-                    ('scheme', 'Silo', 'Silo', '0' * 64, QUALIFIED_SPM_TOOLCHAIN),
-                    ('scheme', 'Silo', 'Silo', QUALIFIED_SPM_PROJECT, '0' * 24))
+                    ('scheme', 'WeFlix', 'WeFlix', '0' * 64, QUALIFIED_SPM_TOOLCHAIN),
+                    ('scheme', 'WeFlix', 'WeFlix', QUALIFIED_SPM_PROJECT, '0' * 24))
         for effective, scope, owner, project, toolchain in profiles:
             fields = {'spm_cache_profile_effective': effective, 'spm_cache_scope': scope,
                       'spm_cache_save_owner': owner}
@@ -703,18 +703,18 @@ class MetadataTests(unittest.TestCase):
 
 
     def compilation_env(self):
-        return {'GITHUB_EVENT_NAME': 'workflow_dispatch', 'SILO_BENCH_VARIANT': 'optimized',
-                'SILO_CACHE_MODE': 'derived_data', 'SILO_COMPILATION_CACHE_ENABLED': 'true',
-                'SILO_BENCHMARK_PLATFORM': 'ios', 'PLATFORM': 'iOS'}
+        return {'GITHUB_EVENT_NAME': 'workflow_dispatch', 'WEFLIX_BENCH_VARIANT': 'optimized',
+                'WEFLIX_CACHE_MODE': 'derived_data', 'WEFLIX_COMPILATION_CACHE_ENABLED': 'true',
+                'WEFLIX_BENCHMARK_PLATFORM': 'ios', 'PLATFORM': 'iOS'}
 
     def test_compilation_cache_requires_manual_optimized_derived_data(self):
         env = self.compilation_env()
         self.assertEqual(metadata.compilation_cache_profile(env), 'compilation-cache-v1')
         self.assertEqual(metadata.compilation_cache_profile({}), 'standard')
         for key, values in {'GITHUB_EVENT_NAME': ('pull_request', 'push', 'workflow_call', ''),
-                            'SILO_BENCH_VARIANT': ('baseline', ''),
-                            'SILO_CACHE_MODE': ('off', 'dependencies', ''),
-                            'SILO_COMPILATION_CACHE_ENABLED': ('TRUE', '1', 'true\n')}.items():
+                            'WEFLIX_BENCH_VARIANT': ('baseline', ''),
+                            'WEFLIX_CACHE_MODE': ('off', 'dependencies', ''),
+                            'WEFLIX_COMPILATION_CACHE_ENABLED': ('TRUE', '1', 'true\n')}.items():
             for value in values:
                 with self.subTest(key=key, value=value), self.assertRaises(ValueError):
                     metadata.validate_controls({**env, key: value})
@@ -724,7 +724,7 @@ class MetadataTests(unittest.TestCase):
                 patch.object(sys, 'argv', ['metadata', '--validate-controls']), \
                 patch.object(metadata, 'metadata', side_effect=AssertionError('Source preparation started')):
             metadata.main()
-        with patch.dict(os.environ, {**self.compilation_env(), 'SILO_CACHE_MODE': 'off'}, clear=True), \
+        with patch.dict(os.environ, {**self.compilation_env(), 'WEFLIX_CACHE_MODE': 'off'}, clear=True), \
                 patch.object(sys, 'argv', ['metadata', '--validate-controls']), \
                 patch.object(metadata, 'metadata', side_effect=AssertionError('Source preparation started')):
             with self.assertRaisesRegex(ValueError, 'requires the derived_data'):
@@ -733,8 +733,8 @@ class MetadataTests(unittest.TestCase):
     def test_compilation_profile_reports_dirty_source_and_excludes_timing(self):
         result = {'source_sha': 'a' * 40, 'cache_namespace': 'v1', 'source_dirty': 'true',
                   'lock_sha256': 'b' * 64, 'build_config_sha256': 'c' * 64,
-                  'toolchain_json': json.dumps({'Silo': {'xcode_build': '27A266a'}})}
-        env = {**self.compilation_env(), 'SILO_DERIVED_CACHE_RESTORED': 'true'}
+                  'toolchain_json': json.dumps({'WeFlix': {'xcode_build': '27A266a'}})}
+        env = {**self.compilation_env(), 'WEFLIX_DERIVED_CACHE_RESTORED': 'true'}
         marker = metadata.benchmark(result, env)
         self.assertTrue(marker['compilation_cache_enabled'])
         self.assertTrue(marker['compilation_cache_diagnostic_remarks'])

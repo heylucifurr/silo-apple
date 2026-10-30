@@ -5,13 +5,13 @@ import Nuke
 import OSLog
 import UIKit
 
-/// Bridges a SiloControl remote-media session into `MPNowPlayingInfoCenter` +
+/// Bridges a WeFlixControl remote-media session into `MPNowPlayingInfoCenter` +
 /// the shared `MPRemoteCommandCenter`. Library video and audiobook playback
 /// use their Aether-scoped coordinators instead.
 ///
 /// The owner supplies command handlers as closures via `attach(handlers:)`.
 ///
-/// Single ownership: the SiloControl client owns one instance and attaches it
+/// Single ownership: the WeFlixControl client owns one instance and attaches it
 /// only for the lifetime of a remote-media session.
 ///
 /// Both centers are process-wide and may also be bound by a local audiobook
@@ -22,7 +22,7 @@ import UIKit
 @MainActor
 final class NowPlayingController {
     private static let logger = Logger(
-        subsystem: Bundle.main.bundleIdentifier ?? "org.siloserver.silo",
+        subsystem: Bundle.main.bundleIdentifier ?? "me.weflix",
         category: "NowPlaying"
     )
 

@@ -22,12 +22,12 @@ struct TVDiagnosticsPromptScreen: View {
                 } else {
                     Text(prompt.message)
                         .font(.system(size: 26))
-                        .foregroundStyle(Color.siloSecondaryText)
+                        .foregroundStyle(Color.weFlixSecondaryText)
                         .frame(maxWidth: 1050, alignment: .leading)
                     if model.selectedDestination == .hosted {
                         Text(model.hostedPrivacyDisclosure)
                             .font(.body)
-                            .foregroundStyle(Color.siloSecondaryText.opacity(0.82))
+                            .foregroundStyle(Color.weFlixSecondaryText.opacity(0.82))
                             .frame(maxWidth: 1050, alignment: .leading)
                     }
                 }

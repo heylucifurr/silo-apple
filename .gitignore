@@ -1,5 +1,5 @@
 # Xcode / XcodeGen
-iosApp/Silo.xcodeproj/
+iosApp/WeFlix.xcodeproj/
 *.xcworkspace/
 xcuserdata/
 *.xcuserstate
@@ -8,15 +8,15 @@ iosApp/.deriveddata/
 
 # XcodeGen regenerates the project, but the exact Aether transitive graph is a
 # release input and must remain reviewable.
-!iosApp/Silo.xcodeproj/
-iosApp/Silo.xcodeproj/*
-!iosApp/Silo.xcodeproj/project.xcworkspace/
-iosApp/Silo.xcodeproj/project.xcworkspace/*
-!iosApp/Silo.xcodeproj/project.xcworkspace/xcshareddata/
-iosApp/Silo.xcodeproj/project.xcworkspace/xcshareddata/*
-!iosApp/Silo.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/
-iosApp/Silo.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/*
-!iosApp/Silo.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved
+!iosApp/WeFlix.xcodeproj/
+iosApp/WeFlix.xcodeproj/*
+!iosApp/WeFlix.xcodeproj/project.xcworkspace/
+iosApp/WeFlix.xcodeproj/project.xcworkspace/*
+!iosApp/WeFlix.xcodeproj/project.xcworkspace/xcshareddata/
+iosApp/WeFlix.xcodeproj/project.xcworkspace/xcshareddata/*
+!iosApp/WeFlix.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/
+iosApp/WeFlix.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/*
+!iosApp/WeFlix.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved
 
 # SwiftPM / CocoaPods
 .build/

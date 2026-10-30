@@ -1,5 +1,5 @@
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 /// The TV's remote receiver stops a title with `stopAndClose()` when a phone
 /// takes over. A title started from a tvOS detail page is a pushed route that
@@ -13,12 +13,12 @@ final class PlayerStopAndCloseTests: XCTestCase {
         player.loadAndPlay(contentId: "outgoing", startFromBeginning: false)
         player.error = "old failure"
 
-        player.replaceSiloControlPlayback(SiloControlPlaybackRequest(
+        player.replaceWeFlixControlPlayback(WeFlixControlPlaybackRequest(
             contentId: "incoming", fileId: nil, audioTrackIndex: nil, subtitleTrackIndex: nil,
             startFromBeginning: true, resumePosition: 42
         ))
 
-        let state = player.makeSiloControlPlaybackState(contentId: "outgoing")
+        let state = player.makeWeFlixControlPlaybackState(contentId: "outgoing")
         XCTAssertEqual(state.contentId, "incoming")
         XCTAssertNil(state.error)
         XCTAssertTrue(state.isLoading)
@@ -31,12 +31,12 @@ final class PlayerStopAndCloseTests: XCTestCase {
         player.loadAndPlay(contentId: "outgoing", startFromBeginning: false)
         player.cleanup()
 
-        player.replaceSiloControlPlayback(SiloControlPlaybackRequest(
+        player.replaceWeFlixControlPlayback(WeFlixControlPlaybackRequest(
             contentId: "incoming", fileId: nil, audioTrackIndex: nil, subtitleTrackIndex: nil,
             startFromBeginning: false, resumePosition: nil
         ))
 
-        XCTAssertEqual(player.makeSiloControlPlaybackState(contentId: nil).contentId, "outgoing")
+        XCTAssertEqual(player.makeWeFlixControlPlaybackState(contentId: nil).contentId, "outgoing")
         XCTAssertTrue(player.needsReplacementForPresentation)
     }
 
@@ -51,12 +51,12 @@ final class PlayerStopAndCloseTests: XCTestCase {
             overview: "Outgoing overview", badges: ["HD"]
         )
 
-        player.replaceSiloControlPlayback(SiloControlPlaybackRequest(
+        player.replaceWeFlixControlPlayback(WeFlixControlPlaybackRequest(
             contentId: "incoming", fileId: nil, audioTrackIndex: nil, subtitleTrackIndex: nil,
             startFromBeginning: false, resumePosition: nil
         ))
 
-        let state = player.makeSiloControlPlaybackState(contentId: "outgoing")
+        let state = player.makeWeFlixControlPlaybackState(contentId: "outgoing")
         XCTAssertEqual(state.contentId, "incoming")
         XCTAssertEqual(state.title, "Loading")
         XCTAssertNil(state.subtitle)
@@ -89,14 +89,14 @@ final class PlayerStopAndCloseTests: XCTestCase {
         player.duration = 3_600
         player.isPlaying = true
 
-        player.replaceSiloControlPlayback(SiloControlPlaybackRequest(
+        player.replaceWeFlixControlPlayback(WeFlixControlPlaybackRequest(
             contentId: "incoming", fileId: nil, audioTrackIndex: nil, subtitleTrackIndex: nil,
             startFromBeginning: false, resumePosition: nil
         ))
 
         for isLoading in [true, false] {
             player.isLoading = isLoading
-            let state = player.makeSiloControlPlaybackState(contentId: "outgoing")
+            let state = player.makeWeFlixControlPlaybackState(contentId: "outgoing")
             XCTAssertEqual(state.contentId, "incoming")
             XCTAssertNil(state.sessionId)
             XCTAssertEqual(state.currentTime, 0)
@@ -109,7 +109,7 @@ final class PlayerStopAndCloseTests: XCTestCase {
         player.currentTime = 24
         player.duration = 1_800
         player.isPlaying = true
-        let prepared = player.makeSiloControlPlaybackState(contentId: "outgoing")
+        let prepared = player.makeWeFlixControlPlaybackState(contentId: "outgoing")
         XCTAssertEqual(prepared.sessionId, "incoming-session")
         XCTAssertEqual(prepared.currentTime, 24)
         XCTAssertEqual(prepared.duration, 1_800)

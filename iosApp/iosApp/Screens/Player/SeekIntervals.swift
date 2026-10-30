@@ -1,6 +1,6 @@
 //
 //  SeekIntervals.swift
-//  Silo (iOS + tvOS + macOS)
+//  WeFlix (iOS + tvOS + macOS)
 //
 //  Contract facts and pure helpers for the profile-wide skip intervals
 //  (`player.{video,audiobook}_skip_{back,forward}_seconds`, contract

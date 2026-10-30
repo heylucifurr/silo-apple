@@ -1,6 +1,6 @@
 import Foundation
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 /// Subtitle wire models and the v2 provider-search, stored-subtitle and
 /// download calls: opaque string identity on the wire, exact statuses, the
@@ -206,7 +206,7 @@ final class APIv2SubtitleTests: XCTestCase {
     @MainActor
     func testAICapabilitiesKeepTheSubtitleStatusWhenTheProbeFails() async throws {
         let (api, _) = try await client()
-        let capabilities = AICapabilities(api: SiloAI(v2: api))
+        let capabilities = AICapabilities(api: WeFlixAI(v2: api))
         stub.reply(path: "/api/v2/subtitles/ai/status", 200,
                    #"{"enabled":true,"transcribe_enabled":false,"revision":"r","state":"available","allowed":true}"#)
         await capabilities.refresh()
@@ -221,7 +221,7 @@ final class APIv2SubtitleTests: XCTestCase {
     @MainActor
     func testAICapabilitiesOfferTranscriptionWithoutTranslation() async throws {
         let (api, _) = try await client()
-        let capabilities = AICapabilities(api: SiloAI(v2: api))
+        let capabilities = AICapabilities(api: WeFlixAI(v2: api))
         stub.reply(path: "/api/v2/subtitles/ai/status", 200,
                    #"{"enabled":false,"transcribe_enabled":true,"revision":"r","state":"available","allowed":true}"#)
         await capabilities.refresh()
@@ -275,7 +275,7 @@ final class APIv2SubtitleTests: XCTestCase {
 
     func testCreatePostsTheContractBody() async throws {
         let (api, tokens) = try await client()
-        let ai = SiloAI(v2: api)
+        let ai = WeFlixAI(v2: api)
         let auth = try await owner(tokens)
         stub.reply(202, Self.receipt())
         let created = try await ai.translateSubtitle(Self.translate(), auth: auth)
@@ -321,7 +321,7 @@ final class APIv2SubtitleTests: XCTestCase {
         ]
         for reply in definite {
             stub.reset()
-            let ai = SiloAI(v2: api)
+            let ai = WeFlixAI(v2: api)
             stub.reply(reply)
             do { _ = try await ai.translateSubtitle(Self.translate(), auth: auth); XCTFail("Expected \(reply) to fail") }
             catch { XCTAssertFalse(SubtitleCreationError.isUncertain(error), "\(error)") }
@@ -339,7 +339,7 @@ final class APIv2SubtitleTests: XCTestCase {
         ]
         for reply in uncertain {
             stub.reset()
-            let ai = SiloAI(v2: api)
+            let ai = WeFlixAI(v2: api)
             stub.reply(reply)
             do { _ = try await ai.translateSubtitle(Self.translate(), auth: auth); XCTFail("Expected \(reply) to fail") }
             catch { XCTAssertTrue(SubtitleCreationError.isUncertain(error), "\(error)") }
@@ -364,7 +364,7 @@ final class APIv2SubtitleTests: XCTestCase {
     func testCreateForAReplacedOwnerIsRefusedOrHeld() async throws {
         // Replaced before the call: refused, nothing sent, nothing held.
         let (api, tokens) = try await client()
-        let ai = SiloAI(v2: api)
+        let ai = WeFlixAI(v2: api)
         let auth = try await owner(tokens)
         await tokens.setProfileId("profile-two")
         for _ in 0..<2 {
@@ -376,7 +376,7 @@ final class APIv2SubtitleTests: XCTestCase {
         // Replaced while in flight: the server may have started the job.
         stub.reset()
         let (inFlight, inFlightTokens) = try await client()
-        let inFlightAI = SiloAI(v2: inFlight)
+        let inFlightAI = WeFlixAI(v2: inFlight)
         let inFlightOwner = try await owner(inFlightTokens)
         stub.reply(202, Self.receipt())
         stub.hold()
@@ -434,7 +434,7 @@ final class APIv2SubtitleTests: XCTestCase {
         let (api, _) = try await client()
         stub.fail(.networkConnectionLost)
         let controller = SubtitleAIController(
-            api: SiloAI(v2: api),
+            api: WeFlixAI(v2: api),
             poller: AIJobPoller(pollInterval: .milliseconds(1)),
             mediaFileId: { 42 },
             currentTime: { 3 },
@@ -475,7 +475,7 @@ final class APIv2SubtitleTests: XCTestCase {
         let sink = LiveSink()
         let coordinator = LiveSubtitleCoordinator(controls: LiveControls(), sink: sink, clock: ManualSafetyClock())
         let controller = SubtitleAIController(
-            api: SiloAI(v2: api),
+            api: WeFlixAI(v2: api),
             poller: AIJobPoller(pollInterval: .milliseconds(1)),
             mediaFileId: { 42 },
             currentTime: { 0 },
@@ -549,7 +549,7 @@ final class APIv2SubtitleTests: XCTestCase {
         let selected = SelectedDescriptors()
         let coordinator = LiveSubtitleCoordinator(controls: LiveControls(), sink: sink, clock: ManualSafetyClock())
         let controller = SubtitleAIController(
-            api: SiloAI(v2: api),
+            api: WeFlixAI(v2: api),
             // The `.started` event below must land before the poller gives up
             // (five polls). At 1 ms a loaded runner loses that race.
             poller: AIJobPoller(pollInterval: .milliseconds(100)),
@@ -905,7 +905,7 @@ final class APIv2SubtitleTests: XCTestCase {
     @MainActor
     func testProviderStoreKeepsItsValueWhenTheProbeFails() async throws {
         let (api, _) = try await client()
-        let store = SubtitleProvidersStore(api: SiloAI(v2: api))
+        let store = SubtitleProvidersStore(api: WeFlixAI(v2: api))
         stub.reply(200, #"{"schema_version":1,"enabled":false,"providers":[],"revision":"r","state":"not_configured","allowed":true}"#)
         await store.refresh()
         XCTAssertFalse(store.isAvailable)
@@ -923,7 +923,7 @@ final class APIv2SubtitleTests: XCTestCase {
     @MainActor
     func testProviderStoreKeepsTheNewestAnswerWhenProbesOverlap() async throws {
         let (api, _) = try await client()
-        let store = SubtitleProvidersStore(api: SiloAI(v2: api))
+        let store = SubtitleProvidersStore(api: WeFlixAI(v2: api))
         stub.sequence([
             .json(200, #"{"schema_version":1,"enabled":false,"providers":[],"revision":"r","state":"not_configured","allowed":true}"#),
             .json(200, #"{"schema_version":1,"enabled":true,"providers":["subdl"],"revision":"s","state":"available","allowed":true}"#),

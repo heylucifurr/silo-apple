@@ -12,7 +12,7 @@ import os
 @Observable
 @MainActor
 final class OnboardingTourGateModel {
-    private static let logger = Logger(subsystem: "org.siloserver.silo", category: "onboarding")
+    private static let logger = Logger(subsystem: "me.weflix", category: "onboarding")
 
     var showTour = false
     var resumeStepId: String?
@@ -22,7 +22,7 @@ final class OnboardingTourGateModel {
     private let activeProfileId: @MainActor () -> String?
 
     init(
-        api: any OnboardingTourAPI = SiloAPI.shared,
+        api: any OnboardingTourAPI = WeFlixAPI.shared,
         activeServerId: @escaping @MainActor () -> String? = { ServerRegistry.shared.activeServerId },
         activeProfileId: @escaping @MainActor () -> String? = { AuthService.shared.profileId }
     ) {

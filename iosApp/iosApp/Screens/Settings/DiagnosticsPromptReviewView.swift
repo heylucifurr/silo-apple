@@ -26,7 +26,7 @@ struct DiagnosticsPromptReviewView: View {
                     .disabled(model.isWorking)
             }
         }
-        .siloGroupedListStyle()
+        .weFlixGroupedListStyle()
         .navigationTitle("Report Summary")
     }
 }

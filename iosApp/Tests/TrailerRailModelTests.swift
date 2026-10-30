@@ -1,6 +1,6 @@
 //
 //  TrailerRailModelTests.swift
-//  SiloTests
+//  WeFlixTests
 //
 //  Shaping rules for the merged "Trailers & More" rail: what appears, in
 //  what order, and the URLs each remote card is built from. Both platform
@@ -10,7 +10,7 @@
 
 import XCTest
 import Foundation
-@testable import Silo
+@testable import WeFlix
 
 final class TrailerRailModelTests: XCTestCase {
 

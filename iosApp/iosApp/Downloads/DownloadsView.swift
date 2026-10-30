@@ -49,9 +49,9 @@ struct DownloadsView: View {
             }
         }
         #if os(macOS)
-        .siloPageBackground()
+        .weFlixPageBackground()
         #else
-        .background(Color.siloBackground.ignoresSafeArea())
+        .background(Color.weFlixBackground.ignoresSafeArea())
         #endif
         .navigationTitle(isSelecting ? "\(selectedCount) Selected" : "Downloads")
         #if os(iOS)
@@ -84,7 +84,7 @@ struct DownloadsView: View {
             }
             Button("Keep", role: .cancel) {}
         }
-        .siloToolbarColorSchemeDark()
+        .weFlixToolbarColorSchemeDark()
     }
 
     // MARK: - Content
@@ -112,26 +112,26 @@ struct DownloadsView: View {
         VStack(spacing: 12) {
             Image(systemName: "arrow.down.circle")
                 .font(.system(size: 44))
-                .foregroundColor(.siloOnSurface.opacity(0.3))
+                .foregroundColor(.weFlixOnSurface.opacity(0.3))
             Text("No Downloads")
-                .font(.siloSubheadline)
-                .foregroundColor(.siloOnSurface)
+                .font(.weFlixSubheadline)
+                .foregroundColor(.weFlixOnSurface)
             Text(noDownloadsHint)
-                .font(.siloCaption)
-                .foregroundColor(.siloSecondaryText)
+                .font(.weFlixCaption)
+                .foregroundColor(.weFlixSecondaryText)
                 .multilineTextAlignment(.center)
-                .padding(.horizontal, SiloTheme.largePadding)
+                .padding(.horizontal, WeFlixTheme.largePadding)
             Button {
                 router.switchTab(to: .libraries)
             } label: {
                 Text("Browse Libraries")
                     .font(.system(size: 14, weight: .semibold))
-                    .foregroundColor(.siloOnSurface)
+                    .foregroundColor(.weFlixOnSurface)
                     .padding(.horizontal, 18)
                     .padding(.vertical, 10)
                     .background(
-                        Capsule().fill(Color.siloChromeSelectedFill)
-                            .overlay(Capsule().stroke(Color.siloChromeSelectedBorder, lineWidth: 1))
+                        Capsule().fill(Color.weFlixChromeSelectedFill)
+                            .overlay(Capsule().stroke(Color.weFlixChromeSelectedBorder, lineWidth: 1))
                     )
             }
             .buttonStyle(.plain)
@@ -194,10 +194,10 @@ struct DownloadsView: View {
                         } label: {
                             Label("Show Progress on Lock Screen", systemImage: "lock.iphone")
                                 .font(.subheadline.weight(.semibold))
-                                .foregroundColor(.siloOnSurface)
+                                .foregroundColor(.weFlixOnSurface)
                                 .padding(.horizontal, 12)
                                 .padding(.vertical, 7)
-                                .background(Capsule().fill(Color.siloChromeSelectedFill))
+                                .background(Capsule().fill(Color.weFlixChromeSelectedFill))
                         }
                         .buttonStyle(.plain)
                         .frame(maxWidth: .infinity, alignment: .leading)
@@ -231,9 +231,9 @@ struct DownloadsView: View {
                     }
                     #if os(iOS)
                     if !isSelecting {
-                        Text("Downloads keep going when you leave Silo or lock your phone. Closing Silo from the app switcher pauses them until you open it again.")
+                        Text("Downloads keep going when you leave weflix or lock your phone. Closing weflix from the app switcher pauses them until you open it again.")
                             .font(.footnote)
-                            .foregroundColor(.siloSecondaryText)
+                            .foregroundColor(.weFlixSecondaryText)
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .padding(.horizontal, 32)
                             .padding(.top, 7)
@@ -392,7 +392,7 @@ struct DownloadsView: View {
                 .font(.system(size: 15))
                 .frame(maxWidth: .infinity)
                 .frame(height: 50)
-                .background(Color.siloOnSurface)
+                .background(Color.weFlixOnSurface)
                 .foregroundColor(.black)
                 .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
             }

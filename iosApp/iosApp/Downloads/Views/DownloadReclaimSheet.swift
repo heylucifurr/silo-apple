@@ -29,7 +29,7 @@ struct DownloadReclaimSheet: View {
                     list(records)
                 }
             }
-            .siloSheetBackground()
+            .weFlixSheetBackground()
             .navigationTitle("Free Up Space")
             #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
@@ -47,7 +47,7 @@ struct DownloadReclaimSheet: View {
             .safeAreaInset(edge: .bottom) {
                 if !records.isEmpty { bottomBar(selected: selected) }
             }
-            .siloToolbarColorSchemeDark()
+            .weFlixToolbarColorSchemeDark()
         }
     }
 
@@ -57,7 +57,7 @@ struct DownloadReclaimSheet: View {
                 header(count: records.count)
                 ForEach(records) { record in
                     row(record)
-                    Divider().overlay(Color.siloDivider).padding(.leading, 56)
+                    Divider().overlay(Color.weFlixDivider).padding(.leading, 56)
                 }
                 Color.clear.frame(height: 24)
             }
@@ -68,7 +68,7 @@ struct DownloadReclaimSheet: View {
         VStack(alignment: .leading, spacing: 4) {
             Text("\(count) item\(count == 1 ? "" : "s") you've finished watching")
                 .font(.footnote)
-                .foregroundColor(.siloSecondaryText)
+                .foregroundColor(.weFlixSecondaryText)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.horizontal, 18)
@@ -91,16 +91,16 @@ struct DownloadReclaimSheet: View {
                 VStack(alignment: .leading, spacing: 2) {
                     Text(label(record))
                         .font(.subheadline.weight(.medium))
-                        .foregroundColor(.siloOnSurface)
+                        .foregroundColor(.weFlixOnSurface)
                         .lineLimit(1)
                     Text("Watched")
                         .font(.caption)
-                        .foregroundColor(.siloSecondaryText)
+                        .foregroundColor(.weFlixSecondaryText)
                 }
                 Spacer(minLength: 8)
                 Text(DownloadFormatting.bytes(record.fileSize))
                     .font(.caption.weight(.semibold))
-                    .foregroundColor(.siloOnSurface)
+                    .foregroundColor(.weFlixOnSurface)
             }
             .padding(.horizontal, 18)
             .padding(.vertical, 10)
@@ -124,7 +124,7 @@ struct DownloadReclaimSheet: View {
                 .font(.subheadline)
                 .frame(maxWidth: .infinity)
                 .frame(minHeight: 50)
-                .background(selected.isEmpty ? Color.siloDisabled : Color.siloOnSurface)
+                .background(selected.isEmpty ? Color.weFlixDisabled : Color.weFlixOnSurface)
                 .foregroundColor(.black)
                 .clipShape(RoundedRectangle(cornerRadius: 15, style: .continuous))
             }
@@ -133,15 +133,15 @@ struct DownloadReclaimSheet: View {
 
             Button("Not now") { dismiss() }
                 .font(.subheadline.weight(.semibold))
-                .foregroundColor(.siloOnSurface)
+                .foregroundColor(.weFlixOnSurface)
                 .frame(maxWidth: .infinity)
                 .frame(minHeight: 44)
                 .background(
                     RoundedRectangle(cornerRadius: 13, style: .continuous)
-                        .fill(Color.siloChromeRestingFill)
+                        .fill(Color.weFlixChromeRestingFill)
                         .overlay(
                             RoundedRectangle(cornerRadius: 13, style: .continuous)
-                                .stroke(Color.siloChromeRestingBorder, lineWidth: 1)
+                                .stroke(Color.weFlixChromeRestingBorder, lineWidth: 1)
                         )
                 )
                 .buttonStyle(.plain)

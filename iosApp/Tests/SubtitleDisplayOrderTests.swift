@@ -1,6 +1,6 @@
 //
 //  SubtitleDisplayOrderTests.swift
-//  SiloTests
+//  WeFlixTests
 //
 //  Unit tests for `SubtitleDisplayOrder`: language grouping, preferred-
 //  language-first group ordering, alphabetical fallback, format priority,
@@ -9,7 +9,7 @@
 //
 
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 final class SubtitleDisplayOrderTests: XCTestCase {
 

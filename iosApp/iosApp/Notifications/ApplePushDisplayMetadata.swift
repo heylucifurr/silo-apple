@@ -266,7 +266,7 @@ final class ApplePushDisplayClient {
     private static let retryBackoff: [TimeInterval] = [0.5, 1, 2]
     private static let maxAttempts = retryBackoff.count + 1
     /// 520-524 are Cloudflare's answers for trouble reaching the origin, which
-    /// Silo servers behind Cloudflare return while the server is briefly away.
+    /// WeFlix servers behind Cloudflare return while the server is briefly away.
     private static let retryableStatuses: Set<Int> = [408, 429, 500, 502, 503, 504, 520, 521, 522, 523, 524]
     private static let retryableURLErrors: Set<URLError.Code> = [
         .timedOut,
@@ -412,7 +412,7 @@ final class ApplePushDisplayClient {
 
     /// The wait before retrying after `error`, or `nil` when another attempt
     /// cannot help: a missing delivery, a refused credential, a response the
-    /// extension cannot read, or a network the user has denied Silo (cellular
+    /// extension cannot read, or a network the user has denied WeFlix (cellular
     /// off, Low Data Mode) stays that way.
     private static func retryDelay(after error: Error, attempt: Int) -> TimeInterval? {
         let backoff = retryBackoff[min(attempt, retryBackoff.count) - 1]
@@ -584,7 +584,7 @@ struct ApplePushDisplayOutcome: Codable, Equatable {
 /// per push, and the app, which drains them into diagnostics. Each outcome
 /// is its own file, so pushes finishing at once in the extension and a
 /// drain in the app never rewrite each other's records. Bounded so a phone
-/// that rarely opens Silo keeps only the newest pushes.
+/// that rarely opens WeFlix keeps only the newest pushes.
 enum ApplePushDisplayOutcomeLog {
     static let capacity = 30
     static let defaultDirectory = FileManager.default

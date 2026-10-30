@@ -548,7 +548,7 @@ private struct PlaybackRealtimeBaseEnvelope: Decodable {
 }
 
 // Each platform sends its own stable protocol client id. These are not the
-// human-facing `X-Silo-Client` product names; the server stores them and only
+// human-facing `X-WeFlix-Client` product names; the server stores them and only
 // checks that they are non-empty.
 #if os(tvOS)
 private let applePlaybackRealtimeClientName = "silo-tvos"

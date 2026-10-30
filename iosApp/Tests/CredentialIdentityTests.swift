@@ -1,6 +1,6 @@
 import Foundation
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 /// Pins the one ownership comparator and the fence built on it.
 ///

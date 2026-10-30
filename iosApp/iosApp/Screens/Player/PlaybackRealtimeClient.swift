@@ -10,7 +10,7 @@ actor PlaybackRealtimeClient {
     typealias OwnerCheck = @Sendable (CapturedOrdinaryRequestAuth) async -> Bool
 
     private static let logger = Logger(
-        subsystem: Bundle.main.bundleIdentifier ?? "org.siloserver.silo",
+        subsystem: Bundle.main.bundleIdentifier ?? "me.weflix",
         category: "PlaybackRealtime"
     )
 
@@ -60,7 +60,7 @@ actor PlaybackRealtimeClient {
             // Wait out an identity transition instead of spending reconnect
             // attempts on requests the closed dispatch gate would refuse.
             guard await HTTPClient.shared.waitForRequestDispatchOpen() else { throw CancellationError() }
-            return try await SiloAPI.shared.apiV2Client.playbackControlHandshake(
+            return try await WeFlixAPI.shared.apiV2Client.playbackControlHandshake(
                 sessionID: sessionId, installationID: authority.installationID, auth: authority.owner)
         },
         ownerIsCurrent: @escaping OwnerCheck = PlaybackRealtimeClient.isCurrentOwner,

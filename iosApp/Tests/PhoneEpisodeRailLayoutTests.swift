@@ -2,7 +2,7 @@
 import SwiftUI
 import UIKit
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 @MainActor
 final class PhoneEpisodeRailLayoutTests: XCTestCase {

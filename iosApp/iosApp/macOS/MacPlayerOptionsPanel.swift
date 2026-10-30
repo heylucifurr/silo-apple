@@ -344,7 +344,7 @@ struct MacPlayerOptionsPanel: View {
                 if let result = entry.result {
                     Text(result.text)
                         .font(.caption)
-                        .foregroundStyle(result.isWarning ? Color.siloWarning.opacity(0.9) : .white.opacity(0.58))
+                        .foregroundStyle(result.isWarning ? Color.weFlixWarning.opacity(0.9) : .white.opacity(0.58))
                         .fixedSize(horizontal: false, vertical: true)
                 } else if !entry.isForbidden, sync.canSync(entry), !entry.isInProgress, entry.error == nil {
                     Text(entry.actionNote)

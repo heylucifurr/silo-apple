@@ -1,5 +1,5 @@
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 /// An empty browse grid must say whether the library is empty or the active
 /// filters match nothing, and only the filtered case may ask the catalog.

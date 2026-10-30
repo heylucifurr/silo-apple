@@ -132,7 +132,7 @@ enum SubtitleDownloadOutcome: Equatable {
     static let storedMessage =
         "The subtitle was saved but couldn't be turned on now. It will be available the next time you play this video."
     static let unconfirmedMessage =
-        "Silo couldn't confirm the download. If it was saved, it will be available the next time you play this video."
+        "weflix couldn't confirm the download. If it was saved, it will be available the next time you play this video."
 
     /// What the search menu shows; `nil` for `.added`, which closes it.
     var message: String? {
@@ -179,7 +179,7 @@ enum SubtitleDownloadOutcome: Equatable {
     }
 
     private static let logger = Logger(
-        subsystem: Bundle.main.bundleIdentifier ?? "org.siloserver.silo",
+        subsystem: Bundle.main.bundleIdentifier ?? "me.weflix",
         category: "Player"
     )
 

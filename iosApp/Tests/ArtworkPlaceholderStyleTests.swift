@@ -1,5 +1,5 @@
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 /// What a missing image shows, per placeholder style.
 final class ArtworkPlaceholderStyleTests: XCTestCase {

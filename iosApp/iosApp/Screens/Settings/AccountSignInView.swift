@@ -38,7 +38,7 @@ struct AccountSignInView: View {
             if model.hasLoaded, model.identities.isEmpty, model.connectable.isEmpty, model.errorMessage == nil {
                 Section {
                     Text("This server has no sign-in provider to connect.")
-                        .foregroundStyle(Color.siloSecondaryText)
+                        .foregroundStyle(Color.weFlixSecondaryText)
                 }
             }
 
@@ -51,14 +51,14 @@ struct AccountSignInView: View {
             } else if let message = model.resultMessage {
                 Section {
                     Label(message, systemImage: "checkmark.circle.fill")
-                        .foregroundStyle(Color.siloOnSurface)
+                        .foregroundStyle(Color.weFlixOnSurface)
                         .accessibilityIdentifier("accountSignIn.result")
                 }
             }
         }
-        .siloGroupedListStyle()
+        .weFlixGroupedListStyle()
         .navigationTitle("Sign-in")
-        .siloNavigationTitleDisplayMode(.inline)
+        .weFlixNavigationTitleDisplayMode(.inline)
         .overlay {
             if model.isLoading && !model.hasLoaded { ProgressView() }
         }
@@ -86,10 +86,10 @@ struct AccountSignInView: View {
     /// in: linking turns the local password off unless the account is
     /// break-glass. For servers that do not say which accounts can
     /// disconnect (`can_unlink` absent).
-    static let disconnectMessage = "You'll no longer be able to sign in with this provider account. Your Silo account and its profiles stay. If this is your only way to sign in, it stays connected until an administrator sets a password for your account."
+    static let disconnectMessage = "You'll no longer be able to sign in with this provider account. Your weflix account and its profiles stay. If this is your only way to sign in, it stays connected until an administrator sets a password for your account."
 
     /// The same, once the server says this account can disconnect.
-    static let disconnectMessageWhenAllowed = "You'll no longer be able to sign in with this provider account. Your Silo account and its profiles stay."
+    static let disconnectMessageWhenAllowed = "You'll no longer be able to sign in with this provider account. Your weflix account and its profiles stay."
 
     private var disconnectTitle: String {
         guard let identity = disconnecting, !identity.providerName.isEmpty else { return "Disconnect sign-in provider?" }
@@ -100,15 +100,15 @@ struct AccountSignInView: View {
         HStack(alignment: .center, spacing: 12) {
             VStack(alignment: .leading, spacing: 3) {
                 Text(identity.providerName.isEmpty ? "Sign-in provider (turned off)" : identity.providerName)
-                    .foregroundStyle(Color.siloOnSurface)
+                    .foregroundStyle(Color.weFlixOnSurface)
                 if !identity.accountLabel.isEmpty {
                     Text(identity.accountLabel)
                         .font(.subheadline)
-                        .foregroundStyle(Color.siloSecondaryText)
+                        .foregroundStyle(Color.weFlixSecondaryText)
                 }
                 Text("Connected \(identity.linkedAt.formatted(date: .abbreviated, time: .omitted))")
                     .font(.caption)
-                    .foregroundStyle(Color.siloSecondaryText)
+                    .foregroundStyle(Color.weFlixSecondaryText)
             }
             Spacer(minLength: 8)
             if model.busyID == identity.id {
@@ -131,7 +131,7 @@ struct AccountSignInView: View {
             HStack(spacing: 12) {
                 ProviderIconView(url: SignInOptions.iconURL(for: item.provider, serverURL: AuthService.shared.serverUrl))
                 Text("Connect \(item.name)")
-                    .foregroundStyle(Color.siloOnSurface)
+                    .foregroundStyle(Color.weFlixOnSurface)
                 Spacer(minLength: 8)
                 if model.busyID == item.id { ProgressView() }
             }
@@ -141,7 +141,7 @@ struct AccountSignInView: View {
     }
 }
 
-/// Re-enters the Silo password, then either runs the provider sign-in that
+/// Re-enters the WeFlix password, then either runs the provider sign-in that
 /// links the account (OIDC), sends the directory username and password
 /// (LDAP), or links who owns this device on the provider's network
 /// (network identity, such as Tailscale).
@@ -190,7 +190,7 @@ private struct ConnectProviderSheet: View {
                     }
                 }
                 Section {
-                    SecureField("Silo password", text: $password)
+                    SecureField("weflix password", text: $password)
                         .textContentType(.password)
                         .focused($focused, equals: .password)
                         .onSubmit(connect)
@@ -207,7 +207,7 @@ private struct ConnectProviderSheet: View {
                 }
             }
             .navigationTitle("Connect \(item.name)")
-            .siloNavigationTitleDisplayMode(.inline)
+            .weFlixNavigationTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel", action: dismiss).disabled(model.isBusy)

@@ -262,7 +262,7 @@ private struct PhoneDetailParallaxArtwork: View {
             if let url, !url.isEmpty {
                 AsyncImageView(url: url, thumbhash: thumbhash, contentMode: .fill)
             } else {
-                Color.siloSurface
+                Color.weFlixSurface
             }
         case .cover(let aspectRatio, let placeholderSymbol):
             // The cover clears the floating top controls and leaves the lower
@@ -464,7 +464,7 @@ struct PhoneDetailHero<Actions: View, BelowOverview: View>: View {
                 creditBlock(alignment: .leading)
                 belowOverview()
             }
-            .padding(.horizontal, SiloTheme.safePadding)
+            .padding(.horizontal, WeFlixTheme.safePadding)
             .padding(.top, 8)
             .padding(.bottom, 12)
         }
@@ -565,9 +565,9 @@ struct PhoneDetailHero<Actions: View, BelowOverview: View>: View {
             VStack(alignment: .leading, spacing: 15) {
                 if let eyebrow, !eyebrow.isEmpty {
                     Text(eyebrow.uppercased())
-                        .siloScaledFont(size: 11, weight: .bold, relativeTo: .caption2)
+                        .weFlixScaledFont(size: 11, weight: .bold, relativeTo: .caption2)
                         .tracking(1.2)
-                        .foregroundStyle(Color.siloOnSurface.opacity(0.7))
+                        .foregroundStyle(Color.weFlixOnSurface.opacity(0.7))
                 }
 
                 titleBlock(textAlignment: .leading, logoHeight: 122)
@@ -649,15 +649,15 @@ struct PhoneDetailHero<Actions: View, BelowOverview: View>: View {
         ZStack(alignment: .topLeading) {
             macBackdrop
 
-            HStack(alignment: .top, spacing: SiloTheme.largePadding) {
+            HStack(alignment: .top, spacing: WeFlixTheme.largePadding) {
                 macPoster
 
                 VStack(alignment: .leading, spacing: 15) {
                     if let eyebrow, !eyebrow.isEmpty {
                         Text(eyebrow.uppercased())
-                            .font(.siloCaption.weight(.bold))
-                            .tracking(SiloTheme.macSidebarHeadingTracking)
-                            .foregroundStyle(Color.siloOnSurface.opacity(0.7))
+                            .font(.weFlixCaption.weight(.bold))
+                            .tracking(WeFlixTheme.macSidebarHeadingTracking)
+                            .foregroundStyle(Color.weFlixOnSurface.opacity(0.7))
                     }
 
                     macTitle
@@ -669,12 +669,12 @@ struct PhoneDetailHero<Actions: View, BelowOverview: View>: View {
                     actions()
                         .padding(.top, 2)
                 }
-                .frame(maxWidth: SiloTheme.macDetailTextWidth, alignment: .leading)
+                .frame(maxWidth: WeFlixTheme.macDetailTextWidth, alignment: .leading)
             }
             // Same gutter as the rows below, so the poster lines up with them.
-            .padding(.horizontal, SiloTheme.padding)
-            .padding(.top, SiloTheme.macDetailTopInset)
-            .padding(.bottom, SiloTheme.largePadding)
+            .padding(.horizontal, WeFlixTheme.padding)
+            .padding(.top, WeFlixTheme.macDetailTopInset)
+            .padding(.bottom, WeFlixTheme.largePadding)
         }
         .frame(maxWidth: .infinity, alignment: .topLeading)
     }
@@ -687,7 +687,7 @@ struct PhoneDetailHero<Actions: View, BelowOverview: View>: View {
         if case .backdrop = artworkStyle, let url = nonEmpty(backdropUrl) {
             AsyncImageView(url: url, thumbhash: backdropThumbhash, contentMode: .fill)
                 .frame(maxWidth: .infinity)
-                .frame(height: SiloTheme.macDetailBackdropHeight)
+                .frame(height: WeFlixTheme.macDetailBackdropHeight)
                 .clipped()
                 .overlay {
                     LinearGradient(
@@ -725,14 +725,14 @@ struct PhoneDetailHero<Actions: View, BelowOverview: View>: View {
                 placeholderSymbol: artworkStyle.placeholderSymbol
             )
             .frame(width: size.width, height: size.height)
-            .clipShape(RoundedRectangle(cornerRadius: SiloTheme.cardCornerRadius, style: .continuous))
+            .clipShape(RoundedRectangle(cornerRadius: WeFlixTheme.cardCornerRadius, style: .continuous))
             .shadow(color: .black.opacity(0.45), radius: 18, y: 8)
             .accessibilityHidden(true)
         }
     }
 
     private var macPosterSize: CGSize {
-        let width = SiloTheme.macDetailPosterWidth
+        let width = WeFlixTheme.macDetailPosterWidth
         if case .cover(let aspectRatio, _) = artworkStyle, aspectRatio > 0 {
             return CGSize(width: width, height: width / aspectRatio)
         }
@@ -744,7 +744,7 @@ struct PhoneDetailHero<Actions: View, BelowOverview: View>: View {
         if let logoUrl = displayedLogoUrl {
             MacTitleLogo(
                 url: logoUrl,
-                size: CGSize(width: SiloTheme.macHeroLogoWidth, height: SiloTheme.macHeroLogoHeight)
+                size: CGSize(width: WeFlixTheme.macHeroLogoWidth, height: WeFlixTheme.macHeroLogoHeight)
             )
             .accessibilityLabel(title)
         } else {
@@ -766,7 +766,7 @@ struct PhoneDetailHero<Actions: View, BelowOverview: View>: View {
                     contentMode: .fill
                 )
             } else {
-                Color.siloSurface
+                Color.weFlixSurface
             }
         case .cover(let aspectRatio, let placeholderSymbol):
             GeometryReader { geometry in
@@ -857,7 +857,7 @@ struct PhoneDetailHero<Actions: View, BelowOverview: View>: View {
                             RatingsRow(ratings: ratings, size: ratingSize, alignment: stackAlignment)
                         }
                     }
-                    .foregroundStyle(Color.siloOnSurface)
+                    .foregroundStyle(Color.weFlixOnSurface)
                     .frame(maxWidth: .infinity, alignment: alignment)
                 }
             }
@@ -866,8 +866,8 @@ struct PhoneDetailHero<Actions: View, BelowOverview: View>: View {
 
     private func metadataText(textAlignment: TextAlignment) -> some View {
         Text(metadataTokens.joined(separator: "  ·  "))
-            .siloScaledFont(size: 14, weight: .medium, relativeTo: .subheadline)
-            .foregroundStyle(Color.siloOnSurface.opacity(0.84))
+            .weFlixScaledFont(size: 14, weight: .medium, relativeTo: .subheadline)
+            .foregroundStyle(Color.weFlixOnSurface.opacity(0.84))
             .multilineTextAlignment(textAlignment)
             .lineLimit(dynamicTypeSize.isAccessibilitySize ? nil : 2)
             .fixedSize(horizontal: false, vertical: true)
@@ -881,14 +881,14 @@ struct PhoneDetailHero<Actions: View, BelowOverview: View>: View {
             HStack(spacing: 6) {
                 ForEach(Array(ratingChips.enumerated()), id: \.offset) { _, chip in
                     Text(chip)
-                        .siloScaledFont(size: 11, weight: .heavy, relativeTo: .caption2)
+                        .weFlixScaledFont(size: 11, weight: .heavy, relativeTo: .caption2)
                         .tracking(0.7)
-                        .foregroundStyle(Color.siloOnSurface)
+                        .foregroundStyle(Color.weFlixOnSurface)
                         .padding(.horizontal, 7)
                         .padding(.vertical, 3)
                         .overlay(
                             RoundedRectangle(cornerRadius: 4)
-                                .stroke(Color.siloOnSurface.opacity(0.55), lineWidth: 1)
+                                .stroke(Color.weFlixOnSurface.opacity(0.55), lineWidth: 1)
                         )
                 }
             }
@@ -928,8 +928,8 @@ struct PhoneDetailHero<Actions: View, BelowOverview: View>: View {
     private func creditBlock(alignment: Alignment) -> some View {
         if let creditText, !creditText.isEmpty {
             Text(creditText)
-                .siloScaledFont(size: 13, weight: .medium, relativeTo: .footnote)
-                .foregroundStyle(Color.siloOnSurface.opacity(0.58))
+                .weFlixScaledFont(size: 13, weight: .medium, relativeTo: .footnote)
+                .foregroundStyle(Color.weFlixOnSurface.opacity(0.58))
                 .lineLimit(dynamicTypeSize.isAccessibilitySize ? nil : 2)
                 .frame(maxWidth: .infinity, alignment: alignment)
         }
@@ -990,7 +990,7 @@ private struct PhoneDetailOverview: View {
             }
             .contentShape(Rectangle())
             .onTapGesture {
-                withAnimation(.easeInOut(duration: SiloTheme.normalDuration)) {
+                withAnimation(.easeInOut(duration: WeFlixTheme.normalDuration)) {
                     isExpanded.toggle()
                 }
             }
@@ -998,8 +998,8 @@ private struct PhoneDetailOverview: View {
 
     private var styledText: some View {
         Text(text)
-            .siloScaledFont(size: 15, relativeTo: .subheadline)
-            .foregroundStyle(Color.siloOnSurface.opacity(0.80))
+            .weFlixScaledFont(size: 15, relativeTo: .subheadline)
+            .foregroundStyle(Color.weFlixOnSurface.opacity(0.80))
             .lineSpacing(Self.lineSpacing)
             .multilineTextAlignment(.leading)
     }
@@ -1037,14 +1037,14 @@ private struct PhoneDetailOverview: View {
 
     private var morePill: some View {
         Button {
-            withAnimation(.easeInOut(duration: SiloTheme.normalDuration)) {
+            withAnimation(.easeInOut(duration: WeFlixTheme.normalDuration)) {
                 isExpanded = true
             }
         } label: {
             Text("MORE")
-                .siloScaledFont(size: 10, weight: .heavy, relativeTo: .caption2)
+                .weFlixScaledFont(size: 10, weight: .heavy, relativeTo: .caption2)
                 .tracking(0.6)
-                .foregroundStyle(Color.siloOnSurface)
+                .foregroundStyle(Color.weFlixOnSurface)
                 .padding(.horizontal, 8)
                 .padding(.vertical, 3)
                 .background(Capsule().fill(Color.black.opacity(0.54)))
@@ -1092,7 +1092,7 @@ private struct PhoneDetailCoverArtwork: View {
                 .overlay(Color.black.opacity(0.26))
                 .clipped()
         } else {
-            Color.siloSurface
+            Color.weFlixSurface
         }
     }
 
@@ -1127,16 +1127,16 @@ private struct PhoneHeroTitle: View {
         let parts = PhoneHeroMetadata.splitTitle(title)
         VStack(spacing: 4) {
             Text(parts.primary)
-                .siloScaledFont(size: 32, weight: .heavy, relativeTo: .largeTitle)
-                .foregroundStyle(Color.siloOnSurface)
+                .weFlixScaledFont(size: 32, weight: .heavy, relativeTo: .largeTitle)
+                .foregroundStyle(Color.weFlixOnSurface)
                 .lineLimit(2)
                 .multilineTextAlignment(textAlignment)
                 .fixedSize(horizontal: false, vertical: true)
             if let subtitle = parts.subtitle {
                 Text(subtitle.uppercased())
-                    .siloScaledFont(size: 13, weight: .heavy, relativeTo: .footnote)
+                    .weFlixScaledFont(size: 13, weight: .heavy, relativeTo: .footnote)
                     .tracking(1.2)
-                    .foregroundStyle(Color.siloOnSurface.opacity(0.80))
+                    .foregroundStyle(Color.weFlixOnSurface.opacity(0.80))
                     .lineLimit(2)
                     .multilineTextAlignment(textAlignment)
             }

@@ -1,5 +1,5 @@
 import Foundation
-@testable import Silo
+@testable import WeFlix
 
 /// Scriptable in-memory `UICustomizationTransport` for store tests.
 ///

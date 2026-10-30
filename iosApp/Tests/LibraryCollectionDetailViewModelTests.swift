@@ -1,10 +1,10 @@
 import Foundation
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 @MainActor
 final class LibraryCollectionDetailViewModelTests: XCTestCase {
-    private func client(_ handler: StubURLProtocol.Handler) async throws -> (SiloAPI, TokenStore) {
+    private func client(_ handler: StubURLProtocol.Handler) async throws -> (WeFlixAPI, TokenStore) {
         let name = "LibraryCollectionDetailTests.\(UUID().uuidString)"
         let suite = try XCTUnwrap(UserDefaults(suiteName: name))
         addTeardownBlock { UserDefaults().removePersistentDomain(forName: name) }
@@ -14,7 +14,7 @@ final class LibraryCollectionDetailViewModelTests: XCTestCase {
         await tokens.setServerUrl("https://collection.example")
         await tokens.setProfileId("profile-one")
         let http = HTTPClient(session: handler.makeSession(), tokenStore: tokens)
-        return (SiloAPI(http: http, tokenStore: tokens), tokens)
+        return (WeFlixAPI(http: http, tokenStore: tokens), tokens)
     }
 
     override func tearDown() {

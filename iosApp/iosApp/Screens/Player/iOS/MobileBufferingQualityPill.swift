@@ -19,7 +19,7 @@ struct MobileBufferingQualityPill: View {
 
     var body: some View {
         PlayerBufferingPillCard(pill: pill, title: title) {
-            HStack(spacing: SiloTheme.smallPadding) {
+            HStack(spacing: WeFlixTheme.smallPadding) {
                 Button(action: onPrimary) {
                     label(pill.kind.primaryAction)
                 }
@@ -42,21 +42,21 @@ struct MobileBufferingQualityPill: View {
             .lineLimit(1)
             .fixedSize()
             .padding(.horizontal, 16)
-            .frame(height: SiloTheme.topBarIconHitSize)
+            .frame(height: WeFlixTheme.topBarIconHitSize)
     }
 }
 
 #if DEBUG
 #Preview("Prompt") {
     MobileBufferingQualityPill(pill: .preview(.prompt), onPrimary: {}, onSecondary: {})
-        .padding(.horizontal, SiloTheme.safePadding)
+        .padding(.horizontal, WeFlixTheme.safePadding)
         .frame(maxHeight: .infinity, alignment: .top)
         .background(Color.gray)
 }
 
 #Preview("Undo") {
     MobileBufferingQualityPill(pill: .preview(.undo), onPrimary: {}, onSecondary: {})
-        .padding(.horizontal, SiloTheme.safePadding)
+        .padding(.horizontal, WeFlixTheme.safePadding)
         .frame(maxHeight: .infinity, alignment: .top)
         .background(Color.gray)
 }
@@ -65,7 +65,7 @@ struct MobileBufferingQualityPill: View {
     PlayerNoticeStack {
         PlayerNoticeOverlay(notice: .preview)
         MobileBufferingQualityPill(pill: .preview(.prompt), onPrimary: {}, onSecondary: {})
-            .padding(.horizontal, SiloTheme.safePadding)
+            .padding(.horizontal, WeFlixTheme.safePadding)
             .playerNoticeStackPill()
     }
     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)

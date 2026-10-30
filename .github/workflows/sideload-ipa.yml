@@ -41,8 +41,8 @@ jobs:
         env:
           PLATFORM: ${{ inputs.platform }}
         run: |
-          ios='{"platform":"iOS","lane":"ipa_ios_unsigned","cache_scheme":"Silo-device","artifact":"Silo-iOS-unsigned-ipa","ipa_path":"build/ios-unsigned/Silo-unsigned.ipa"}'
-          tvos='{"platform":"tvOS","lane":"ipa_tvos_unsigned","cache_scheme":"SiloTV-device","artifact":"SiloTV-tvOS-unsigned-ipa","ipa_path":"build/tvos-unsigned/SiloTV-unsigned.ipa"}'
+          ios='{"platform":"iOS","lane":"ipa_ios_unsigned","cache_scheme":"WeFlix-device","artifact":"WeFlix-iOS-unsigned-ipa","ipa_path":"build/ios-unsigned/WeFlix-unsigned.ipa"}'
+          tvos='{"platform":"tvOS","lane":"ipa_tvos_unsigned","cache_scheme":"WeFlixTV-device","artifact":"WeFlixTV-tvOS-unsigned-ipa","ipa_path":"build/tvos-unsigned/WeFlixTV-unsigned.ipa"}'
           case "$PLATFORM" in
             ios)  include="[$ios]" ;;
             tvos) include="[$tvos]" ;;
@@ -105,7 +105,7 @@ jobs:
               --target "$GITHUB_SHA" \
               --prerelease \
               --title "$TITLE" \
-              --notes "Unsigned iOS/tvOS IPAs for third-party signing / sideloading. See docs/release/sideloading.md. The Silo-source archive contains the matching source and rebuild instructions." \
+              --notes "Unsigned iOS/tvOS IPAs for third-party signing / sideloading. See docs/release/sideloading.md. The WeFlix-source archive contains the matching source and rebuild instructions." \
               || gh release view "$TAG" >/dev/null
           fi
           echo "tag=$TAG" >> "$GITHUB_OUTPUT"
@@ -126,8 +126,8 @@ jobs:
     # iPhone Duo out of the letterboxed compatibility mode older SDKs get.
     runs-on: xcode-27
     env:
-      SILO_CACHE_NAMESPACE: production
-      SILO_SOURCE_PACKAGES_PATH: ${{ github.workspace }}/.ci-cache/packages
+      WEFLIX_CACHE_NAMESPACE: production
+      WEFLIX_SOURCE_PACKAGES_PATH: ${{ github.workspace }}/.ci-cache/packages
     # Only the release-upload step needs write; scope it to the job
     # rather than the whole workflow to keep the rest at least privilege.
     permissions:
@@ -166,7 +166,7 @@ jobs:
           operation: restore
           root: '.'
           mode: dependencies
-          namespace: ${{ env.SILO_CACHE_NAMESPACE }}
+          namespace: ${{ env.WEFLIX_CACHE_NAMESPACE }}
           toolchain-key: ${{ steps.metadata.outputs.toolchain_key }}
           lock-key: ${{ steps.metadata.outputs.lock_sha256 }}
           project-key: ${{ steps.metadata.outputs.build_config_sha256 }}-xcodegen2.43.0
@@ -198,7 +198,7 @@ jobs:
           # ships the project.yml CURRENT_PROJECT_VERSION placeholder.
           BUILD_NUMBER: ${{ needs.release.outputs.build_number }}
           # Linked from Settings > About > Source Code in the built app.
-          SILO_RELEASE_SOURCE_URL: ${{ needs.source.outputs.source_url }}
+          WEFLIX_RELEASE_SOURCE_URL: ${{ needs.source.outputs.source_url }}
 
       - name: Upload ${{ matrix.platform }} IPA artifact
         uses: actions/upload-artifact@v4
@@ -222,7 +222,7 @@ jobs:
           operation: save
           root: '.'
           mode: dependencies
-          namespace: ${{ env.SILO_CACHE_NAMESPACE }}
+          namespace: ${{ env.WEFLIX_CACHE_NAMESPACE }}
           toolchain-key: ${{ steps.metadata.outputs.toolchain_key }}
           lock-key: ${{ steps.metadata.outputs.lock_sha256 }}
           project-key: ${{ steps.metadata.outputs.build_config_sha256 }}-xcodegen2.43.0

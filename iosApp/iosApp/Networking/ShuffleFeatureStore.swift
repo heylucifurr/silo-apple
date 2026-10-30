@@ -28,9 +28,9 @@ final class ShuffleFeatureStore {
     /// profile switch discards its result.
     private var generation = 0
 
-    private let api: SiloAPI
+    private let api: WeFlixAPI
 
-    init(api: SiloAPI = .shared) {
+    init(api: WeFlixAPI = .shared) {
         self.api = api
     }
 

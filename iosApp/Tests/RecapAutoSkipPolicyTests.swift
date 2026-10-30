@@ -1,5 +1,5 @@
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 /// `playback.auto_skip_recap` jumps past a recap on its own, once, and only
 /// for a viewer playing alone whose load has shown its first frame.

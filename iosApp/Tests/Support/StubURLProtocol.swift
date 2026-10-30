@@ -1,7 +1,7 @@
 import Foundation
 
-// The one URLProtocol stub for every networking test in SiloTests and
-// SiloTVTests. Do not write another private `URLProtocol` subclass; express
+// The one URLProtocol stub for every networking test in WeFlixTests and
+// WeFlixTVTests. Do not write another private `URLProtocol` subclass; express
 // the scenario as routes on a `StubURLProtocol.Handler`.
 //
 // Usage
@@ -358,7 +358,7 @@ final class StubURLProtocol: URLProtocol {
 
     // MARK: Registry
 
-    static let markerHeader = "X-Silo-Test-Stub-Handler"
+    static let markerHeader = "X-WeFlix-Test-Stub-Handler"
 
     private final class WeakHandler {
         weak var handler: Handler?

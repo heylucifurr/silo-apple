@@ -1,6 +1,6 @@
 import Foundation
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 /// The shared stub's `Gate` must not strand a waiter whose task is cancelled:
 /// `stopLoading()` cancels a gated reply, and a test that never opens the

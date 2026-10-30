@@ -1,6 +1,6 @@
 import Foundation
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 /// Mirrors the web client's `roomSyncCatchup.test.ts`, so native and browser
 /// members converge on the room the same way.

@@ -647,7 +647,7 @@ class QRLoginViewModel: NearbySignInCodeSource {
             return .pending(opened: response.opened == true, pollAfter: response.pollAfter, expiresAt: response.expiresAt)
         case .approved:
             // `validated()` guarantees tokens on `approved`. A temporary
-            // session belongs to a SiloRemote handoff, never to sign-in.
+            // session belongs to a WeFlixRemote handoff, never to sign-in.
             guard let tokens = response.tokens, !response.temporary else { return .finished(.couldNotFinish) }
             // The tokens were issued once; a failed install cannot be
             // collected again, so it ends this attempt.

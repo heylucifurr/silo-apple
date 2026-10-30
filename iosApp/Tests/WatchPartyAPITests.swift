@@ -1,6 +1,6 @@
 import Foundation
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 final class WatchPartyAPITests: XCTestCase {
     private var stub = APIv2TestStub()
@@ -98,8 +98,8 @@ final class WatchPartyAPITests: XCTestCase {
     }
 
     func testInvitationKeepsServerAndBasePathAndRejectsAmbiguousProofs() throws {
-        let invitation = try XCTUnwrap(WatchPartyInvitation(url: URL(string: "https://example.test/silo/rooms/join?token=invite%2Bproof")!))
-        XCTAssertEqual(invitation.serverURL, "https://example.test/silo")
+        let invitation = try XCTUnwrap(WatchPartyInvitation(url: URL(string: "https://example.test/weFlix/rooms/join?token=invite%2Bproof")!))
+        XCTAssertEqual(invitation.serverURL, "https://example.test/weFlix")
         XCTAssertEqual(invitation.joinToken, "invite+proof")
         for value in ["https://example.test/rooms/join?token=", "https://example.test/rooms/join?token=a&token=b",
                       "https://user:pass@example.test/rooms/join?token=a", "https://example.test/rooms/other?token=a",
@@ -110,19 +110,19 @@ final class WatchPartyAPITests: XCTestCase {
 
     func testAppLinkInvitationMatchesTheWebLink() throws {
         let app = try XCTUnwrap(WatchPartyInvitation(url: URL(string:
-            "silo://watch-party?server=https%3A%2F%2Fexample.test%2Fsilo%2F&token=invite%2Bproof")!))
-        let web = try XCTUnwrap(WatchPartyInvitation(url: URL(string: "https://example.test/silo/rooms/join?token=invite%2Bproof")!))
+            "weflix://watch-party?server=https%3A%2F%2Fexample.test%2FweFlix%2F&token=invite%2Bproof")!))
+        let web = try XCTUnwrap(WatchPartyInvitation(url: URL(string: "https://example.test/weFlix/rooms/join?token=invite%2Bproof")!))
         XCTAssertEqual(app, web)
-        let lan = try XCTUnwrap(WatchPartyInvitation(url: URL(string: "SILO://watch-party?server=HTTP://192.168.1.10:8090&token=t")!))
+        let lan = try XCTUnwrap(WatchPartyInvitation(url: URL(string: "WEFLIX://watch-party?server=HTTP://192.168.1.10:8090&token=t")!))
         XCTAssertEqual(lan.serverURL, "http://192.168.1.10:8090")
-        for value in ["silo://watch-party?token=a", "silo://watch-party?server=https://example.test&token=",
-                      "silo://watch-party?server=https://example.test&token=a&token=b",
-                      "silo://watch-party?server=https://example.test&server=https://other.test&token=a",
-                      "silo://watch-party?server=https://user:pass@example.test&token=a",
-                      "silo://watch-party?server=https://example.test?x=1&token=a",
-                      "silo://watch-party?server=file:///srv&token=a", "silo://watch-party?server=example.test&token=a",
-                      "silo://watch-party/other?server=https://example.test&token=a",
-                      "silo://invite?server=https://example.test&token=a",
+        for value in ["weflix://watch-party?token=a", "weflix://watch-party?server=https://example.test&token=",
+                      "weflix://watch-party?server=https://example.test&token=a&token=b",
+                      "weflix://watch-party?server=https://example.test&server=https://other.test&token=a",
+                      "weflix://watch-party?server=https://user:pass@example.test&token=a",
+                      "weflix://watch-party?server=https://example.test?x=1&token=a",
+                      "weflix://watch-party?server=file:///srv&token=a", "weflix://watch-party?server=example.test&token=a",
+                      "weflix://watch-party/other?server=https://example.test&token=a",
+                      "weflix://invite?server=https://example.test&token=a",
                       "continuum://watch-party?server=https://example.test&token=a"] {
             XCTAssertNil(WatchPartyInvitation(url: URL(string: value)!), value)
         }

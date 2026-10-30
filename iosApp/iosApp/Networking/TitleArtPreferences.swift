@@ -1,6 +1,6 @@
 //
 //  TitleArtPreferences.swift
-//  Silo (iOS + tvOS + macOS)
+//  WeFlix (iOS + tvOS + macOS)
 //
 //  Whether title pages name a title with its logo artwork (`ui.title_art`).
 //
@@ -61,10 +61,10 @@ protocol TitleArtTransport: AnyObject, Sendable {
     ) async throws
 }
 
-final class SiloTitleArtTransport: TitleArtTransport {
-    private let api: SiloAPI
+final class WeFlixTitleArtTransport: TitleArtTransport {
+    private let api: WeFlixAPI
 
-    init(api: SiloAPI = .shared) {
+    init(api: WeFlixAPI = .shared) {
         self.api = api
     }
 
@@ -246,7 +246,7 @@ final class TitleArtPreferences {
 
     init(
         defaults: SharedDefaults = .shared,
-        transport: TitleArtTransport = SiloTitleArtTransport(),
+        transport: TitleArtTransport = WeFlixTitleArtTransport(),
         requestIdentity: @escaping @MainActor () -> HTTPRequestIdentity? =
             TitleArtPreferences.activeRequestIdentity
     ) {

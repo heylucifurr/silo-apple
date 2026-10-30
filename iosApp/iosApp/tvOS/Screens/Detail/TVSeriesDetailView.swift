@@ -589,7 +589,7 @@ struct TVSeriesDetailView: View {
             if carouselLoadFailed {
                 Text("Couldn't load more episodes. Move away and back to retry.")
                     .font(.system(size: 18))
-                    .foregroundStyle(Color.siloSecondaryText)
+                    .foregroundStyle(Color.weFlixSecondaryText)
             }
             if let trailerFetchStatus {
                 TVTrailerStatusPill(
@@ -666,7 +666,7 @@ struct TVSeriesDetailView: View {
                 }
                 guard selectedSeason != nil else { return }
                 if hasPositionedModeRow {
-                    withAnimation(reduceMotion ? nil : .easeOut(duration: SiloTheme.fastDuration)) {
+                    withAnimation(reduceMotion ? nil : .easeOut(duration: WeFlixTheme.fastDuration)) {
                         proxy.scrollTo(newId, anchor: .center)
                     }
                 } else {
@@ -808,16 +808,16 @@ struct TVSeriesDetailView: View {
             .focusSection()
         } else if isLoadingEpisodes && carouselEpisodes.isEmpty {
             TVEpisodeRailPlaceholder(
-                cardWidth: SiloTheme.thumbnailCardWidth
+                cardWidth: WeFlixTheme.thumbnailCardWidth
                     * uiCustomization.cardPresentation.posterSize.scale,
-                cardHeightRatio: SiloTheme.thumbnailCardHeight / SiloTheme.thumbnailCardWidth,
+                cardHeightRatio: WeFlixTheme.thumbnailCardHeight / WeFlixTheme.thumbnailCardWidth,
                 cardSpacing: 40
             )
             .frame(height: episodeRailReservedHeight)
         } else if carouselEpisodes.isEmpty {
             Text("No episodes available")
                 .font(.system(size: 22))
-                .foregroundStyle(Color.siloSecondaryText)
+                .foregroundStyle(Color.weFlixSecondaryText)
                 .frame(maxWidth: .infinity, minHeight: episodeRailReservedHeight, alignment: .topLeading)
         } else {
             TVEpisodeRail(
@@ -831,8 +831,8 @@ struct TVSeriesDetailView: View {
                 currentContentId: displayedEpisode?.contentId,
                 favoriteStates: episodeFavoriteStates,
                 watchlistStates: episodeWatchlistStates,
-                baseCardWidth: SiloTheme.thumbnailCardWidth,
-                cardHeightRatio: SiloTheme.thumbnailCardHeight / SiloTheme.thumbnailCardWidth,
+                baseCardWidth: WeFlixTheme.thumbnailCardWidth,
+                cardHeightRatio: WeFlixTheme.thumbnailCardHeight / WeFlixTheme.thumbnailCardWidth,
                 cardSpacing: 40,
                 anchorsFocusedCard: true,
                 scrollRequest: episodeScrollRequest,
@@ -849,8 +849,8 @@ struct TVSeriesDetailView: View {
 
     private var episodeRailReservedHeight: CGFloat {
         TVEpisodeRail.anchoredHeight(
-            cardWidth: SiloTheme.thumbnailCardWidth * uiCustomization.cardPresentation.posterSize.scale,
-            cardHeightRatio: SiloTheme.thumbnailCardHeight / SiloTheme.thumbnailCardWidth
+            cardWidth: WeFlixTheme.thumbnailCardWidth * uiCustomization.cardPresentation.posterSize.scale,
+            cardHeightRatio: WeFlixTheme.thumbnailCardHeight / WeFlixTheme.thumbnailCardWidth
         )
     }
 
@@ -1244,10 +1244,10 @@ private struct TVSeriesModeTabStyle: ButtonStyle {
             .scaleEffect(configuration.isPressed ? 0.98 : 1)
             .focusEffectDisabled()
             .animation(
-                .easeOut(duration: SiloTheme.fastDuration),
+                .easeOut(duration: WeFlixTheme.fastDuration),
                 value: rendersFocusedAppearance
             )
-            .animation(.easeOut(duration: SiloTheme.fastDuration), value: isSelected)
+            .animation(.easeOut(duration: WeFlixTheme.fastDuration), value: isSelected)
     }
 }
 #endif

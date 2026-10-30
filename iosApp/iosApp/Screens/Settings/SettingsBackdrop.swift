@@ -6,9 +6,9 @@ import SwiftUI
 struct SettingsBackdrop: View {
     var body: some View {
         #if os(macOS)
-        SiloPageBackdrop()
+        WeFlixPageBackdrop()
         #else
-        Color.siloBackground
+        Color.weFlixBackground
             .ignoresSafeArea()
             .allowsHitTesting(false)
             .accessibilityHidden(true)

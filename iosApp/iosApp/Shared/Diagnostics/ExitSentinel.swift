@@ -124,7 +124,7 @@ struct ExitSentinelEnvironment: Equatable {
 /// Decides whether an unclean previous run is worth a report. The sentinel is
 /// armed for the whole foreground session, so a power cut, a reboot, an app
 /// update, or Xcode stopping a debug session all leave a marker behind that
-/// says nothing about Silo's own stability.
+/// says nothing about WeFlix's own stability.
 enum ExitSentinelLeftoverPolicy {
     enum Decision: Equatable {
         case report

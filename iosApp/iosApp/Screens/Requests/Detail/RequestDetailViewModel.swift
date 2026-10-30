@@ -63,7 +63,7 @@ final class RequestDetailViewModel {
     /// shows whether the request exists.
     private(set) var isSubmissionUnconfirmed = false
 
-    private let api: SiloAPI
+    private let api: WeFlixAPI
     private let cache: RequestDetailCache
     private let features: RequestsFeatureStore
     /// In-flight bus-triggered reload; cancelled and replaced on the next
@@ -77,7 +77,7 @@ final class RequestDetailViewModel {
     init(
         mediaType: RequestMediaType,
         tmdbId: Int,
-        api: SiloAPI = .shared,
+        api: WeFlixAPI = .shared,
         cache: RequestDetailCache? = nil,
         features: RequestsFeatureStore? = nil
     ) {

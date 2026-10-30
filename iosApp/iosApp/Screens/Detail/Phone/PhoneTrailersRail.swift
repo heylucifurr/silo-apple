@@ -24,7 +24,7 @@ struct PhoneTrailersRail: View {
         if !entries.isEmpty {
             VStack(alignment: .leading, spacing: 14) {
                 PhoneSectionHeader(title: "Trailers & More")
-                    .padding(.horizontal, SiloTheme.safePadding)
+                    .padding(.horizontal, WeFlixTheme.safePadding)
                 rail
             }
         }
@@ -47,7 +47,7 @@ struct PhoneTrailersRail: View {
             .padding(.vertical, 4)
             .phoneMediaRailBounds()
         }
-        .contentMargins(.horizontal, SiloTheme.safePadding, for: .scrollContent)
+        .contentMargins(.horizontal, WeFlixTheme.safePadding, for: .scrollContent)
         .mediaRailScrolling()
     }
 }
@@ -112,20 +112,20 @@ private struct PhoneTrailerCard: View {
                 thumbnail
                 VStack(alignment: .leading, spacing: 4) {
                     Text(kindLabel)
-                        .siloScaledFont(size: 10, weight: .bold, relativeTo: .caption2)
+                        .weFlixScaledFont(size: 10, weight: .bold, relativeTo: .caption2)
                         .tracking(1.0)
-                        .foregroundColor(.siloOnSurface.opacity(0.55))
+                        .foregroundColor(.weFlixOnSurface.opacity(0.55))
 
                     Text(entry.title)
-                        .siloScaledFont(size: 14, weight: .semibold, relativeTo: .subheadline)
-                        .foregroundColor(.siloOnSurface.opacity(0.92))
+                        .weFlixScaledFont(size: 14, weight: .semibold, relativeTo: .subheadline)
+                        .foregroundColor(.weFlixOnSurface.opacity(0.92))
                         .lineLimit(dynamicTypeSize.isAccessibilitySize ? nil : 2)
                         .multilineTextAlignment(.leading)
 
                     if let durationLabel {
                         Text(durationLabel)
-                            .siloScaledFont(size: 12, weight: .medium, relativeTo: .caption)
-                            .foregroundColor(.siloSecondaryText)
+                            .weFlixScaledFont(size: 12, weight: .medium, relativeTo: .caption)
+                            .foregroundColor(.weFlixSecondaryText)
                             .lineLimit(1)
                     }
                 }
@@ -168,7 +168,7 @@ private struct PhoneTrailerCard: View {
             // A local extra the server has no image for yet gets the
             // surface tile plus the shared play glyph.
             Rectangle()
-                .fill(Color.siloSurfaceElevated)
+                .fill(Color.weFlixSurfaceElevated)
                 .frame(width: cardWidth, height: thumbnailHeight)
         }
     }

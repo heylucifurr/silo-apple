@@ -1,5 +1,5 @@
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 /// Pins the `captureRequestAuth` refusal classifier.
 ///

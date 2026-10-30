@@ -3,7 +3,7 @@ import Foundation
 import Network
 import OSLog
 
-/// Serves every SiloControl controller connected to this TV: phones,
+/// Serves every WeFlixControl controller connected to this TV: phones,
 /// tablets, and integrations such as Home Assistant. Each controller has its
 /// own connection, heartbeat and authorization. The player, the temporary
 /// phone identity, the one in-flight handoff and the standby screen are
@@ -19,7 +19,7 @@ final class TVControlReceiver {
         let id = UUID()
         /// Order of acceptance; lower is older.
         let sequence: Int
-        let session: SiloControlSession
+        let session: WeFlixControlSession
         var readTask: Task<Void, Never>?
         var heartbeatTask: Task<Void, Never>?
         var authWatchdogTask: Task<Void, Never>?
@@ -36,10 +36,10 @@ final class TVControlReceiver {
         /// The temporary identity generation this controller's handoff
         /// produced. A v2 launch needs it to equal the active generation.
         var readyGeneration: UUID?
-        var commandBudget = SiloControlReceiverPolicy.CommandBudget()
+        var commandBudget = WeFlixControlReceiverPolicy.CommandBudget()
         var rateLimitNoticeAt: Date?
 
-        init(sequence: Int, session: SiloControlSession) {
+        init(sequence: Int, session: WeFlixControlSession) {
             self.sequence = sequence
             self.session = session
         }
@@ -48,7 +48,7 @@ final class TVControlReceiver {
             features.contains(feature)
         }
 
-        func summary(isHandingOff: Bool) -> SiloControlReceiverPolicy.ControllerSummary {
+        func summary(isHandingOff: Bool) -> WeFlixControlReceiverPolicy.ControllerSummary {
             .init(id: id, sequence: sequence, didReceiveHello: didReceiveHello, passive: passive,
                   isAuthorized: isAuthorized, isHandingOff: isHandingOff)
         }
@@ -107,12 +107,12 @@ final class TVControlReceiver {
     /// rejected one.
     private var rejectedPlayerHandoffGeneration: UUID?
     private nonisolated static let logger = Logger(
-        subsystem: Bundle.main.bundleIdentifier ?? "org.siloserver.silo",
+        subsystem: Bundle.main.bundleIdentifier ?? "me.weflix",
         category: "control.receiver"
     )
 
     /// Poster and synopsis for the playing title, sent with its state.
-    private let nowPlayingMetadata = SiloControlNowPlayingMetadataResolver()
+    private let nowPlayingMetadata = WeFlixControlNowPlayingMetadataResolver()
 
     private init() {
         nowPlayingMetadata.onChange = { [weak self] in self?.broadcastState() }
@@ -144,7 +144,7 @@ final class TVControlReceiver {
 
         let device = AppleDeviceIdentity.current
         var record: [String: String] = [
-            "v": String(SiloControlProtocol.version),
+            "v": String(WeFlixControlProtocol.version),
             "name": device.name,
             "id": device.id,
             "server": serverId,
@@ -159,10 +159,10 @@ final class TVControlReceiver {
         let txt = NWTXTRecord(record)
 
         do {
-            let listener = try NWListener(using: SiloControlSession.tlsParameters())
+            let listener = try NWListener(using: WeFlixControlSession.tlsParameters())
             listener.service = NWListener.Service(
                 name: device.name,
-                type: SiloControlProtocol.serviceType,
+                type: WeFlixControlProtocol.serviceType,
                 txtRecord: txt
             )
             listener.newConnectionHandler = { [weak self] connection in
@@ -220,7 +220,7 @@ final class TVControlReceiver {
     private func refreshAdvertisement() {
         guard listener != nil,
               let serverId = RemotePlaybackIdentityManager.shared.effectiveServerId else { return }
-        let serverName = RemotePlaybackIdentityManager.shared.effectiveServerName ?? "Silo"
+        let serverName = RemotePlaybackIdentityManager.shared.effectiveServerName ?? "weflix"
         listenerGeneration += 1
         listener?.cancel()
         listener = nil
@@ -248,7 +248,7 @@ final class TVControlReceiver {
     /// silent auto-resume) never did and stay connected.
     func disconnectRemoteControl() {
         for controller in controllers.values where !controller.passive {
-            closeController(controller.id, reason: SiloControlCloseReason.tvDisconnected)
+            closeController(controller.id, reason: WeFlixControlCloseReason.tvDisconnected)
         }
     }
 
@@ -260,7 +260,7 @@ final class TVControlReceiver {
         }
         rejectedPlayerHandoffGeneration = expectedGenerationID
         // Everyone watching loses the title, not only the phone that lent it.
-        broadcast(.error(SiloControlErrorMessage(
+        broadcast(.error(WeFlixControlErrorMessage(
             code: "temporary_session_expired",
             message: "The phone profile session expired."
         )))
@@ -327,26 +327,26 @@ final class TVControlReceiver {
     // MARK: - Connections
 
     private func accept(_ connection: NWConnection) async {
-        let session = SiloControlSession(connection: connection)
+        let session = WeFlixControlSession(connection: connection)
         let existing = controllers.values.map { $0.summary(isHandingOff: pendingHandoff?.controllerId == $0.id) }
-        switch SiloControlReceiverPolicy.admission(existing: existing) {
+        switch WeFlixControlReceiverPolicy.admission(existing: existing) {
         case .admit:
             break
         case .admitEvicting(let id):
             Self.logger.info("control: at controller limit; closing an idle connection")
-            closeController(id, reason: SiloControlCloseReason.tooManyControllers)
+            closeController(id, reason: WeFlixControlCloseReason.tooManyControllers)
         case .refuse:
             Self.logger.info("control: at controller limit; refusing a new controller")
             let stream = await session.open()
             try? await session.send(makeHello())
-            session.enqueue(.error(SiloControlErrorMessage(
+            session.enqueue(.error(WeFlixControlErrorMessage(
                 code: "too_many_controllers",
                 message: "Too many devices are controlling this Apple TV. Disconnect one and try again."
             )))
             // The peer's features aren't known yet, but every shipped decoder
             // ignores the `close` payload. Without the reason, a phone that
             // saw `multi_controller` in the hello would forget this TV.
-            await session.closeGracefully(reason: SiloControlCloseReason.tooManyControllers)
+            await session.closeGracefully(reason: WeFlixControlCloseReason.tooManyControllers)
             withExtendedLifetime(stream) {}
             return
         }
@@ -372,7 +372,7 @@ final class TVControlReceiver {
     }
 
     private func startReadLoop(
-        stream: AsyncThrowingStream<SiloControlMessage, Error>,
+        stream: AsyncThrowingStream<WeFlixControlMessage, Error>,
         controller: Controller
     ) {
         let controllerId = controller.id
@@ -388,7 +388,7 @@ final class TVControlReceiver {
         }
     }
 
-    private func handle(_ message: SiloControlMessage, from controllerId: UUID) {
+    private func handle(_ message: WeFlixControlMessage, from controllerId: UUID) {
         guard let controller = controllers[controllerId] else { return }
         // NOTE: liveness is reset only on `.pong` (below), not on every inbound
         // message. A `.pong` is the controller's reply to our ping, so it's the
@@ -402,7 +402,7 @@ final class TVControlReceiver {
         case .handoffOffer(let offer):
             guard (controller.negotiatedVersion ?? 0) >= 2, let controllerDeviceId = controller.deviceId else {
                 sendHandoffCancel(offer.requestId, reason: "version_unsupported",
-                                  message: "Update Silo on both devices to continue.", to: controller)
+                                  message: "Update weflix on both devices to continue.", to: controller)
                 return
             }
             beginHandoff(offer, from: controller, controllerDeviceId: controllerDeviceId)
@@ -413,11 +413,11 @@ final class TVControlReceiver {
             cancelPendingHandoff()
         case .launch(let launch):
             guard controller.isAuthorized else {
-                sendError(code: "unauthorized", message: "Connect with a matching Silo account first.", to: controller)
+                sendError(code: "unauthorized", message: "Connect with a matching weflix account first.", to: controller)
                 return
             }
             if (controller.negotiatedVersion ?? 0) >= 2,
-               !SiloControlReceiverPolicy.canLaunch(
+               !WeFlixControlReceiverPolicy.canLaunch(
                    readyGeneration: controller.readyGeneration,
                    activeGeneration: RemotePlaybackIdentityManager.shared.activeIdentity?.generationID
                ) {
@@ -427,7 +427,7 @@ final class TVControlReceiver {
             handleLaunch(launch, from: controller)
         case .control(let command):
             guard controller.isAuthorized else {
-                sendError(code: "unauthorized", message: "Connect with a matching Silo account first.", to: controller)
+                sendError(code: "unauthorized", message: "Connect with a matching weflix account first.", to: controller)
                 return
             }
             guard controller.commandBudget.allow() else {
@@ -462,15 +462,15 @@ final class TVControlReceiver {
         }
     }
 
-    private func handleHello(_ hello: SiloControlHello, from controller: Controller) {
+    private func handleHello(_ hello: WeFlixControlHello, from controller: Controller) {
         guard !controller.didReceiveHello else { return }
         // Read first, so even a refusal below can carry a close reason.
         controller.features = Set(hello.features ?? [])
         guard hello.role == .phone,
-              let version = SiloControlProtocol.negotiatedVersion(with: hello.supportedVersions),
+              let version = WeFlixControlProtocol.negotiatedVersion(with: hello.supportedVersions),
               let serverId = hello.serverId, !serverId.isEmpty else {
-            sendError(code: "version_unsupported", message: "Update Silo on both devices to continue.", to: controller)
-            closeController(controller.id, reason: SiloControlCloseReason.unauthorized)
+            sendError(code: "version_unsupported", message: "Update weflix on both devices to continue.", to: controller)
+            closeController(controller.id, reason: WeFlixControlCloseReason.unauthorized)
             return
         }
         controller.didReceiveHello = true
@@ -490,21 +490,21 @@ final class TVControlReceiver {
         // to complete server-mediated identity handoff.
         guard matchesServer || version >= 2 else {
             sendError(code: "server_mismatch",
-                      message: "This Apple TV is connected to a different Silo server.", to: controller)
-            closeController(controller.id, reason: SiloControlCloseReason.unauthorized)
+                      message: "This Apple TV is connected to a different weflix server.", to: controller)
+            closeController(controller.id, reason: WeFlixControlCloseReason.unauthorized)
             return
         }
 
         // The device's older sockets are ones it has abandoned. Only a
         // connection the TV keeps replaces them, so a refused hello can't
         // knock out a working one.
-        let replaced = SiloControlReceiverPolicy.connectionsReplaced(
+        let replaced = WeFlixControlReceiverPolicy.connectionsReplaced(
             byHelloFrom: hello.deviceId,
             on: controller.id,
             existing: controllers.values.map { (id: $0.id, deviceId: $0.deviceId) }
         )
         for id in replaced {
-            closeController(id, reason: SiloControlCloseReason.replaced)
+            closeController(id, reason: WeFlixControlCloseReason.replaced)
         }
 
         controller.isAuthorized = matchesServer
@@ -517,14 +517,14 @@ final class TVControlReceiver {
     // MARK: - Handoff
 
     private func beginHandoff(
-        _ offer: SiloControlHandoffOffer,
+        _ offer: WeFlixControlHandoffOffer,
         from controller: Controller,
         controllerDeviceId: String
     ) {
         let manager = RemotePlaybackIdentityManager.shared
         // A handoff stops what is on screen before the swap, so consent is
         // asked here, not at launch, and checked again before the stop.
-        let canConfirm = controller.supports(SiloControlFeature.replaceConfirmation)
+        let canConfirm = controller.supports(WeFlixControlFeature.replaceConfirmation)
         if let nowPlaying = titleNeedingConsent(for: offer, canConfirm: canConfirm) {
             sendReplaceConfirmationRequired(offer.requestId, nowPlaying: nowPlaying, to: controller)
             return
@@ -534,7 +534,7 @@ final class TVControlReceiver {
            let other = controllers[pending.controllerId] {
             sendHandoffCancel(
                 pending.requestId,
-                reason: SiloControlHandoffCancelReason.superseded,
+                reason: WeFlixControlHandoffCancelReason.superseded,
                 message: "\(controller.deviceName ?? "Another device") started playing on this TV.",
                 to: other
             )
@@ -545,7 +545,7 @@ final class TVControlReceiver {
 
         let activeGeneration = manager.activeIdentity?.generationID
         let issued = issuedIdentity.flatMap { $0.generation == activeGeneration ? $0 : nil }
-        let allowReuse = SiloControlReceiverPolicy.mayReuseIdentity(
+        let allowReuse = WeFlixControlReceiverPolicy.mayReuseIdentity(
             offerMatchesIdentity: manager.matches(offer, controllerDeviceId: controllerDeviceId),
             identityConnection: issued?.connectionId,
             connection: controller.id,
@@ -621,7 +621,7 @@ final class TVControlReceiver {
         }
     }
 
-    private func completeHandoff(_ ready: SiloControlHandoffReady, generation: UUID, for controller: Controller) {
+    private func completeHandoff(_ ready: WeFlixControlHandoffReady, generation: UUID, for controller: Controller) {
         // Readiness is this controller's alone: an earlier controller's
         // launch must never play under this profile.
         for other in controllers.values where other.id != controller.id {
@@ -631,9 +631,9 @@ final class TVControlReceiver {
         controller.isAuthorized = true
 
         var resumeToken: String?
-        if controller.supports(SiloControlFeature.resumeToken) {
+        if controller.supports(WeFlixControlFeature.resumeToken) {
             resumeToken = issuedIdentity.flatMap { $0.generation == generation ? $0.resumeToken : nil }
-                ?? SiloControlReceiverPolicy.makeResumeToken()
+                ?? WeFlixControlReceiverPolicy.makeResumeToken()
         }
         issuedIdentity = IssuedIdentity(generation: generation, connectionId: controller.id, resumeToken: resumeToken)
 
@@ -685,20 +685,20 @@ final class TVControlReceiver {
     }
 
     private struct ReplaceConfirmationRequired: Error {
-        let nowPlaying: SiloControlNowPlayingSummary
+        let nowPlaying: WeFlixControlNowPlayingSummary
     }
 
     /// What `offer` would replace without its user's consent, or nil when
     /// the handoff may go ahead.
     private func titleNeedingConsent(
-        for offer: SiloControlHandoffOffer,
+        for offer: WeFlixControlHandoffOffer,
         canConfirm: Bool
-    ) -> SiloControlNowPlayingSummary? {
+    ) -> WeFlixControlNowPlayingSummary? {
         let nowPlaying = nowPlayingSummary()
-        let needsConsent = SiloControlReceiverPolicy.needsReplaceConfirmation(
+        let needsConsent = WeFlixControlReceiverPolicy.needsReplaceConfirmation(
             titleOnScreen: isTitleOnScreen,
             playingUnderOfferedProfile: isPlaying(underProfileOf: offer),
-            replaceConfirmed: SiloControlReceiverPolicy.confirmationCovers(
+            replaceConfirmed: WeFlixControlReceiverPolicy.confirmationCovers(
                 onScreenContentId: nowPlaying.contentId,
                 replaceConfirmed: offer.replaceConfirmed == true,
                 replacingContentId: offer.replacingContentId
@@ -710,12 +710,12 @@ final class TVControlReceiver {
 
     private func sendReplaceConfirmationRequired(
         _ requestId: String,
-        nowPlaying: SiloControlNowPlayingSummary,
+        nowPlaying: WeFlixControlNowPlayingSummary,
         to controller: Controller
     ) {
         sendHandoffCancel(
             requestId,
-            reason: SiloControlHandoffCancelReason.replaceConfirmationRequired,
+            reason: WeFlixControlHandoffCancelReason.replaceConfirmationRequired,
             message: "\(nowPlaying.profileName ?? "Someone") is watching \(nowPlaying.title) on this TV.",
             nowPlaying: nowPlaying,
             to: controller
@@ -743,7 +743,7 @@ final class TVControlReceiver {
                            to: controller)
             // A cross-server controller can't do anything else here.
             if !controller.isAuthorized {
-                self.closeController(controllerId, reason: SiloControlCloseReason.launchTimeout)
+                self.closeController(controllerId, reason: WeFlixControlCloseReason.launchTimeout)
             }
         }
     }
@@ -762,7 +762,7 @@ final class TVControlReceiver {
     /// Whether what is on screen plays under the profile `offer` names. The
     /// TV plays under the temporary identity when one is active, else under
     /// its own saved profile.
-    private func isPlaying(underProfileOf offer: SiloControlHandoffOffer) -> Bool {
+    private func isPlaying(underProfileOf offer: WeFlixControlHandoffOffer) -> Bool {
         if let identity = RemotePlaybackIdentityManager.shared.activeIdentity {
             return identity.profileId == offer.profileId && ServerRegistry.serversMatch(
                 serverId: identity.serverId, verifiedServerId: identity.serverIdentity,
@@ -777,15 +777,15 @@ final class TVControlReceiver {
         )
     }
 
-    private func nowPlayingSummary() -> SiloControlNowPlayingSummary {
-        let state = playerViewModel?.makeSiloControlPlaybackState(contentId: playerContentId)
+    private func nowPlayingSummary() -> WeFlixControlNowPlayingSummary {
+        let state = playerViewModel?.makeWeFlixControlPlaybackState(contentId: playerContentId)
         let identity = RemotePlaybackIdentityManager.shared.activeIdentity
         let startedByPhone = identity != nil && playerHandoffGeneration == identity?.generationID
         // Under a borrowed identity only its own name is right. Phones that
         // don't send one (Android today) leave it nil, and the prompt then
         // says "Someone" rather than naming the TV's own profile.
         let profileName = identity.map(\.profileName) ?? CurrentProfileStore.shared.profile?.name
-        return SiloControlNowPlayingSummary(
+        return WeFlixControlNowPlayingSummary(
             contentId: state?.contentId ?? playerContentId,
             title: state?.title ?? "a title",
             subtitle: state?.subtitle,
@@ -796,7 +796,7 @@ final class TVControlReceiver {
 
     // MARK: - Launch and control
 
-    private func handleLaunch(_ launch: SiloControlLaunchRequest, from controller: Controller) {
+    private func handleLaunch(_ launch: WeFlixControlLaunchRequest, from controller: Controller) {
         // The launch names the phone's registry key; the identity learned
         // from its hello lets a same-deployment phone on another address
         // launch without a handoff having renamed the effective server.
@@ -807,7 +807,7 @@ final class TVControlReceiver {
             serverIdentity: launchIdentity
         ) else {
             sendError(code: "server_mismatch",
-                      message: "This Apple TV is connected to a different Silo server.", to: controller)
+                      message: "This Apple TV is connected to a different weflix server.", to: controller)
             return
         }
 
@@ -815,7 +815,7 @@ final class TVControlReceiver {
         standbyState = nil
         let generation = RemotePlaybackIdentityManager.shared.activeIdentity?.generationID
         if let player = playerViewModel,
-           SiloControlReceiverPolicy.canReplaceInPlayer(
+           WeFlixControlReceiverPolicy.canReplaceInPlayer(
                playerGeneration: playerHandoffGeneration, activeGeneration: generation,
                playerIsDisposed: player.needsReplacementForPresentation,
                playerIsWatchParty: player.isWatchPartyPlayback
@@ -823,9 +823,9 @@ final class TVControlReceiver {
             readyTimeoutTask?.cancel()
             readyTimeoutTask = nil
             playerContentId = playback.contentId
-            player.replaceSiloControlPlayback(playback)
+            player.replaceWeFlixControlPlayback(playback)
             DiagnosticsCoordinator.recordBreadcrumb(
-                category: .playback, tag: "SiloControl",
+                category: .playback, tag: "WeFlixControl",
                 message: "remote playback replaced in existing player"
             )
             broadcastState()
@@ -851,7 +851,7 @@ final class TVControlReceiver {
         broadcast(.state(placeholderState(contentId: playback.contentId, title: "Loading", isLoading: true)))
     }
 
-    private func handleControl(_ command: SiloControlCommand, from controller: Controller) {
+    private func handleControl(_ command: WeFlixControlCommand, from controller: Controller) {
         // .stop goes through the receiver, so it also clears a title still loading (no player registered yet).
         if command.name == .stop {
             stopRemotePlayback()
@@ -864,7 +864,7 @@ final class TVControlReceiver {
         }
 
         do {
-            try playerViewModel.applySiloControlCommand(command)
+            try playerViewModel.applyWeFlixControlCommand(command)
             broadcastState()
         } catch {
             sendError(code: "command_failed", message: error.localizedDescription, to: controller)
@@ -901,7 +901,7 @@ final class TVControlReceiver {
 
         let session = controller.session
         let read = controller.readTask
-        let wireReason = controller.supports(SiloControlFeature.closeReason) ? reason : nil
+        let wireReason = controller.supports(WeFlixControlFeature.closeReason) ? reason : nil
         // Send the goodbye BEFORE cancelling the read task. Cancelling the
         // consumer fires the message stream's onTermination, which tears the
         // connection down and races ahead of the `.close` — the peer then
@@ -973,7 +973,7 @@ final class TVControlReceiver {
                 sendState(to: controller)
             } else if !controller.isAuthorized, wasAuthorized, !ownIdentityEnded {
                 sendError(code: "server_mismatch",
-                          message: "This Apple TV is now playing from a different Silo server.",
+                          message: "This Apple TV is now playing from a different weflix server.",
                           to: controller)
             }
         }
@@ -1006,7 +1006,7 @@ final class TVControlReceiver {
                 return
             }
             Self.logger.info("control: controller never said hello; closing it")
-            self.closeController(controllerId, reason: SiloControlCloseReason.timeout)
+            self.closeController(controllerId, reason: WeFlixControlCloseReason.timeout)
         }
     }
 
@@ -1031,12 +1031,12 @@ final class TVControlReceiver {
         }
     }
 
-    private func currentState() -> SiloControlPlaybackState {
+    private func currentState() -> WeFlixControlPlaybackState {
         guard let playerViewModel else {
             nowPlayingMetadata.track(contentId: nil)
             return idleState()
         }
-        var state = playerViewModel.makeSiloControlPlaybackState(contentId: playerContentId)
+        var state = playerViewModel.makeWeFlixControlPlaybackState(contentId: playerContentId)
         // Follows the live content ID, so an autoplayed next episode drops
         // the previous title's poster on its first tick.
         nowPlayingMetadata.track(contentId: state.contentId)
@@ -1058,7 +1058,7 @@ final class TVControlReceiver {
     }
 
     /// Sends `message` to every authorized controller.
-    private func broadcast(_ message: SiloControlMessage) {
+    private func broadcast(_ message: WeFlixControlMessage) {
         for controller in controllers.values where controller.isAuthorized {
             controller.session.enqueue(message)
         }
@@ -1066,17 +1066,17 @@ final class TVControlReceiver {
 
     /// Replies go to the controller that caused them, never to the others.
     private func sendError(code: String, message: String, to controller: Controller) {
-        controller.session.enqueue(.error(SiloControlErrorMessage(code: code, message: message)))
+        controller.session.enqueue(.error(WeFlixControlErrorMessage(code: code, message: message)))
     }
 
     private func sendHandoffCancel(
         _ requestId: String,
         reason: String,
         message: String?,
-        nowPlaying: SiloControlNowPlayingSummary? = nil,
+        nowPlaying: WeFlixControlNowPlayingSummary? = nil,
         to controller: Controller
     ) {
-        controller.session.enqueue(.handoffCancel(SiloControlHandoffCancel(
+        controller.session.enqueue(.handoffCancel(WeFlixControlHandoffCancel(
             requestId: requestId,
             reason: reason,
             message: message,
@@ -1084,27 +1084,27 @@ final class TVControlReceiver {
         )))
     }
 
-    private func makeHello() -> SiloControlMessage {
+    private func makeHello() -> WeFlixControlMessage {
         let device = AppleDeviceIdentity.current
-        return .hello(SiloControlHello(
+        return .hello(WeFlixControlHello(
             role: .tv,
             deviceName: device.name,
             deviceId: device.id,
             serverId: RemotePlaybackIdentityManager.shared.effectiveServerId,
             serverName: RemotePlaybackIdentityManager.shared.effectiveServerName,
-            supportedVersions: SiloControlProtocol.supportedVersions,
+            supportedVersions: WeFlixControlProtocol.supportedVersions,
             serverIdentity: RemotePlaybackIdentityManager.shared.effectiveServerIdentity,
-            features: SiloControlFeature.receiverFeatures
+            features: WeFlixControlFeature.receiverFeatures
         ))
     }
 
-    private func idleState() -> SiloControlPlaybackState {
+    private func idleState() -> WeFlixControlPlaybackState {
         placeholderState(contentId: nil, title: "Ready", isLoading: false)
     }
 
     /// State for a TV with no playing title: idle, or loading `contentId`.
-    private func placeholderState(contentId: String?, title: String, isLoading: Bool) -> SiloControlPlaybackState {
-        SiloControlPlaybackState(
+    private func placeholderState(contentId: String?, title: String, isLoading: Bool) -> WeFlixControlPlaybackState {
+        WeFlixControlPlaybackState(
             contentId: contentId,
             sessionId: nil,
             title: title,

@@ -18,12 +18,12 @@ struct HeldSettingChangesSection: View {
             }
         } header: {
             Text("Not Saved")
-                .foregroundStyle(Color.siloSecondaryText)
+                .foregroundStyle(Color.weFlixSecondaryText)
         } footer: {
             Text(message)
-                .foregroundStyle(Color.siloSecondaryText)
+                .foregroundStyle(Color.weFlixSecondaryText)
         }
-        .listRowBackground(Color.siloGroupedCell)
+        .listRowBackground(Color.weFlixGroupedCell)
     }
 }
 #endif

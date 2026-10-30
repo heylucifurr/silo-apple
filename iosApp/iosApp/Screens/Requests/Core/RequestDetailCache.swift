@@ -32,7 +32,7 @@ final class RequestDetailCache {
     private var ownRecords: [Key: MediaRequest] = [:]
     private var seeds: [Key: RequestMediaResult] = [:]
     /// Titles waiting to be warmed, shared by every list that asked.
-    private var prefetchQueue: [(key: Key, api: SiloAPI)] = []
+    private var prefetchQueue: [(key: Key, api: WeFlixAPI)] = []
     private var prefetchTask: Task<Void, Never>?
     /// Bumped by `clear()`: a drain from the previous session stops at its
     /// next step instead of consuming the next session's queue.
@@ -126,7 +126,7 @@ final class RequestDetailCache {
     /// lands on the finished page. Lists that load together share one
     /// queue, so a later list adds its titles instead of dropping an
     /// earlier list's.
-    func prefetch(_ records: [MediaRequest], api: SiloAPI = .shared) {
+    func prefetch(_ records: [MediaRequest], api: WeFlixAPI = .shared) {
         let keys = records
             .map { Key(mediaType: $0.mediaType, tmdbId: $0.tmdbId) }
             .filter { details[$0] == nil && ($0.mediaType == .movie || $0.mediaType == .series) }

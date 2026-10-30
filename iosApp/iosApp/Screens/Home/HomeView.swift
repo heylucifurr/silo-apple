@@ -29,7 +29,7 @@ struct HomeView: View {
     /// Beside the iPhone Duo's status column there is no action cluster, and
     /// the extra room keeps the logo's glass pill off the screen's corner.
     private var headerTopInset: CGFloat {
-        SiloTheme.smallPadding + (statusColumn == nil ? 0 : 6)
+        WeFlixTheme.smallPadding + (statusColumn == nil ? 0 : 6)
     }
     @Environment(\.statusColumn) private var statusColumn
     /// The LazyVStack already contributes its normal section spacing after the
@@ -106,7 +106,7 @@ struct HomeView: View {
         }
         #else
         ZStack(alignment: .top) {
-            SiloPageBackdrop()
+            WeFlixPageBackdrop()
                 .ignoresSafeArea()
 
             Group {
@@ -138,8 +138,8 @@ struct HomeView: View {
                 // It occupies the same 44pt row as the icon buttons so its
                 // centre lines up with theirs.
                 #if !os(macOS)
-                SiloWordmarkView(width: 72)
-                    .frame(height: SiloTheme.topBarIconHitSize)
+                WeFlixWordmarkView(width: 96)
+                    .frame(height: WeFlixTheme.topBarIconHitSize)
                     .pageChromeBacking(
                         scrollState: chromeScrollState,
                         outset: EdgeInsets(top: 6, leading: 16, bottom: 6, trailing: 16)
@@ -154,7 +154,7 @@ struct HomeView: View {
                 TabTopBarActions(
                     onSearch: { router.navigate(to: .search) },
                     onOpenSettings: { router.navigate(to: .settings) },
-                    onOpenRequests: { router.navigate(to: .requestsHub) },
+                    onOpenDownloads: { router.navigate(to: .downloads) },
                     onSwitchProfile: {
                         router.switchProfile()
                     },
@@ -163,11 +163,11 @@ struct HomeView: View {
                 )
             }
             .clearsWindowControls()
-            .padding(.horizontal, SiloTheme.padding)
+            .padding(.horizontal, WeFlixTheme.padding)
             #if os(iOS)
             .padding(.top, headerTopInset)
             #endif
-            .padding(.bottom, SiloTheme.smallPadding)
+            .padding(.bottom, WeFlixTheme.smallPadding)
             // Same scroll-driven glass as the Detail page chrome so the
             // utilities stay legible over bright artwork once rows scroll
             // underneath.
@@ -231,7 +231,7 @@ struct HomeView: View {
     private var scrollContent: some View {
         GeometryReader { geometry in
             feedScrollView(topSafeAreaInset: geometry.safeAreaInsets.top)
-                .siloScrollEdgeEffect()
+                .weFlixScrollEdgeEffect()
         }
     }
     #endif
@@ -276,7 +276,7 @@ struct HomeView: View {
             MacFeaturedHero(section: section)
                 // The hero sits flush with the top of the window, so it takes
                 // back the stack's leading gap and the page's top margin.
-                .padding(.top, -(HomeFeedMetrics.sectionSpacing + SiloTheme.padding))
+                .padding(.top, -(HomeFeedMetrics.sectionSpacing + WeFlixTheme.padding))
         } else {
             feedRow(section)
         }
@@ -348,11 +348,11 @@ struct HomeView: View {
         // title bar. The stack's section spacing is the only top gap.
         return 0
         #else
-        var runway = topSafeAreaInset + SiloTheme.topBarIconHitSize + SiloTheme.smallPadding
+        var runway = topSafeAreaInset + WeFlixTheme.topBarIconHitSize + WeFlixTheme.smallPadding
         #if os(iOS)
         runway += headerTopInset + headerToContentGap
         #else
-        runway += SiloTheme.largePadding + SiloTheme.smallPadding
+        runway += WeFlixTheme.largePadding + WeFlixTheme.smallPadding
         #endif
         return runway
         #endif

@@ -3,7 +3,7 @@ import Darwin
 import SwiftUI
 import UIKit
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 /// What a missing image shows is decoration: neither VoiceOver nor UI
 /// automation (XCUITest, Maestro) may see it as an element, such as a glyph

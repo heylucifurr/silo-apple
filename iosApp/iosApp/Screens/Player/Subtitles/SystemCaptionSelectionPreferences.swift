@@ -1,9 +1,9 @@
 //
 //  SystemCaptionSelectionPreferences.swift
-//  Silo (iOS + tvOS + macOS)
+//  WeFlix (iOS + tvOS + macOS)
 //
 //  Read-only bridge for the non-visual half of Apple's Subtitles &
-//  Captioning preferences. Silo never writes these values: the active
+//  Captioning preferences. WeFlix never writes these values: the active
 //  system profile remains the single source of truth.
 //
 

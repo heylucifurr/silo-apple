@@ -53,7 +53,7 @@ class ProfileSelectionViewModel {
     private(set) var accountName: String?
 
     func loadAccount() async {
-        accountName = try? await SiloAPI.shared.currentUser().username
+        accountName = try? await WeFlixAPI.shared.currentUser().username
     }
 
     var primaryProfile: UserProfile? {
@@ -167,7 +167,7 @@ private enum ProfileManagementError: LocalizedError {
         case .primaryProfileUnavailable:
             return "Couldn't find the primary profile needed to manage household profiles."
         case .temporaryContextCleanupFailed:
-            return "Silo couldn't finish creating the profile. Please try selecting it again."
+            return "weflix couldn't finish creating the profile. Please try selecting it again."
         }
     }
 }

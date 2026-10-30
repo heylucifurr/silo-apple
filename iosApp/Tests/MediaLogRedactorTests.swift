@@ -1,5 +1,5 @@
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 final class MediaLogRedactorTests: XCTestCase {
     /// Every line the leak audit found, plus the cases already pinned below.
@@ -9,7 +9,7 @@ final class MediaLogRedactorTests: XCTestCase {
             + "fallback=file:///private/var/mobile/movie.mkv rate=1.000 frames=42",
         "Authorization: Bearer header-secret, Cookie=session=cookie-secret "
             + "token=plain-secret path=/Users/person/Movies/title.mkv",
-        #"headers=["X-Profile-Token": "profile-secret", "X-Silo-Auth": "auth-secret"] frames=42"#,
+        #"headers=["X-Profile-Token": "profile-secret", "X-WeFlix-Auth": "auth-secret"] frames=42"#,
         #"cache="/var/mobile/Containers/Data/Downloads/Show Name S01E01.mkv" sidecar=Movie Title (2024).en.srt retries=3"#,
         "Authorization: Bearer abc",
         "token=short",
@@ -18,8 +18,8 @@ final class MediaLogRedactorTests: XCTestCase {
         "origin 192.168.1.42:8096/Videos/abc/Movie.mkv",
         "origin [2001:db8::1]:8096/Videos/abc/Movie.mkv",
         #"path=\\media-nas\Movies\Show Name S01E01.mkv"#,
-        "cache ~/Documents/Silo/Show Name S02E03.mkv loaded",
-        "cache /Library/Caches/com.silo/Downloads/title.mkv loaded",
+        "cache ~/Documents/WeFlix/Show Name S02E03.mkv loaded",
+        "cache /Library/Caches/com.weFlix/Downloads/title.mkv loaded",
         "playing [redacted-url] Movie.mkv",
         "hls ready url=master.m3u8 seq=4",
         "session started successfully after 3 retries",
@@ -49,7 +49,7 @@ final class MediaLogRedactorTests: XCTestCase {
     }
 
     func testRedactsCustomCredentialHeadersWithoutDroppingLaterTelemetry() {
-        let source = #"headers=["X-Profile-Token": "profile-secret", "X-Silo-Auth": "auth-secret", "X_Profile_Token": "underscore-secret"] frames=42 rate=1.000"#
+        let source = #"headers=["X-Profile-Token": "profile-secret", "X-WeFlix-Auth": "auth-secret", "X_Profile_Token": "underscore-secret"] frames=42 rate=1.000"#
         let redacted = MediaLogRedactor.sanitize(source)
 
         XCTAssertFalse(redacted.contains("profile-secret"))
@@ -110,12 +110,12 @@ final class MediaLogRedactorTests: XCTestCase {
     }
 
     func testRedactsCachesAndTildeHomePaths() {
-        let caches = MediaLogRedactor.sanitize("cache /Library/Caches/com.silo/Downloads/title.mkv loaded")
+        let caches = MediaLogRedactor.sanitize("cache /Library/Caches/com.weFlix/Downloads/title.mkv loaded")
         XCTAssertFalse(caches.contains("title.mkv"))
         XCTAssertFalse(caches.contains("/Library/Caches"))
         XCTAssertTrue(caches.contains("loaded"))
 
-        let home = MediaLogRedactor.sanitize("cache ~/Documents/Silo/Show Name S02E03.mkv loaded")
+        let home = MediaLogRedactor.sanitize("cache ~/Documents/WeFlix/Show Name S02E03.mkv loaded")
         XCTAssertFalse(home.contains("Show Name"))
         XCTAssertFalse(home.contains("S02E03"))
         XCTAssertFalse(home.contains("~/Documents"))

@@ -212,9 +212,9 @@ struct TVMainTabView: View {
                 .transition(.opacity)
             }
         }
-        .animation(.easeOut(duration: SiloTheme.fastDuration), value: showSignOutConfirm)
+        .animation(.easeOut(duration: WeFlixTheme.fastDuration), value: showSignOutConfirm)
         .ignoresSafeArea(edges: [.top, .horizontal])
-        .tint(.siloOnSurface)
+        .tint(.weFlixOnSurface)
         .fullScreenCover(isPresented: Binding(
             get: { audioStore.isShowingFullPlayer },
             set: { if !$0 { audioStore.dismissFullPlayer() } }
@@ -402,7 +402,7 @@ struct TVMainTabView: View {
 
     private var rootContent: some View {
         ZStack(alignment: .top) {
-            Color.siloBackground
+            Color.weFlixBackground
                 .ignoresSafeArea()
 
             Group {
@@ -599,11 +599,11 @@ struct TVMainTabView: View {
     private func panelIntrinsicWidth(for panel: TVTopMenuPanel) -> CGFloat {
         switch panel {
         case .profile, .root(.recommendations), .root(.libraryShortcut):
-            return SiloTheme.Skyline.dropdownWidth
+            return WeFlixTheme.Skyline.dropdownWidth
         case .root:
-            return SiloTheme.Skyline.dropdownWidth
-                + SiloTheme.Skyline.flyoutGap
-                + SiloTheme.Skyline.flyoutWidth
+            return WeFlixTheme.Skyline.dropdownWidth
+                + WeFlixTheme.Skyline.flyoutGap
+                + WeFlixTheme.Skyline.flyoutWidth
         }
     }
 
@@ -627,16 +627,16 @@ struct TVMainTabView: View {
 
         return panelBody(for: panel, isActive: isActive)
             .padding(.leading, leading)
-            .padding(.top, SiloTheme.Skyline.dropdownTopInset)
+            .padding(.top, WeFlixTheme.Skyline.dropdownTopInset)
             .opacity(isActive ? 1 : 0)
             .scaleEffect(
-                reduceMotion || isActive ? 1 : SiloTheme.Skyline.cascadeOpenScale,
+                reduceMotion || isActive ? 1 : WeFlixTheme.Skyline.cascadeOpenScale,
                 anchor: UnitPoint(x: anchorX, y: 0)
             )
             .allowsHitTesting(isActive)
             .accessibilityHidden(!isActive)
             .animation(
-                reduceMotion ? nil : .easeOut(duration: SiloTheme.Skyline.topMenuPanelOpenDuration),
+                reduceMotion ? nil : .easeOut(duration: WeFlixTheme.Skyline.topMenuPanelOpenDuration),
                 value: isActive
             )
             .onExitCommand { closePanel() }
@@ -651,8 +651,8 @@ struct TVMainTabView: View {
         anchors: [TVTopMenuPanel: Anchor<CGRect>],
         proxy: GeometryProxy
     ) -> CGFloat {
-        let safe = SiloTheme.Skyline.safeAreaX
-        let level1Width = SiloTheme.Skyline.dropdownWidth
+        let safe = WeFlixTheme.Skyline.safeAreaX
+        let level1Width = WeFlixTheme.Skyline.dropdownWidth
         let screenWidth = proxy.size.width
 
         switch panel {
@@ -678,8 +678,8 @@ struct TVMainTabView: View {
             // right; keep the whole thing on screen while preferring to
             // center level-1 under the tab.
             let totalWidth = level1Width
-                + SiloTheme.Skyline.flyoutGap
-                + SiloTheme.Skyline.flyoutWidth
+                + WeFlixTheme.Skyline.flyoutGap
+                + WeFlixTheme.Skyline.flyoutWidth
             let maxLeading = max(safe, screenWidth - safe - totalWidth)
             return min(max(centered, safe), maxLeading)
         }
@@ -695,7 +695,7 @@ struct TVMainTabView: View {
     ) -> CGFloat {
         guard let anchor = anchors[panel] else { return 0.5 }
         let rect = proxy[anchor]
-        let level1Width = SiloTheme.Skyline.dropdownWidth
+        let level1Width = WeFlixTheme.Skyline.dropdownWidth
         let originInPanel = rect.midX - leading
         return min(max(originInPanel / level1Width, 0), 1)
     }
@@ -830,7 +830,7 @@ struct TVMainTabView: View {
         panelFocusExitTask = nil
         panelEntersFocus = false
         panelHasFocus = false
-        withAnimation(reduceMotion ? nil : .easeOut(duration: SiloTheme.Skyline.cascadeScrimDuration)) {
+        withAnimation(reduceMotion ? nil : .easeOut(duration: WeFlixTheme.Skyline.cascadeScrimDuration)) {
             openPanel = panel
         }
     }
@@ -885,7 +885,7 @@ struct TVMainTabView: View {
         panelEntersFocus = true
         panelHasFocus = true
         panelFocusEntryGeneration += 1
-        withAnimation(reduceMotion ? nil : .easeOut(duration: SiloTheme.Skyline.cascadeScrimDuration)) {
+        withAnimation(reduceMotion ? nil : .easeOut(duration: WeFlixTheme.Skyline.cascadeScrimDuration)) {
             openPanel = panel
         }
     }
@@ -901,7 +901,7 @@ struct TVMainTabView: View {
         panelFocusExitTask?.cancel()
         panelFocusExitTask = nil
         let wasFocused = panelHasFocus
-        withAnimation(reduceMotion ? nil : .easeOut(duration: SiloTheme.Skyline.cascadeScrimDuration)) {
+        withAnimation(reduceMotion ? nil : .easeOut(duration: WeFlixTheme.Skyline.cascadeScrimDuration)) {
             openPanel = nil
         }
         panelEntersFocus = false
@@ -944,7 +944,7 @@ struct TVMainTabView: View {
         guard openPanel != nil else { return }
         panelFocusExitTask?.cancel()
         panelFocusExitTask = nil
-        withAnimation(reduceMotion ? nil : .easeOut(duration: SiloTheme.Skyline.cascadeScrimDuration)) {
+        withAnimation(reduceMotion ? nil : .easeOut(duration: WeFlixTheme.Skyline.cascadeScrimDuration)) {
             openPanel = nil
         }
         panelEntersFocus = false
@@ -1013,7 +1013,7 @@ struct TVMainTabView: View {
         // Tear down the panel first, then select the tab + hand focus to the
         // swapped-in content. Selecting the root bumps contentFocusRequest,
         // which the new page consumes as its entry generation.
-        withAnimation(reduceMotion ? nil : .easeOut(duration: SiloTheme.Skyline.cascadeScrimDuration)) {
+        withAnimation(reduceMotion ? nil : .easeOut(duration: WeFlixTheme.Skyline.cascadeScrimDuration)) {
             openPanel = nil
         }
         panelEntersFocus = false
@@ -1032,7 +1032,7 @@ struct TVMainTabView: View {
         panelFocusExitTask = nil
         shortcutPillSelections[libraryId] = pill ?? .recommended
 
-        withAnimation(reduceMotion ? nil : .easeOut(duration: SiloTheme.Skyline.cascadeScrimDuration)) {
+        withAnimation(reduceMotion ? nil : .easeOut(duration: WeFlixTheme.Skyline.cascadeScrimDuration)) {
             openPanel = nil
         }
         panelEntersFocus = false
@@ -1219,7 +1219,7 @@ struct TVMainTabView: View {
         // Tab content switches crossfade over 200 ms (§4.2); the outgoing
         // view never owns focus here because selection happens from the bar.
         // Reduce Motion snaps (the `.identity` transition + nil animation).
-        withAnimation(reduceMotion ? nil : .easeInOut(duration: SiloTheme.normalDuration)) {
+        withAnimation(reduceMotion ? nil : .easeInOut(duration: WeFlixTheme.normalDuration)) {
             selectedRoot = root
             personalRoot = nil
             openPanel = nil
@@ -1263,7 +1263,7 @@ struct TVMainTabView: View {
         // hand-down tokens cannot briefly re-focus rows during an Up return.
         isTopMenuFocused = true
 
-        withAnimation(reduceMotion ? nil : SiloTheme.springAnimation) {
+        withAnimation(reduceMotion ? nil : WeFlixTheme.springAnimation) {
             isTopMenuFocusSuppressed = false
         }
         // Let the bar's enabled state commit before asking its @FocusState to
@@ -1282,7 +1282,7 @@ struct TVMainTabView: View {
         selectedRoot = .home
         panelReturnFocus = nil
         unlockBar()
-        withAnimation(reduceMotion ? nil : SiloTheme.springAnimation) {
+        withAnimation(reduceMotion ? nil : WeFlixTheme.springAnimation) {
             // Un-suppress before requesting focus: requestMenuFocus drops the
             // request while the menu is suppressed, which could leave the
             // Home button unfocused after the exit-to-home gesture.
@@ -1292,7 +1292,7 @@ struct TVMainTabView: View {
     }
 
     private func returnFromPersonalRootInMenu() {
-        withAnimation(reduceMotion ? nil : .easeInOut(duration: SiloTheme.normalDuration)) {
+        withAnimation(reduceMotion ? nil : .easeInOut(duration: WeFlixTheme.normalDuration)) {
             personalRoot = nil
         }
     }
@@ -1380,7 +1380,7 @@ struct TVMainTabView: View {
         router.popToRoot()
         barOwnsFocusOnPopToRoot = false
         suppressTopMenuFocusForContentHandoff()
-        withAnimation(reduceMotion ? nil : .easeInOut(duration: SiloTheme.normalDuration)) {
+        withAnimation(reduceMotion ? nil : .easeInOut(duration: WeFlixTheme.normalDuration)) {
             personalRoot = destination
             openPanel = nil
         }
@@ -1494,7 +1494,7 @@ struct TVMainTabView: View {
             TVServerSetupView(router: router)
         default:
             EmptyStateView(icon: "questionmark.circle", title: "Unknown", subtitle: nil)
-                .siloBackground()
+                .weFlixBackground()
         }
     }
 }

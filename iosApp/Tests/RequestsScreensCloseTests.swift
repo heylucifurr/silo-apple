@@ -1,6 +1,6 @@
 import Foundation
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 /// Open Requests screens close once the server answers that requests are
 /// unavailable (1.0 Requests AC7), back to whatever opened them, and never

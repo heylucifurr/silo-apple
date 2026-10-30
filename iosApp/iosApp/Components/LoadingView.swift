@@ -8,22 +8,22 @@ struct LoadingView: View {
     var body: some View {
         ZStack {
             if usesPageBackground {
-                SiloPageBackdrop()
+                WeFlixPageBackdrop()
             } else {
-                Color.siloBackground.ignoresSafeArea()
+                Color.weFlixBackground.ignoresSafeArea()
             }
 
             VStack(spacing: 20) {
-                SiloWordmarkView(width: 132)
+                WeFlixWordmarkView(width: 132)
 
                 ProgressView()
-                    .tint(.siloOnSurface)
+                    .tint(.weFlixOnSurface)
                     .scaleEffect(1.2)
 
                 if let message {
                     Text(message)
-                        .font(.siloCaption)
-                        .foregroundColor(.siloSecondaryText)
+                        .font(.weFlixCaption)
+                        .foregroundColor(.weFlixSecondaryText)
                 }
             }
         }

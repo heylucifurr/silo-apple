@@ -22,7 +22,7 @@ extension Image {
 }
 
 extension PlatformImage {
-    static func siloImage(cgImage: CGImage) -> PlatformImage {
+    static func weFlixImage(cgImage: CGImage) -> PlatformImage {
         #if canImport(UIKit)
         return PlatformImage(cgImage: cgImage)
         #elseif canImport(AppKit)

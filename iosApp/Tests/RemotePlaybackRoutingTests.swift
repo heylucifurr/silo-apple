@@ -1,6 +1,6 @@
 #if os(iOS)
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 /// Every streaming play on iOS funnels through `AppRouter.presentPlayer`,
 /// where one interceptor decides between the engaged TV and the local
@@ -12,7 +12,7 @@ import XCTest
 final class RemotePlaybackRoutingTests: XCTestCase {
     func testEngagedTVTakesTheRequestAndNoLocalPlayerAppears() async {
         let router = AppRouter()
-        var received: [SiloControlPlaybackRequest] = []
+        var received: [WeFlixControlPlaybackRequest] = []
         router.remotePlaybackInterceptor = { request, _ in
             received.append(request)
             return true
@@ -64,7 +64,7 @@ final class RemotePlaybackRoutingTests: XCTestCase {
 
     func testOfflinePlayPromptsWhileATVIsEngagedAndHonoursTheChoice() async {
         let router = AppRouter()
-        var sentToTV: [SiloControlPlaybackRequest] = []
+        var sentToTV: [WeFlixControlPlaybackRequest] = []
         router.isRemotePlaybackEngaged = { true }
         router.remotePlaybackInterceptor = { request, _ in
             sentToTV.append(request)
@@ -99,7 +99,7 @@ final class RemotePlaybackRoutingTests: XCTestCase {
     func testPlayingADifferentTitleAsksBeforeReplacingWhatTheTVIsPlaying() async {
         let router = AppRouter()
         var sent: [String] = []
-        var consents: [SiloControlReplaceConsent?] = []
+        var consents: [WeFlixControlReplaceConsent?] = []
         router.remotePlaybackInterceptor = { request, replaceConsent in
             sent.append(request.contentId)
             consents.append(replaceConsent)
@@ -116,7 +116,7 @@ final class RemotePlaybackRoutingTests: XCTestCase {
         router.confirmReplaceRemotePlayback()
         await expectEventually("sent after confirmation") { sent == ["miasma"] }
         XCTAssertNil(router.pendingReplaceRemotePlayback)
-        XCTAssertEqual(consents, [SiloControlReplaceConsent(contentId: "oak")],
+        XCTAssertEqual(consents, [WeFlixControlReplaceConsent(contentId: "oak")],
                        "the TV must not ask again after the user agreed here to replace Oak Street")
     }
 
@@ -125,7 +125,7 @@ final class RemotePlaybackRoutingTests: XCTestCase {
     func testResumingTheSameTitleDoesNotAsk() async {
         let router = AppRouter()
         var sent: [String] = []
-        var consents: [SiloControlReplaceConsent?] = []
+        var consents: [WeFlixControlReplaceConsent?] = []
         router.remotePlaybackInterceptor = { request, replaceConsent in
             sent.append(request.contentId)
             consents.append(replaceConsent)
@@ -156,9 +156,9 @@ final class RemotePlaybackRoutingTests: XCTestCase {
     /// fresh client has nothing engaged, and the predicate is what the
     /// legacy per-site `hasActiveSession` checks were replaced with.
     func testFreshClientIsNotEngagedAndLaunchOnEngagedTVDeclines() async {
-        let client = SiloControlClient()
+        let client = WeFlixControlClient()
         XCTAssertFalse(client.remotePlaybackEngaged)
-        let taken = await client.launchOnEngagedTV(SiloControlPlaybackRequest(
+        let taken = await client.launchOnEngagedTV(WeFlixControlPlaybackRequest(
             contentId: "c1", fileId: nil, audioTrackIndex: nil, subtitleTrackIndex: nil,
             startFromBeginning: true, resumePosition: nil
         ))

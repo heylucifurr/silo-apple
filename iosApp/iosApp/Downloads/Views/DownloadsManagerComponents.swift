@@ -40,11 +40,11 @@ private struct DownloadGroupedRowModifier: ViewModifier {
             style: .continuous
         )
         content
-            .background(Color.siloGroupedCell)
+            .background(Color.weFlixGroupedCell)
             .overlay(alignment: .top) {
                 if position.hasSeparator {
                     Rectangle()
-                        .fill(Color.siloDivider)
+                        .fill(Color.weFlixDivider)
                         .frame(height: 1 / displayScale)
                         .padding(.leading, separatorInset)
                 }
@@ -100,7 +100,7 @@ struct DownloadSectionHeader: View {
             }
         }
         .font(.subheadline.weight(.medium))
-        .foregroundColor(.siloSecondaryText)
+        .foregroundColor(.weFlixSecondaryText)
         .padding(.horizontal, 32)
         .padding(.top, 22)
         .padding(.bottom, 7)
@@ -110,32 +110,32 @@ struct DownloadSectionHeader: View {
 // MARK: - Storage summary
 
 /// The storage card at the top of the Downloads Manager: a big "used of
-/// device" figure over a breakdown bar in the Silo wordmark's colors
+/// device" figure over a breakdown bar in the WeFlix wordmark's colors
 /// (series / movies / in progress / other).
 struct DownloadsStorageHeader: View {
     let used: Int64
     let breakdown: DownloadStorageBreakdown
     var activeCount: Int = 0
 
-    private static let seriesColor = Color.siloBrandBlue
-    private static let moviesColor = Color.siloBrandRed
-    private static let inProgressColor = Color.siloBrandOrange
-    private static let otherColor = Color.siloOnSurface.opacity(0.3)
+    private static let seriesColor = Color.weFlixBrandBlue
+    private static let moviesColor = Color.weFlixBrandRed
+    private static let inProgressColor = Color.weFlixBrandOrange
+    private static let otherColor = Color.weFlixOnSurface.opacity(0.3)
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             let amount = Text(DownloadFormatting.bytes(used))
                 .font(.title2.bold())
-                .foregroundColor(.siloOnSurface)
+                .foregroundColor(.weFlixOnSurface)
             let context = Text(contextSuffix)
                 .font(.subheadline)
-                .foregroundColor(.siloSecondaryText)
+                .foregroundColor(.weFlixSecondaryText)
             Text("\(amount)\(context)")
 
             if activeCount > 0 {
                 Text(inProgressLine)
                     .font(.footnote)
-                    .foregroundColor(.siloSecondaryText)
+                    .foregroundColor(.weFlixSecondaryText)
             }
 
             if breakdown.total > 0 {
@@ -177,7 +177,7 @@ struct DownloadsStorageHeader: View {
             }
         }
         .frame(height: 18)
-        .background(Color.siloChromeRestingFill)
+        .background(Color.weFlixChromeRestingFill)
         .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
     }
 
@@ -207,10 +207,10 @@ struct DownloadsStorageHeader: View {
                     .fill(color)
                     .frame(width: 8, height: 8)
                 Text(label)
-                    .foregroundColor(.siloSecondaryText)
+                    .foregroundColor(.weFlixSecondaryText)
                 Text(DownloadFormatting.bytes(bytes))
                     .fontWeight(.semibold)
-                    .foregroundColor(.siloOnSurface)
+                    .foregroundColor(.weFlixOnSurface)
             }
             .font(.footnote)
             .lineLimit(1)
@@ -231,9 +231,9 @@ struct DownloadReclaimBanner: View {
         Button(action: onReview) {
             HStack(spacing: 12) {
                 let amount = Text("Free up \(DownloadFormatting.bytes(bytes))")
-                    .foregroundColor(.siloOnSurface)
+                    .foregroundColor(.weFlixOnSurface)
                 let count = Text(" · \(episodeCount) watched")
-                    .foregroundColor(.siloSecondaryText)
+                    .foregroundColor(.weFlixSecondaryText)
                 Text("\(amount)\(count)")
                     .font(.subheadline)
                     .lineLimit(1)
@@ -242,10 +242,10 @@ struct DownloadReclaimBanner: View {
 
                 Text("Review")
                     .font(.subheadline.weight(.semibold))
-                    .foregroundColor(.siloOnSurface)
+                    .foregroundColor(.weFlixOnSurface)
                     .padding(.horizontal, 14)
                     .padding(.vertical, 7)
-                    .background(Capsule().fill(Color.siloChromeSelectedFill))
+                    .background(Capsule().fill(Color.weFlixChromeSelectedFill))
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 10)
@@ -278,14 +278,14 @@ struct DownloadSortControl: View {
                     Image(systemName: "chevron.down")
                         .font(.caption.weight(.semibold))
                 }
-                .foregroundColor(.siloOnSurface)
+                .foregroundColor(.weFlixOnSurface)
             }
 
             Spacer()
 
             Text("\(itemCount) item\(itemCount == 1 ? "" : "s")")
                 .font(.footnote)
-                .foregroundColor(.siloSecondaryText)
+                .foregroundColor(.weFlixSecondaryText)
         }
         .padding(.horizontal, 32)
         .padding(.top, 22)
@@ -302,10 +302,10 @@ struct DownloadSelectionCircle: View {
     var body: some View {
         ZStack {
             Circle()
-                .fill(selected ? Color.siloOnSurface : Color.clear)
+                .fill(selected ? Color.weFlixOnSurface : Color.clear)
                 .overlay(
                     Circle().stroke(
-                        selected ? Color.siloOnSurface : Color.siloOnSurface.opacity(0.35),
+                        selected ? Color.weFlixOnSurface : Color.weFlixOnSurface.opacity(0.35),
                         lineWidth: 1.5
                     )
                 )

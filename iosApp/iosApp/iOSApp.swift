@@ -1,11 +1,11 @@
 import SwiftUI
 
 @main
-struct SiloApp: App {
+struct WeFlixApp: App {
     #if os(iOS)
-    @UIApplicationDelegateAdaptor(SiloAppDelegate.self) private var appDelegate
+    @UIApplicationDelegateAdaptor(WeFlixAppDelegate.self) private var appDelegate
     #elseif os(macOS)
-    @NSApplicationDelegateAdaptor(SiloMacAppDelegate.self) private var appDelegate
+    @NSApplicationDelegateAdaptor(WeFlixMacAppDelegate.self) private var appDelegate
     #endif
 
     init() {
@@ -24,9 +24,9 @@ struct SiloApp: App {
         ArtworkDisplay.install()
 
         #if os(iOS) || os(tvOS)
-        // Aether's optional host stream enters Silo diagnostics only through a
+        // Aether's optional host stream enters WeFlix diagnostics only through a
         // media-specific redactor and the existing consent/debug-logging gate.
-        // General Apple unified logs are never collected into a Silo report.
+        // General Apple unified logs are never collected into a WeFlix report.
         AetherDiagnosticsBridge.install()
 
         // Opens the launch phase timeline. This runs before any consent
@@ -60,7 +60,7 @@ struct SiloApp: App {
                         #endif
                         return
                     }
-                    SiloDeepLinkCoordinator.shared.receive(url)
+                    WeFlixDeepLinkCoordinator.shared.receive(url)
                 }
                 #if os(macOS)
                 // Deliver URLs to this window instead of opening a new one.
@@ -113,7 +113,7 @@ enum LaunchTimeline {
 
     // MARK: - Launch chain
 
-    /// `SiloApp.init`. Runs before any consent context exists, so the line
+    /// `WeFlixApp.init`. Runs before any consent context exists, so the line
     /// stages in `EarlyBootBuffer` until the first consent establish permits
     /// it. Always `cold`: the warm counterpart is `recordScenePhase`.
     static func recordProcessStart() {

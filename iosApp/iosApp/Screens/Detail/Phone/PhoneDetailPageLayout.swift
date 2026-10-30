@@ -32,7 +32,7 @@ struct PhoneDetailPageLayout<Column: View, PaneArtwork: View, PaneSidebar: View,
     /// Clears the floating Close and Remote buttons, which sit 9pt below the
     /// top edge and are 44pt tall. The content pane scrolls beneath this inset
     /// rather than under the buttons, so it needs no backing strip.
-    static var contentPaneTopInset: CGFloat { 9 + SiloTheme.topBarIconHitSize + 12 }
+    static var contentPaneTopInset: CGFloat { 9 + WeFlixTheme.topBarIconHitSize + 12 }
     /// Room left below the lead section when it pulls the sections up.
     static var contentPaneBottomInset: CGFloat { 20 }
 
@@ -106,7 +106,7 @@ struct PhoneDetailPageLayout<Column: View, PaneArtwork: View, PaneSidebar: View,
             .scrollBounceBehavior(.basedOnSize)
             .frame(width: page.sidebarWidth)
             .clipShape(.rect(cornerRadius: 32, style: .continuous))
-            .siloGlass(in: .rect(cornerRadius: 32, style: .continuous), tint: .black.opacity(0.32))
+            .weFlixGlass(in: .rect(cornerRadius: 32, style: .continuous), tint: .black.opacity(0.32))
             .padding(PhoneDetailHeroLayout.splitSidebarMargin)
 
             ScrollView(.vertical, showsIndicators: false) {

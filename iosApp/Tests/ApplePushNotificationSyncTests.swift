@@ -1,7 +1,7 @@
 #if os(iOS)
 import Foundation
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 private let notificationSyncPath = "/api/v2/notifications/sync"
 

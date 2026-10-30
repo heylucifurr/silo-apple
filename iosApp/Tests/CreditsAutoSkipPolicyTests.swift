@@ -1,5 +1,5 @@
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 final class CreditsAutoSkipPolicyTests: XCTestCase {
     private let credits = TimeRange(start: 1_500, end: 1_790)

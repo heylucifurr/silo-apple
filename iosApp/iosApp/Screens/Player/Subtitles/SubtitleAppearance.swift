@@ -161,7 +161,7 @@ enum SubtitlePositionPreset: String, Codable, CaseIterable, Identifiable {
 
 /// Apple exposes five distinct caption edge treatments. This value is
 /// runtime-only: it is populated from MediaAccessibility and deliberately
-/// excluded from the server-backed Silo appearance JSON.
+/// excluded from the server-backed WeFlix appearance JSON.
 enum SystemCaptionTextEdgeStyle: Equatable {
     case none
     case raised
@@ -214,7 +214,7 @@ struct SubtitleAppearance: Codable, Equatable {
 
     // Runtime-only MediaAccessibility details. These are intentionally not
     // CodingKeys: a device caption profile must never leak into the user's
-    // server-synced Silo appearance or another platform.
+    // server-synced WeFlix appearance or another platform.
     var fontOpacity: Int
     var systemRelativeFontScale: Double?
     var systemTextEdgeStyle: SystemCaptionTextEdgeStyle?

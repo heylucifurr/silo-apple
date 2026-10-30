@@ -84,8 +84,9 @@ enum PrimaryMenuBuiltin: String, Codable, CaseIterable, Identifiable, Sendable {
     var navigationIcon: String {
         switch self {
         case .home: return AppTab.home.icon
-        case .movies: return "film.stack"
-        case .series: return "tv"
+        // Bundled artwork, not SF Symbols: `menuIcon(_:)` draws these.
+        case .movies: return MenuIconAsset.movies
+        case .series: return MenuIconAsset.shows
         case .music: return "rectangle.stack"
         case .audiobooks: return "book.closed"
         case .forYou: return AppTab.recommendations.icon
@@ -339,10 +340,10 @@ extension UICustomizationTransport {
     }
 }
 
-final class SiloUICustomizationTransport: UICustomizationTransport {
-    private let api: SiloAPI
+final class WeFlixUICustomizationTransport: UICustomizationTransport {
+    private let api: WeFlixAPI
 
-    init(api: SiloAPI = .shared) {
+    init(api: WeFlixAPI = .shared) {
         self.api = api
     }
 
@@ -403,7 +404,7 @@ enum UICustomizationCapabilityState: Equatable, Sendable {
         case .supported:
             return nil
         case .serverUpgradeRequired:
-            return "Update this Silo server to use synced interface settings."
+            return "Update this weflix server to use synced interface settings."
         case .unavailable:
             return "Interface settings are read-only until server support can be verified."
         }
@@ -716,7 +717,7 @@ final class UICustomizationPreferences {
 
     init(
         defaults: SharedDefaults = .shared,
-        transport: UICustomizationTransport = SiloUICustomizationTransport(),
+        transport: UICustomizationTransport = WeFlixUICustomizationTransport(),
         cacheKey: @escaping @MainActor () -> String? = UICustomizationPreferences.activeCacheKey,
         requestIdentity: @escaping @MainActor () -> HTTPRequestIdentity? = UICustomizationPreferences.activeRequestIdentity,
         initialCapabilityState: UICustomizationCapabilityState = .checking,
@@ -1973,7 +1974,7 @@ final class UICustomizationPreferences {
         let mapped = SettingsAPIError.from(error)
         switch mapped {
         case .serverUpgradeRequired, .unknownSetting:
-            return "Update this Silo server to sync interface preferences."
+            return "Update this weflix server to sync interface preferences."
         default:
             return mapped.writeFailure == .release
                 ? "The server didn't accept this change, so it wasn't saved."

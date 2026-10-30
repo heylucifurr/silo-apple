@@ -59,7 +59,7 @@ struct MovieDetailContent<BelowOverview: View>: View {
         PhoneDetailPageSurface(
             backdropURL: detail.backdropUrl,
             backdropThumbhash: detail.backdropThumbhash,
-            enablesArtworkGlass: SiloMediaType.isMovieLibrary(detail.type),
+            enablesArtworkGlass: WeFlixMediaType.isMovieLibrary(detail.type),
             keepsSideSafeArea: true
         ) {
             PhoneDetailPageLayout(scrollState: scrollState) {
@@ -83,13 +83,13 @@ struct MovieDetailContent<BelowOverview: View>: View {
                         hero(pane: .overview)
                         belowOverview()
                     }
-                    .padding(.horizontal, SiloTheme.safePadding)
+                    .padding(.horizontal, WeFlixTheme.safePadding)
                     belowFold
                 }
                 .padding(.bottom, 40)
             }
         }
-        .siloResumePlaybackAlert(
+        .weFlixResumePlaybackAlert(
             isPresented: Binding(
                 get: { pendingResumePosition != nil },
                 set: { if !$0 { pendingResumePosition = nil } }
@@ -129,7 +129,7 @@ struct MovieDetailContent<BelowOverview: View>: View {
             ratings: detail.displayRatings,
             creditText: PhoneHeroMetadata.creditText(from: detail),
             overlayData: OverlayData.from(detail),
-            enablesArtworkParallax: SiloMediaType.isMovieLibrary(detail.type),
+            enablesArtworkParallax: WeFlixMediaType.isMovieLibrary(detail.type),
             pane: pane,
             actions: { actionStack },
             belowOverview: { heroExtras }
@@ -291,7 +291,7 @@ struct MovieDetailContent<BelowOverview: View>: View {
             trailersSection
 
             detailsSection
-                .padding(.horizontal, SiloTheme.safePadding)
+                .padding(.horizontal, WeFlixTheme.safePadding)
 
             similarSection
         }
@@ -324,7 +324,7 @@ struct MovieDetailContent<BelowOverview: View>: View {
     private func castSection(cast: [CastMember]) -> some View {
         VStack(alignment: .leading, spacing: 14) {
             PhoneSectionHeader(title: "Cast & Crew")
-                .padding(.horizontal, SiloTheme.safePadding)
+                .padding(.horizontal, WeFlixTheme.safePadding)
             PhoneCastRail(cast: cast, onTap: onPersonTap)
         }
     }

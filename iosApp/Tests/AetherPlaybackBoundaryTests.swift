@@ -1,7 +1,7 @@
 import AetherEngine
 import Foundation
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 @MainActor
 final class AetherPlaybackBoundaryTests: XCTestCase {

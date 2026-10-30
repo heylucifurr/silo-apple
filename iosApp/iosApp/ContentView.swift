@@ -10,10 +10,10 @@ struct ContentView: View {
     @State private var serverRegistry = ServerRegistry.shared
     @State private var audioStore = AudioPlaybackStore()
     @State private var launchPreferences = ProfileLaunchPreferences.shared
-    @State private var deepLinkCoordinator = SiloDeepLinkCoordinator.shared
+    @State private var deepLinkCoordinator = WeFlixDeepLinkCoordinator.shared
     @State private var isApplyingProfileReturnPolicy = false
     #if os(iOS)
-    @State private var siloControl = SiloControlClient()
+    @State private var weFlixControl = WeFlixControlClient()
     @State private var pictureInPicture = PictureInPictureCoordinator.shared
     #endif
     #if DEBUG
@@ -32,7 +32,7 @@ struct ContentView: View {
     /// only one deferred intent: a newer external URL supersedes an older one.
     @State private var pendingDeepLink: URL?
     #if os(iOS)
-    /// A TV sign-in link being approved (`silo://device?…`).
+    /// A TV sign-in link being approved (`weflix://device?…`).
     @State private var deviceApprovalLink: DeviceApprovalLink?
     #endif
     /// Monotonically identifies the newest accepted external navigation
@@ -115,8 +115,8 @@ struct ContentView: View {
         #endif
         .environment(audioStore)
         #if os(iOS)
-        .environment(siloControl)
-        .modifier(RemotePlaybackRoutingModifier(router: router, siloControl: siloControl))
+        .environment(weFlixControl)
+        .modifier(RemotePlaybackRoutingModifier(router: router, weFlixControl: weFlixControl))
         #endif
         .environmentObject(overlayPrefs)
         .preferredColorScheme(.dark)
@@ -210,7 +210,7 @@ struct ContentView: View {
             ExitSentinel.shared.appDidEnterForeground()
             #endif
         }
-        .onReceive(NotificationCenter.default.publisher(for: .siloSessionExpired)) { notification in
+        .onReceive(NotificationCenter.default.publisher(for: .weFlixSessionExpired)) { notification in
             guard let event = notification.object as? SessionExpiryEvent,
                   event.disposition == .persistentSessionCleared else { return }
             Task { @MainActor in
@@ -226,11 +226,11 @@ struct ContentView: View {
                 router.expiredSession()
             }
         }
-        .onReceive(NotificationCenter.default.publisher(for: .siloProfileVerificationRequired)) { notification in
+        .onReceive(NotificationCenter.default.publisher(for: .weFlixProfileVerificationRequired)) { notification in
             guard let event = notification.object as? ProfileVerificationRequiredEvent else { return }
             Task { await AuthService.shared.recoverFromProfileVerificationRequired(event) }
         }
-        .onReceive(NotificationCenter.default.publisher(for: .siloProfileSelectionRequired)) { _ in
+        .onReceive(NotificationCenter.default.publisher(for: .weFlixProfileSelectionRequired)) { _ in
             guard shouldPresentProfileSelectionAfterRecovery(
                 isLoggedIn: AuthService.shared.isLoggedIn,
                 activeProfileID: AuthService.shared.profileId
@@ -515,10 +515,10 @@ struct ContentView: View {
             #if os(iOS)
             switch newPhase {
             case .active:
-                siloControl.appDidBecomeActive()
+                weFlixControl.appDidBecomeActive()
                 DownloadManager.shared.sceneDidBecomeActive()
             case .background:
-                siloControl.appDidEnterBackground()
+                weFlixControl.appDidEnterBackground()
                 // Keep series monitoring alive while backgrounded; only
                 // worth a wake when the profile can download at all.
                 if DownloadManager.shared.downloadsEnabled {
@@ -725,7 +725,7 @@ struct ContentView: View {
     }
 
     /// If background playback starts, stop the away clock. If it later stops
-    /// while Silo is still hidden, begin a fresh interval at that point.
+    /// while WeFlix is still hidden, begin a fresh interval at that point.
     private func updateProfileAwayStartForBackgroundPlayback() {
         guard scenePhase == .background else { return }
         markProfileAwayStartIfNeeded()
@@ -807,7 +807,7 @@ struct ContentView: View {
         switch router.authState {
         case .loading:
             // Covered by the startup splash until the stored route resolves.
-            Color.siloBackground.ignoresSafeArea()
+            Color.weFlixBackground.ignoresSafeArea()
 
         case .needsServerSetup:
             #if os(tvOS)
@@ -889,19 +889,19 @@ struct ContentView: View {
     }
     #endif
 
-    /// Resolves a `silo://` URL (or its legacy `continuum://` alias) to a
+    /// Resolves a `weflix://` URL (or its legacy `continuum://` alias) to a
     /// navigation action. Supported shapes:
-    /// - `silo://item/{contentId}` — push the detail screen
-    /// - `silo://play/{contentId}` — push the player (resume from
+    /// - `weflix://item/{contentId}` — push the detail screen
+    /// - `weflix://play/{contentId}` — push the player (resume from
     ///   last known position)
-    /// - `silo://downloads` — select the Downloads tab (local
+    /// - `weflix://downloads` — select the Downloads tab (local
     ///   download notifications)
-    /// - `silo://watch-party?server=…&token=…` — join a Watch Party
+    /// - `weflix://watch-party?server=…&token=…` — join a Watch Party
     ///   invitation (see `WatchPartyInvitation`)
-    /// - `silo://search?q={term}` — open Search with `term` filled in
+    /// - `weflix://search?q={term}` — open Search with `term` filled in
     ///   (Siri's in-app search; see `SiriSearchLink`)
-    /// - `silo://cast?host=…&port=…&id=…` — connect the remote to the Roku
-    ///   whose pairing code was scanned (iOS; see `SiloControlPairingLink`)
+    /// - `weflix://cast?host=…&port=…&id=…` — connect the remote to the Roku
+    ///   whose pairing code was scanned (iOS; see `WeFlixControlPairingLink`)
     ///
     /// If the auth state isn't ready yet, the link is queued in
     /// `pendingDeepLink` until startup commits its initial route.
@@ -979,13 +979,13 @@ struct ContentView: View {
         }
         // A Roku's pairing code, scanned with the Camera. The remote needs a
         // profile on the Roku's server to connect under.
-        if let link = SiloControlPairingLink(url: url) {
+        if let link = WeFlixControlPairingLink(url: url) {
             guard router.authState == .authenticated,
                   !launchPreferences.requiresSelectionAfterBackground() else {
                 pendingDeepLink = url
                 return
             }
-            Task { await siloControl.connect(pairingLink: link) }
+            Task { await weFlixControl.connect(pairingLink: link) }
             return
         }
         #endif
@@ -1008,7 +1008,7 @@ struct ContentView: View {
             return
         }
         #endif
-        guard SiloURLScheme.isAppURL(url),
+        guard WeFlixURLScheme.isAppURL(url),
               let host = url.host?.lowercased() else { return }
 
         // A content link received while the app is returning must not race the
@@ -1028,15 +1028,13 @@ struct ContentView: View {
                 pendingDeepLink = url
                 return
             }
-            // The tab only exists while downloads are enabled — a stale
-            // download notification tapped after a profile/capability
-            // change must not select a tab that never renders.
+            // Downloads only exists while the profile can download, and it is a
+            // pushed page now: a stale notification must not open a page that
+            // cannot render. Popping first means the push lands one copy of
+            // Downloads on the tab root, never a second on top of an open one.
             guard DownloadManager.shared.downloadsEnabled else { return }
-            // Select the tab rather than pushing the route — a push stacks
-            // a duplicate Downloads screen when that tab is already showing,
-            // and hides the tab context from anywhere else.
             router.popToRoot()
-            router.switchTab(to: .downloads)
+            router.navigate(to: .downloads)
             return
         }
 
@@ -1127,7 +1125,7 @@ struct ContentView: View {
         identity: DeepLinkIdentity
     ) async {
         do {
-            let detail = try await SiloAPI.shared.itemDetail(contentId: contentId)
+            let detail = try await WeFlixAPI.shared.itemDetail(contentId: contentId)
             guard canCompletePlayDeepLink(revision: revision, identity: identity) else {
                 return
             }
@@ -1164,9 +1162,16 @@ struct ContentView: View {
     /// validation is cancelled and the local route stands, which keeps an
     /// offline launch from waiting on the network.
     private func checkInitialState() async {
+        // A build that ships a server address skips the address prompt: with
+        // nothing saved yet, that server becomes active before resolution, so a
+        // first launch lands on sign-in instead of server setup.
+        let needsDefaultServerSetup = await connectDefaultServerIfNeeded()
         let local = await RestoredSessionAuthResolver.resolveLocal()
         guard !Task.isCancelled, router.authState == .loading else { return }
         commitInitialState(local.state)
+        if needsDefaultServerSetup {
+            router.navigate(to: .serverNeedsSetup)
+        }
 
         guard let expectedAccount = local.restoredAccount else { return }
         let validation = await AuthService.shared.validateRestoredSession(
@@ -1193,6 +1198,24 @@ struct ContentView: View {
         #endif
         StartupContentPrefetcher.prefetchForInitialRoute(state)
         router.authState = state
+    }
+
+    /// Makes `DefaultServer` active when this is a first launch with nothing
+    /// saved, so the stored-session resolution that follows finds a server and
+    /// asks for sign-in rather than for an address.
+    ///
+    /// Returns whether that server still needs its own first-run setup. Every
+    /// outcome that did not get that far — an unreachable address, a server too
+    /// old to answer, a build with no `DefaultServer.host` — returns `false`
+    /// and leaves the setup screen as the way in, with the address already
+    /// filled in.
+    private func connectDefaultServerIfNeeded() async -> Bool {
+        guard !DefaultServer.host.isEmpty, ServerRegistry.shared.entries.isEmpty else { return false }
+        do {
+            return try await AuthService.shared.checkServer(url: DefaultServer.url).needsSetup
+        } catch {
+            return false
+        }
     }
 
     /// Saved servers' push registrations still need renewing while no
@@ -1324,7 +1347,7 @@ struct ContentView: View {
         didAttemptDebugAutoPlay = true
 
         do {
-            let home = try await SiloAPI.shared.homeSections()
+            let home = try await WeFlixAPI.shared.homeSections()
             guard let contentId = home.sections.lazy
                 .compactMap({ $0.items.first?.contentId })
                 .first else {
@@ -1381,12 +1404,12 @@ struct ContentView: View {
     #endif
 
     /// Debug: sign in from launch arguments, with the password accepted from
-    /// `SILO_DEBUG_PASSWORD` so physical-device runs do not expose it in the
+    /// `WEFLIX_DEBUG_PASSWORD` so physical-device runs do not expose it in the
     /// process arguments. Simulator fixtures may still pass `-debugPassword`.
     /// Selects the primary (or only) PIN-less profile.
     private func maybeDebugAutoLogin() async {
         let password = debugLaunchArgValue("-debugPassword")
-            ?? ProcessInfo.processInfo.environment["SILO_DEBUG_PASSWORD"]
+            ?? ProcessInfo.processInfo.environment["WEFLIX_DEBUG_PASSWORD"]
         guard router.authState != .authenticated,
               let server = debugLaunchArgValue("-debugServer"),
               let username = debugLaunchArgValue("-debugUsername"),
@@ -1419,7 +1442,7 @@ struct ContentView: View {
         }
     }
     private func resolveDebugSearchContentId(query: String) async throws -> String {
-        let response = try await SiloAPI.shared.catalogPage(.search(query, type: nil, limit: 20)).response
+        let response = try await WeFlixAPI.shared.catalogPage(.search(query, type: nil, limit: 20)).response
 
         let normalizedQuery = query.folding(options: [.caseInsensitive, .diacriticInsensitive], locale: .current)
         let preferredItem = response.items.first { item in
@@ -1434,12 +1457,12 @@ struct ContentView: View {
         }
 
         if preferredItem.type == "series" {
-            let seasons = try await SiloAPI.shared.seasons(seriesId: preferredItem.contentId)
+            let seasons = try await WeFlixAPI.shared.seasons(seriesId: preferredItem.contentId)
             guard let firstSeason = seasons.seasons.sorted(by: { $0.seasonNumber < $1.seasonNumber }).first else {
                 throw DebugAutoPlayError.noPlayableEpisode(seriesTitle: preferredItem.title)
             }
 
-            let episodes = try await SiloAPI.shared.episodes(
+            let episodes = try await WeFlixAPI.shared.episodes(
                 seriesId: preferredItem.contentId,
                 seasonNumber: firstSeason.seasonNumber
             )
@@ -1482,7 +1505,7 @@ struct ContentView: View {
             // is a bug.
             let _ = assertionFailure("No signed-out destination for \(route)")
             EmptyStateView(icon: "questionmark.circle", title: "Unknown", subtitle: nil)
-                .siloPageBackground()
+                .weFlixPageBackground()
         }
     }
 
@@ -1511,7 +1534,7 @@ struct ContentView: View {
             #endif
         default:
             EmptyStateView(icon: "questionmark.circle", title: "Unknown", subtitle: nil)
-                .siloPageBackground()
+                .weFlixPageBackground()
         }
     }
 }
@@ -2085,7 +2108,7 @@ private struct FixedPrimarySplitViewWidth: UIViewControllerRepresentable {
 /// play would replace the TV's title or bypass it for a download.
 private struct RemotePlaybackRoutingModifier: ViewModifier {
     let router: AppRouter
-    let siloControl: SiloControlClient
+    let weFlixControl: WeFlixControlClient
 
     func body(content: Content) -> some View {
         content
@@ -2093,18 +2116,18 @@ private struct RemotePlaybackRoutingModifier: ViewModifier {
                 // One routing decision for every streaming play on iOS: an
                 // engaged TV (including one mid-reconnect) takes the request;
                 // otherwise the local player opens as before.
-                router.remotePlaybackInterceptor = { [siloControl] request, replaceConsent in
-                    await siloControl.launchOnEngagedTV(request, replaceConsent: replaceConsent)
+                router.remotePlaybackInterceptor = { [weFlixControl] request, replaceConsent in
+                    await weFlixControl.launchOnEngagedTV(request, replaceConsent: replaceConsent)
                 }
-                router.isRemotePlaybackEngaged = { [siloControl] in siloControl.remotePlaybackEngaged }
-                router.remotePlaybackCurrentTitle = { [siloControl] in
-                    guard siloControl.remotePlaybackEngaged,
-                          let state = siloControl.state,
+                router.isRemotePlaybackEngaged = { [weFlixControl] in weFlixControl.remotePlaybackEngaged }
+                router.remotePlaybackCurrentTitle = { [weFlixControl] in
+                    guard weFlixControl.remotePlaybackEngaged,
+                          let state = weFlixControl.state,
                           let contentId = state.contentId, !contentId.isEmpty else { return nil }
                     return (
                         title: state.title,
                         contentId: contentId,
-                        targetName: siloControl.activeTarget?.name ?? siloControl.lastTarget?.name ?? "the TV"
+                        targetName: weFlixControl.activeTarget?.name ?? weFlixControl.lastTarget?.name ?? "the TV"
                     )
                 }
             }
@@ -2130,7 +2153,7 @@ private struct RemotePlaybackRoutingModifier: ViewModifier {
                 ),
                 titleVisibility: .visible
             ) {
-                Button("Play on \(siloControl.activeTarget?.name ?? siloControl.lastTarget?.name ?? "TV")") {
+                Button("Play on \(weFlixControl.activeTarget?.name ?? weFlixControl.lastTarget?.name ?? "TV")") {
                     router.sendPendingOfflinePlayToTV()
                 }
                 Button("Play on this \(UIDevice.current.model)") {
@@ -2200,7 +2223,7 @@ private struct MacRootPageTopInset: ViewModifier {
     func body(content: Content) -> some View {
         if reclaimsToolbarStrip {
             content
-                .padding(.top, SiloTheme.padding)
+                .padding(.top, WeFlixTheme.padding)
                 .ignoresSafeArea(.container, edges: .top)
         } else {
             content
@@ -2292,11 +2315,15 @@ func projectedMainTabDestinations(
         case .builtin(.calendar): destination = .app(.calendar)
         case .library(let libraryId, let label):
             let library = availableLibraries.first(where: { $0.id == libraryId })
+            // A library the profile can see takes its media type's artwork; one
+            // it cannot yet keeps the generic stack.
+            let icon = library.map(menuIconNames(for:))
+                ?? (icon: "rectangle.stack", selectedIcon: "rectangle.stack.fill")
             destination = .library(
                 id: libraryId,
                 label: library?.name ?? label,
-                icon: library?.navigationIcon ?? "rectangle.stack",
-                selectedIcon: library?.selectedNavigationIcon ?? "rectangle.stack.fill"
+                icon: icon.icon,
+                selectedIcon: icon.selectedIcon
             )
         case .section, .collection:
             destination = nil
@@ -2457,7 +2484,7 @@ struct MainTabView: View {
     @Environment(AudioPlaybackStore.self) private var audioStore
     @Environment(\.scenePhase) private var scenePhase
     #if os(iOS)
-    @Environment(SiloControlClient.self) private var siloControl
+    @Environment(WeFlixControlClient.self) private var weFlixControl
     /// For You is normally constructed lazily by TabView. Own its model at the
     /// shell level so the existing startup single-flight can fill it before
     /// the user taps the tab, making the destination paint immediately.
@@ -2503,7 +2530,7 @@ struct MainTabView: View {
             StatusColumnLayout(safeArea: proxy.safeAreaInsets)
         } action: { statusColumn = $0 }
         #endif
-        .tint(.siloOnSurface)
+        .tint(.weFlixOnSurface)
         #if os(iOS)
         .overlay {
             if router.presentedItemDetail != nil {
@@ -2513,7 +2540,7 @@ struct MainTabView: View {
                 // rounded detail card while it is open.
                 Rectangle()
                     .fill(.ultraThickMaterial)
-                    .overlay(Color.siloGlassStrong.opacity(0.92))
+                    .overlay(Color.weFlixGlassStrong.opacity(0.92))
                     .ignoresSafeArea()
                     .allowsHitTesting(false)
                     // A sideways swipe on the card reveals the page it returns to.
@@ -2561,7 +2588,7 @@ struct MainTabView: View {
         // already be .active when the authenticated UI first appears, so the
         // scenePhase onChange alone would miss it. Idempotent — the controller
         // guards against duplicate probes.
-        .task { siloControl.attemptAutoResumeIfIdle() }
+        .task { weFlixControl.attemptAutoResumeIfIdle() }
         // Join the authenticated startup prefetch immediately and retain its
         // decoded rows in the model TabView will later display.
         .task { await recommendationsViewModel.loadRecommendations() }
@@ -2649,13 +2676,13 @@ struct MainTabView: View {
                 router.refitItemDetail()
             }
         }
-        .siloRemoteControl(
+        .weFlixRemoteControl(
             isPresented: Binding(
-                get: { siloControl.isShowingRemoteControl },
-                set: { if !$0 { siloControl.hideRemoteControl() } }
+                get: { weFlixControl.isShowingRemoteControl },
+                set: { if !$0 { weFlixControl.hideRemoteControl() } }
             ),
             coversWindow: router.presentsItemDetailFullWindow || statusColumn != nil,
-            controller: siloControl
+            controller: weFlixControl
         )
         #endif
         // Outside the presentation modifiers so presented covers (audio
@@ -2682,7 +2709,7 @@ struct MainTabView: View {
         router.pendingOfflinePlayChoice = nil
         router.presentedPlayer = nil
         audioStore.dismissFullPlayer()
-        siloControl.hideRemoteControl()
+        weFlixControl.hideRemoteControl()
         router.dismissItemDetail()
         router.popToRoot()
         if visibleDestinations.contains(where: { $0.id == .app(.search) }) {
@@ -2795,10 +2822,22 @@ struct MainTabView: View {
             ),
             showAudiobooks: navPrefs.showAudiobooks
         )
+        #if os(iOS)
+        // The phone's tab bar trades Downloads for Requests. Downloads opens as
+        // a pushed page from the profile menu instead (`Route.downloads`), which
+        // is also where the `weflix://downloads` deep link goes.
+        if RequestsFeatureStore.shared.isEnabled,
+           !destinations.contains(where: { $0.id == .app(.requests) }) {
+            destinations.append(.app(.requests))
+        }
+        #else
+        // Mac and TV keep Downloads where it is; the Mac sidebar adds its own
+        // Requests row.
         if DownloadManager.shared.downloadsEnabled,
            !destinations.contains(where: { $0.id == .app(.downloads) }) {
             destinations.append(.app(.downloads))
         }
+        #endif
         return destinations
     }
 
@@ -2831,7 +2870,7 @@ struct MainTabView: View {
     }
 
     private var sidebarTitle: String {
-        serverRegistry.activeServer?.displayName ?? "Silo"
+        serverRegistry.activeServer?.displayName ?? "weflix"
     }
 
     /// iPhone + iPad compact width: bottom tab bar, single navigation stack.
@@ -2839,18 +2878,25 @@ struct MainTabView: View {
         NavigationStack(path: $router.path) {
             TabView(selection: $selectedDestinationID) {
                 ForEach(visibleDestinations) { destination in
-                    Tab(
-                        destination.title,
-                        systemImage: selectedDestinationID == destination.id
-                            ? destination.selectedIcon
-                            : destination.icon,
-                        value: destination.id
-                    ) {
-                        destinationContent(for: destination)
-                            #if os(iOS)
-                            .toolbar(statusColumn == nil ? .automatic : .hidden, for: .tabBar)
-                            #endif
-                    }
+                    // `.tabItem` rather than `Tab(_:systemImage:)`: that initialiser
+                    // takes an SF Symbol name only, and the media categories carry
+                    // bundled artwork. `menuIcon(_:)` draws either kind.
+                    destinationContent(for: destination)
+                        #if os(iOS)
+                        .toolbar(statusColumn == nil ? .automatic : .hidden, for: .tabBar)
+                        #endif
+                        .tabItem {
+                            Label {
+                                Text(destination.title)
+                            } icon: {
+                                menuIcon(
+                                    selectedDestinationID == destination.id
+                                        ? destination.selectedIcon
+                                        : destination.icon
+                                )
+                            }
+                        }
+                        .tag(destination.id)
                 }
             }
             .navigationDestination(for: Route.self) { route in
@@ -2858,7 +2904,7 @@ struct MainTabView: View {
             }
             #if os(iOS)
             .environment(\.statusColumn, statusColumn)
-            .siloTabBarMinimizeOnScroll()
+            .weFlixTabBarMinimizeOnScroll()
             .modifier(NowPlayingShelfAttachment(showsCard: statusColumn != nil))
             // Outside the shelf's bottom inset, which would otherwise shorten
             // the column and push its actions up into the system status.
@@ -2884,7 +2930,7 @@ struct MainTabView: View {
                 topBarActions: TabTopBarActions(
                     onSearch: { router.navigate(to: .search) },
                     onOpenSettings: { router.navigate(to: .settings) },
-                    onOpenRequests: { router.navigate(to: .requestsHub) },
+                    onOpenDownloads: { router.navigate(to: .downloads) },
                     onSwitchProfile: { router.switchProfile() },
                     onSwitchServer: { router.navigate(to: .serverList) },
                     onSignOut: { router.signOutAndReset() },
@@ -2974,8 +3020,8 @@ struct MainTabView: View {
         HStack(spacing: 0) {
             Color.clear
                 .frame(
-                    width: SiloTheme.topBarIconHitSize,
-                    height: SiloTheme.topBarIconHitSize
+                    width: WeFlixTheme.topBarIconHitSize,
+                    height: WeFlixTheme.topBarIconHitSize
                 )
                 .accessibilityHidden(true)
 
@@ -2988,8 +3034,8 @@ struct MainTabView: View {
                 Image(systemName: "arrow.left")
                     .font(.body.weight(.semibold))
                     .frame(
-                        width: SiloTheme.topBarIconHitSize,
-                        height: SiloTheme.topBarIconHitSize
+                        width: WeFlixTheme.topBarIconHitSize,
+                        height: WeFlixTheme.topBarIconHitSize
                     )
                     .contentShape(Rectangle())
             }
@@ -3014,32 +3060,32 @@ struct MainTabView: View {
             )
                 .navigationTitle(sidebarTitle)
                 .navigationSplitViewColumnWidth(
-                    min: SiloTheme.macSidebarMinWidth,
-                    ideal: SiloTheme.macSidebarIdealWidth,
-                    max: SiloTheme.macSidebarMaxWidth
+                    min: WeFlixTheme.macSidebarMinWidth,
+                    ideal: WeFlixTheme.macSidebarIdealWidth,
+                    max: WeFlixTheme.macSidebarMaxWidth
                 )
         } detail: {
             sidebarDetailContent
         }
         // One canvas for the window, title bar and page, so no separate
         // strip sits beside the sidebar.
-        .containerBackground(Color.siloPageCanvas, for: .window)
+        .containerBackground(Color.weFlixPageCanvas, for: .window)
         .toolbarBackground(.hidden, for: .windowToolbar)
-        .onReceive(NotificationCenter.default.publisher(for: .siloOpenSettings)) { _ in
+        .onReceive(NotificationCenter.default.publisher(for: .weFlixOpenSettings)) { _ in
             // Never push over the player: leaving it tears playback down.
             // Settings already on the stack stays where it is.
             guard !isPlayerOnScreen,
                   !router.visiblePushedRoutes.contains(.settings) else { return }
             router.navigate(to: .settings)
         }
-        .onReceive(NotificationCenter.default.publisher(for: .siloOpenSearch)) { _ in
+        .onReceive(NotificationCenter.default.publisher(for: .weFlixOpenSearch)) { _ in
             guard !isPlayerOnScreen else { return }
             selectSidebarDestination(.app(.search))
         }
         .onChange(of: isPlayerOnScreen) { _, isPlaying in
             // The player gets the whole window; the sidebar comes back as it
             // was when playback ends.
-            withAnimation(.easeInOut(duration: SiloTheme.normalDuration)) {
+            withAnimation(.easeInOut(duration: WeFlixTheme.normalDuration)) {
                 if isPlaying {
                     columnVisibilityBeforePlayback = columnVisibility
                     columnVisibility = .detailOnly
@@ -3116,7 +3162,7 @@ struct MainTabView: View {
                 Label {
                     Text(destination.title)
                 } icon: {
-                    Image(systemName: isSelected ? destination.selectedIcon : destination.icon)
+                    menuIcon(isSelected ? destination.selectedIcon : destination.icon)
                         #if os(iOS)
                         // Row icons otherwise take the list's graphite tint,
                         // which is also the selected row's fill.
@@ -3133,7 +3179,7 @@ struct MainTabView: View {
         #if os(iOS)
         // The shell's near-white tint would fill the selected row under the
         // system's white text, so the selected row gets a graphite fill.
-        .tint(Color.siloIconTile)
+        .tint(Color.weFlixIconTile)
         #endif
     }
 
@@ -3361,6 +3407,8 @@ struct MainTabView: View {
             #endif
         case .requestsHub:
             RequestsHubView()
+        case .downloads:
+            DownloadsView()
         case .requestDetail(let mediaType, let tmdbId):
             RequestDetailView(mediaType: mediaType, tmdbId: tmdbId)
         case .myRequests:
@@ -3398,7 +3446,7 @@ struct MainTabView: View {
             AutoDownloadsView()
         default:
             EmptyStateView(icon: "questionmark.circle", title: "Unknown", subtitle: nil)
-                .siloPageBackground()
+                .weFlixPageBackground()
         }
     }
 

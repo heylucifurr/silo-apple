@@ -1,38 +1,38 @@
 import Foundation
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 final class PlaybackMediaAuthorizationTests: XCTestCase {
     func testSubtitleScopeKeepsArtifactsAndFontsOnTheOriginalAPISession() throws {
         let scope = try PlaybackMediaAuthorization.SubtitleScope(
-            serverURL: "https://api.example/silo", sessionID: "session-one"
+            serverURL: "https://api.example/weFlix", sessionID: "session-one"
         )
         for resource in [
-            "https://api.example/silo/api/v2/stream/session-one/subtitles/2.ass",
-            "https://api.example:443/silo/api/v2/stream/session-one/subtitles/2/fonts?file_id=42&embedded_stream_index=3",
-            "https://api.example/silo/api/v2/stream/session-one/subtitles/2.srt?downloaded_subtitle_id=8",
-            "https://api.example/silo/api/v2/stream/session-one/subtitles/2.vtt?external_subtitle_key=" + String(repeating: "a1", count: 32),
+            "https://api.example/weFlix/api/v2/stream/session-one/subtitles/2.ass",
+            "https://api.example:443/weFlix/api/v2/stream/session-one/subtitles/2/fonts?file_id=42&embedded_stream_index=3",
+            "https://api.example/weFlix/api/v2/stream/session-one/subtitles/2.srt?downloaded_subtitle_id=8",
+            "https://api.example/weFlix/api/v2/stream/session-one/subtitles/2.vtt?external_subtitle_key=" + String(repeating: "a1", count: 32),
         ] {
             XCTAssertTrue(scope.allows(url(resource)), resource)
         }
         for resource in [
-            "https://api.example/silo/api/v2/stream/session-two/subtitles/2.ass",
-            "https://proxy.example/silo/api/v2/stream/session-one/subtitles/2.ass",
-            "http://api.example/silo/api/v2/stream/session-one/subtitles/2.ass",
+            "https://api.example/weFlix/api/v2/stream/session-two/subtitles/2.ass",
+            "https://proxy.example/weFlix/api/v2/stream/session-one/subtitles/2.ass",
+            "http://api.example/weFlix/api/v2/stream/session-one/subtitles/2.ass",
             "https://api.example/api/v2/stream/session-one/subtitles/2.ass",
-            "https://api.example/silo/api/v2/stream/session-one",
-            "https://api.example/silo/api/v2/auth/refresh",
-            "https://api.example/silo/api/v2/playback/transcode/session-one/master.m3u8",
-            "https://api.example/silo/api/v2/stream/session-one/subtitles/2/fonts/extra",
-            "https://api.example/silo/api/v2/stream/session-one/subtitles/%252e%252e",
-            "https://api.example/silo/api/v2/stream/session-one/subtitles/2.ass?token=secret",
-            "https://api.example/silo/api/v2/stream/session-one/subtitles/2.ass?file_id=1&file_id=2",
-            "https://api.example/silo/api/v2/stream/session-one/subtitles/2.ass?embedded_stream_index=1&downloaded_subtitle_id=2",
-            "https://api.example/silo/api/v2/stream/session-one/subtitles/2.ass#fragment",
+            "https://api.example/weFlix/api/v2/stream/session-one",
+            "https://api.example/weFlix/api/v2/auth/refresh",
+            "https://api.example/weFlix/api/v2/playback/transcode/session-one/master.m3u8",
+            "https://api.example/weFlix/api/v2/stream/session-one/subtitles/2/fonts/extra",
+            "https://api.example/weFlix/api/v2/stream/session-one/subtitles/%252e%252e",
+            "https://api.example/weFlix/api/v2/stream/session-one/subtitles/2.ass?token=secret",
+            "https://api.example/weFlix/api/v2/stream/session-one/subtitles/2.ass?file_id=1&file_id=2",
+            "https://api.example/weFlix/api/v2/stream/session-one/subtitles/2.ass?embedded_stream_index=1&downloaded_subtitle_id=2",
+            "https://api.example/weFlix/api/v2/stream/session-one/subtitles/2.ass#fragment",
             // Only the v2 media namespace the plan minted: no unrooted or
             // other-version twin of the same route.
-            "https://api.example/silo/stream/session-one/subtitles/2.ass",
-            "https://api.example/silo/api/v3/stream/session-one/subtitles/2.ass",
+            "https://api.example/weFlix/stream/session-one/subtitles/2.ass",
+            "https://api.example/weFlix/api/v3/stream/session-one/subtitles/2.ass",
         ] {
             XCTAssertFalse(scope.allows(url(resource)), resource)
         }
@@ -40,25 +40,25 @@ final class PlaybackMediaAuthorizationTests: XCTestCase {
 
     func testAPIMasterAuthorizesOnlyItsOwnSessionMedia() throws {
         let scope = try PlaybackMediaAuthorization.Scope(
-            sourceURL: url("https://api.example/silo/api/v2/playback/transcode/session-one/master.m3u8"),
-            serverURL: "https://api.example/silo/",
+            sourceURL: url("https://api.example/weFlix/api/v2/playback/transcode/session-one/master.m3u8"),
+            serverURL: "https://api.example/weFlix/",
             sessionID: "session-one"
         )
 
-        XCTAssertTrue(scope.allows(url("https://api.example/silo/api/v2/playback/transcode/session-one/master.m3u8")))
-        XCTAssertTrue(scope.allows(url("https://api.example:443/silo/api/v2/playback/transcode/session-one/segment/init.mp4")))
-        XCTAssertTrue(scope.allows(url("https://api.example/silo/api/v2/playback/transcode/session-one/segment/seg_00001.m4s")))
-        XCTAssertFalse(scope.allows(url("https://api.example/silo/api/v2/playback/transcode/session-two/segment/seg_00001.m4s")))
-        XCTAssertFalse(scope.allows(url("https://api.example/silo/api/v2/auth/refresh")))
-        XCTAssertFalse(scope.allows(url("https://api.example/silo/api/v2/stream/session-one")))
+        XCTAssertTrue(scope.allows(url("https://api.example/weFlix/api/v2/playback/transcode/session-one/master.m3u8")))
+        XCTAssertTrue(scope.allows(url("https://api.example:443/weFlix/api/v2/playback/transcode/session-one/segment/init.mp4")))
+        XCTAssertTrue(scope.allows(url("https://api.example/weFlix/api/v2/playback/transcode/session-one/segment/seg_00001.m4s")))
+        XCTAssertFalse(scope.allows(url("https://api.example/weFlix/api/v2/playback/transcode/session-two/segment/seg_00001.m4s")))
+        XCTAssertFalse(scope.allows(url("https://api.example/weFlix/api/v2/auth/refresh")))
+        XCTAssertFalse(scope.allows(url("https://api.example/weFlix/api/v2/stream/session-one")))
         XCTAssertFalse(scope.allows(url("https://api.example/api/v2/playback/transcode/session-one/master.m3u8")))
-        XCTAssertFalse(scope.allows(url("https://api.example/silo/playback/transcode/session-one/segment/seg_00001.m4s")))
+        XCTAssertFalse(scope.allows(url("https://api.example/weFlix/playback/transcode/session-one/segment/seg_00001.m4s")))
     }
 
     func testProxyMasterNeverAuthorizesAnotherOriginOrRouteFamily() throws {
         let scope = try PlaybackMediaAuthorization.Scope(
             sourceURL: url("https://proxy.example:8443/stream/v3/session-one/master.m3u8"),
-            serverURL: "https://api.example/silo",
+            serverURL: "https://api.example/weFlix",
             sessionID: "session-one"
         )
         XCTAssertTrue(scope.allows(url("https://PROXY.example:8443/stream/v3/session-one/segment/seg_00001.ts")))
@@ -66,7 +66,7 @@ final class PlaybackMediaAuthorizationTests: XCTestCase {
             "https://proxy.example/stream/v3/session-one/segment/seg_00001.ts",
             "http://proxy.example:8443/stream/v3/session-one/segment/seg_00001.ts",
             "https://another-proxy.example:8443/stream/v3/session-one/segment/seg_00001.ts",
-            "https://api.example/silo/api/v2/playback/transcode/session-one/master.m3u8",
+            "https://api.example/weFlix/api/v2/playback/transcode/session-one/master.m3u8",
             "https://proxy.example:8443/stream/v3/session-two/master.m3u8",
             "https://proxy.example:8443/stream/v3/session-one",
             "https://proxy.example:8443/api/v2/auth/refresh",
@@ -77,11 +77,11 @@ final class PlaybackMediaAuthorizationTests: XCTestCase {
 
     func testProgressiveRoutesAuthorizeOnlyTheirPinnedPathAndSeekQuery() throws {
         for source in [
-            "https://api.example/silo/api/v2/stream/session-one?seek=8",
+            "https://api.example/weFlix/api/v2/stream/session-one?seek=8",
             "https://proxy.example/stream/v3/session-one?seek=8",
         ] {
             let scope = try PlaybackMediaAuthorization.Scope(
-                sourceURL: url(source), serverURL: "https://api.example/silo", sessionID: "session-one"
+                sourceURL: url(source), serverURL: "https://api.example/weFlix", sessionID: "session-one"
             )
             let path = String(source.split(separator: "?")[0])
             XCTAssertTrue(scope.allows(url(source)))
@@ -107,11 +107,11 @@ final class PlaybackMediaAuthorizationTests: XCTestCase {
     /// and subtitle playlists as the master route under `silo_rendition`.
     func testHLSMasterAuthorizesItsRenditionPlaylistsOnly() throws {
         for master in [
-            "https://api.example/silo/api/v2/playback/transcode/session-one/master.m3u8",
+            "https://api.example/weFlix/api/v2/playback/transcode/session-one/master.m3u8",
             "https://proxy.example/stream/v3/session-one/master.m3u8",
         ] {
             let scope = try PlaybackMediaAuthorization.Scope(
-                sourceURL: url(master), serverURL: "https://api.example/silo", sessionID: "session-one"
+                sourceURL: url(master), serverURL: "https://api.example/weFlix", sessionID: "session-one"
             )
             XCTAssertTrue(scope.allows(url(master + "?silo_rendition=video")), master)
             XCTAssertTrue(scope.allows(url(master + "?silo_rendition=subtitles")), master)
@@ -124,10 +124,10 @@ final class PlaybackMediaAuthorizationTests: XCTestCase {
             XCTAssertFalse(scope.allows(url(segments + "seg_00001.ts?silo_rendition=video")), master)
         }
         let progressive = try PlaybackMediaAuthorization.Scope(
-            sourceURL: url("https://api.example/silo/api/v2/stream/session-one"),
-            serverURL: "https://api.example/silo", sessionID: "session-one"
+            sourceURL: url("https://api.example/weFlix/api/v2/stream/session-one"),
+            serverURL: "https://api.example/weFlix", sessionID: "session-one"
         )
-        XCTAssertFalse(progressive.allows(url("https://api.example/silo/api/v2/stream/session-one?silo_rendition=video")))
+        XCTAssertFalse(progressive.allows(url("https://api.example/weFlix/api/v2/stream/session-one?silo_rendition=video")))
     }
 
     func testUnexpectedQueriesAndURLCredentialsAreDenied() throws {

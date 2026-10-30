@@ -37,7 +37,7 @@ struct CompanionPairingCard: View {
                 .accessibilityHidden(started)
 
             card
-                .siloFormWidth(540)
+                .weFlixFormWidth(540)
                 .padding(.horizontal, 10)
                 .padding(.bottom, 8)
                 .offset(y: appeared ? 0 : 700)
@@ -117,24 +117,24 @@ struct CompanionPairingCard: View {
             heroGlyph.padding(.bottom, 16)
             if let server {
                 Text("Sign in \(tv.name) to \(server.displayName)?")
-                    .font(.siloTitle)
+                    .font(.weFlixTitle)
                     .multilineTextAlignment(.center)
                 // Unauthenticated Bonjour: the name and state are the TV's
                 // claim, checked against its code on the next step.
                 Text(Self.signInOfferBody(tvName: tv.name))
-                    .font(.siloCaption)
+                    .font(.weFlixCaption)
                     .foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)
                     .padding(.top, 6)
                 primaryButton("Sign In") { setUp() }.padding(.top, 22)
             } else {
                 Text("Set Up \(tv.name)")
-                    .font(.siloTitle)
+                    .font(.weFlixTitle)
                     .multilineTextAlignment(.center)
                 Text(tv.isRoku
                      ? "Sign \(tv.name) in to a server from this \(UIDevice.current.model)."
                      : "Sign \(tv.name) in to your servers from this \(UIDevice.current.model).")
-                    .font(.siloCaption)
+                    .font(.weFlixCaption)
                     .foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)
                     .padding(.top, 6)
@@ -171,15 +171,15 @@ struct CompanionPairingCard: View {
                 Image(systemName: "server.rack")
                     .font(.system(size: 16, weight: .semibold))
                     .frame(width: 34, height: 34)
-                    .background(Color.siloIconTile, in: RoundedRectangle(cornerRadius: 9, style: .continuous))
+                    .background(Color.weFlixIconTile, in: RoundedRectangle(cornerRadius: 9, style: .continuous))
                     .foregroundStyle(.white)
                 VStack(alignment: .leading, spacing: 2) {
                     Text(server.displayName)
-                        .font(.siloBody)
+                        .font(.weFlixBody)
                         .foregroundStyle(.primary)
                         .lineLimit(1)
                     Text(server.url)
-                        .font(.siloCaption)
+                        .font(.weFlixCaption)
                         .foregroundStyle(.secondary)
                         .lineLimit(2)
                         .truncationMode(.middle)
@@ -189,12 +189,12 @@ struct CompanionPairingCard: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
                 Image(systemName: isOn ? "checkmark.circle.fill" : "circle")
                     .font(.system(size: 22))
-                    .foregroundStyle(isOn ? Color.siloOnSurface : Color.secondary)
+                    .foregroundStyle(isOn ? Color.weFlixOnSurface : Color.secondary)
             }
             .padding(.horizontal, 14)
             .padding(.vertical, 12)
             .background(
-                isOn ? Color.siloChromeSelectedFill : Color.siloChromeRestingFill,
+                isOn ? Color.weFlixChromeSelectedFill : Color.weFlixChromeRestingFill,
                 in: RoundedRectangle(cornerRadius: 13, style: .continuous)
             )
         }
@@ -221,10 +221,10 @@ struct CompanionPairingCard: View {
                          code: String, matchWords: String?) -> some View {
         VStack(spacing: 0) {
             Text("Check that \(tv.name) shows")
-                .font(.siloCaption)
+                .font(.weFlixCaption)
                 .foregroundStyle(.secondary)
             Text(DeviceUserCode.display(code))
-                .font(.siloPIN)
+                .font(.weFlixPIN)
                 .lineLimit(1)
                 .minimumScaleFactor(0.6)
                 .padding(.top, 8)
@@ -236,24 +236,24 @@ struct CompanionPairingCard: View {
             // "Older phones show ..." line.
             if let olderTVLine = Self.olderTVLine(matchWords: matchWords) {
                 Text(olderTVLine)
-                    .font(.siloCaption)
+                    .font(.weFlixCaption)
                     .foregroundStyle(.tertiary)
                     .multilineTextAlignment(.center)
                     .padding(.top, 4)
             }
             Text(TVApprovalCard.signInLine(serverName: serverName, serverHost: serverHost, accountName: accountName))
-                .font(.siloBody)
+                .font(.weFlixBody)
                 .multilineTextAlignment(.center)
                 .fixedSize(horizontal: false, vertical: true)
                 .padding(.top, 14)
             Text(TVApprovalCard.profilesLine)
-                .font(.siloCaption)
+                .font(.weFlixCaption)
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
                 .fixedSize(horizontal: false, vertical: true)
                 .padding(.top, 8)
             Text(TVApprovalCard.onlyApproveInFrontLine)
-                .font(.siloCaption)
+                .font(.weFlixCaption)
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
                 .fixedSize(horizontal: false, vertical: true)
@@ -281,11 +281,11 @@ struct CompanionPairingCard: View {
             Text(signedIn.isEmpty
                 ? (server == nil ? "Setup didn’t finish" : "Sign-in didn’t finish")
                 : (server == nil ? "Set up \(signedIn.joined(separator: ", "))" : "\(tv.name) is signed in"))
-                .font(.siloHeadline)
+                .font(.weFlixHeadline)
                 .multilineTextAlignment(.center)
             ForEach(failed, id: \.name) { failure in
                 Text(failure.summary)
-                    .font(.siloCaption)
+                    .font(.weFlixCaption)
                     .foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)
                     .padding(.top, 4)
@@ -306,7 +306,7 @@ struct CompanionPairingCard: View {
                 .foregroundStyle(.yellow)
                 .padding(.bottom, 12)
             Text(message)
-                .font(.siloBody)
+                .font(.weFlixBody)
                 .multilineTextAlignment(.center)
             primaryButton("Try Again") { retry() }.padding(.top, 22)
             tertiaryButton("Close") { dismiss() }.padding(.top, 4)
@@ -326,8 +326,8 @@ struct CompanionPairingCard: View {
         HStack(spacing: 12) {
             Image(systemName: "tv").font(.system(size: 22)).frame(width: 40, height: 40)
             VStack(alignment: .leading, spacing: 2) {
-                Text(title).font(.siloHeadline)
-                Text(subtitle).font(.siloCaption).foregroundStyle(.secondary)
+                Text(title).font(.weFlixHeadline)
+                Text(subtitle).font(.weFlixCaption).foregroundStyle(.secondary)
             }
             Spacer()
         }
@@ -336,9 +336,9 @@ struct CompanionPairingCard: View {
 
     private func progressStep(title: String, subtitle: String) -> some View {
         VStack(spacing: 10) {
-            Text(title).font(.siloHeadline)
+            Text(title).font(.weFlixHeadline)
             Text(subtitle)
-                .font(.siloCaption)
+                .font(.weFlixCaption)
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
             ProgressView().padding(.top, 4)
@@ -352,17 +352,17 @@ struct CompanionPairingCard: View {
 
     private func primaryButton(_ title: String, action: @escaping () -> Void) -> some View {
         Button(action: action) {
-            Text(title).font(.siloHeadline).frame(maxWidth: .infinity).padding(.vertical, 6)
+            Text(title).font(.weFlixHeadline).frame(maxWidth: .infinity).padding(.vertical, 6)
         }
         .pairingPrimaryButton()
     }
 
     private func tertiaryButton(_ title: String, action: @escaping () -> Void) -> some View {
         Button(action: action) {
-            Text(title).font(.siloBody).frame(maxWidth: .infinity).padding(.vertical, 8)
+            Text(title).font(.weFlixBody).frame(maxWidth: .infinity).padding(.vertical, 8)
         }
         .buttonStyle(.plain)
-        .foregroundStyle(Color.siloSecondaryText)
+        .foregroundStyle(Color.weFlixSecondaryText)
     }
 
     private func cancelButton() -> some View {
@@ -420,8 +420,8 @@ extension View {
         self
             .buttonStyle(.borderedProminent)
             .controlSize(.large)
-            .tint(.siloOnSurface)
-            .foregroundStyle(Color.siloBackground)
+            .tint(.weFlixOnSurface)
+            .foregroundStyle(Color.weFlixBackground)
     }
 }
 #endif

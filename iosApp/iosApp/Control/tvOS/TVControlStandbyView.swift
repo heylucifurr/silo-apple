@@ -15,7 +15,7 @@ struct TVControlStandbyView: View {
             VStack(spacing: 34) {
                 Image(systemName: "appletvremote.gen4")
                     .font(.system(size: 86, weight: .medium))
-                    .foregroundStyle(Color.siloOnSurface)
+                    .foregroundStyle(Color.weFlixOnSurface)
                     .frame(width: 150, height: 150)
                     .background {
                         Circle()
@@ -29,12 +29,12 @@ struct TVControlStandbyView: View {
                 VStack(spacing: 12) {
                     Text("Ready for \(state.controllerLabel)")
                         .font(.system(size: 52, weight: .semibold))
-                        .foregroundStyle(Color.siloOnSurface)
+                        .foregroundStyle(Color.weFlixOnSurface)
                         .multilineTextAlignment(.center)
 
                     Text(state.serverName ?? "Remote control active")
                         .font(.title3)
-                        .foregroundStyle(Color.siloSecondaryText)
+                        .foregroundStyle(Color.weFlixSecondaryText)
                         .multilineTextAlignment(.center)
                 }
 
@@ -42,7 +42,7 @@ struct TVControlStandbyView: View {
                     receiver.disconnectRemoteControl()
                 }
                 .buttonStyle(.borderedProminent)
-                .foregroundStyle(Color.siloBackground)
+                .foregroundStyle(Color.weFlixBackground)
                 .controlSize(.large)
                 .focused($isDisconnectFocused)
             }

@@ -1,6 +1,6 @@
 import Foundation
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 /// Minimal cross-task observation point for the cancellation-shield tests.
 actor PlaybackTestActorBox<Value: Sendable> {

@@ -6,7 +6,7 @@ import Foundation
 import Nuke
 import Security
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 /// The local route (`LocalRoute`, `LocalRouteTrust`, `LocalRouteController`):
 /// which requests move to the server's LAN address, what proves that address
@@ -480,7 +480,7 @@ final class LocalRouteControllerTests: XCTestCase {
         let controller = makeController(document: { document }, confirms: { _ in true })
 
         for server in [entry(url: "http://192.168.1.20:8080"), entry(identity: nil),
-                       entry(url: "https://local-route-tests.example/silo")] {
+                       entry(url: "https://local-route-tests.example/weFlix")] {
             controller.update(activeServer: server, isSignedIn: true)
             await controller.settle()
             XCTAssertNil(controller.activeLocalOrigin, "\(server.url) \(server.verifiedServerId ?? "no identity")")

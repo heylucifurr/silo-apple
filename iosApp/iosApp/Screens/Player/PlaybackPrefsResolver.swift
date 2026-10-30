@@ -1,6 +1,6 @@
 //
 //  PlaybackPrefsResolver.swift
-//  Silo (iOS + tvOS)
+//  WeFlix (iOS + tvOS)
 //
 //  Pure resolution logic that turns the server-provided
 //  `effective_subtitle_*` fields (carried on `WatchDetail`) into a

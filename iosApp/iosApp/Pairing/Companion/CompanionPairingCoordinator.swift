@@ -71,7 +71,7 @@ final class CompanionPairingCoordinator {
             case .expired:
                 return "\(name): the code expired before it was approved."
             case .updateRequired:
-                return "\(name): the server or Silo needs to be updated first."
+                return "\(name): the server or weflix needs to be updated first."
             case .saveFailed:
                 return "\(name): the TV approved the sign-in but couldn't save it. Try again."
             case .authFailed:
@@ -132,7 +132,7 @@ final class CompanionPairingCoordinator {
     /// user-initiated cancel), so a trailing stream close can't repaint the
     /// terminal state and late messages are ignored.
     private var concluded = false
-    private static let logger = Logger(subsystem: "org.siloserver.silo", category: "pairing.companion")
+    private static let logger = Logger(subsystem: "me.weflix", category: "pairing.companion")
 
     init(
         channel: any PairingChannel,
@@ -214,7 +214,7 @@ final class CompanionPairingCoordinator {
             disarmWatchdog()
             tvName = name
             guard supported.contains(PairingProtocol.version) else {
-                await conclude(.error("Update Silo on both devices to continue."), goodbye: .cancel(reason: "version_unsupported"))
+                await conclude(.error("Update weflix on both devices to continue."), goodbye: .cancel(reason: "version_unsupported"))
                 return
             }
             if let fixedServer {

@@ -26,10 +26,10 @@ struct ServerSetupView: View {
     var body: some View {
         MarqueeStage(scrim: .bottom, frostStart: 0.30) {
             MarqueeTopBar {
-                SiloWordmarkView(width: 92)
+                WeFlixWordmarkView(width: 92)
             } trailing: { EmptyView() }
         } content: {
-            MarqueeHeadline(title: "Connect to\nyour server", lead: "Type the address you use for Silo.")
+            MarqueeHeadline(title: "Connect to\nyour server", lead: "Type the address you use for weflix.")
 
             MarqueeTextField(
                 systemImage: "globe",
@@ -81,7 +81,7 @@ struct ServerSetupView: View {
             if !recentServers.isEmpty, focusedField == nil, !(viewModel.isLoading && submittedWithKeyboard) {
                 Text("Recent")
                     .font(.system(size: 15, weight: .semibold))
-                    .foregroundStyle(Color.siloOnSurface.opacity(0.62))
+                    .foregroundStyle(Color.weFlixOnSurface.opacity(0.62))
                     .padding(.top, 22)
                     .padding(.leading, 2)
                     .padding(.bottom, 10)
@@ -99,7 +99,7 @@ struct ServerSetupView: View {
         }
         .animation(.easeInOut(duration: 0.2), value: viewModel.error)
         .animation(.easeInOut(duration: 0.2), value: viewModel.discoveryError)
-        .animation(SiloTheme.springAnimation, value: viewModel.showsAdvancedOptions)
+        .animation(WeFlixTheme.springAnimation, value: viewModel.showsAdvancedOptions)
         .animation(.easeOut(duration: 0.25), value: focusedField)
         .animation(.easeInOut(duration: 0.2), value: discovery.servers)
         .sensoryFeedback(.error, trigger: viewModel.error) { _, error in error != nil }
@@ -141,7 +141,7 @@ struct ServerSetupView: View {
                     .rotationEffect(.degrees(viewModel.showsAdvancedOptions ? 180 : 0))
             }
             .font(.system(size: 14))
-            .foregroundStyle(Color.siloOnSurface.opacity(0.62))
+            .foregroundStyle(Color.weFlixOnSurface.opacity(0.62))
             .padding(.leading, 4)
             .frame(minHeight: 32)
         }
@@ -182,7 +182,7 @@ struct ServerSetupView: View {
                     .frame(height: MarqueeMetrics.fieldHeight)
                 }
                 .font(.system(size: MarqueeMetrics.fieldFont))
-                .foregroundStyle(Color.siloOnSurface)
+                .foregroundStyle(Color.weFlixOnSurface)
                 .background(
                     RoundedRectangle(cornerRadius: MarqueeMetrics.fieldCorner, style: .continuous)
                         .fill(Color.white.opacity(0.07))
@@ -191,9 +191,9 @@ struct ServerSetupView: View {
                                 .strokeBorder(Color.white.opacity(0.12), lineWidth: 1)
                         )
                 )
-                Text("Auto tries HTTPS first, then HTTP, then Silo's port 8090.")
+                Text("Auto tries HTTPS first, then HTTP, then weflix's port 8090.")
                     .font(.system(size: 12))
-                    .foregroundStyle(Color.siloOnSurface.opacity(0.4))
+                    .foregroundStyle(Color.weFlixOnSurface.opacity(0.4))
                     .padding(.leading, 4)
             }
             .padding(.top, 8)

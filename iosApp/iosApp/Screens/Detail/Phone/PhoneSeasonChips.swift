@@ -28,7 +28,7 @@ struct PhoneSeasonChips: View {
                         #endif
                     }
                 }
-                .padding(.horizontal, SiloTheme.safePadding)
+                .padding(.horizontal, WeFlixTheme.safePadding)
                 .padding(.vertical, 4)
             }
             .onAppear {
@@ -47,7 +47,7 @@ struct PhoneSeasonChips: View {
     ) {
         guard let id else { return }
         if animated {
-            withAnimation(.easeOut(duration: SiloTheme.fastDuration)) {
+            withAnimation(.easeOut(duration: WeFlixTheme.fastDuration)) {
                 proxy.scrollTo(id, anchor: .center)
             }
         } else {
@@ -66,7 +66,7 @@ struct PhoneSeasonChips: View {
 
     private static var itemSpacing: CGFloat {
         #if os(macOS)
-        SiloTheme.spacing
+        WeFlixTheme.spacing
         #else
         8
         #endif
@@ -90,9 +90,9 @@ struct PhoneSeasonChips: View {
     #if os(macOS)
     private func posterCard(for season: Season) -> some View {
         let isSelected = selected?.id == season.id
-        let width = SiloTheme.macSeasonCardWidth
+        let width = WeFlixTheme.macSeasonCardWidth
         let size = CGSize(width: width, height: width * 1.5)
-        let shape = RoundedRectangle(cornerRadius: SiloTheme.cornerRadius, style: .continuous)
+        let shape = RoundedRectangle(cornerRadius: WeFlixTheme.cornerRadius, style: .continuous)
         return Button {
             onSelect(season)
         } label: {
@@ -106,11 +106,11 @@ struct PhoneSeasonChips: View {
                             contentMode: .fill
                         )
                     } else {
-                        Color.siloSurfaceElevated
+                        Color.weFlixSurfaceElevated
                             .overlay {
                                 Image(systemName: "tv")
                                     .font(.title2)
-                                    .foregroundStyle(Color.siloSecondaryText)
+                                    .foregroundStyle(Color.weFlixSecondaryText)
                             }
                     }
                 }
@@ -118,8 +118,8 @@ struct PhoneSeasonChips: View {
                 .clipShape(shape)
                 .overlay {
                     shape.strokeBorder(
-                        isSelected ? Color.siloPrimary : Color.clear,
-                        lineWidth: SiloTheme.macHeroSelectionRingWidth
+                        isSelected ? Color.weFlixPrimary : Color.clear,
+                        lineWidth: WeFlixTheme.macHeroSelectionRingWidth
                     )
                 }
                 .overlay(alignment: .topTrailing) {
@@ -134,19 +134,19 @@ struct PhoneSeasonChips: View {
                 }
 
                 Text(label(for: season))
-                    .font(.siloCardTitle)
-                    .foregroundStyle(Color.siloOnSurface)
+                    .font(.weFlixCardTitle)
+                    .foregroundStyle(Color.weFlixOnSurface)
                     .lineLimit(1)
                 Text(season.episodeCount == 1 ? "1 episode" : "\(season.episodeCount) episodes")
-                    .font(.siloCardMetadata)
-                    .foregroundStyle(Color.siloSecondaryText)
+                    .font(.weFlixCardMetadata)
+                    .foregroundStyle(Color.weFlixSecondaryText)
                     .lineLimit(1)
             }
             .frame(width: size.width, alignment: .leading)
-            .opacity(isSelected ? 1 : SiloTheme.macSeasonUnselectedOpacity)
+            .opacity(isSelected ? 1 : WeFlixTheme.macSeasonUnselectedOpacity)
             .contentShape(Rectangle())
         }
-        .buttonStyle(.siloFlat)
+        .buttonStyle(.weFlixFlat)
         .accessibilityLabel(label(for: season))
         .accessibilityValue(season.userData?.played == true ? "Watched" : "")
         .accessibilityAddTraits(isSelected ? .isSelected : [])

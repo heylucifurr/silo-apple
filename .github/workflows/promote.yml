@@ -57,7 +57,7 @@ jobs:
           # written by hand.
           previous="$(python3 scripts/ci/release-version.py previous-release "$release_tag" | sed -n 's/^previous_release=//p')"
           {
-            echo "Silo $version, build $build: the TestFlight build $BETA_TAG."
+            echo "WeFlix $version, build $build: the TestFlight build $BETA_TAG."
             echo
             if [[ -n "$previous" ]]; then
               gh api "repos/$GH_REPO/releases/generate-notes" \
@@ -70,7 +70,7 @@ jobs:
             echo "The source archive this build links to is on the $BETA_TAG release."
           } > notes.md
           gh release create "$release_tag" --draft --target "$commit" \
-            --title "Silo $version" --notes-file notes.md
+            --title "WeFlix $version" --notes-file notes.md
           {
             echo "Drafted $release_tag."
             echo

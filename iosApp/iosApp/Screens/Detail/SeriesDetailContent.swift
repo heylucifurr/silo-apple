@@ -121,7 +121,7 @@ struct SeriesDetailContent<BelowOverview: View>: View {
                         hero(pane: .overview)
                         belowOverview()
                     }
-                    .padding(.horizontal, SiloTheme.safePadding)
+                    .padding(.horizontal, WeFlixTheme.safePadding)
                     belowFold
                 }
                 .padding(.bottom, 40)
@@ -132,7 +132,7 @@ struct SeriesDetailContent<BelowOverview: View>: View {
             }
             #endif
         }
-        .siloResumePlaybackAlert(
+        .weFlixResumePlaybackAlert(
             isPresented: Binding(
                 get: { pendingResume != nil },
                 set: { if !$0 { pendingResume = nil } }
@@ -560,7 +560,7 @@ struct SeriesDetailContent<BelowOverview: View>: View {
             }
             trailersSection
             detailsSection
-                .padding(.horizontal, SiloTheme.safePadding)
+                .padding(.horizontal, WeFlixTheme.safePadding)
             similarSection
         }
     }
@@ -609,7 +609,7 @@ struct SeriesDetailContent<BelowOverview: View>: View {
                     }
                 }
                 .padding(.vertical, 4)
-                .padding(.horizontal, SiloTheme.safePadding)
+                .padding(.horizontal, WeFlixTheme.safePadding)
                 .opacity(isLoadingEpisodes ? 1 : 0)
                 .accessibilityHidden(!isLoadingEpisodes)
                 .accessibilityLabel("Loading seasons")
@@ -627,7 +627,7 @@ struct SeriesDetailContent<BelowOverview: View>: View {
                 title: episodeSectionTitle,
                 trailingText: episodeCountSubtitle
             )
-            .padding(.horizontal, SiloTheme.safePadding)
+            .padding(.horizontal, WeFlixTheme.safePadding)
 
             ZStack(alignment: .topLeading) {
                 PhoneEpisodeRailSkeleton()
@@ -642,13 +642,13 @@ struct SeriesDetailContent<BelowOverview: View>: View {
                                 hierarchyRetryTask = Task { await onRetryHierarchy() }
                             }
                         }
-                        .padding(.horizontal, SiloTheme.safePadding)
+                        .padding(.horizontal, WeFlixTheme.safePadding)
                     }
 
                     if hierarchyError == nil && !isLoadingEpisodes && seasons.isEmpty {
                         Text("No episodes available")
                             .foregroundStyle(.secondary)
-                            .padding(.horizontal, SiloTheme.safePadding)
+                            .padding(.horizontal, WeFlixTheme.safePadding)
                     } else if hierarchyError == nil || !episodes.isEmpty {
                         PhoneEpisodeCarousel(
                             episodes: episodes,
@@ -694,7 +694,7 @@ struct SeriesDetailContent<BelowOverview: View>: View {
     private func castSection(cast: [CastMember]) -> some View {
         VStack(alignment: .leading, spacing: 14) {
             PhoneSectionHeader(title: "Cast & Crew")
-                .padding(.horizontal, SiloTheme.safePadding)
+                .padding(.horizontal, WeFlixTheme.safePadding)
             PhoneCastRail(cast: cast, onTap: onPersonTap)
         }
     }

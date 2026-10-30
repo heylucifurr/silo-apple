@@ -53,7 +53,7 @@ struct TVLibraryGridView: View {
         subtitle: String? = nil,
         showsHeader: Bool = true,
         showsAlphabetRail: Bool = true,
-        topContentInset: CGFloat = SiloTheme.smallPadding,
+        topContentInset: CGFloat = WeFlixTheme.smallPadding,
         focusRequest: Int = 0,
         isTopMenuFocused: Bool = false,
         onTopMenuFocusRequest: (() -> Void)? = nil
@@ -118,7 +118,7 @@ struct TVLibraryGridView: View {
         }
         .environment(\.browseLibraryId, libraryId)
         .animation(.easeOut(duration: 0.18), value: openPanel)
-        .siloBackground()
+        .weFlixBackground()
         .task {
             if viewModel.items.isEmpty {
                 await viewModel.loadInitial()
@@ -162,7 +162,7 @@ struct TVLibraryGridView: View {
             VStack(alignment: .leading, spacing: 32) {
                 if showsHeader {
                     header
-                        .padding(.horizontal, SiloTheme.safePadding)
+                        .padding(.horizontal, WeFlixTheme.safePadding)
                         .padding(.top, topContentInset)
                 } else {
                     Color.clear
@@ -183,7 +183,7 @@ struct TVLibraryGridView: View {
                     } : nil,
                     isShuffleStarting: shuffleLauncher.isStarting
                 )
-                .padding(.horizontal, SiloTheme.safePadding)
+                .padding(.horizontal, WeFlixTheme.safePadding)
                 .shuffleFailureAlert(shuffleLauncher)
 
                 if viewModel.items.isEmpty && viewModel.isLoading {
@@ -201,7 +201,7 @@ struct TVLibraryGridView: View {
                             PosterSkeletonCard()
                         }
                     }
-                    .padding(.horizontal, SiloTheme.safePadding)
+                    .padding(.horizontal, WeFlixTheme.safePadding)
                 } else if let error = viewModel.error, viewModel.items.isEmpty {
                     ErrorView(state: error, onRetry: { Task { await viewModel.loadInitial() } })
                 } else if viewModel.items.isEmpty {
@@ -228,7 +228,7 @@ struct TVLibraryGridView: View {
                             viewModel.setPosterRowVisibility(range, isVisible: isVisible)
                         }
                     )
-                    .padding(.horizontal, SiloTheme.safePadding)
+                    .padding(.horizontal, WeFlixTheme.safePadding)
                 }
             }
             .padding(.bottom, 48)
@@ -295,8 +295,8 @@ struct TVLibraryGridView: View {
     }
 
     private var emptyGridIcon: String {
-        if SiloMediaType.isSeries(libraryType) { return "tv" }
-        if SiloMediaType.isAudiobook(libraryType) { return "book.closed" }
+        if WeFlixMediaType.isSeries(libraryType) { return "tv" }
+        if WeFlixMediaType.isAudiobook(libraryType) { return "book.closed" }
         return "film.stack"
     }
 
@@ -306,20 +306,20 @@ struct TVLibraryGridView: View {
         VStack(alignment: .leading, spacing: 8) {
             Text(libraryName)
                 .font(.system(size: 64, weight: .bold))
-                .foregroundColor(.siloOnSurface)
+                .foregroundColor(.weFlixOnSurface)
 
             if let prefix = selectedPrefix {
                 Text(prefix == "#" ? "Titles starting with a number or symbol" : "Titles starting with \(prefix)")
-                    .font(.siloHeadline)
-                    .foregroundColor(.siloSecondaryText)
+                    .font(.weFlixHeadline)
+                    .foregroundColor(.weFlixSecondaryText)
             } else if let subtitle {
                 Text(subtitle)
-                    .font(.siloHeadline)
-                    .foregroundColor(.siloSecondaryText)
+                    .font(.weFlixHeadline)
+                    .foregroundColor(.weFlixSecondaryText)
             } else if let total = totalLabel {
                 Text(total)
-                    .font(.siloHeadline)
-                    .foregroundColor(.siloSecondaryText)
+                    .font(.weFlixHeadline)
+                    .foregroundColor(.weFlixSecondaryText)
             }
         }
     }

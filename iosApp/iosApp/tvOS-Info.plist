@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
-	<string>Silo</string>
+	<string>WeFlix</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIcons</key>
@@ -27,9 +27,10 @@
 	<array>
 		<dict>
 			<key>CFBundleURLName</key>
-			<string>org.siloserver.silo</string>
+			<string>me.weflix</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
+				<string>weflix</string>
 				<string>silo</string>
 				<string>continuum</string>
 			</array>
@@ -37,10 +38,6 @@
 	</array>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
-	<key>SiloKeychainAccessGroup</key>
-	<string>$(AppIdentifierPrefix)org.siloserver.silo.shared</string>
-	<key>SiloUsesUserIndependentKeychain</key>
-	<string>$(SILO_USER_INDEPENDENT_KEYCHAIN)</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
 	<key>LSApplicationQueriesSchemes</key>
@@ -54,16 +51,15 @@
 	</dict>
 	<key>NSBonjourServices</key>
 	<array>
+		<string>_weflixpair._tcp</string>
 		<string>_silopair._tcp</string>
+		<string>_weflixcast._tcp</string>
 		<string>_silocast._tcp</string>
+		<string>_weflix._tcp</string>
 		<string>_silo._tcp</string>
 	</array>
 	<key>NSLocalNetworkUsageDescription</key>
-	<string>Silo uses your local network to find Silo servers, and to set up and control Silo on your Apple TV.</string>
-	<key>SiloBuildChannel</key>
-	<string>$(SILO_BUILD_CHANNEL)</string>
-	<key>SiloSourceURL</key>
-	<string>$(SILO_SOURCE_URL)</string>
+	<string>weflix uses your local network to find weflix servers, and to set up and control weflix on your Apple TV.</string>
 	<key>TVTopShelfImage</key>
 	<dict>
 		<key>TVTopShelfPrimaryImage</key>
@@ -77,5 +73,13 @@
 	<array>
 		<string>arm64</string>
 	</array>
+	<key>WeFlixBuildChannel</key>
+	<string>$(WEFLIX_BUILD_CHANNEL)</string>
+	<key>WeFlixKeychainAccessGroup</key>
+	<string>$(AppIdentifierPrefix)me.weflix.shared</string>
+	<key>WeFlixSourceURL</key>
+	<string>$(WEFLIX_SOURCE_URL)</string>
+	<key>WeFlixUsesUserIndependentKeychain</key>
+	<string>$(WEFLIX_USER_INDEPENDENT_KEYCHAIN)</string>
 </dict>
 </plist>

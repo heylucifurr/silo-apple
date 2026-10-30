@@ -361,7 +361,7 @@ actor HostedDiagnosticsAPI {
     private func registerInstallation(platform: Platform) async throws -> HostedDiagnosticsCredential {
         let body = HostedInstallationRequest(
             platform: platform,
-            appID: Bundle.main.bundleIdentifier ?? "org.siloserver.silo",
+            appID: Bundle.main.bundleIdentifier ?? "me.weflix",
             appVersion: AppleDeviceIdentity.bundleAppVersion,
             appBuild: AppleDeviceIdentity.bundleAppBuild
         )

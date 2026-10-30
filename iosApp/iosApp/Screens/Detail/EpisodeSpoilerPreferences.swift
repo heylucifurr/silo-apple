@@ -1,6 +1,6 @@
 //
 //  EpisodeSpoilerPreferences.swift
-//  Silo (iOS + tvOS + macOS)
+//  WeFlix (iOS + tvOS + macOS)
 //
 //  The active profile's spoiler switches, read from and written to the server
 //  at `scope=profile`. Every surface that shows an episode still or
@@ -137,7 +137,7 @@ final class EpisodeSpoilerPreferences {
 
     init(
         defaults: SharedDefaults = .shared,
-        transport: ProfileScopedSettingTransport = SiloProfileScopedSettingTransport(),
+        transport: ProfileScopedSettingTransport = WeFlixProfileScopedSettingTransport(),
         requestIdentity: @escaping @MainActor () -> HTTPRequestIdentity? =
             SeekIntervalPreferences.activeRequestIdentity
     ) {

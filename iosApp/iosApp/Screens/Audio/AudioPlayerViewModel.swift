@@ -5,7 +5,7 @@ import OSLog
 @Observable
 @MainActor
 final class AudioPlayerViewModel {
-    private let api: SiloAPI
+    private let api: WeFlixAPI
     private struct StartedAudioSession {
         let session: PlaybackSessionResponse
         let authority: PlaybackV2SessionAuthority
@@ -53,7 +53,7 @@ final class AudioPlayerViewModel {
     let seekIntervalPreferences = SeekIntervalPreferences.shared
     @ObservationIgnored private var isObservingSeekIntervals = false
     private let logger = Logger(
-        subsystem: Bundle.main.bundleIdentifier ?? "org.siloserver.silo",
+        subsystem: Bundle.main.bundleIdentifier ?? "me.weflix",
         category: "Playback"
     )
 
@@ -105,7 +105,7 @@ final class AudioPlayerViewModel {
         seekIntervalPreferences.pair(for: .audiobook)
     }
 
-    init(api: SiloAPI = .shared) {
+    init(api: WeFlixAPI = .shared) {
         self.api = api
         engine.onEvent = { [weak self] event in
             self?.handleEngineEvent(event)
@@ -750,7 +750,7 @@ final class AudioPlayerViewModel {
                     position: AudioPlaybackTimeline.localTime(for: currentTime, in: track),
                     isPaused: !isPlaying
                 )
-                _ = try await SiloAPI.shared.apiV2Client.updatePlaybackProgress(
+                _ = try await WeFlixAPI.shared.apiV2Client.updatePlaybackProgress(
                     sessionID: session.sessionId,
                     sample: sample,
                     installationID: authority.installationID,
@@ -781,7 +781,7 @@ final class AudioPlayerViewModel {
             duration: duration,
             forceOverwrite: true
         ) else { return }
-        let outcome = await SiloAPI.shared.apiV2Client.syncProgress([item])
+        let outcome = await WeFlixAPI.shared.apiV2Client.syncProgress([item])
         if let failure = outcome.failureSummary {
             logger.warning(
                 "\(label, privacy: .public) failed for \(contentId, privacy: .public) at \(position, privacy: .public): \(failure, privacy: .public)"
@@ -837,8 +837,8 @@ final class AudioPlayerViewModel {
         session: PlaybackSessionResponse,
         additionalHeaders: [String: String]
     ) async -> StreamRequest? {
-        let serverURL = await SiloAPI.shared.currentServerUrl()
-        let accessToken = await SiloAPI.shared.currentAccessToken()
+        let serverURL = await WeFlixAPI.shared.currentServerUrl()
+        let accessToken = await WeFlixAPI.shared.currentAccessToken()
         return StreamRequest.resolve(
             rawURL: session.streamUrl,
             serverURL: serverURL,
@@ -853,7 +853,7 @@ final class AudioPlayerViewModel {
         if raw.hasPrefix("http://") || raw.hasPrefix("https://") {
             return URL(string: raw)
         }
-        let serverUrl = await SiloAPI.shared.currentServerUrl()
+        let serverUrl = await WeFlixAPI.shared.currentServerUrl()
         guard !serverUrl.isEmpty else { return nil }
         let base = serverUrl.hasSuffix("/") ? String(serverUrl.dropLast()) : serverUrl
         let path = raw.hasPrefix("/") ? raw : "/\(raw)"

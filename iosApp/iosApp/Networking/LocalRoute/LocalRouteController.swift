@@ -13,7 +13,7 @@ struct LocalRouteRecord: Codable, Equatable, Sendable {
 
 /// UserDefaults-backed `LocalRouteRecord`s.
 struct LocalRouteStore: Sendable {
-    static let defaultsKey = "siloLocalRoute.v1"
+    static let defaultsKey = "weFlixLocalRoute.v1"
     let defaultsKey: String
 
     init(defaultsKey: String = LocalRouteStore.defaultsKey) {
@@ -48,7 +48,7 @@ struct LocalRouteStore: Sendable {
 ///   `GET /api/v2/system/connections`, read over the saved address and only
 ///   when that is HTTPS (a plain-HTTP address cannot vouch for a key).
 /// - Candidates: the local origin that last worked, the admin-set local
-///   address, and `_silo._tcp` adverts whose TXT `id` is the server's
+///   address, and `_weflix._tcp` adverts whose TXT `id` is the server's
 ///   identity. Each is tried as `https` on a private IPv4 address.
 /// - It probes while the app is in the foreground on a Wi-Fi, wired or other
 ///   non-cellular path, again on every path change, and drops the route as
@@ -98,13 +98,13 @@ final class LocalRouteController {
     @ObservationIgnored private var retry: Task<Void, Never>?
     @ObservationIgnored private var pathMonitor: NWPathMonitor?
     @ObservationIgnored private var pathDebounce: Task<Void, Never>?
-    @ObservationIgnored private var browser: NWBrowser?
+    @ObservationIgnored private var browsers: [NWBrowser] = []
     @ObservationIgnored private var browserGeneration = 0
     @ObservationIgnored private var browseSequence = 0
     @ObservationIgnored private let environment: Environment
 
     nonisolated static let probeTimeout: TimeInterval = 3
-    private nonisolated static let logger = Logger(subsystem: "org.siloserver.silo", category: "local.route")
+    private nonisolated static let logger = Logger(subsystem: "me.weflix", category: "local.route")
 
     init(environment: Environment = .live) {
         self.environment = environment
@@ -417,9 +417,12 @@ final class LocalRouteController {
         let identity = server.identity
         let parameters = NWParameters()
         parameters.includePeerToPeer = false
-        let browser = NWBrowser(
-            for: .bonjourWithTXTRecord(type: ServerDiscoveryProtocol.serviceType, domain: nil), using: parameters)
-        browser.browseResultsChangedHandler = { [weak self] results, _ in
+        // One browser per service type, so a server advertising either the
+        // current or the pre-rename record is matched.
+        browsers = ServerDiscoveryProtocol.serviceTypes.map { type in
+            let browser = NWBrowser(
+                for: .bonjourWithTXTRecord(type: type, domain: nil), using: parameters)
+            browser.browseResultsChangedHandler = { [weak self] results, _ in
             let matching = results.filter { result in
                 guard case let .bonjour(txt) = result.metadata else { return false }
                 return ServerIdentity.usable(txt.dictionary[ServerDiscoveryProtocol.txtServerID]) == identity
@@ -445,14 +448,15 @@ final class LocalRouteController {
             guard case .failed(let error) = state else { return }
             Self.logger.error("local route browser failed: \(String(describing: error), privacy: .public)")
         }
-        browser.start(queue: .main)
-        self.browser = browser
+            browser.start(queue: .main)
+            return browser
+        }
     }
 
     private func stopBrowser() {
         browserGeneration += 1
-        browser?.cancel()
-        browser = nil
+        browsers.forEach { $0.cancel() }
+        browsers = []
     }
 }
 

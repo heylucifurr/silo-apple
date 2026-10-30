@@ -53,15 +53,15 @@ struct PhoneDetailFactsSection: View {
 
     private func label(_ fact: DetailFacts.Fact) -> some View {
         Text(fact.label.uppercased())
-            .siloScaledFont(size: 11, weight: .bold, relativeTo: .caption2)
+            .weFlixScaledFont(size: 11, weight: .bold, relativeTo: .caption2)
             .tracking(1.2)
-            .foregroundColor(.siloOnSurface.opacity(0.5))
+            .foregroundColor(.weFlixOnSurface.opacity(0.5))
     }
 
     private func value(_ fact: DetailFacts.Fact) -> some View {
         Text(fact.value)
-            .siloScaledFont(size: 14, relativeTo: .subheadline)
-            .foregroundColor(.siloOnSurface)
+            .weFlixScaledFont(size: 14, relativeTo: .subheadline)
+            .foregroundColor(.weFlixOnSurface)
             .frame(maxWidth: .infinity, alignment: .leading)
     }
 }

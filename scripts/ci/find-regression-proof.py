@@ -19,7 +19,7 @@ import zipfile
 
 
 WORKFLOW = ".github/workflows/player-regression.yml"
-SCHEMES = ("Silo", "SiloTV", "SiloMac")
+SCHEMES = ("WeFlix", "WeFlixTV", "WeFlixMac")
 MAX_API_BYTES = 8 * 1024 * 1024
 MAX_ARCHIVE_BYTES = 256 * 1024
 MAX_PROOF_BYTES = 16 * 1024
@@ -74,7 +74,7 @@ def read_config(env):
             "Incomplete expected toolchain")
     for scheme, toolchain in toolchains.items():
         expected_fields = {"xcode_version", "xcode_build", "sdk_version", "sdk_build", "architecture"}
-        if scheme != "SiloMac":
+        if scheme != "WeFlixMac":
             expected_fields |= {"runtime_version", "runtime_build"}
         require(isinstance(toolchain, dict)
                 and set(toolchain) == expected_fields,
@@ -185,7 +185,7 @@ def validate_jobs(jobs, run, config, now):
         require(isinstance(steps, list) and all(isinstance(step, dict) for step in steps),
                 "Missing regression steps")
         names = ["Build player", "Record regression proof", "Upload regression proof"]
-        if scheme != "SiloMac":
+        if scheme != "WeFlixMac":
             names.append("Run complete simulator suite")
         for name in names:
             required = [step for step in steps if step.get("name") == name]

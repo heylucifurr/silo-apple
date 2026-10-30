@@ -4,7 +4,7 @@ import SwiftUI
 
 /// Reports whether the window this view is in can be seen. Minimized, hidden
 /// with the app, on another Space or covered entirely, it can't, whatever
-/// other Silo windows show.
+/// other WeFlix windows show.
 struct MacWindowVisibilityReader: NSViewRepresentable {
     let onChange: @MainActor (Bool) -> Void
 

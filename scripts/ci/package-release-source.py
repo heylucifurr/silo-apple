@@ -16,7 +16,7 @@ from urllib.request import urlopen
 
 
 ROOT = Path(__file__).resolve().parents[2]
-RESOLVED = "iosApp/Silo.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved"
+RESOLVED = "iosApp/WeFlix.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved"
 
 
 def git(repo, *args):
@@ -87,9 +87,9 @@ def package_sources(repo, output_directory):
         raise ValueError("Update swift-libass-sources.json for the resolved SwiftLibass revision before release")
 
     output_directory.mkdir(parents=True, exist_ok=True)
-    output = output_directory / f"Silo-source-{revision}.tar.gz"
+    output = output_directory / f"WeFlix-source-{revision}.tar.gz"
     with tempfile.TemporaryDirectory() as scratch:
-        tree = Path(scratch) / f"Silo-source-{revision}"
+        tree = Path(scratch) / f"WeFlix-source-{revision}"
         tree.mkdir()
         app_archive = Path(scratch) / "app.tar"
         subprocess.run(["git", "-C", str(repo), "archive", "HEAD", "-o", str(app_archive)], check=True)

@@ -27,9 +27,9 @@ struct HistoryView: View {
                 )
             }
         }
-        .siloPageBackground()
+        .weFlixPageBackground()
         .navigationTitle("History")
-        .siloNavigationTitleDisplayMode(.large)
+        .weFlixNavigationTitleDisplayMode(.large)
         .task {
             await viewModel.load(reset: true)
         }
@@ -40,10 +40,10 @@ struct HistoryView: View {
 
     private var gridContent: some View {
         ScrollView(.vertical, showsIndicators: false) {
-            VStack(alignment: .leading, spacing: SiloTheme.padding) {
+            VStack(alignment: .leading, spacing: WeFlixTheme.padding) {
                 Text(viewModel.countLabel)
-                    .font(.siloCaption)
-                    .foregroundColor(.siloSecondaryText)
+                    .font(.weFlixCaption)
+                    .foregroundColor(.weFlixSecondaryText)
 
                 CatalogGrid(
                     items: viewModel.items,
@@ -57,9 +57,9 @@ struct HistoryView: View {
                     }
                 )
             }
-            .padding(.horizontal, SiloTheme.padding)
-            .padding(.top, SiloTheme.smallPadding)
-            .padding(.bottom, SiloTheme.largePadding)
+            .padding(.horizontal, WeFlixTheme.padding)
+            .padding(.top, WeFlixTheme.smallPadding)
+            .padding(.bottom, WeFlixTheme.largePadding)
         }
     }
 }

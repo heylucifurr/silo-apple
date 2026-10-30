@@ -76,7 +76,7 @@ struct SeriesDownloadSheet: View {
                          ? "Download now. Nothing else downloads later."
                          : "Keep new episodes coming to this \(Self.deviceName) as they air.")
                         .font(.footnote)
-                        .foregroundColor(.siloSecondaryText)
+                        .foregroundColor(.weFlixSecondaryText)
                         .padding(.horizontal, 4)
 
                     if kind == .oneTime {
@@ -105,7 +105,7 @@ struct SeriesDownloadSheet: View {
                     if !summary.isEmpty {
                         Text(summary)
                             .font(.subheadline)
-                            .foregroundColor(.siloSecondaryText)
+                            .foregroundColor(.weFlixSecondaryText)
                             .frame(maxWidth: .infinity, alignment: .center)
                             .multilineTextAlignment(.center)
                             .padding(.horizontal, 8)
@@ -121,7 +121,7 @@ struct SeriesDownloadSheet: View {
             #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
             #endif
-            .siloSheetBackground()
+            .weFlixSheetBackground()
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") { dismiss() }
@@ -171,20 +171,20 @@ struct SeriesDownloadSheet: View {
     private func optionList(_ options: [Option]) -> some View {
         VStack(spacing: 0) {
             ForEach(Array(options.enumerated()), id: \.element.id) { index, option in
-                if index > 0 { Divider().overlay(Color.siloDivider).padding(.leading, 52) }
+                if index > 0 { Divider().overlay(Color.weFlixDivider).padding(.leading, 52) }
                 Button(action: option.select) {
                     HStack(spacing: 14) {
                         Image(systemName: option.selected ? "checkmark.circle.fill" : "circle")
                             .font(.system(size: 22))
-                            .foregroundColor(option.selected ? .siloOnSurface : .siloSecondaryText.opacity(0.6))
+                            .foregroundColor(option.selected ? .weFlixOnSurface : .weFlixSecondaryText.opacity(0.6))
                             .frame(width: 24)
                         VStack(alignment: .leading, spacing: 2) {
                             Text(option.title)
                                 .font(.system(size: 16.5, weight: .semibold))
-                                .foregroundColor(.siloOnSurface)
+                                .foregroundColor(.weFlixOnSurface)
                             Text(option.detail)
                                 .font(.footnote)
-                                .foregroundColor(.siloSecondaryText)
+                                .foregroundColor(.weFlixSecondaryText)
                         }
                         Spacer(minLength: 0)
                     }
@@ -241,12 +241,12 @@ struct SeriesDownloadSheet: View {
         return HStack {
             // The menu carries its own "Quality" label for VoiceOver.
             Text("Quality")
-                .foregroundColor(.siloOnSurface)
+                .foregroundColor(.weFlixOnSurface)
                 .accessibilityHidden(isMenu)
             Spacer()
             if !isMenu {
                 Text(locked ? DownloadFormat.original.displayName : qualityLabel(selection.wrappedValue))
-                    .foregroundColor(.siloSecondaryText)
+                    .foregroundColor(.weFlixSecondaryText)
                     .padding(.trailing, 10)
                     .padding(.vertical, 7)
             } else {
@@ -257,7 +257,7 @@ struct SeriesDownloadSheet: View {
                 }
                 .pickerStyle(.menu)
                 .labelsHidden()
-                .tint(.siloSecondaryText)
+                .tint(.weFlixSecondaryText)
                 // At its natural width: sharing the row with the label wraps
                 // a value like "1 Mbps · up to 480p" out of the row.
                 .fixedSize()
@@ -273,17 +273,17 @@ struct SeriesDownloadSheet: View {
         card {
             qualityRow(selection: $monitorQuality, locked: !manager.canChooseMonitorQuality,
                        keeping: existing.map { $0.quality ?? DownloadFormat.original.rawValue })
-            Divider().overlay(Color.siloDivider).padding(.leading, 16)
+            Divider().overlay(Color.weFlixDivider).padding(.leading, 16)
             Toggle("Delete after watching", isOn: $deleteWatched)
-                .tint(.siloSwitchOn)
-                .foregroundColor(.siloOnSurface)
+                .tint(.weFlixSwitchOn)
+                .foregroundColor(.weFlixOnSurface)
                 .padding(.horizontal, 16)
                 .padding(.vertical, 11)
-            Divider().overlay(Color.siloDivider).padding(.leading, 16)
+            Divider().overlay(Color.weFlixDivider).padding(.leading, 16)
             HStack {
                 // The menu carries its own "Storage limit" label for VoiceOver.
                 Text("Storage limit")
-                    .foregroundColor(.siloOnSurface)
+                    .foregroundColor(.weFlixOnSurface)
                     .accessibilityHidden(true)
                 Spacer()
                 Picker("Storage limit", selection: $maxStorageBytes) {
@@ -293,7 +293,7 @@ struct SeriesDownloadSheet: View {
                 }
                 .pickerStyle(.menu)
                 .labelsHidden()
-                .tint(.siloSecondaryText)
+                .tint(.weFlixSecondaryText)
                 // At its natural width, like the Quality menu.
                 .fixedSize()
             }
@@ -324,7 +324,7 @@ struct SeriesDownloadSheet: View {
             .font(.system(size: 17))
             .frame(maxWidth: .infinity)
             .frame(height: 50)
-            .background(Color.siloOnSurface)
+            .background(Color.weFlixOnSurface)
             .foregroundColor(.black)
             .clipShape(RoundedRectangle(cornerRadius: 15, style: .continuous))
         }
@@ -633,7 +633,7 @@ struct SeriesDownloadSheet: View {
 
     private func loadSeasonsIfNeeded() async {
         guard seasons.isEmpty, loadedSeasons.isEmpty else { return }
-        if let response = try? await SiloAPI.shared.seasons(seriesId: seriesId) {
+        if let response = try? await WeFlixAPI.shared.seasons(seriesId: seriesId) {
             loadedSeasons = response.seasons
         }
     }

@@ -12,9 +12,9 @@ import SwiftUI
 struct TabTopBarActions: View {
     let onSearch: () -> Void
     let onOpenSettings: () -> Void
-    /// Opens the media-requests hub. The menu row only renders when the
-    /// server reports `requests_enabled`, so the closure is inert otherwise.
-    let onOpenRequests: () -> Void
+    /// Opens Downloads. The menu row only renders when the profile can
+    /// download, so the closure is inert otherwise.
+    let onOpenDownloads: () -> Void
     let onSwitchProfile: () -> Void
     let onSwitchServer: () -> Void
     let onSignOut: () -> Void
@@ -25,7 +25,7 @@ struct TabTopBarActions: View {
     /// the avatar fallback.
     private let profileStore = CurrentProfileStore.shared
     #if os(iOS)
-    @Environment(SiloControlClient.self) private var siloControl
+    @Environment(WeFlixControlClient.self) private var weFlixControl
     @State private var isShowingControlPicker = false
     @Environment(\.statusColumn) private var statusColumn
     #endif
@@ -41,7 +41,7 @@ struct TabTopBarActions: View {
             // Holds the header row at its usual height so the page below
             // doesn't move up.
             Color.clear
-                .frame(width: 0, height: SiloTheme.topBarIconHitSize)
+                .frame(width: 0, height: WeFlixTheme.topBarIconHitSize)
                 .accessibilityHidden(true)
         }
         #endif
@@ -61,7 +61,7 @@ struct TabTopBarActions: View {
     private var actions: some View {
         // Icons spaced evenly. Order is fixed: Search, Remote (iOS), Profile.
         let layout = axis == .horizontal
-            ? AnyLayout(HStackLayout(spacing: SiloTheme.topBarIconSpacing))
+            ? AnyLayout(HStackLayout(spacing: WeFlixTheme.topBarIconSpacing))
             : AnyLayout(VStackLayout(spacing: 6))
         return layout {
             TopBarIconButton(
@@ -70,14 +70,14 @@ struct TabTopBarActions: View {
                 action: onSearch
             )
             #if os(iOS)
-            SiloControlModeButton(controller: siloControl) {
+            WeFlixControlModeButton(controller: weFlixControl) {
                 isShowingControlPicker = true
             }
             #endif
             ProfileAvatarMenu(
                 profile: profileStore.profile,
                 onOpenSettings: onOpenSettings,
-                onOpenRequests: onOpenRequests,
+                onOpenDownloads: onOpenDownloads,
                 onSwitchProfile: onSwitchProfile,
                 onSwitchServer: onSwitchServer,
                 onSignOut: onSignOut
@@ -85,7 +85,7 @@ struct TabTopBarActions: View {
         }
         #if os(iOS)
         .sheet(isPresented: $isShowingControlPicker) {
-            SiloControlTargetPickerView(request: nil, controller: siloControl)
+            WeFlixControlTargetPickerView(request: nil, controller: weFlixControl)
         }
         #endif
         // No-op once cached; covers a page shown before the session-level
@@ -107,8 +107,8 @@ private struct TopBarIconButton: View {
         Button(action: action) {
             Image(systemName: systemImage)
                 .font(.system(size: 18, weight: .semibold))
-                .foregroundColor(.siloOnSurface)
-                .frame(width: SiloTheme.topBarIconHitSize, height: SiloTheme.topBarIconHitSize)
+                .foregroundColor(.weFlixOnSurface)
+                .frame(width: WeFlixTheme.topBarIconHitSize, height: WeFlixTheme.topBarIconHitSize)
                 .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
@@ -125,20 +125,20 @@ struct ProfileAvatarMenu: View {
     /// Mac sidebar. The top-bar cluster keeps the avatar alone.
     var showsName = false
     let onOpenSettings: () -> Void
-    let onOpenRequests: () -> Void
+    let onOpenDownloads: () -> Void
     let onSwitchProfile: () -> Void
     let onSwitchServer: () -> Void
     let onSignOut: () -> Void
 
-    /// Capability-gated: the Requests row exists only when the server has
-    /// the feature enabled (older servers 404 the probe and read as off).
-    private var requestsEnabled: Bool {
-        RequestsFeatureStore.shared.isEnabled
+    /// Capability-gated: the Downloads row exists only when the profile can
+    /// download at all. Requests needs no row here — it is a tab.
+    private var downloadsEnabled: Bool {
+        DownloadManager.shared.downloadsEnabled
     }
 
     private var avatarSize: CGFloat {
         #if os(macOS)
-        SiloTheme.macSidebarAvatarSize
+        WeFlixTheme.macSidebarAvatarSize
         #else
         30
         #endif
@@ -147,7 +147,7 @@ struct ProfileAvatarMenu: View {
     /// The default avatar fill is as dark as the Mac sidebar, so the row
     /// there uses the lighter tile grey to keep the circle visible.
     private var avatarFill: Color {
-        showsName ? .siloIconTile : .siloSurfaceVariant
+        showsName ? .weFlixIconTile : .weFlixSurfaceVariant
     }
 
     var body: some View {
@@ -157,11 +157,11 @@ struct ProfileAvatarMenu: View {
                 Button(WatchPartySession.shared.isEngaged ? "Return to Watch Party" : "Watch Party", systemImage: "person.3") { router.navigate(to: .watchParty) }
             }
             #endif
-            if requestsEnabled {
+            if downloadsEnabled {
                 Button {
-                    onOpenRequests()
+                    onOpenDownloads()
                 } label: {
-                    Label("Requests", systemImage: "sparkles")
+                    Label("Downloads", systemImage: "arrow.down.circle")
                 }
 
                 Divider()
@@ -180,10 +180,12 @@ struct ProfileAvatarMenu: View {
             } label: {
                 Label("Switch Profile", systemImage: "person.2")
             }
-            Button {
-                onSwitchServer()
-            } label: {
-                Label("Switch Server", systemImage: "server.rack")
+            if AppVisibility.showsSwitchServer {
+                Button {
+                    onSwitchServer()
+                } label: {
+                    Label("Switch Server", systemImage: "server.rack")
+                }
             }
             Button(role: .destructive) {
                 onSignOut()
@@ -191,7 +193,7 @@ struct ProfileAvatarMenu: View {
                 Label("Sign Out", systemImage: "rectangle.portrait.and.arrow.right")
             }
         } label: {
-            HStack(spacing: SiloTheme.smallPadding) {
+            HStack(spacing: WeFlixTheme.smallPadding) {
                 ProfileAvatarView(
                     avatar: profile?.avatarEmoji,
                     imageUrl: profile?.avatarImageUrl,
@@ -200,13 +202,13 @@ struct ProfileAvatarMenu: View {
                     backgroundColor: avatarFill
                 )
                 .frame(
-                    width: showsName ? nil : SiloTheme.topBarIconHitSize,
-                    height: SiloTheme.topBarIconHitSize
+                    width: showsName ? nil : WeFlixTheme.topBarIconHitSize,
+                    height: WeFlixTheme.topBarIconHitSize
                 )
                 if showsName {
                     Text(profile?.name ?? "")
-                        .font(.siloHeadline)
-                        .foregroundStyle(Color.siloOnSurface)
+                        .font(.weFlixHeadline)
+                        .foregroundStyle(Color.weFlixOnSurface)
                         .lineLimit(1)
                     Spacer(minLength: 0)
                 }

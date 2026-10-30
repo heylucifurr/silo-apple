@@ -1,5 +1,5 @@
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 /// The live AI cue buffer is fed by a translator that does not run in playback
 /// lockstep, so its bound must never evict a cue the playhead has not reached.

@@ -1,7 +1,7 @@
 import AetherEngine
 import Foundation
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 /// Mid-stream reconnect after the server drops (playback protocol v3 §6.2):
 /// which replan a lost connection sends, the backoff and budget, and how each

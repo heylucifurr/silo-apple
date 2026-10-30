@@ -1,7 +1,7 @@
 import Foundation
 import Security
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 final class AccountSessionPersistenceTests: XCTestCase {
     private func harness(_ memory: SessionMemory = SessionMemory()) async throws -> (TokenStore, SharedKeychain, SharedDefaults, SessionMemory) {

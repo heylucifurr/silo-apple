@@ -4,9 +4,9 @@ import SwiftUI
 /// static fills, no shimmer, replaced in place by the real cards.
 struct PosterSkeletonCard: View {
     var body: some View {
-        RoundedRectangle(cornerRadius: SiloTheme.cornerRadius, style: .continuous)
+        RoundedRectangle(cornerRadius: WeFlixTheme.cornerRadius, style: .continuous)
             .fill(Color.white.opacity(0.09))
-            .aspectRatio(SiloTheme.posterCardWidth / SiloTheme.posterCardHeight, contentMode: .fit)
+            .aspectRatio(WeFlixTheme.posterCardWidth / WeFlixTheme.posterCardHeight, contentMode: .fit)
             .frame(maxWidth: .infinity)
             .accessibilityHidden(true)
     }
@@ -19,11 +19,11 @@ struct PosterRowsSkeleton: View {
     @State private var uiCustomization = UICustomizationPreferences.shared
 
     private var cardWidth: CGFloat {
-        SiloTheme.posterCardWidth * uiCustomization.cardPresentation.posterSize.scale
+        WeFlixTheme.posterCardWidth * uiCustomization.cardPresentation.posterSize.scale
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: SiloTheme.largePadding) {
+        VStack(alignment: .leading, spacing: WeFlixTheme.largePadding) {
             ForEach(0..<rowCount, id: \.self) { _ in
                 VStack(alignment: .leading, spacing: 12) {
                     Capsule()
@@ -31,18 +31,18 @@ struct PosterRowsSkeleton: View {
                         .frame(width: 140, height: 16)
                     HStack(spacing: 12) {
                         ForEach(0..<cardCount, id: \.self) { _ in
-                            RoundedRectangle(cornerRadius: SiloTheme.cornerRadius, style: .continuous)
+                            RoundedRectangle(cornerRadius: WeFlixTheme.cornerRadius, style: .continuous)
                                 .fill(Color.white.opacity(0.09))
                                 .frame(
                                     width: cardWidth,
-                                    height: cardWidth * SiloTheme.posterCardHeight / SiloTheme.posterCardWidth
+                                    height: cardWidth * WeFlixTheme.posterCardHeight / WeFlixTheme.posterCardWidth
                                 )
                         }
                     }
                 }
             }
         }
-        .padding(.horizontal, SiloTheme.padding)
+        .padding(.horizontal, WeFlixTheme.padding)
         // Zero minimums let the frame shrink below the rows' natural size;
         // without them six phone posters widen the whole page and it centers
         // the skeleton off the leading edge, as `RequestRailSkeleton` did.

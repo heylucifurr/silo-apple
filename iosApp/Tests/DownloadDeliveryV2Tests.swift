@@ -1,6 +1,6 @@
 import Foundation
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 /// Offline delivery on v2: the manifest read, the artwork and subtitle routes
 /// it names, the file URL the background session requests, and what a failed

@@ -1,5 +1,5 @@
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 /// Settings > About legal notices: the build's source link and the bundled
 /// license texts behind Open Source Licenses.
@@ -8,9 +8,9 @@ final class LegalNoticesTests: XCTestCase {
         // Single-platform tags such as v1.4.0+ios arrive percent-encoded.
         for tag in ["v1.0.0", "v1.4.0%2Bios"] {
             let archive = "https://github.com/Silo-Server/silo-apple/releases/download/\(tag)/"
-                + "Silo-source-\(String(repeating: "a", count: 40)).tar.gz"
+                + "weflix-source-\(String(repeating: "a", count: 40)).tar.gz"
 
-            XCTAssertEqual(SiloLegalLinks.sourceURL(stamped: archive).absoluteString, archive)
+            XCTAssertEqual(WeFlixLegalLinks.sourceURL(stamped: archive).absoluteString, archive)
         }
     }
 
@@ -18,7 +18,7 @@ final class LegalNoticesTests: XCTestCase {
         let stamps: [String?] = [
             nil,
             "",
-            "$(SILO_SOURCE_URL)",
+            "$(WEFLIX_SOURCE_URL)",
             "http://github.com/Silo-Server/silo-apple/releases/download/v1/a.tar.gz",
             "https://example.com/Silo-Server/silo-apple/releases/download/v1/a.tar.gz",
             "https://github.com/someone/silo-apple/releases/download/v1/a.tar.gz",
@@ -26,7 +26,7 @@ final class LegalNoticesTests: XCTestCase {
         ]
 
         for stamp in stamps {
-            XCTAssertEqual(SiloLegalLinks.sourceURL(stamped: stamp), SiloLegalLinks.repository, stamp ?? "nil")
+            XCTAssertEqual(WeFlixLegalLinks.sourceURL(stamped: stamp), WeFlixLegalLinks.repository, stamp ?? "nil")
         }
     }
 

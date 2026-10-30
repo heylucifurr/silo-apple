@@ -1,5 +1,5 @@
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 /// Card-overlay prefs come only from the canonical settings contract. A
 /// server without it gets the update message, never the retired string
@@ -233,7 +233,7 @@ final class OverlayPrefsStoreTests: XCTestCase {
     private func makeAPI(
         stub: StubURLProtocol.Handler,
         profileId: String
-    ) async throws -> (SiloAPI, TokenStore) {
+    ) async throws -> (WeFlixAPI, TokenStore) {
         let suiteName = "overlay-prefs-tests-\(UUID().uuidString)"
         let suite = try XCTUnwrap(UserDefaults(suiteName: suiteName))
         addTeardownBlock {
@@ -248,7 +248,7 @@ final class OverlayPrefsStoreTests: XCTestCase {
         await tokens.saveTokens(accessToken: "access", refreshToken: "refresh")
         await tokens.setProfileId(profileId)
         let http = HTTPClient(session: stub.makeSession(), tokenStore: tokens)
-        return (SiloAPI(http: http, tokenStore: tokens), tokens)
+        return (WeFlixAPI(http: http, tokenStore: tokens), tokens)
     }
 }
 

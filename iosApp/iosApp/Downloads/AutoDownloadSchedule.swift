@@ -116,7 +116,7 @@ final class AutoDownloadSchedule {
         let today = calendar.startOfDay(for: Date())
         guard let end = calendar.date(byAdding: .day, value: Self.windowDays, to: today) else { return }
         do {
-            let response = try await SiloAPI.shared.calendarEvents(
+            let response = try await WeFlixAPI.shared.calendarEvents(
                 start: Self.dayString(today, calendar: calendar),
                 end: Self.dayString(end, calendar: calendar),
                 filter: CalendarFilter.everything.rawValue,
@@ -147,7 +147,7 @@ final class AutoDownloadSchedule {
             let batch = missing[start..<min(start + Self.seriesInfoConcurrency, missing.count)]
             await withTaskGroup(of: (String, ItemDetail?).self) { group in
                 for seriesId in batch {
-                    group.addTask { (seriesId, try? await SiloAPI.shared.itemDetail(contentId: seriesId)) }
+                    group.addTask { (seriesId, try? await WeFlixAPI.shared.itemDetail(contentId: seriesId)) }
                 }
                 for await (seriesId, detail) in group {
                     guard key == currentScopeKey else { continue }

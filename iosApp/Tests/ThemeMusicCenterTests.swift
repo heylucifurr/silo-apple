@@ -1,6 +1,6 @@
 import Foundation
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 /// When a title page plays its theme: the setting, the server capability, the
 /// page's own lifecycle, other media and the selected season decide.

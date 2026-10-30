@@ -1,7 +1,7 @@
 import AetherEngine
 import Foundation
 
-/// Immutable Silo-owned context that Aether cannot infer from a media source.
+/// Immutable WeFlix-owned context that Aether cannot infer from a media source.
 struct AetherPlaybackStatsSourceMetadata: Equatable {
     let source: String?
     let delivery: String?
@@ -69,7 +69,7 @@ struct AetherPlaybackStatsSourceMetadata: Equatable {
     }
 }
 
-/// Value-only snapshot of the public Aether state used by Silo diagnostics.
+/// Value-only snapshot of the public Aether state used by WeFlix diagnostics.
 /// Keeping projection separate from observation makes generation fencing and
 /// update cadence the controller's responsibility, not this formatter's.
 struct AetherPlaybackStatsSnapshot: Equatable {

@@ -1,5 +1,5 @@
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 /// Contract tests for the canonical settings API client.
 ///
@@ -339,7 +339,7 @@ final class SettingValuesAPITests: XCTestCase {
         XCTAssertEqual(SettingScopeIdentity.account.queryItems, ["scope": "account"])
         XCTAssertEqual(SettingScopeIdentity.profile.queryItems, ["scope": "profile"])
         XCTAssertEqual(SettingScopeIdentity.profileClient.queryItems, ["scope": "profile_client"])
-        // The device half comes from the X-Silo-Device-Id header the client
+        // The device half comes from the X-WeFlix-Device-Id header the client
         // already attaches, never the query — sending it twice is the bug.
         XCTAssertEqual(SettingScopeIdentity.profileDevice.queryItems, ["scope": "profile_device"])
         XCTAssertEqual(
@@ -394,7 +394,7 @@ final class SettingValuesAPITests: XCTestCase {
     // MARK: - Requests over the wire
 
     func testGetContractCapabilitiesReportsUpgradeRequiredOnAV1OnlyServer() async throws {
-        // The chi router's own 404: plain text, no Silo error envelope.
+        // The chi router's own 404: plain text, no WeFlix error envelope.
         stub.route(StubURLProtocol.any) { _ in .text("404 page not found\n", status: 404) }
         let api = await makeStubbedAPI()
 
@@ -632,7 +632,7 @@ final class SettingValuesAPITests: XCTestCase {
         let http = HTTPClient(session: stub.makeSession(), tokenStore: tokenStore)
         let sessionExpiredCount = LockedCounter()
         let observer = NotificationCenter.default.addObserver(
-            forName: .siloSessionExpired,
+            forName: .weFlixSessionExpired,
             object: nil,
             queue: nil
         ) { _ in
@@ -704,7 +704,7 @@ final class SettingValuesAPITests: XCTestCase {
         )
         let sessionExpiredCount = LockedCounter()
         let observer = NotificationCenter.default.addObserver(
-            forName: .siloSessionExpired,
+            forName: .weFlixSessionExpired,
             object: nil,
             queue: nil
         ) { _ in
@@ -753,7 +753,7 @@ final class SettingValuesAPITests: XCTestCase {
         let harness = try await makeRefreshHarness(testName: "TransientRefresh")
         let sessionExpiredCount = LockedCounter()
         let observer = NotificationCenter.default.addObserver(
-            forName: .siloSessionExpired,
+            forName: .weFlixSessionExpired,
             object: nil,
             queue: nil
         ) { _ in
@@ -821,7 +821,7 @@ final class SettingValuesAPITests: XCTestCase {
         let harness = try await makeRefreshHarness(testName: "MalformedRefresh")
         let sessionExpiredCount = LockedCounter()
         let observer = NotificationCenter.default.addObserver(
-            forName: .siloSessionExpired,
+            forName: .weFlixSessionExpired,
             object: nil,
             queue: nil
         ) { _ in
@@ -1235,7 +1235,7 @@ final class SettingValuesAPITests: XCTestCase {
             }
         }
         let persistentObserver = NotificationCenter.default.addObserver(
-            forName: .siloSessionExpired,
+            forName: .weFlixSessionExpired,
             object: nil,
             queue: nil
         ) { _ in
@@ -1974,7 +1974,7 @@ final class SettingValuesAPITests: XCTestCase {
         let harness = try await makeRefreshHarness(testName: "RefreshServerSwitch")
         let sessionExpiredCount = LockedCounter()
         let observer = NotificationCenter.default.addObserver(
-            forName: .siloSessionExpired,
+            forName: .weFlixSessionExpired,
             object: nil,
             queue: nil
         ) { _ in
@@ -2027,7 +2027,7 @@ final class SettingValuesAPITests: XCTestCase {
         let harness = try await makeRefreshHarness(testName: "RefreshSignOut")
         let sessionExpiredCount = LockedCounter()
         let observer = NotificationCenter.default.addObserver(
-            forName: .siloSessionExpired,
+            forName: .weFlixSessionExpired,
             object: nil,
             queue: nil
         ) { _ in
@@ -2072,7 +2072,7 @@ final class SettingValuesAPITests: XCTestCase {
         let harness = try await makeRefreshHarness(testName: "RefreshNewerToken")
         let sessionExpiredCount = LockedCounter()
         let observer = NotificationCenter.default.addObserver(
-            forName: .siloSessionExpired,
+            forName: .weFlixSessionExpired,
             object: nil,
             queue: nil
         ) { _ in
@@ -2330,8 +2330,8 @@ final class SettingValuesAPITests: XCTestCase {
             URLQueryItem(name: "series_ids", value: "s-101"),
         ])
         XCTAssertEqual(recorded.header("X-Profile-Id"), Self.stubProfileId)
-        XCTAssertEqual(recorded.header("X-Silo-Client-Family"), AppleDeviceIdentity.current.clientFamily)
-        XCTAssertEqual(recorded.header("X-Silo-Device-Id")?.isEmpty, false)
+        XCTAssertEqual(recorded.header("X-WeFlix-Client-Family"), AppleDeviceIdentity.current.clientFamily)
+        XCTAssertEqual(recorded.header("X-WeFlix-Device-Id")?.isEmpty, false)
     }
 
     func testGetEffectiveValuesRejectsARevisionBelowTheMinimum() async throws {
@@ -2448,9 +2448,9 @@ final class SettingValuesAPITests: XCTestCase {
 
     static let stubProfileId = "profile-under-test"
 
-    /// A SiloAPI whose HTTPClient talks to this test's `stub`, with a
+    /// A WeFlixAPI whose HTTPClient talks to this test's `stub`, with a
     /// TokenStore isolated to this test.
-    private func makeStubbedAPI(profileId: String? = SettingValuesAPITests.stubProfileId) async -> SiloAPI {
+    private func makeStubbedAPI(profileId: String? = SettingValuesAPITests.stubProfileId) async -> WeFlixAPI {
         let suiteName = "settings-values-tests-\(UUID().uuidString)"
         let suite = UserDefaults(suiteName: suiteName)!
         addTeardownBlock {
@@ -2465,7 +2465,7 @@ final class SettingValuesAPITests: XCTestCase {
         await tokenStore.setProfileId(profileId)
 
         let http = HTTPClient(session: stub.makeSession(), tokenStore: tokenStore)
-        return SiloAPI(http: http, tokenStore: tokenStore)
+        return WeFlixAPI(http: http, tokenStore: tokenStore)
     }
 
     private func makeRefreshHarness(testName: String) async throws -> (

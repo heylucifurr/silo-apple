@@ -1,6 +1,6 @@
 import Foundation
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 /// Network identity sign-in ("Continue as …" through a network provider
 /// such as Tailscale): discovery of the provider, the sign-in request on the
@@ -117,7 +117,7 @@ final class NetworkSignInTests: XCTestCase {
     /// another shape offers no network sign-in.
     func testSignInPathIsTheAPISuffixOnTheSavedBase() {
         XCTAssertEqual(NetworkSignIn.apiPath(of: Self.network()), Self.apiPath)
-        XCTAssertEqual(NetworkSignIn.apiPath(of: Self.network(path: "/silo/api/v2/auth/network/5/sign-in")), Self.apiPath,
+        XCTAssertEqual(NetworkSignIn.apiPath(of: Self.network(path: "/weFlix/api/v2/auth/network/5/sign-in")), Self.apiPath,
             "another address's path prefix is dropped; the saved base supplies its own")
         XCTAssertEqual(NetworkSignIn.apiPath(of: Self.network(path: " /api/v2/auth/network/12/sign-in ")),
             "/api/v2/auth/network/12/sign-in")
@@ -353,14 +353,14 @@ final class NetworkSignInTests: XCTestCase {
 
         let item = AccountSignInModel.Connectable(provider: Self.network(), method: .network)
         XCTAssertEqual(AccountSignInModel.connectFooter(for: item, networkLinkKeepsPassword: true),
-            "Enter your Silo password to confirm. This connects Alice Example, the Tailscale account this device belongs to. You can then sign in with Tailscale or your password. Tailscale sign-in works only when you open this server at its Tailscale address.")
+            "Enter your weflix password to confirm. This connects Alice Example, the Tailscale account this device belongs to. You can then sign in with Tailscale or your password. Tailscale sign-in works only when you open this server at its Tailscale address.")
         XCTAssertEqual(AccountSignInModel.connectFooter(for: item, networkLinkKeepsPassword: false),
-            "Enter your Silo password to confirm. This connects Alice Example, the Tailscale account this device belongs to. After connecting, you sign in with Tailscale instead of your password, and only when you open this server at its Tailscale address.")
+            "Enter your weflix password to confirm. This connects Alice Example, the Tailscale account this device belongs to. After connecting, you sign in with Tailscale instead of your password, and only when you open this server at its Tailscale address.")
     }
 
     /// Like directory linking, the local password goes once, under the
     /// account's own bearer; this device's owner is what the server links.
-    func testLinkSendsOnlyTheSiloPasswordOnceUnderTheAccount() async throws {
+    func testLinkSendsOnlyTheWeFlixPasswordOnceUnderTheAccount() async throws {
         let (api, account) = try await makeSignedInAPI()
         let entry = try Support.entry(named: "link_account_identity_with_network_ok", bundleClass: Self.self)
         XCTAssertEqual(entry.operationId, "linkAccountIdentityWithNetwork")
@@ -399,7 +399,7 @@ final class NetworkSignInTests: XCTestCase {
         let (api, _, tokens) = try await makeSignedInStack()
         let model = AccountSignInModel(api: api, tokenStore: tokens, link: { _, _ in XCTFail("browser link used") })
         let providers = try Support.mutatedBody(named: "list_auth_providers_ok", bundleClass: Self.self) { object in
-            object["items"] = [["id": "local", "display_name": "Silo account", "mode": "credentials", "default": true],
+            object["items"] = [["id": "local", "display_name": "weflix account", "mode": "credentials", "default": true],
                                Self.networkItem]
         }
         stub.reply(path: APIv2Client.authProvidersPath, 200, String(decoding: providers, as: UTF8.self))
@@ -415,10 +415,10 @@ final class NetworkSignInTests: XCTestCase {
         let cases: [(Int, String, String)] = [
             (403, Self.problemBody("network_identity_required", 403), "Open this server at its Tailscale address to connect it."),
             (422, #"{"type":"https://siloserver.org/docs/api/v2/problems/validation_failed","title":"t","status":422,"detail":"d","errors":[{"location":"body.password","code":"invalid","detail":"d"}]}"#,
-                "That Silo password is incorrect."),
+                "That weflix password is incorrect."),
             (403, Self.problemBody("not_permitted", 403), "Tailscale doesn't allow this device to sign in to this server."),
             (409, Self.problemBody("local_password_required", 409),
-                "Your account has no Silo password to confirm with. Ask an administrator to connect the provider."),
+                "Your account has no weflix password to confirm with. Ask an administrator to connect the provider."),
             (409, Self.problemBody("already_linked", 409), ExternalSignInError.reasonText("already_linked")),
         ]
         for (status, body, expected) in cases {
@@ -431,7 +431,7 @@ final class NetworkSignInTests: XCTestCase {
         let before = stub.requestedPaths.filter { $0 == APIv2Client.identityLinkNetworkPath }.count
         let empty = await model.connect(item.provider, password: "")
         XCTAssertFalse(empty)
-        XCTAssertEqual(model.errorMessage, "Enter your Silo password.")
+        XCTAssertEqual(model.errorMessage, "Enter your weflix password.")
         XCTAssertEqual(stub.requestedPaths.filter { $0 == APIv2Client.identityLinkNetworkPath }.count, before,
             "nothing is sent without the password")
 

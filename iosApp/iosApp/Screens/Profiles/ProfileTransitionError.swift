@@ -20,7 +20,7 @@ enum ProfileTransitionError: LocalizedError {
         case .temporaryIdentityActive:
             return "End remote playback before switching profiles."
         case .missingPINProof:
-            return "Silo couldn't verify that profile's PIN. Please try again."
+            return "weflix couldn't verify that profile's PIN. Please try again."
         case .incorrectPIN:
             return "That PIN is incorrect. Try again."
         case .pinLockedOut(let retryAfter):
@@ -37,7 +37,7 @@ enum ProfileTransitionError: LocalizedError {
         case .identityChanged:
             return "The active account changed while selecting the profile. Please try again."
         case .accountEpochUnavailable:
-            return "Silo couldn't securely remember this profile. Please try again."
+            return "weflix couldn't securely remember this profile. Please try again."
         }
     }
 }

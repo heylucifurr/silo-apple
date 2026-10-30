@@ -1,5 +1,5 @@
 import Foundation
-@testable import Silo
+@testable import WeFlix
 
 /// Scenario wrapper over the shared `StubURLProtocol.Handler` for the API v2
 /// wire tests. One persistent catch-all route answers every request from a

@@ -2,7 +2,7 @@ import AetherEngine
 import SwiftUI
 import UIKit
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 /// Aether decodes a sidecar after the track is picked. While playback is
 /// paused no clock tick redraws the overlay, so the cues arriving must.

@@ -1,6 +1,6 @@
 import Foundation
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 /// The detail-page theme player, driven through its public surface with a fake
 /// grant source and a fake audio output. Mirrors the web player's lifecycle

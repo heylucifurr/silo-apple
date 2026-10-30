@@ -1,6 +1,6 @@
 import Foundation
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 /// The v2 catalog wire layer: query grammar, strict page decoding, opaque
 /// continuations, and the ownership fences around every catalog read and

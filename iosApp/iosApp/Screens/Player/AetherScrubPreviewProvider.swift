@@ -4,7 +4,7 @@ import Foundation
 
 /// Owns disposable still extraction for the active Aether load generation.
 ///
-/// Silo's controls speak in source-media time while Aether's still APIs use
+/// WeFlix's controls speak in source-media time while Aether's still APIs use
 /// the active player/transport axis. Keeping the conversion and generation
 /// fences here prevents a late frame from a replaced V3 plan appearing over
 /// the next item. Cache-backed native stills are preferred because they do

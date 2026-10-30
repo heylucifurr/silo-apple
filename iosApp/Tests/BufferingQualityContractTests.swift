@@ -1,6 +1,6 @@
 import Foundation
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 /// The buffering-quality wire contract (silo-server
 /// docs/design/2026-10-17-buffering-quality.md, "Wire contract"): what a start

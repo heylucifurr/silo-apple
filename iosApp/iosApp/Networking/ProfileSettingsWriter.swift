@@ -16,7 +16,7 @@ import OSLog
 
 /// The slice of the canonical settings API the profile preferences need.
 ///
-/// A protocol rather than a direct ``SiloAPI`` reference so the mapping
+/// A protocol rather than a direct ``WeFlixAPI`` reference so the mapping
 /// between editor state and wire values can be exercised without a network.
 /// The scope is baked in at `profile`: these are the household member's own
 /// choices, and the contract resolves device, library and series overrides
@@ -26,11 +26,11 @@ protocol ProfileSettingsTransport: AnyObject, Sendable {
     func putValue(key: SettingKey, value: SettingJSONValue, profileId: String?) async throws
 }
 
-/// The production transport: the canonical endpoints on ``SiloAPI``.
-final class SiloProfileSettingsTransport: ProfileSettingsTransport {
-    private let api: SiloAPI
+/// The production transport: the canonical endpoints on ``WeFlixAPI``.
+final class WeFlixProfileSettingsTransport: ProfileSettingsTransport {
+    private let api: WeFlixAPI
 
-    init(api: SiloAPI = .shared) {
+    init(api: WeFlixAPI = .shared) {
         self.api = api
     }
 
@@ -115,7 +115,7 @@ final class ProfileSettingsWriter: Sendable {
     struct Superseded: Error, Equatable {}
 
     private static let logger = Logger(
-        subsystem: Bundle.main.bundleIdentifier ?? "org.siloserver.silo",
+        subsystem: Bundle.main.bundleIdentifier ?? "me.weflix",
         category: "ProfileSettingsWriter"
     )
 
@@ -134,7 +134,7 @@ final class ProfileSettingsWriter: Sendable {
     }
 
     convenience init() {
-        self.init(transport: SiloProfileSettingsTransport())
+        self.init(transport: WeFlixProfileSettingsTransport())
     }
 
     // MARK: - Read

@@ -256,7 +256,7 @@ final class PlayerSettings {
     /// truth. Storing a compound tier id was safe while this client had one
     /// quality table; it stopped being safe when the settings picker adopted
     /// the cross-client presets, because both tables spell a rung `1080p-high`
-    /// and mean different bitrates by it (10 Mbps in ``SiloQualityPresets``,
+    /// and mean different bitrates by it (10 Mbps in ``WeFlixQualityPresets``,
     /// 20 Mbps in ``ApplePlaybackQuality``). A stored id would silently change
     /// meaning depending on which table read it back; a stored pair says what
     /// it means and each table interprets it rather than owning it.
@@ -302,8 +302,8 @@ final class PlayerSettings {
     /// client whose ladder has a rung this table does not. The settings picker
     /// shows the pair's own description in that case rather than snapping to a
     /// nearby preset, which would misreport what is stored.
-    var currentQualityPreset: SiloQualityPreset? {
-        SiloQualityPresets.preset(
+    var currentQualityPreset: WeFlixQualityPreset? {
+        WeFlixQualityPresets.preset(
             resolution: preferredQualityResolution,
             bitrateKbps: maxBitrateKbps
         )
@@ -312,7 +312,7 @@ final class PlayerSettings {
     /// A user-facing label for the stored pair, in the terms of the two
     /// pickers that set it ("1080p at 10 Mbps") rather than a preset name.
     var preferredQualityLabel: String {
-        SiloQualityPresets.describeAxes(
+        WeFlixQualityPresets.describeAxes(
             resolution: preferredQualityResolution,
             bitrateKbps: maxBitrateKbps
         )
@@ -362,13 +362,13 @@ final class PlayerSettings {
 
     /// The shared preset the cellular pair corresponds to, or nil for a pair
     /// no preset covers (set through the API or by another client).
-    var currentCellularQualityPreset: SiloQualityPreset? {
-        SiloQualityPresets.preset(resolution: cellularQualityResolution, bitrateKbps: cellularMaxBitrateKbps)
+    var currentCellularQualityPreset: WeFlixQualityPreset? {
+        WeFlixQualityPresets.preset(resolution: cellularQualityResolution, bitrateKbps: cellularMaxBitrateKbps)
     }
 
     /// A user-facing label for the cellular pair, preset or not.
     var cellularQualityLabel: String {
-        SiloQualityPresets.describe(resolution: cellularQualityResolution, bitrateKbps: cellularMaxBitrateKbps)
+        WeFlixQualityPresets.describe(resolution: cellularQualityResolution, bitrateKbps: cellularMaxBitrateKbps)
     }
 
     /// The pair playback asks for on the current connection: the cellular
@@ -449,7 +449,7 @@ final class PlayerSettings {
 
     /// Retained as the cross-client buffering preference. Aether owns the
     /// cache implementation; the adapter maps this preference without
-    /// constructing a Silo source cache.
+    /// constructing a WeFlix source cache.
     private(set) var seekCacheEnabled: Bool {
         didSet {
             guard !isLoadingCache else { return }
@@ -587,7 +587,7 @@ final class PlayerSettings {
 
     /// Device-local: when true, subtitle styling mirrors the system's
     /// Subtitles & Captioning accessibility preferences instead of the
-    /// Silo appearance. Never synced to the server — it is inherently
+    /// WeFlix appearance. Never synced to the server — it is inherently
     /// about *this* device's accessibility configuration.
     private(set) var subtitleMatchesSystemAppearance: Bool {
         didSet {
@@ -604,7 +604,7 @@ final class PlayerSettings {
     var subtitleSystemAppearance: SubtitleAppearance = SystemCaptionAppearance.current()
     var subtitleSystemSelectionPreferences = SystemCaptionSelectionPreferences.current()
 
-    /// The Silo appearance in effect on this device: its own while the
+    /// The WeFlix appearance in effect on this device: its own while the
     /// device override is on, otherwise the profile's. Every appearance editor
     /// starts from this, so an edit never starts from a stale device copy.
     var subtitleAppearance: SubtitleAppearance {
@@ -1003,7 +1003,7 @@ final class PlayerSettings {
     /// axis on its own. A preset names both axes, so both are written:
     /// leaving a stale cap behind would keep throttling a tier the user just
     /// widened, which is also why uncapped is an explicit JSON null.
-    func setQualityPreset(_ preset: SiloQualityPreset) {
+    func setQualityPreset(_ preset: WeFlixQualityPreset) {
         setQualityResolution(preset.resolution)
         setMaxBitrateKbps(preset.bitrateKbps)
     }
@@ -1012,7 +1012,7 @@ final class PlayerSettings {
     /// bitrate cap keeps following wherever it comes from (this device's own
     /// value or the profile's), as on the web.
     func setQualityResolution(_ resolution: String) {
-        preferredQualityResolution = SiloQualityPresets.normalizeResolution(resolution)
+        preferredQualityResolution = WeFlixQualityPresets.normalizeResolution(resolution)
         enqueueDeviceValue(.preferredQuality, value: .string(preferredQualityResolution))
     }
 
@@ -1027,8 +1027,8 @@ final class PlayerSettings {
     /// Set the cellular pair from a shared preset. Saved at the same scope as
     /// the main pair; against a server older than revision 20 the flusher
     /// keeps it on this device until the server serves the keys.
-    func setCellularQualityPreset(_ preset: SiloQualityPreset) {
-        cellularQualityResolution = SiloQualityPresets.normalizeResolution(preset.resolution)
+    func setCellularQualityPreset(_ preset: WeFlixQualityPreset) {
+        cellularQualityResolution = WeFlixQualityPresets.normalizeResolution(preset.resolution)
         cellularMaxBitrateKbps = preset.bitrateKbps.flatMap { $0 > 0 ? $0 : nil }
         enqueueDeviceValue(.cellularPreferredQuality, value: .string(cellularQualityResolution))
         enqueueDeviceValue(
@@ -1195,7 +1195,7 @@ final class PlayerSettings {
     }
 
     /// Toggle mirroring the device's Subtitles & Captioning accessibility
-    /// preferences. Purely local; the saved Silo appearance is untouched
+    /// preferences. Purely local; the saved WeFlix appearance is untouched
     /// so switching back restores it.
     func setSubtitleMatchesSystemAppearance(_ enabled: Bool) {
         guard enabled != subtitleMatchesSystemAppearance else { return }
@@ -1422,7 +1422,7 @@ final class PlayerSettings {
 
     /// Normalizes the pair the same way ``setQualityPreset(_:)`` does.
     func adoptProfileQuality(resolution: String, bitrateKbps: Int?) {
-        preferredQualityResolution = SiloQualityPresets.normalizeResolution(resolution)
+        preferredQualityResolution = WeFlixQualityPresets.normalizeResolution(resolution)
         maxBitrateKbps = bitrateKbps.flatMap { $0 > 0 ? $0 : nil }
     }
 
@@ -1621,7 +1621,7 @@ final class PlayerSettings {
         // write that back on the next edit, so a 1080p/6 Mbps choice made on
         // the web would decay into Apple's 720p High the first time this
         // client touched any quality control.
-        preferredQualityResolution = SiloQualityPresets.normalizeResolution(
+        preferredQualityResolution = WeFlixQualityPresets.normalizeResolution(
             effectiveByKey[.preferredQuality]?.value.stringValue
         )
         maxBitrateKbps = effectiveByKey[.maxBitrateKbps]?.value.intValue.flatMap {
@@ -1632,7 +1632,7 @@ final class PlayerSettings {
         // Without one this device keeps its value, which is the only copy on
         // a server older than revision 20.
         if let entry = effectiveByKey[.cellularPreferredQuality] {
-            cellularQualityResolution = SiloQualityPresets.normalizeResolution(entry.value.stringValue)
+            cellularQualityResolution = WeFlixQualityPresets.normalizeResolution(entry.value.stringValue)
         }
         if let entry = effectiveByKey[.cellularMaxBitrateKbps] {
             cellularMaxBitrateKbps = entry.value.intValue.flatMap { $0 > 0 ? $0 : nil }
@@ -2117,13 +2117,13 @@ final class PlayerSettings {
     ///
     /// Those builds wrote `1080p-high` and friends into this very key, so the
     /// value read here may be either spelling.
-    /// ``SiloQualityPresets/normalizeResolution(_:)`` reduces both to a
+    /// ``WeFlixQualityPresets/normalizeResolution(_:)`` reduces both to a
     /// contract member, dropping the bitrate half — which is correct, because
     /// the companion key below carries it. An upgrading device therefore keeps
     /// its resolution and loses only a cap it never stored separately, and the
     /// first server refresh restores that from the profile's own row.
     private static func cachedQualityResolution(_ defaults: UserDefaults) -> String {
-        SiloQualityPresets.normalizeResolution(
+        WeFlixQualityPresets.normalizeResolution(
             defaults.string(forKey: cacheKey(Keys.preferredQuality))
         )
     }
@@ -2141,7 +2141,7 @@ final class PlayerSettings {
     /// stored. A stored bitrate of 0 is uncapped (see ``cellularMaxBitrateKbps``).
     private static func cachedCellularQuality(_ defaults: UserDefaults) -> AppleQualityAxes {
         let resolution = defaults.string(forKey: cacheKey(Keys.cellularPreferredQuality))
-            .map { SiloQualityPresets.normalizeResolution($0) }
+            .map { WeFlixQualityPresets.normalizeResolution($0) }
             ?? defaultCellularQuality.resolution
         let bitrateKey = cacheKey(Keys.cellularMaxBitrateKbps)
         let bitrate = defaults.object(forKey: bitrateKey) == nil

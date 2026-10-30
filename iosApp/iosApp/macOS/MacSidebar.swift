@@ -31,9 +31,9 @@ struct MacSidebar: View {
                         rows(for: section)
                     } header: {
                         Text(title)
-                            .font(.siloCaption)
+                            .font(.weFlixCaption)
                             .textCase(.uppercase)
-                            .tracking(SiloTheme.macSidebarHeadingTracking)
+                            .tracking(WeFlixTheme.macSidebarHeadingTracking)
                     }
                 } else {
                     rows(for: section)
@@ -43,31 +43,31 @@ struct MacSidebar: View {
         .listStyle(.sidebar)
         .scrollBounceBehavior(.basedOnSize)
         .scrollContentBackground(.hidden)
-        .background(Color.siloSidebarCanvas)
+        .background(Color.weFlixSidebarCanvas)
         .safeAreaInset(edge: .top, spacing: 0) {
-            SiloWordmarkView(width: SiloTheme.macSidebarWordmarkWidth)
+            WeFlixWordmarkView(width: WeFlixTheme.macSidebarWordmarkWidth)
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.horizontal, SiloTheme.padding)
-                .padding(.vertical, SiloTheme.spacing)
+                .padding(.horizontal, WeFlixTheme.padding)
+                .padding(.vertical, WeFlixTheme.spacing)
                 // Opaque, so rows scrolling underneath do not show through.
-                .background(Color.siloSidebarCanvas)
+                .background(Color.weFlixSidebarCanvas)
         }
         .safeAreaInset(edge: .bottom, spacing: 0) {
             ProfileAvatarMenu(
                 profile: profileStore.profile,
                 showsName: true,
                 onOpenSettings: { router.navigate(to: .settings) },
-                onOpenRequests: { onSelect(.app(.requests)) },
+                onOpenDownloads: { onSelect(.app(.downloads)) },
                 onSwitchProfile: { router.switchProfile() },
                 onSwitchServer: { router.navigate(to: .serverList) },
                 onSignOut: { router.signOutAndReset() }
             )
             .menuIndicator(.hidden)
-            .padding(.horizontal, SiloTheme.padding)
-            .padding(.vertical, SiloTheme.smallPadding)
-            .background(Color.siloSidebarCanvas)
+            .padding(.horizontal, WeFlixTheme.padding)
+            .padding(.vertical, WeFlixTheme.smallPadding)
+            .background(Color.weFlixSidebarCanvas)
             .overlay(alignment: .top) {
-                Divider().overlay(Color.siloDivider)
+                Divider().overlay(Color.weFlixDivider)
             }
             .task { await profileStore.refresh() }
         }
@@ -77,14 +77,15 @@ struct MacSidebar: View {
         ForEach(section.items) { destination in
             let isSelected = highlight == destination.id
             HStack {
-                Label(
-                    destination.title,
-                    systemImage: isSelected ? destination.selectedIcon : destination.icon
-                )
+                Label {
+                    Text(destination.title)
+                } icon: {
+                    menuIcon(isSelected ? destination.selectedIcon : destination.icon)
+                }
                 if destination.id == .app(.search) {
                     Spacer()
                     Text("⌘K")
-                        .font(.siloSmall)
+                        .font(.weFlixSmall)
                         .foregroundStyle(.secondary)
                 }
             }

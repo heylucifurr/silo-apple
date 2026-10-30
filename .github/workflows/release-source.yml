@@ -57,7 +57,7 @@ jobs:
             echo "::error::Source release $RELEASE_TAG is a draft. Publish it before distributing binaries."
             exit 1
           fi
-          ASSET="Silo-source-${GITHUB_SHA}.tar.gz"
+          ASSET="WeFlix-source-${GITHUB_SHA}.tar.gz"
           gh release upload "$RELEASE_TAG" "$RUNNER_TEMP/release-source/$ASSET" --clobber
           SOURCE_URL="$(gh release view "$RELEASE_TAG" --json assets --jq ".assets[] | select(.name == \"$ASSET\") | .url")"
           test -n "$SOURCE_URL"

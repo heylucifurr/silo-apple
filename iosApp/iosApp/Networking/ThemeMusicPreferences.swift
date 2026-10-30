@@ -1,6 +1,6 @@
 //
 //  ThemeMusicPreferences.swift
-//  Silo (iOS + tvOS + macOS)
+//  WeFlix (iOS + tvOS + macOS)
 //
 //  Whether title pages play local theme music (`ui.theme_music_enabled`) and
 //  whether it repeats (`ui.theme_music_loop`). Both default to off.
@@ -75,7 +75,7 @@ final class ThemeMusicPreferences {
     @ObservationIgnored private var writeTail: Task<Void, Never>?
 
     init(
-        transport: ThemeMusicTransport = SiloTitleArtTransport(),
+        transport: ThemeMusicTransport = WeFlixTitleArtTransport(),
         requestIdentity: @escaping @MainActor () -> HTTPRequestIdentity? = TitleArtPreferences.activeRequestIdentity
     ) {
         self.transport = transport

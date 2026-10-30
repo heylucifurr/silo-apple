@@ -3,7 +3,7 @@ import XCTest
 #if !os(tvOS)
 import AuthenticationServices
 #endif
-@testable import Silo
+@testable import WeFlix
 
 /// External sign-in in the apps: provider discovery and the password-form
 /// rule, the native OAuth handshake (PKCE, state and server checks, error
@@ -297,7 +297,7 @@ final class ExternalSignInTests: XCTestCase {
             .failure(reason: "email_in_use"))
         // The origin compares as an origin: case and a default port differ
         // only in spelling.
-        XCTAssertEqual(try parse(["code": "c", "state": "st", "server": Self.serverId, "iss": "HTTPS://Silo.Example.Test:443"]),
+        XCTAssertEqual(try parse(["code": "c", "state": "st", "server": Self.serverId, "iss": "HTTPS://silo.Example.Test:443"]),
             .code("c", link: false))
 
         let refusals: [([String: String], ExternalSignInError)] = [
@@ -327,11 +327,11 @@ final class ExternalSignInTests: XCTestCase {
         }
         XCTAssertEqual(ExternalSignInError.issuerMismatch.message,
             "This sign-in came back from a different server. Nothing was signed in.")
-        let deepLink = try XCTUnwrap(URL(string: "silo://auth/callback?code=c&state=st&server=\(Self.serverId)"))
-        XCTAssertFalse(NativeSignIn.isCallback(deepLink), "silo:// deep links are not the sign-in redirect")
+        let deepLink = try XCTUnwrap(URL(string: "weflix://auth/callback?code=c&state=st&server=\(Self.serverId)"))
+        XCTAssertFalse(NativeSignIn.isCallback(deepLink), "weflix:// deep links are not the sign-in redirect")
         XCTAssertThrowsError(try NativeSignInCallback.parse(deepLink, expectedState: "st", expectedServerId: Self.serverId,
             expectedIssuer: Self.origin))
-        let otherPath = try XCTUnwrap(URL(string: "org.siloserver.silo:/other?code=c&state=st&server=\(Self.serverId)"))
+        let otherPath = try XCTUnwrap(URL(string: "me.weflix:/other?code=c&state=st&server=\(Self.serverId)"))
         XCTAssertThrowsError(try NativeSignInCallback.parse(otherPath, expectedState: "st", expectedServerId: Self.serverId,
             expectedIssuer: Self.origin)) {
             XCTAssertEqual($0 as? ExternalSignInError, .incompleteCallback)
@@ -408,7 +408,7 @@ final class ExternalSignInTests: XCTestCase {
         var startURLs: [URL] { lock.withLock { opened } }
 
         @MainActor func authenticate(url: URL, callbackScheme: String) async throws -> URL {
-            XCTAssertEqual(callbackScheme, "org.siloserver.silo")
+            XCTAssertEqual(callbackScheme, "me.weflix")
             lock.withLock { opened.append(url) }
             try await whileOpen?()
             return try answer(url)
@@ -708,13 +708,13 @@ final class ExternalSignInTests: XCTestCase {
         func resolved(_ provider: APIv2AuthProvider, on saved: String) -> String? {
             SignInOptions.nativeStart(of: provider).flatMap { NativeSignIn.startURL($0, onServer: saved) }?.absoluteString
         }
-        let prefixed = Self.provider(startPath: "/silo/api/v2/auth/oauth/5/native/start?keep=1")
+        let prefixed = Self.provider(startPath: "/weFlix/api/v2/auth/oauth/5/native/start?keep=1")
         XCTAssertEqual(resolved(prefixed, on: "http://192.168.1.5:8096"),
             "http://192.168.1.5:8096/api/v2/auth/oauth/5/native/start?keep=1", "the public prefix is not the LAN's")
         XCTAssertEqual(resolved(prefixed, on: "https://lan.example.test/media/"),
             "https://lan.example.test/media/api/v2/auth/oauth/5/native/start?keep=1", "the saved prefix is kept")
-        XCTAssertEqual(resolved(Self.provider(), on: "HTTPS://Silo.Example.Test"),
-            "HTTPS://Silo.Example.Test" + Self.startPath)
+        XCTAssertEqual(resolved(Self.provider(), on: "HTTPS://silo.Example.Test"),
+            "HTTPS://silo.Example.Test" + Self.startPath)
         XCTAssertEqual(resolved(Self.provider(), on: Self.hostile), Self.hostile + Self.startPath)
 
         let unusable: [APIv2AuthProvider] = [
@@ -1039,7 +1039,7 @@ final class ExternalSignInTests: XCTestCase {
 
     func testWrongPasswordAndLastSignInMethodCopy() throws {
         let wrong = APIv2Error.problem(try decode(APIv2Problem.self, "create_account_identity_link_ticket_wrong_password"))
-        XCTAssertEqual(AccountSignInModel.message(for: wrong, action: .connect), "That Silo password is incorrect.")
+        XCTAssertEqual(AccountSignInModel.message(for: wrong, action: .connect), "That weflix password is incorrect.")
         let last = APIv2Error.problem(try decode(APIv2Problem.self, "delete_account_identity_last_sign_in_method"))
         XCTAssertEqual(AccountSignInModel.message(for: last, action: .disconnect),
             "This is your only way to sign in, so it can't be disconnected. Ask an administrator to set a password for your account first.")
@@ -1138,11 +1138,11 @@ final class ExternalSignInTests: XCTestCase {
                 errors: location.map { [APIv2ProblemError(location: $0, code: "invalid", detail: "d")] }))
         }
         let cases: [(Error, String)] = [
-            (problem("validation_failed", 422, at: "body.password"), "That Silo password is incorrect."),
+            (problem("validation_failed", 422, at: "body.password"), "That weflix password is incorrect."),
             (problem("validation_failed", 422, at: "body.directory_password"),
                 "The directory didn't accept that username and password."),
             (problem("local_password_required", 409),
-                "Your account has no Silo password to confirm with. Ask an administrator to connect the provider."),
+                "Your account has no weflix password to confirm with. Ask an administrator to connect the provider."),
             (problem("not_permitted", 403), ExternalSignInError.reasonText("not_permitted")),
             (problem("account_disabled", 403), ExternalSignInError.reasonText("account_disabled")),
             (problem("identity_linked_elsewhere", 409), ExternalSignInError.reasonText("identity_linked_elsewhere")),
@@ -1268,7 +1268,7 @@ final class ExternalSignInTests: XCTestCase {
         }
         let http = HTTPClient(session: handler.makeSession(), tokenStore: tokens)
         let expired = Counter()
-        let observer = NotificationCenter.default.addObserver(forName: .siloSessionExpired, object: nil, queue: nil) { _ in
+        let observer = NotificationCenter.default.addObserver(forName: .weFlixSessionExpired, object: nil, queue: nil) { _ in
             _ = expired.increment()
         }
         defer { NotificationCenter.default.removeObserver(observer) }
@@ -1424,7 +1424,7 @@ extension ExternalSignInTests {
         let strays = [
             Self.callback(["code": "c", "state": "someone-else", "server": Self.serverId]),
             Self.callback(["code": "c", "server": Self.serverId]),
-            try XCTUnwrap(URL(string: "org.siloserver.silo:/auth/callback")),
+            try XCTUnwrap(URL(string: "me.weflix:/auth/callback")),
         ]
         for stray in strays {
             XCTAssertFalse(runner.receiveExternalCallback(stray), stray.absoluteString)

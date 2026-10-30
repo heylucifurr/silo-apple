@@ -31,7 +31,7 @@ struct EpisodeThumbCard: View {
     /// tvOS: loads the version saved with the card's progress and shows its
     /// format pills (`TVContinueWatchingPlaybackMetadataStore`).
     var showsSavedPlaybackMetadata = false
-    /// Unscaled card width; nil keeps `SiloTheme.thumbnailCardWidth`. The
+    /// Unscaled card width; nil keeps `WeFlixTheme.thumbnailCardWidth`. The
     /// Poster Size setting scales either one.
     var baseCardWidth: CGFloat? = nil
 
@@ -51,9 +51,9 @@ struct EpisodeThumbCard: View {
 
     /// The size the card draws its still at, at the current card-size setting.
     static func artworkSize(baseWidth: CGFloat? = nil) -> CGSize {
-        let base = baseWidth ?? SiloTheme.thumbnailCardWidth
+        let base = baseWidth ?? WeFlixTheme.thumbnailCardWidth
         let width = base * UICustomizationPreferences.shared.cardPresentation.posterSize.scale
-        return CGSize(width: width, height: width * (SiloTheme.thumbnailCardHeight / SiloTheme.thumbnailCardWidth))
+        return CGSize(width: width, height: width * (WeFlixTheme.thumbnailCardHeight / WeFlixTheme.thumbnailCardWidth))
     }
 
     #if os(tvOS)
@@ -78,7 +78,7 @@ struct EpisodeThumbCard: View {
 
             VStack(alignment: .leading, spacing: 4) {
                 Text(displayTitle)
-                    .font(.siloPosterTitle)
+                    .font(.weFlixPosterTitle)
                     .lineLimit(1)
                     .truncationMode(.tail)
                     .tvCardTitleFocus(isFocused: isFocused)
@@ -86,7 +86,7 @@ struct EpisodeThumbCard: View {
 
                 if let subtitle = subtitleLine {
                     Text(subtitle)
-                        .font(.siloPosterMetadata)
+                        .font(.weFlixPosterMetadata)
                         .tvCardSubtitleFocus(isFocused: isFocused)
                         .lineLimit(1)
                         .truncationMode(.tail)
@@ -135,13 +135,13 @@ struct EpisodeThumbCard: View {
             VStack(alignment: .leading, spacing: 6) {
                 thumbnail
                 Text(displayTitle)
-                    .font(.siloCardTitle)
-                    .foregroundStyle(Color.siloOnSurface)
+                    .font(.weFlixCardTitle)
+                    .foregroundStyle(Color.weFlixOnSurface)
                     .lineLimit(1)
                 if let subtitle = subtitleLine {
                     Text(subtitle)
-                        .font(.siloCardMetadata)
-                        .foregroundColor(.siloSecondaryText)
+                        .font(.weFlixCardMetadata)
+                        .foregroundColor(.weFlixSecondaryText)
                         .lineLimit(1)
                 }
             }
@@ -167,7 +167,7 @@ struct EpisodeThumbCard: View {
             .frame(width: cardWidth, height: cardHeight)
             .episodeSpoilerBlur(hidesStill)
             .clipped()
-            .clipShape(RoundedRectangle(cornerRadius: SiloTheme.cornerRadius))
+            .clipShape(RoundedRectangle(cornerRadius: WeFlixTheme.cornerRadius))
 
             #if !os(tvOS)
             // Scrim keeps bottom overlays and progress legible over bright stills.
@@ -177,7 +177,7 @@ struct EpisodeThumbCard: View {
                 endPoint: .bottom
             )
             .frame(width: cardWidth, height: cardHeight)
-            .clipShape(RoundedRectangle(cornerRadius: SiloTheme.cornerRadius))
+            .clipShape(RoundedRectangle(cornerRadius: WeFlixTheme.cornerRadius))
             #endif
 
             // Server / user-customized overlay badges. `wide` variant
@@ -189,7 +189,7 @@ struct EpisodeThumbCard: View {
                     variant: .wide
                 )
                 .frame(width: cardWidth, height: cardHeight)
-                .clipShape(RoundedRectangle(cornerRadius: SiloTheme.cornerRadius))
+                .clipShape(RoundedRectangle(cornerRadius: WeFlixTheme.cornerRadius))
             }
 
             // Progress bar (resume)
@@ -199,7 +199,7 @@ struct EpisodeThumbCard: View {
                     ProgressBar(value: p)
                 }
                 .frame(width: cardWidth, height: cardHeight)
-                .clipShape(RoundedRectangle(cornerRadius: SiloTheme.cornerRadius))
+                .clipShape(RoundedRectangle(cornerRadius: WeFlixTheme.cornerRadius))
             }
 
             // Watched check
@@ -208,12 +208,12 @@ struct EpisodeThumbCard: View {
                     Spacer()
                     ZStack {
                         Circle()
-                            .fill(Color.siloOnSurface)
+                            .fill(Color.weFlixOnSurface)
                             .frame(width: checkBadgeSize, height: checkBadgeSize)
                             .shadow(color: .black.opacity(0.3), radius: 4)
                         Image(systemName: "checkmark")
                             .font(.system(size: checkIconSize, weight: .bold))
-                            .foregroundColor(Color.siloBackground)
+                            .foregroundColor(Color.weFlixBackground)
                     }
                 }
                 .padding(badgeInset)
@@ -351,7 +351,7 @@ struct EpisodeThumbCard: View {
             radius: isFocused ? 20 : 8,
             y: isFocused ? 10 : 4
         )
-        .animation(.easeOut(duration: SiloTheme.fastDuration), value: isFocused)
+        .animation(.easeOut(duration: WeFlixTheme.fastDuration), value: isFocused)
         .applyEpisodePlayPauseAction(playAction)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(accessibilityDescription)

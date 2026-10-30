@@ -1,6 +1,6 @@
 import Foundation
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 /// The reachability probe asks the active server for its public health
 /// endpoint without credentials, so a dead session cannot make a live server

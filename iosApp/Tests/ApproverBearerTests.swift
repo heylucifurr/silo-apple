@@ -1,6 +1,6 @@
 import Foundation
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 /// `HTTPClient.freshAccessToken(serverId:)` for a saved server that is not
 /// the active one: the bearer a phone approves a TV with. The slot renews

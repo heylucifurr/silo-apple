@@ -1,5 +1,5 @@
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 // MARK: - Unwatched rule
 
@@ -89,7 +89,7 @@ final class EpisodeSpoilerSettingsTests: XCTestCase {
         let all = EpisodeSpoilerSettings(hidesImages: true, hidesOverviews: true)
         for type in ["episode", " Episode ", "episodes", " Episodes "] {
             let item = try episodeItem(type: type)
-            XCTAssertTrue(SiloMediaType.isSupportedSectionItem(type))
+            XCTAssertTrue(WeFlixMediaType.isSupportedSectionItem(type))
             XCTAssertTrue(all.hidesImage(for: item), type)
             XCTAssertTrue(all.hidesOverview(for: item), type)
         }

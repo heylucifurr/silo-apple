@@ -19,7 +19,7 @@ struct TVItemDetailView: View {
     @State private var viewModel: ItemDetailViewModel
     /// Season and episode routes resolve to their series, so this is the
     /// page theme music looks up the selected season's own set on.
-    private var isSeriesPage: Bool { viewModel.detail.map { SiloMediaType.isSeries($0.type) } ?? false }
+    private var isSeriesPage: Bool { viewModel.detail.map { WeFlixMediaType.isSeries($0.type) } ?? false }
     @State private var hasStartedDetailLoad = false
     /// Set when the user explicitly resets subtitles to "Auto" this visit:
     /// the server override is cleared with a fire-and-forget DELETE, but the
@@ -54,7 +54,7 @@ struct TVItemDetailView: View {
     @Environment(AppRouter.self) private var router
     @Environment(\.scenePhase) private var scenePhase
     private static let focusLogger = Logger(
-        subsystem: Bundle.main.bundleIdentifier ?? "org.siloserver.silo",
+        subsystem: Bundle.main.bundleIdentifier ?? "me.weflix",
         category: "TVFocus"
     )
 
@@ -84,9 +84,9 @@ struct TVItemDetailView: View {
                 TVItemDetailLoadingView(seed: seed)
             }
         }
-        .siloBackground()
-        .siloNavigationTitleDisplayMode(.inline)
-        .siloNavigationBarBackgroundHidden()
+        .weFlixBackground()
+        .weFlixNavigationTitleDisplayMode(.inline)
+        .weFlixNavigationBarBackgroundHidden()
         .descriptionTranslation(viewModel)
         .themeMusic(
             viewModel.detail?.themes,
@@ -133,7 +133,7 @@ struct TVItemDetailView: View {
             // A warm return from the YouTube app lands here with the page
             // still alive — nothing to restore, so the handoff record must
             // not survive to be replayed on some later cold launch. Re-probe
-            // YouTube as well because its installation can change while Silo
+            // YouTube as well because its installation can change while WeFlix
             // is suspended.
             if newPhase == .active {
                 allowRemoteTrailers = TVTrailerLaunch.canDisplayRemoteCards()
@@ -649,7 +649,7 @@ struct TVItemDetailView: View {
         guard ConnectionMonitor.shared.isServerReachable else { return .unavailable }
         let libraryId = libraryId
         return await DetailResumeState.load {
-            try await SiloAPI.shared.watchDetail(contentId: id, libraryId: libraryId).userData
+            try await WeFlixAPI.shared.watchDetail(contentId: id, libraryId: libraryId).userData
         }
     }
 
@@ -966,7 +966,7 @@ struct TVItemDetailView: View {
                     // A watched change dropped these pages. A shared request
                     // sent before the write could still be in flight and would
                     // hand back the old state, so read the server directly.
-                    response = try await SiloAPI.shared.episodes(
+                    response = try await WeFlixAPI.shared.episodes(
                         seriesId: detail.contentId, seasonNumber: season.seasonNumber,
                         libraryId: libraryId
                     )

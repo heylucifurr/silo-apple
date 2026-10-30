@@ -8,7 +8,7 @@ struct TVSectionHeader: View {
     var body: some View {
         Text(title)
             .font(.system(size: 36, weight: .semibold))
-            .foregroundColor(.siloOnSurface)
+            .foregroundColor(.weFlixOnSurface)
     }
 }
 #endif

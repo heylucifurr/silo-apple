@@ -44,7 +44,7 @@ struct TVSubtitleDialog<Content: View>: View {
             }
             .padding(34)
             .frame(width: 1280, height: 800)
-            .siloPlayerGlass(in: RoundedRectangle(cornerRadius: 28, style: .continuous))
+            .weFlixPlayerGlass(in: RoundedRectangle(cornerRadius: 28, style: .continuous))
             .overlay(
                 RoundedRectangle(cornerRadius: 28, style: .continuous)
                     .stroke(Color.white.opacity(0.18), lineWidth: 1)

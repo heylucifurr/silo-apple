@@ -1,6 +1,6 @@
 //
 //  LiveSubtitleCoordinator.swift
-//  Silo (iOS + tvOS)
+//  WeFlix (iOS + tvOS)
 //
 //  The live AI-subtitle state machine. Layers a real-time, playhead-first cue
 //  experience over the websocket on top of the polling authority:
@@ -73,7 +73,7 @@ protocol LiveSubtitleSink: AnyObject {
     /// given `trackKey`. The ordinal that backs the track id is derived from
     /// the key by the adapter.
     func installLiveTrack(trackKey: String, label: String?, language: String?)
-    /// Feed one streamed cue in absolute Silo source seconds. The adapter owns
+    /// Feed one streamed cue in absolute WeFlix source seconds. The adapter owns
     /// normalization and `LiveSubtitleTrack` dedupe.
     func feedCue(_ cue: PlaybackRealtimeSubtitleCue)
     /// Select the live track installed for `trackKey`.
@@ -166,7 +166,7 @@ final class RealLiveSubtitleClock: LiveSubtitleClock {
 final class LiveSubtitleCoordinator {
 
     private static let logger = Logger(
-        subsystem: Bundle.main.bundleIdentifier ?? "org.siloserver.silo",
+        subsystem: Bundle.main.bundleIdentifier ?? "me.weflix",
         category: "LiveSubtitle"
     )
 

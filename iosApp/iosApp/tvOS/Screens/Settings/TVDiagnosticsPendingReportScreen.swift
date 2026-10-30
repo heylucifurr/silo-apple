@@ -21,7 +21,7 @@ struct TVDiagnosticsPendingReportScreen: View {
                 if let summary {
                     TVDiagnosticsSummaryLines(summary: summary, spacing: 14, titleSize: 32)
                         .font(.system(size: 23))
-                        .foregroundStyle(Color.siloSecondaryText)
+                        .foregroundStyle(Color.weFlixSecondaryText)
                 } else {
                     ProgressView("Building report summary…")
                 }

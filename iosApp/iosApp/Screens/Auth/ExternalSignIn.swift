@@ -12,7 +12,7 @@ import Security
 ///    own path prefix, so the app never opens another origin. An oauth
 ///    provider without `native_start_path` offers no browser sign-in.
 /// 3. The server finishes with the provider and redirects to the fixed app
-///    URI `org.siloserver.silo:/auth/callback` with `code`, `state`,
+///    URI `me.weflix:/auth/callback` with `code`, `state`,
 ///    `server` and `iss` (the origin where the native start first arrived),
 ///    or `error`.
 /// 4. Check `state`, `server`, and that `iss` is the saved base's origin,
@@ -27,8 +27,8 @@ import Security
 /// nor any token is ever logged.
 enum NativeSignIn {
     /// RFC 8252 private-use scheme: the iOS bundle prefix and the Android
-    /// `applicationId`. Distinct from the `silo://` deep links.
-    static let callbackScheme = "org.siloserver.silo"
+    /// `applicationId`. Distinct from the `weflix://` deep links.
+    static let callbackScheme = "me.weflix"
     static let callbackPath = "/auth/callback"
 
     /// Whether `url` is the handshake's app redirect rather than a deep link.
@@ -445,7 +445,7 @@ final class ExternalSignInService: Sendable {
 }
 
 /// Which saved servers ask the provider to let the person choose an account
-/// on their next browser sign-in (`prompt=select_account`). An explicit Silo
+/// on their next browser sign-in (`prompt=select_account`). An explicit WeFlix
 /// sign-out sets it: the sign-in sheet shares the system browser's cookies,
 /// so without it the provider signs the same person straight back in. The
 /// first browser sign-in that succeeds clears it.

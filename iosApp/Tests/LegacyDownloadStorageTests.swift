@@ -1,6 +1,6 @@
 import XCTest
 import Foundation
-@testable import Silo
+@testable import WeFlix
 
 /// Covers the one-shot removal of downloads saved by earlier versions and
 /// the store's refusal to overwrite a file it could not load.
@@ -11,7 +11,7 @@ final class LegacyDownloadStorageTests: XCTestCase {
     override func setUpWithError() throws {
         sandbox = FileManager.default.temporaryDirectory
             .appendingPathComponent("LegacyDownloadStorageTests-\(UUID().uuidString)", isDirectory: true)
-        root = sandbox.appendingPathComponent("SiloDownloads", isDirectory: true)
+        root = sandbox.appendingPathComponent("WeFlixDownloads", isDirectory: true)
         try FileManager.default.createDirectory(at: root, withIntermediateDirectories: true)
     }
 
@@ -45,7 +45,7 @@ final class LegacyDownloadStorageTests: XCTestCase {
 
         XCTAssertEqual(try contents(of: root), [LegacyDownloadStorage.markerFileName, "server"])
         XCTAssertEqual(try contents(of: scope), [DownloadFilePaths.storeFileName], "only a fresh store is left")
-        XCTAssertEqual(try contents(of: sandbox), ["SiloDownloads"], "the moved-aside tree is deleted")
+        XCTAssertEqual(try contents(of: sandbox), ["WeFlixDownloads"], "the moved-aside tree is deleted")
         let carried = await store.load(serverId: "server", profileId: "profile")
         XCTAssertTrue(carried.records.isEmpty)
         XCTAssertEqual(carried.legacyRowsPending, true, "the scope's first registry read deletes the old rows")
@@ -172,14 +172,14 @@ final class LegacyDownloadStorageTests: XCTestCase {
         let removal = await store.removeLegacyStorage()
 
         XCTAssertEqual(removal, LegacyDownloadStorage.Removal(hadDownloads: true, completed: false))
-        XCTAssertEqual(try contents(of: sandbox), ["SiloDownloads"], "the moved-aside tree is deleted anyway")
+        XCTAssertEqual(try contents(of: sandbox), ["WeFlixDownloads"], "the moved-aside tree is deleted anyway")
         let loaded = await store.load(serverId: LegacyDownloadStorage.markerFileName, profileId: "profile")
         XCTAssertEqual(loaded.progressQueue.map(\.mediaItemId), ["movie-3"], "the queue survives in the new root")
     }
 
     func testInterruptedRemovalKeepsTheNoticeAndFinishesTheDelete() throws {
         // A run that moved the tree aside but died before writing its marker.
-        let aside = sandbox.appendingPathComponent("SiloDownloads.removed-\(UUID().uuidString)", isDirectory: true)
+        let aside = sandbox.appendingPathComponent("WeFlixDownloads.removed-\(UUID().uuidString)", isDirectory: true)
         let scope = aside.appendingPathComponent("server/profile", isDirectory: true)
         try FileManager.default.createDirectory(at: scope, withIntermediateDirectories: true)
         try Data(#"{"records":{"d1":{}}}"#.utf8).write(to: scope.appendingPathComponent("store.json"))
@@ -187,7 +187,7 @@ final class LegacyDownloadStorageTests: XCTestCase {
 
         let legacy = LegacyDownloadStorage(root: root)
         XCTAssertEqual(legacy.remove(), LegacyDownloadStorage.Removal(hadDownloads: true, completed: true))
-        XCTAssertEqual(try contents(of: sandbox), ["SiloDownloads"])
+        XCTAssertEqual(try contents(of: sandbox), ["WeFlixDownloads"])
         XCTAssertEqual(legacy.state(), .removed(noticePending: true))
     }
 

@@ -55,9 +55,9 @@ final class OverlayPrefsStore: ObservableObject {
     /// Invalidates an older refresh when the active server changes or a newer
     /// refresh starts, preventing late responses from repopulating stale prefs.
     private var refreshGeneration: UInt = 0
-    private let api: SiloAPI
+    private let api: WeFlixAPI
 
-    init(api: SiloAPI = .shared) {
+    init(api: WeFlixAPI = .shared) {
         self.api = api
     }
 

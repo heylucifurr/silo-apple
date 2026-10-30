@@ -1,10 +1,10 @@
 import Foundation
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 /// A 403 `profile_verification_required` from any request sends the user back
 /// to profile selection, not only the Home prefetch. `HTTPClient` posts
-/// `.siloProfileVerificationRequired` once per rejected proof, and only when
+/// `.weFlixProfileVerificationRequired` once per rejected proof, and only when
 /// the request carried the active profile and its current proof.
 final class ProfileVerificationSignalTests: XCTestCase {
     private static let resourcePath = "/api/v2/home/sections"
@@ -69,7 +69,7 @@ final class ProfileVerificationSignalTests: XCTestCase {
     private func observeSignals(for serverId: String) -> (SignalLog, NSObjectProtocol) {
         let log = SignalLog()
         let token = NotificationCenter.default.addObserver(
-            forName: .siloProfileVerificationRequired, object: nil, queue: nil
+            forName: .weFlixProfileVerificationRequired, object: nil, queue: nil
         ) { notification in
             guard let event = notification.object as? ProfileVerificationRequiredEvent,
                   event.account.serverId == serverId else { return }

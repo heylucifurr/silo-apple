@@ -1,6 +1,6 @@
 import Foundation
 
-/// Media-engine-free mapping from Silo's persisted/system caption appearance
+/// Media-engine-free mapping from WeFlix's persisted/system caption appearance
 /// to the values the Aether cue overlay needs.
 struct AetherSubtitleRenderStyle: Equatable {
     struct RGB: Equatable {

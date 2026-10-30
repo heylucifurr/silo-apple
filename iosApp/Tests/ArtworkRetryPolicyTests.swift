@@ -1,6 +1,6 @@
 import XCTest
 import Nuke
-@testable import Silo
+@testable import WeFlix
 
 final class ArtworkRetryPolicyTests: XCTestCase {
     func testTransportFailuresBackOffThenStop() {

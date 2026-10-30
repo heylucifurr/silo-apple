@@ -21,7 +21,7 @@ import Nuke
 /// choose the bytes (a plugin's `?variant=card`), so it stays in the identity.
 enum ArtworkCacheKey {
     private static let artworkRoute = "/api/v2/artwork/"
-    /// The Silo route's signature and the Cloudflare token's default name.
+    /// The WeFlix route's signature and the Cloudflare token's default name.
     /// S3 presigning adds `X-Amz-*` items, matched by prefix.
     private static let authorizationItems: Set<String> = ["exp", "sig", "verify"]
     /// The directory a cached artwork key names its image type with.
@@ -29,7 +29,7 @@ enum ArtworkCacheKey {
         "poster", "backdrop", "still", "logo", "profile", "banner", "thumb", "clearart", "disc",
     ]
 
-    /// The URL without its authorization for revisioned Silo artwork, with
+    /// The URL without its authorization for revisioned WeFlix artwork, with
     /// any other query items sorted. Nil for every other URL.
     static func stableImageID(for url: URL) -> String? {
         guard var components = URLComponents(url: url, resolvingAgainstBaseURL: false),

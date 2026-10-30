@@ -8,10 +8,10 @@ import OSLog
 /// different directory tree with no migration.
 ///
 /// ```
-/// <AppSupport>/SiloDownloads/
+/// <AppSupport>/WeFlixDownloads/
 ///   .legacy-downloads-removed    (see `LegacyDownloadStorage`)
 ///   staging/task-<n>.bin         (finished untagged transfers, see below)
-/// <AppSupport>/SiloDownloads/<serverId>/<profileId>/
+/// <AppSupport>/WeFlixDownloads/<serverId>/<profileId>/
 ///   store.json
 ///   <downloadId>/
 ///     media.<ext>
@@ -31,17 +31,17 @@ import OSLog
 enum DownloadFilePaths {
     private static let logger = Logger.downloads
 
-    private static let rootFolderName = "SiloDownloads"
+    private static let rootFolderName = "WeFlixDownloads"
     static let storeFileName = "store.json"
     static let stagingFolderName = "staging"
 
-    /// `<AppSupport>/SiloDownloads` as a path only; `rootDirectory()`
+    /// `<AppSupport>/WeFlixDownloads` as a path only; `rootDirectory()`
     /// creates it.
     private static let rootURL = FileManager.default
         .urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
         .appendingPathComponent(rootFolderName, isDirectory: true)
 
-    /// `<AppSupport>/SiloDownloads`, created on first use and excluded from
+    /// `<AppSupport>/WeFlixDownloads`, created on first use and excluded from
     /// iCloud/iTunes backup (downloads are large and not re-uploadable).
     /// Re-checked on each call: the legacy removal recreates the folder.
     static func rootDirectory() -> URL {
@@ -264,7 +264,7 @@ enum DownloadFilePaths {
 extension Logger {
     /// The category every Downloads type logs under.
     static let downloads = Logger(
-        subsystem: Bundle.main.bundleIdentifier ?? "org.siloserver.silo",
+        subsystem: Bundle.main.bundleIdentifier ?? "me.weflix",
         category: "Downloads"
     )
 }

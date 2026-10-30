@@ -1,7 +1,7 @@
 import Foundation
 
 /// Host-facing playback diagnostics. Every value is projected from
-/// AetherEngine's public state or from immutable Silo session metadata.
+/// AetherEngine's public state or from immutable WeFlix session metadata.
 /// A missing value means the active Aether route cannot measure it.
 struct PlaybackStats: Equatable {
     struct MediaStream: Equatable {
@@ -12,7 +12,7 @@ struct PlaybackStats: Equatable {
 
     var sampledAt: Date = Date()
 
-    // Source/session identity supplied by Silo.
+    // Source/session identity supplied by WeFlix.
     var route: String?
     var source: String?
     var delivery: String?

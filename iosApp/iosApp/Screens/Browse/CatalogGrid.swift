@@ -117,7 +117,7 @@ struct CatalogGrid: View {
             HStack {
                 Spacer()
                 ProgressView()
-                    .tint(.siloOnSurface)
+                    .tint(.weFlixOnSurface)
                     .padding()
                 Spacer()
             }
@@ -126,7 +126,7 @@ struct CatalogGrid: View {
 
     private func playAction(for item: BrowseItem) -> (() -> Void)? {
         #if os(tvOS)
-        guard SiloMediaType.isDirectlyPlayable(item.type) else { return nil }
+        guard WeFlixMediaType.isDirectlyPlayable(item.type) else { return nil }
         return {
             router.presentPlayer(
                 contentId: item.contentId,
@@ -212,8 +212,8 @@ struct CatalogGrid: View {
             columnCount: columns.count,
             spacing: 8,
             maximumWidth: usesThreeColumnPhoneLayout
-                ? SiloTheme.posterCardWidth
-                : SiloTheme.posterCardWidth * scale
+                ? WeFlixTheme.posterCardWidth
+                : WeFlixTheme.posterCardWidth * scale
         )
         return fittedWidth / scale
         #else

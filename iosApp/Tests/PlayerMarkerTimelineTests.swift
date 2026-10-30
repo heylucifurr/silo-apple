@@ -1,5 +1,5 @@
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 /// `marker_segments` may hold a kind more than once. Skip controls act on the
 /// occurrence under the playhead and never span the content between two.

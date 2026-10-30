@@ -1,6 +1,6 @@
-# Silo iOS Design Language
+# WeFlix iOS Design Language
 
-A design philosophy and specification guide derived from Plezy's open-source codebase. This document defines the visual language, interaction patterns, and component specifications for building the Silo iOS client.
+A design philosophy and specification guide derived from Plezy's open-source codebase. This document defines the visual language, interaction patterns, and component specifications for building the WeFlix iOS client.
 
 **Source of truth:** Values in this document are extracted from the Plezy Flutter app at `../plezy/`. When in doubt, cross-reference `lib/theme/mono_theme.dart`, `lib/utils/layout_constants.dart`, and the widget implementations.
 

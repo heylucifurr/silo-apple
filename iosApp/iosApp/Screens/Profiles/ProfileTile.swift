@@ -83,7 +83,7 @@ struct ProfileTile: View {
                     }
                     .background {
                         Circle()
-                            .strokeBorder(Color.siloOnSurface, lineWidth: 6)
+                            .strokeBorder(Color.weFlixOnSurface, lineWidth: 6)
                             .padding(-12)
                             .opacity(isFocused ? 1 : 0)
                     }
@@ -92,14 +92,14 @@ struct ProfileTile: View {
 
                 Text(profile.name)
                     .font(.system(size: scaledNameSize(size), weight: .semibold))
-                    .foregroundStyle(isFocused ? Color.siloOnSurface : Color.siloOnSurface.opacity(nameOpacity))
+                    .foregroundStyle(isFocused ? Color.weFlixOnSurface : Color.weFlixOnSurface.opacity(nameOpacity))
                     .lineLimit(1)
                     .padding(.top, isFocused ? nameSpacing + 18 : nameSpacing)
 
                 if isRemembered {
                     Text(rememberedBadgeLabel)
                         .font(.system(size: metaSize))
-                        .foregroundStyle(Color.siloOnSurface.opacity(0.4))
+                        .foregroundStyle(Color.weFlixOnSurface.opacity(0.4))
                         .lineLimit(1)
                         .padding(.top, 2)
                 }
@@ -179,7 +179,7 @@ struct ProfileTile: View {
         let lockSize = lockSize * scale
         return Image(systemName: "lock.fill")
             .font(.system(size: lockSize * 0.42, weight: .semibold))
-            .foregroundStyle(Color.siloOnSurface.opacity(0.75))
+            .foregroundStyle(Color.weFlixOnSurface.opacity(0.75))
             .frame(width: lockSize, height: lockSize)
             .background(Circle().fill(Color(hex: "#1C1C1E")))
             .overlay(Circle().strokeBorder(Color.black, lineWidth: lockSize * 0.07))
@@ -263,12 +263,12 @@ struct AddProfileTile: View {
                     .overlay {
                         Image(systemName: "plus")
                             .font(.system(size: size * 0.3, weight: .light))
-                            .foregroundStyle(Color.siloOnSurface.opacity(isFocused ? 1 : 0.4))
+                            .foregroundStyle(Color.weFlixOnSurface.opacity(isFocused ? 1 : 0.4))
                     }
                     .frame(width: size, height: size)
                     .background {
                         Circle()
-                            .strokeBorder(Color.siloOnSurface, lineWidth: 6)
+                            .strokeBorder(Color.weFlixOnSurface, lineWidth: 6)
                             .padding(-12)
                             .opacity(isFocused ? 1 : 0)
                     }
@@ -276,7 +276,7 @@ struct AddProfileTile: View {
 
                 Text("Add profile")
                     .font(.system(size: scaledNameSize(size), weight: .semibold))
-                    .foregroundStyle(Color.siloOnSurface.opacity(isFocused ? 1 : 0.62))
+                    .foregroundStyle(Color.weFlixOnSurface.opacity(isFocused ? 1 : 0.62))
                     .padding(.top, isFocused ? nameSpacing + 18 : nameSpacing)
             }
             .frame(maxWidth: .infinity)

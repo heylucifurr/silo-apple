@@ -13,7 +13,7 @@ struct TVApprovalCard: View {
     /// Back to code entry when the code isn't found (a mistyped digit is the
     /// usual cause); nil hides it.
     var onEnterAnotherCode: (() -> Void)? = nil
-    /// "Not you?": sign out of this server in Silo only, then sign in again,
+    /// "Not you?": sign out of this server in WeFlix only, then sign in again,
     /// keeping the TV's code. The wording follows `model.accountSwitch`:
     /// "Switch account" when the provider is asked for an account choice or
     /// the server only takes passwords, "Sign out" when a provider could
@@ -105,49 +105,49 @@ struct TVApprovalCard: View {
         VStack(alignment: .leading, spacing: 18) {
             VStack(alignment: .leading, spacing: 4) {
                 Text("Sign in \(request.deviceName)?")
-                    .font(.siloTitle)
+                    .font(.weFlixTitle)
                     .fixedSize(horizontal: false, vertical: true)
                 if let platform = request.platformLabel {
-                    Text(platform).font(.siloCaption).foregroundStyle(.secondary)
+                    Text(platform).font(.weFlixCaption).foregroundStyle(.secondary)
                 }
             }
 
             VStack(alignment: .leading, spacing: 6) {
-                Text("Check that your TV shows").font(.siloCaption).foregroundStyle(.secondary)
+                Text("Check that your TV shows").font(.weFlixCaption).foregroundStyle(.secondary)
                 Text(request.code)
-                    .font(.siloPIN)
+                    .font(.weFlixPIN)
                     .lineLimit(1)
                     .minimumScaleFactor(0.6)
                     .accessibilityLabel(Text(DeviceUserCode.spokenCharacters(request.code)).speechSpellsOutCharacters())
             }
 
             VStack(alignment: .leading, spacing: 6) {
-                Text(signInLine(request)).font(.siloBody).fixedSize(horizontal: false, vertical: true)
+                Text(signInLine(request)).font(.weFlixBody).fixedSize(horizontal: false, vertical: true)
                 if onSwitchAccount != nil {
                     Button(Self.switchAccountLink(model.accountSwitch)) { confirmsSwitchAccount = true }
-                        .font(.siloCaption)
+                        .font(.weFlixCaption)
                         .disabled(busy)
                 }
             }
 
             Label(Self.profilesLine, systemImage: "person.2")
-                .font(.siloCaption)
+                .font(.weFlixCaption)
                 .foregroundStyle(.secondary)
                 .fixedSize(horizontal: false, vertical: true)
             Label(Self.onlyApproveInFrontLine, systemImage: "exclamationmark.shield")
-                .font(.siloCaption)
+                .font(.weFlixCaption)
                 .foregroundStyle(.secondary)
                 .fixedSize(horizontal: false, vertical: true)
             if let line = requestedLine(request) {
-                Text(line).font(.siloCaption).foregroundStyle(.secondary)
+                Text(line).font(.weFlixCaption).foregroundStyle(.secondary)
             }
 
             Button {
                 Task { await model.approve() }
             } label: {
                 HStack {
-                    if busy && !declining { ProgressView().tint(Color.siloBackground) }
-                    Text("Sign in TV").font(.siloHeadline)
+                    if busy && !declining { ProgressView().tint(Color.weFlixBackground) }
+                    Text("Sign in TV").font(.weFlixHeadline)
                 }
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 6)
@@ -165,7 +165,7 @@ struct TVApprovalCard: View {
                 .frame(maxWidth: .infinity).padding(.vertical, 6)
             }
             .buttonStyle(.plain)
-            .foregroundStyle(Color.siloSecondaryText)
+            .foregroundStyle(Color.weFlixSecondaryText)
             .disabled(busy)
         }
     }
@@ -211,7 +211,7 @@ struct TVApprovalCard: View {
                    title: "We couldn't find that code on \(serverName).",
                    detail: "Check the code on your TV. The TV shows its server's name at the top of its screen.")
             if !otherServers.isEmpty {
-                Text("Try another server").font(.siloCaption).foregroundStyle(.secondary)
+                Text("Try another server").font(.weFlixCaption).foregroundStyle(.secondary)
                 ForEach(otherServers) { server in
                     Button {
                         onChooseServer(server)
@@ -224,7 +224,7 @@ struct TVApprovalCard: View {
             }
             if let onEnterAnotherCode {
                 Button(action: onEnterAnotherCode) {
-                    Text("Enter another code").font(.siloHeadline).frame(maxWidth: .infinity).padding(.vertical, 6)
+                    Text("Enter another code").font(.weFlixHeadline).frame(maxWidth: .infinity).padding(.vertical, 6)
                 }
                 .pairingPrimaryButton()
             }
@@ -235,9 +235,9 @@ struct TVApprovalCard: View {
     private func result(symbol: String, tint: Color, title: String, detail: String?) -> some View {
         VStack(alignment: .leading, spacing: 8) {
             Image(systemName: symbol).font(.system(size: 36)).foregroundStyle(tint).accessibilityHidden(true)
-            Text(title).font(.siloHeadline).fixedSize(horizontal: false, vertical: true)
+            Text(title).font(.weFlixHeadline).fixedSize(horizontal: false, vertical: true)
             if let detail {
-                Text(detail).font(.siloCaption).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
+                Text(detail).font(.weFlixCaption).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
             }
         }
         .accessibilityElement(children: .combine)
@@ -245,7 +245,7 @@ struct TVApprovalCard: View {
 
     private func closeButton(_ title: String) -> some View {
         Button(action: onClose) {
-            Text(title).font(.siloHeadline).frame(maxWidth: .infinity).padding(.vertical, 6)
+            Text(title).font(.weFlixHeadline).frame(maxWidth: .infinity).padding(.vertical, 6)
         }
         .buttonStyle(.bordered)
         .controlSize(.large)

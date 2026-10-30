@@ -62,7 +62,7 @@ class SourceProofTests(unittest.TestCase):
         self.tag = self.env["RELEASE_TAG"]
         self.now = datetime(2026, 1, 2, tzinfo=timezone.utc)
         self.archive_bytes = b"exact packaged source fixture, not a live source download"
-        name = "Silo-source-" + self.source["sha"] + ".tar.gz"
+        name = "WeFlix-source-" + self.source["sha"] + ".tar.gz"
         self.release = {"id": 10, "tag_name": self.tag, "draft": False,
                         "published_at": "2026-01-01T00:00:00Z", "assets": [{
                             "id": 20, "name": name, "state": "uploaded", "size": len(self.archive_bytes),
@@ -431,7 +431,7 @@ class SourceProofTests(unittest.TestCase):
             self.assertEqual(source["sha"], sha)
             self.assertEqual(source["tree"], tree)
             release = copy.deepcopy(self.release)
-            release["assets"][0]["name"] = "Silo-source-" + sha + ".tar.gz"
+            release["assets"][0]["name"] = "WeFlix-source-" + sha + ".tar.gz"
             release["assets"][0]["browser_download_url"] = self.asset["url"].replace(self.source["sha"], sha)
             class API:
                 def get(api, path, binary=False):

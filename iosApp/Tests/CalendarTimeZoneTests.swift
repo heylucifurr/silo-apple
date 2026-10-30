@@ -1,5 +1,5 @@
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 /// After a device timezone change, Calendar asks for the same week in the
 /// new zone: a Monday-to-Sunday range and a matching `timezone` (issue #516).

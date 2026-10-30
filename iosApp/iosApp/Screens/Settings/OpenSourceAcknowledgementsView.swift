@@ -8,26 +8,26 @@ enum OpenSourceAcknowledgements {
         var fileExtension: String? = "txt"
     }
 
-    /// The AGPL's "Appropriate Legal Notices" for Silo itself: copyright, no
+    /// The AGPL's "Appropriate Legal Notices" for WeFlix itself: copyright, no
     /// warranty, the license and its additional permission, and where the
     /// source is published (this build's archive when a release lane stamped it).
-    static let siloNotice = """
+    static let weFlixNotice = """
     Copyright (C) 2026 Silo Media L.L.C. and contributors.
 
-    Silo is free software: you can redistribute it and/or modify it under the \
+    weflix is free software: you can redistribute it and/or modify it under the \
     terms of the GNU Affero General Public License as published by the Free \
     Software Foundation, either version 3 of the License, or (at your option) \
     any later version, with the additional permission for app store \
     distribution reproduced below.
 
-    Silo is distributed in the hope that it will be useful, but WITHOUT ANY \
+    weflix is distributed in the hope that it will be useful, but WITHOUT ANY \
     WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS \
     FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License below \
     for more details.
 
-    Source code: \(SiloLegalLinks.sourceCode.absoluteString)
+    Source code: \(WeFlixLegalLinks.sourceCode.absoluteString)
 
-    The Silo name, logo, and wordmark are trademarks of Silo Media L.L.C. and \
+    The weflix name, logo, and wordmark are trademarks of Silo Media L.L.C. and \
     are not licensed under the AGPL.
     """
 
@@ -35,7 +35,7 @@ enum OpenSourceAcknowledgements {
     /// APPSTORE-EXCEPTION.md, copied into the bundle by project.yml.
     static let resources: [Resource] = [
         Resource(title: "GNU Affero General Public License version 3", name: "LICENSE", fileExtension: nil),
-        Resource(title: "Silo Apple App Store / DRM Exception", name: "APPSTORE-EXCEPTION", fileExtension: "md"),
+        Resource(title: "weflix Apple App Store / DRM Exception", name: "APPSTORE-EXCEPTION", fileExtension: "md"),
         Resource(title: "Overview and provenance", name: "README"),
         Resource(
             title: "AetherEngine — LGPL 3 and Apple Store / DRM Exception",
@@ -71,8 +71,8 @@ enum OpenSourceAcknowledgements {
         let text: String
     }
 
-    /// Silo's own notice first, then the resources in order.
-    static let entries: [Entry] = [Entry(id: "Silo", text: "Silo\n====\n\n\(siloNotice)")] + resourceEntries
+    /// WeFlix's own notice first, then the resources in order.
+    static let entries: [Entry] = [Entry(id: "weflix", text: "weflix\n====\n\n\(weFlixNotice)")] + resourceEntries
 
     private static let resourceEntries: [Entry] = resources.map { resource in
         let body: String
@@ -114,7 +114,7 @@ struct OpenSourceAcknowledgementsView: View {
                 }
             }
             .font(.system(.footnote, design: .monospaced))
-            .foregroundStyle(Color.siloOnSurface)
+            .foregroundStyle(Color.weFlixOnSurface)
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding()
             #if !os(tvOS)
@@ -122,13 +122,13 @@ struct OpenSourceAcknowledgementsView: View {
             #endif
         }
         #if os(macOS)
-        .siloPageBackground()
+        .weFlixPageBackground()
         #else
-        .background(Color.siloBackground)
+        .background(Color.weFlixBackground)
         #endif
         .navigationTitle("Open Source Licenses")
-        .siloNavigationTitleDisplayMode(.inline)
-        .siloToolbarColorSchemeDark()
+        .weFlixNavigationTitleDisplayMode(.inline)
+        .weFlixToolbarColorSchemeDark()
     }
 }
 
@@ -149,11 +149,11 @@ struct TVOpenSourceAcknowledgementsOverlay: View {
                         Text("CREDITS")
                             .font(.system(size: 15, weight: .semibold, design: .monospaced))
                             .tracking(2)
-                            .foregroundStyle(Color.siloSecondaryText)
+                            .foregroundStyle(Color.weFlixSecondaryText)
 
                         Text("Acknowledgements")
                             .font(.system(size: 38, weight: .semibold))
-                            .foregroundStyle(Color.siloOnSurface)
+                            .foregroundStyle(Color.weFlixOnSurface)
                     }
 
                     Spacer(minLength: 40)
@@ -179,11 +179,11 @@ struct TVOpenSourceAcknowledgementsOverlay: View {
                         }
                         Text(ThirdPartyCredits.trademarkNotice)
                             .font(.system(size: 20))
-                            .foregroundStyle(Color.siloSecondaryText)
+                            .foregroundStyle(Color.weFlixSecondaryText)
 
                         Text(OpenSourceAcknowledgements.text)
                             .font(.system(size: 20, design: .monospaced))
-                            .foregroundStyle(Color.siloOnSurface)
+                            .foregroundStyle(Color.weFlixOnSurface)
                             .padding(.top, 12)
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -198,11 +198,11 @@ struct TVOpenSourceAcknowledgementsOverlay: View {
             .frame(maxWidth: 1500, maxHeight: 900, alignment: .topLeading)
             .background(
                 RoundedRectangle(cornerRadius: 32, style: .continuous)
-                    .fill(Color.siloSurfaceElevated)
+                    .fill(Color.weFlixSurfaceElevated)
             )
             .overlay {
                 RoundedRectangle(cornerRadius: 32, style: .continuous)
-                    .strokeBorder(Color.siloChromeRestingBorder, lineWidth: 1)
+                    .strokeBorder(Color.weFlixChromeRestingBorder, lineWidth: 1)
             }
             .focusSection()
             .defaultFocus($focusedElement, .document, priority: .userInitiated)

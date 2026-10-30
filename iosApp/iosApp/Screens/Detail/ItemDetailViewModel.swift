@@ -300,7 +300,7 @@ class ItemDetailViewModel {
             } else if coalescesMetadataRequests {
                 item = try await MetadataRequestPool.shared.itemDetail(contentId: contentId, libraryId: libraryId)
             } else {
-                item = try await SiloAPI.shared.itemDetail(contentId: contentId, libraryId: libraryId)
+                item = try await WeFlixAPI.shared.itemDetail(contentId: contentId, libraryId: libraryId)
             }
             // The v2 detail carries the viewer's flags, so favorite and
             // watchlist need no extra round trips. Independent of the detail
@@ -603,7 +603,7 @@ class ItemDetailViewModel {
             if coalescesMetadataRequest {
                 watchDetail = try await MetadataRequestPool.shared.watchDetail(contentId: contentId, libraryId: libraryId)
             } else {
-                watchDetail = try await SiloAPI.shared.watchDetail(contentId: contentId, libraryId: libraryId)
+                watchDetail = try await WeFlixAPI.shared.watchDetail(contentId: contentId, libraryId: libraryId)
             }
             ResponseCache.shared.set(watchDetail, for: CacheKey.itemWatchDetail(contentId, libraryId: libraryId))
             return applyingPlaybackMetadata(watchDetail, to: item)
@@ -728,12 +728,12 @@ class ItemDetailViewModel {
             request: { [weak self] in
                 let contentId = try self?.pinnedTrailerFetchContentId()
                 guard let contentId else { throw ItemDetailViewModelError.noItemLoaded }
-                return try await SiloAPI.shared.requestTrailersRefresh(contentId: contentId)
+                return try await WeFlixAPI.shared.requestTrailersRefresh(contentId: contentId)
             },
             fetchDetail: { [weak self, libraryId] in
                 let contentId = try self?.pinnedTrailerFetchContentId()
                 guard let contentId else { throw ItemDetailViewModelError.noItemLoaded }
-                return try await SiloAPI.shared.itemDetail(contentId: contentId, libraryId: libraryId)
+                return try await WeFlixAPI.shared.itemDetail(contentId: contentId, libraryId: libraryId)
             }
         )
         trailerFetchStorage = coordinator
@@ -941,7 +941,7 @@ class ItemDetailViewModel {
             } else if coalescesMetadataRequest {
                 response = try await MetadataRequestPool.shared.seasons(seriesId: seriesId, libraryId: libraryId)
             } else {
-                response = try await SiloAPI.shared.seasons(seriesId: seriesId, libraryId: libraryId)
+                response = try await WeFlixAPI.shared.seasons(seriesId: seriesId, libraryId: libraryId)
             }
             guard !Task.isCancelled, generation == seasonsLoadGeneration else { return }
             ResponseCache.shared.set(response, for: CacheKey.itemSeasons(seriesId, libraryId: libraryId))
@@ -1324,7 +1324,7 @@ class ItemDetailViewModel {
                     libraryId: libraryId
                 )
             } else {
-                response = try await SiloAPI.shared.episodes(
+                response = try await WeFlixAPI.shared.episodes(
                     seriesId: seriesId,
                     seasonNumber: seasonNumber,
                     libraryId: libraryId
@@ -1385,7 +1385,7 @@ class ItemDetailViewModel {
     func refreshSeriesEpisodePersonalLists(contentId: String) async {
         let mutationVersion = episodePersonalListMutationVersions[contentId, default: 0]
         let owner = await currentPersonalStateOwner()
-        let api = SiloAPI.shared.apiV2Client
+        let api = WeFlixAPI.shared.apiV2Client
         do {
             // Episodes carry `user_data` but no `user_state`, so each card
             // still reads its two memberships.
@@ -1433,7 +1433,7 @@ class ItemDetailViewModel {
         let generation = episodePersonalListRefreshGeneration
         let mutationVersionsAtStart = episodePersonalListMutationVersions
         let owner = await currentPersonalStateOwner()
-        let api = SiloAPI.shared.apiV2Client
+        let api = WeFlixAPI.shared.apiV2Client
         var states: [String: (favorite: Bool?, watchlist: Bool?)] = [:]
 
         // Query in small batches so a long season cannot fan out an

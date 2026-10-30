@@ -1,6 +1,6 @@
 import Foundation
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 /// Local theme music over API v2 (`docs/catalog-api.md`, "Local theme songs,
 /// V2" in silo-server), decoded from the vendored server fixtures.
@@ -12,7 +12,7 @@ final class ThemeSongsV2Tests: XCTestCase {
         stub = APIv2TestStub()
     }
 
-    private func api(server: String = "https://silo.example/base") async throws -> SiloAPI {
+    private func api(server: String = "https://silo.example/base") async throws -> WeFlixAPI {
         let name = "ThemeSongsV2Tests.\(UUID().uuidString)"
         let suite = try XCTUnwrap(UserDefaults(suiteName: name))
         addTeardownBlock { UserDefaults().removePersistentDomain(forName: name) }
@@ -21,7 +21,7 @@ final class ThemeSongsV2Tests: XCTestCase {
         await tokens.switchActiveServer(serverId: "test-server")
         await tokens.setServerUrl(server)
         await tokens.setProfileId("profile-one")
-        return SiloAPI(http: HTTPClient(session: stub.makeSession(), tokenStore: tokens), tokenStore: tokens)
+        return WeFlixAPI(http: HTTPClient(session: stub.makeSession(), tokenStore: tokens), tokenStore: tokens)
     }
 
     private func fixture(_ name: String, setting members: [String: Any] = [:]) -> String {

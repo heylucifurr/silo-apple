@@ -38,18 +38,18 @@ struct MacFeaturedHero: View {
             ZStack(alignment: .bottomLeading) {
                 backdrop(for: item)
                 scrim
-                VStack(alignment: .leading, spacing: SiloTheme.largePadding) {
+                VStack(alignment: .leading, spacing: WeFlixTheme.largePadding) {
                     details(for: item)
                     titleStrip
                 }
-                .padding(.bottom, SiloTheme.padding)
+                .padding(.bottom, WeFlixTheme.padding)
             }
             .frame(maxWidth: .infinity)
             // A share of the window, so the rows below stay in view.
             .containerRelativeFrame(.vertical) { length, _ in
                 min(
-                    SiloTheme.macHeroMaxHeight,
-                    max(SiloTheme.macHeroMinHeight, length * SiloTheme.macHeroWindowFraction)
+                    WeFlixTheme.macHeroMaxHeight,
+                    max(WeFlixTheme.macHeroMinHeight, length * WeFlixTheme.macHeroWindowFraction)
                 )
             }
             .clipped()
@@ -98,7 +98,7 @@ struct MacFeaturedHero: View {
                 )
                 .episodeSpoilerBlur(EpisodeSpoilerPreferences.shared.settings.hidesImage(for: item))
             } else {
-                Color.siloSurfaceElevated
+                Color.weFlixSurfaceElevated
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -115,8 +115,8 @@ struct MacFeaturedHero: View {
         ZStack {
             LinearGradient(
                 stops: [
-                    .init(color: .siloPageCanvas, location: 0),
-                    .init(color: Color.siloPageCanvas.opacity(0.7), location: 0.3),
+                    .init(color: .weFlixPageCanvas, location: 0),
+                    .init(color: Color.weFlixPageCanvas.opacity(0.7), location: 0.3),
                     .init(color: .clear, location: 0.7),
                 ],
                 startPoint: .leading,
@@ -125,7 +125,7 @@ struct MacFeaturedHero: View {
             LinearGradient(
                 stops: [
                     .init(color: .clear, location: 0.45),
-                    .init(color: .siloPageCanvas, location: 1),
+                    .init(color: .weFlixPageCanvas, location: 1),
                 ],
                 startPoint: .top,
                 endPoint: .bottom
@@ -136,52 +136,52 @@ struct MacFeaturedHero: View {
     }
 
     private func details(for item: SectionItem) -> some View {
-        VStack(alignment: .leading, spacing: SiloTheme.spacing) {
+        VStack(alignment: .leading, spacing: WeFlixTheme.spacing) {
             Text("Featured — No. \(Self.twoDigit(index + 1))")
-                .font(.siloCaption.weight(.semibold))
+                .font(.weFlixCaption.weight(.semibold))
                 .textCase(.uppercase)
-                .tracking(SiloTheme.macSidebarHeadingTracking)
-                .foregroundStyle(Color.siloSecondaryText)
+                .tracking(WeFlixTheme.macSidebarHeadingTracking)
+                .foregroundStyle(Color.weFlixSecondaryText)
 
             title(for: item)
 
             if let metadata = Self.metadataLine(for: item) {
                 Text(metadata)
-                    .font(.siloBody.weight(.semibold))
-                    .foregroundStyle(Color.siloOnSurface)
+                    .font(.weFlixBody.weight(.semibold))
+                    .foregroundStyle(Color.weFlixOnSurface)
                     .lineLimit(1)
             }
 
             overview(for: item)
 
-            HStack(spacing: SiloTheme.spacing) {
+            HStack(spacing: WeFlixTheme.spacing) {
                 // A series has nothing to play directly; More Info opens it.
-                if SiloMediaType.isDirectlyPlayable(item.type) {
+                if WeFlixMediaType.isDirectlyPlayable(item.type) {
                     Button { play(item) } label: {
                         Label("Play", systemImage: "play.fill")
-                            .font(.siloBody.weight(.semibold))
-                            .foregroundStyle(Color.siloBackground)
-                            .padding(.horizontal, SiloTheme.largePadding)
-                            .padding(.vertical, SiloTheme.spacing)
-                            .background(Capsule().fill(Color.siloPrimary))
+                            .font(.weFlixBody.weight(.semibold))
+                            .foregroundStyle(Color.weFlixBackground)
+                            .padding(.horizontal, WeFlixTheme.largePadding)
+                            .padding(.vertical, WeFlixTheme.spacing)
+                            .background(Capsule().fill(Color.weFlixPrimary))
                             .contentShape(Capsule())
                     }
                 }
                 Button { openDetail(item) } label: {
                     Label("More Info", systemImage: "info.circle")
-                        .font(.siloBody.weight(.semibold))
-                        .foregroundStyle(Color.siloOnSurface)
-                        .padding(.horizontal, SiloTheme.largePadding)
-                        .padding(.vertical, SiloTheme.spacing)
-                        .background(Capsule().fill(Color.siloChromeSelectedFill))
-                        .overlay(Capsule().stroke(Color.siloChromeSelectedBorder))
+                        .font(.weFlixBody.weight(.semibold))
+                        .foregroundStyle(Color.weFlixOnSurface)
+                        .padding(.horizontal, WeFlixTheme.largePadding)
+                        .padding(.vertical, WeFlixTheme.spacing)
+                        .background(Capsule().fill(Color.weFlixChromeSelectedFill))
+                        .overlay(Capsule().stroke(Color.weFlixChromeSelectedBorder))
                         .contentShape(Capsule())
                 }
             }
-            .buttonStyle(.siloFlat)
-            .padding(.top, SiloTheme.smallPadding)
+            .buttonStyle(.weFlixFlat)
+            .padding(.top, WeFlixTheme.smallPadding)
         }
-        .frame(maxWidth: SiloTheme.macHeroTextWidth, alignment: .leading)
+        .frame(maxWidth: WeFlixTheme.macHeroTextWidth, alignment: .leading)
         .padding(.leading, HomeFeedMetrics.gutter)
     }
 
@@ -195,15 +195,15 @@ struct MacFeaturedHero: View {
                 contentId: item.contentId,
                 pendingLanguage: presentation.pendingLanguage
             )
-            VStack(alignment: .leading, spacing: SiloTheme.smallPadding) {
+            VStack(alignment: .leading, spacing: WeFlixTheme.smallPadding) {
                 Text(overview)
-                    .font(.siloBody)
-                    .foregroundStyle(Color.siloSecondaryText)
+                    .font(.weFlixBody)
+                    .foregroundStyle(Color.weFlixSecondaryText)
                     .lineLimit(3)
                     .fixedSize(horizontal: false, vertical: true)
                     .opacity(presentation.status == .translating ? 0.5 : 1)
                 if presentation.status != nil || offersTranslation {
-                    HStack(spacing: SiloTheme.spacing) {
+                    HStack(spacing: WeFlixTheme.spacing) {
                         if let status = presentation.status {
                             DescriptionTranslationStatusLabel(status: status)
                         }
@@ -216,14 +216,14 @@ struct MacFeaturedHero: View {
                                 )
                             } label: {
                                 Label("Translate", systemImage: MachineTranslation.symbol)
-                                    .font(.siloCaption)
-                                    .foregroundStyle(Color.siloSecondaryText)
-                                    .padding(.horizontal, SiloTheme.spacing)
+                                    .font(.weFlixCaption)
+                                    .foregroundStyle(Color.weFlixSecondaryText)
+                                    .padding(.horizontal, WeFlixTheme.spacing)
                                     .padding(.vertical, 2)
-                                    .overlay(Capsule().stroke(Color.siloChromeSelectedBorder))
+                                    .overlay(Capsule().stroke(Color.weFlixChromeSelectedBorder))
                                     .contentShape(Capsule())
                             }
-                            .buttonStyle(.siloFlat)
+                            .buttonStyle(.weFlixFlat)
                         }
                     }
                 }
@@ -244,8 +244,8 @@ struct MacFeaturedHero: View {
     @ViewBuilder
     private func title(for item: SectionItem) -> some View {
         let name = Text(item.title)
-            .font(.siloHeroTitle)
-            .foregroundStyle(Color.siloOnSurface)
+            .font(.weFlixHeroTitle)
+            .foregroundStyle(Color.weFlixOnSurface)
             .lineLimit(2)
             .minimumScaleFactor(0.7)
 
@@ -270,7 +270,7 @@ struct MacFeaturedHero: View {
     }
 
     private static var logoSize: CGSize {
-        CGSize(width: SiloTheme.macHeroLogoWidth, height: SiloTheme.macHeroLogoHeight)
+        CGSize(width: WeFlixTheme.macHeroLogoWidth, height: WeFlixTheme.macHeroLogoHeight)
     }
 
     /// Every title in the section, with the one on show highlighted.
@@ -282,7 +282,7 @@ struct MacFeaturedHero: View {
                         Button { select(offset) } label: {
                             thumbnail(for: entry, isCurrent: offset == index)
                         }
-                        .buttonStyle(.siloFlat)
+                        .buttonStyle(.weFlixFlat)
                         .id(entry.contentId)
                         .accessibilityLabel(entry.title)
                         .accessibilityAddTraits(offset == index ? .isSelected : [])
@@ -290,16 +290,16 @@ struct MacFeaturedHero: View {
                 }
                 .padding(.horizontal, HomeFeedMetrics.gutter)
                 // Room for the highlight ring, which draws outside the art.
-                .padding(.vertical, SiloTheme.smallPadding)
+                .padding(.vertical, WeFlixTheme.smallPadding)
             }
             .onChange(of: index) { _, newIndex in
                 guard section.items.indices.contains(newIndex) else { return }
-                withAnimation(.easeInOut(duration: SiloTheme.slowDuration)) {
+                withAnimation(.easeInOut(duration: WeFlixTheme.slowDuration)) {
                     proxy.scrollTo(section.items[newIndex].contentId, anchor: .center)
                 }
             }
         }
-        .frame(height: Self.thumbnailSize.height + SiloTheme.smallPadding * 2)
+        .frame(height: Self.thumbnailSize.height + WeFlixTheme.smallPadding * 2)
     }
 
     /// The list's posters match the poster rows below the hero, including
@@ -323,25 +323,25 @@ struct MacFeaturedHero: View {
                     for: EpisodeWatchState(sectionItem: entry), isEpisodeStill: entry.posterIsEpisodeStill
                 ))
             } else {
-                Color.siloSurfaceElevated
+                Color.weFlixSurfaceElevated
                     .overlay {
                         Text(entry.title)
-                            .font(.siloSmall)
-                            .foregroundStyle(Color.siloSecondaryText)
+                            .font(.weFlixSmall)
+                            .foregroundStyle(Color.weFlixSecondaryText)
                             .multilineTextAlignment(.center)
-                            .padding(SiloTheme.smallPadding)
+                            .padding(WeFlixTheme.smallPadding)
                     }
             }
         }
         .frame(width: Self.thumbnailSize.width, height: Self.thumbnailSize.height)
         .clipShape(shape)
         .overlay {
-            shape.fill(Color.black.opacity(isCurrent ? 0 : SiloTheme.macHeroUnselectedShade))
+            shape.fill(Color.black.opacity(isCurrent ? 0 : WeFlixTheme.macHeroUnselectedShade))
         }
         .overlay {
             shape.strokeBorder(
-                isCurrent ? Color.siloPrimary : Color.clear,
-                lineWidth: SiloTheme.macHeroSelectionRingWidth
+                isCurrent ? Color.weFlixPrimary : Color.clear,
+                lineWidth: WeFlixTheme.macHeroSelectionRingWidth
             )
         }
         .contentShape(shape)
@@ -366,7 +366,7 @@ struct MacFeaturedHero: View {
 
     private func advanceAfterDelay() async {
         guard !isPaused, section.items.count > 1 else { return }
-        try? await Task.sleep(for: .seconds(SiloTheme.macHeroAdvanceSeconds))
+        try? await Task.sleep(for: .seconds(WeFlixTheme.macHeroAdvanceSeconds))
         guard !Task.isCancelled else { return }
         step(1)
     }
@@ -377,7 +377,7 @@ struct MacFeaturedHero: View {
             if let item { openDetail(item) }
             return
         }
-        withAnimation(.easeInOut(duration: SiloTheme.slowDuration)) {
+        withAnimation(.easeInOut(duration: WeFlixTheme.slowDuration)) {
             index = offset
         }
     }
@@ -385,7 +385,7 @@ struct MacFeaturedHero: View {
     private func step(_ delta: Int) {
         let count = section.items.count
         guard count > 1 else { return }
-        withAnimation(.easeInOut(duration: SiloTheme.slowDuration)) {
+        withAnimation(.easeInOut(duration: WeFlixTheme.slowDuration)) {
             index = (index + delta + count) % count
         }
     }

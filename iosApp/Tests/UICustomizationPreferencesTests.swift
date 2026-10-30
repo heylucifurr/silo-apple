@@ -1,5 +1,5 @@
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 @MainActor
 final class UICustomizationPreferencesTests: XCTestCase {
@@ -636,8 +636,11 @@ final class UICustomizationPreferencesTests: XCTestCase {
 
     func testPrimaryMenuItemsUseMainMenuNavigationIcons() {
         XCTAssertEqual(PrimaryMenuItem.builtin(.home).navigationIcon, AppTab.home.icon)
-        XCTAssertEqual(PrimaryMenuItem.builtin(.movies).navigationIcon, "film.stack")
-        XCTAssertEqual(PrimaryMenuItem.builtin(.series).navigationIcon, "tv")
+        // Movies and Series draw bundled artwork now instead of an SF Symbol, so
+        // these names are what the asset catalogue has to ship; `menuIcon(_:)`
+        // resolves them.
+        XCTAssertEqual(PrimaryMenuItem.builtin(.movies).navigationIcon, "TabMovies")
+        XCTAssertEqual(PrimaryMenuItem.builtin(.series).navigationIcon, "TabShows")
         XCTAssertEqual(PrimaryMenuItem.builtin(.music).navigationIcon, "rectangle.stack")
         XCTAssertEqual(PrimaryMenuItem.builtin(.audiobooks).navigationIcon, "book.closed")
         XCTAssertEqual(

@@ -179,7 +179,7 @@ final class ConnectionMonitor {
     }
 
     private static let logger = Logger(
-        subsystem: Bundle.main.bundleIdentifier ?? "org.siloserver.silo",
+        subsystem: Bundle.main.bundleIdentifier ?? "me.weflix",
         category: "ConnectionMonitor"
     )
 
@@ -198,7 +198,7 @@ final class ConnectionMonitor {
                 self?.applyPathUpdate(online: online)
             }
         }
-        pathMonitor.start(queue: DispatchQueue(label: "org.siloserver.silo.connection-monitor"))
+        pathMonitor.start(queue: DispatchQueue(label: "me.weflix.connection-monitor"))
     }
 
     // MARK: - Passive signals (reported by HTTPClient)

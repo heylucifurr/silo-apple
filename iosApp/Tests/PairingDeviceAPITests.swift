@@ -1,6 +1,6 @@
 import Foundation
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 /// The explicit-URL pairing client on the v2 wire. These calls skip
 /// `APIv2Client` and its recorded probe verdict, so this client has to tell a

@@ -209,7 +209,7 @@ final class LoginViewModel {
         return message(for: error)
     }
 
-    /// The sign-in failure as the login form shows it. Silo's v2 login
+    /// The sign-in failure as the login form shows it. WeFlix's v2 login
     /// rejects with problem documents, so only a problem's status says what
     /// went wrong; a bare 401 or 403 comes from something in front of the
     /// server (an authenticating proxy or WAF) and must not blame the

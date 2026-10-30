@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// Picker + management UI for the set of saved Silo servers.
+/// Picker + management UI for the set of saved WeFlix servers.
 ///
 /// Shared between iOS and tvOS with minor platform-specific tweaks:
 /// - iOS: Navigation `List` with swipe-to-delete.
@@ -37,12 +37,12 @@ struct ServerListView: View {
             }
         }
         .background(SettingsBackdrop())
-        .animation(.easeOut(duration: SiloTheme.fastDuration), value: removeTarget)
+        .animation(.easeOut(duration: WeFlixTheme.fastDuration), value: removeTarget)
         #else
         contentList
             .disabled(isResolvingServer)
             .navigationTitle("Servers")
-            .siloNavigationTitleDisplayMode(.inline)
+            .weFlixNavigationTitleDisplayMode(.inline)
             .alert(
                 "Remove this server?",
                 isPresented: Binding(
@@ -69,13 +69,13 @@ struct ServerListView: View {
                     Text("CONNECTION")
                         .font(.system(size: 15, weight: .semibold, design: .monospaced))
                         .tracking(2)
-                        .foregroundColor(.siloSecondaryText)
+                        .foregroundColor(.weFlixSecondaryText)
                     Text("Manage Servers")
                         .font(.system(size: 38, weight: .semibold))
-                        .foregroundColor(.siloOnSurface)
-                    Text("Manage saved Silo servers or add another connection.")
+                        .foregroundColor(.weFlixOnSurface)
+                    Text("Manage saved weflix servers or add another connection.")
                         .font(.system(size: 20))
-                        .foregroundColor(.siloSecondaryText)
+                        .foregroundColor(.weFlixSecondaryText)
                 }
                 .padding(.horizontal, 24)
                 .padding(.bottom, 18)
@@ -116,7 +116,7 @@ struct ServerListView: View {
             .padding(.bottom, 64)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-        .safeAreaPadding(.horizontal, SiloTheme.Skyline.safeAreaX)
+        .safeAreaPadding(.horizontal, WeFlixTheme.Skyline.safeAreaX)
         .safeAreaPadding(.top, 64)
         .defaultFocus($focusedRow, defaultTVRow)
     }
@@ -182,19 +182,19 @@ struct ServerListView: View {
                 }
             } header: {
                 Text("Saved servers")
-                    .foregroundColor(.siloSecondaryText)
+                    .foregroundColor(.weFlixSecondaryText)
             }
-            .listRowBackground(Color.siloGroupedCell)
+            .listRowBackground(Color.weFlixGroupedCell)
 
             Section {
                 Button {
                     router.resetToServerSetup()
                 } label: {
                     Label("Add Server", systemImage: "plus")
-                        .foregroundColor(.siloOnSurface)
+                        .foregroundColor(.weFlixOnSurface)
                 }
             }
-            .listRowBackground(Color.siloGroupedCell)
+            .listRowBackground(Color.weFlixGroupedCell)
         }
         .settingsListChrome()
     }
@@ -209,24 +209,24 @@ struct ServerListView: View {
                       ? "checkmark.circle.fill"
                       : "server.rack")
                     .font(.system(size: 20, weight: .medium))
-                    .foregroundColor(.siloOnSurface)
+                    .foregroundColor(.weFlixOnSurface)
                     .frame(width: 28)
 
                 VStack(alignment: .leading, spacing: 2) {
                     Text(entry.displayName)
-                        .font(.siloSubheadline)
-                        .foregroundColor(.siloOnSurface)
+                        .font(.weFlixSubheadline)
+                        .foregroundColor(.weFlixOnSurface)
                         .lineLimit(1)
                     Text(entry.url)
-                        .font(.siloCaption)
-                        .foregroundColor(.siloSecondaryText)
+                        .font(.weFlixCaption)
+                        .foregroundColor(.weFlixSecondaryText)
                         .lineLimit(2)
                         .truncationMode(.middle)
                         .fixedSize(horizontal: false, vertical: true)
                     if entry.id == registry.activeServerId, LocalRouteController.shared.isOnLocalNetwork {
                         LocalRouteStatusLine()
-                            .font(.siloCaption)
-                            .foregroundColor(.siloSecondaryText)
+                            .font(.weFlixCaption)
+                            .foregroundColor(.weFlixSecondaryText)
                     }
                 }
                 .multilineTextAlignment(.leading)
@@ -274,7 +274,7 @@ struct ServerListView: View {
             isResolvingServer = false
             removeTarget = nil
             guard removed else {
-                router.accountActionError = "Silo couldn't remove the saved server. Please try again."
+                router.accountActionError = "weflix couldn't remove the saved server. Please try again."
                 if wasActive { refreshAuthState() }
                 return
             }

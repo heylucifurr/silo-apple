@@ -1,19 +1,19 @@
 //
 //  ItemVideosDecodingTests.swift
-//  SiloTests
+//  WeFlixTests
 //
 //  Decoding contract for the trailers payload: `videos[]` / `extras[]` on
 //  item detail and the `POST /api/v2/catalog/items/{id}/trailers/refresh`
 //  response. Item detail starts from the vendored server fixture for
 //  `GET /api/v2/catalog/items/{id}` and runs through the same decode and
-//  `ItemDetail(catalog:)` projection as `SiloAPI.itemDetail`, so a drift in
+//  `ItemDetail(catalog:)` projection as `WeFlixAPI.itemDetail`, so a drift in
 //  the wire model or the projection fails here rather than silently
 //  emptying the rail on a device.
 //
 
 import XCTest
 import Foundation
-@testable import Silo
+@testable import WeFlix
 
 final class ItemVideosDecodingTests: XCTestCase {
 

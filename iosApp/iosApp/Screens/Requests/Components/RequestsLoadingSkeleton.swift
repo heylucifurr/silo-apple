@@ -34,7 +34,7 @@ struct RequestRailSkeleton: View {
     }
 
     private var height: CGFloat {
-        width * (SiloTheme.posterCardHeight / SiloTheme.posterCardWidth)
+        width * (WeFlixTheme.posterCardHeight / WeFlixTheme.posterCardWidth)
     }
 
     var body: some View {
@@ -51,7 +51,7 @@ struct RequestRailSkeleton: View {
                         RequestsSkeleton.block(
                             width: width,
                             height: height,
-                            cornerRadius: SiloTheme.cornerRadius,
+                            cornerRadius: WeFlixTheme.cornerRadius,
                             opacity: 0.09 + Double(index % 3) * 0.01
                         )
                         RequestsSkeleton.bar(width: width * 0.76, height: captionHeight, opacity: 0.14)
@@ -132,7 +132,7 @@ struct MyRequestsSkeleton: View {
 
     private var row: some View {
         HStack(spacing: 12) {
-            RequestsSkeleton.block(width: 46, height: 69, cornerRadius: SiloTheme.smallCornerRadius)
+            RequestsSkeleton.block(width: 46, height: 69, cornerRadius: WeFlixTheme.smallCornerRadius)
             VStack(alignment: .leading, spacing: 8) {
                 RequestsSkeleton.bar(width: 150, height: 13, opacity: 0.15)
                 RequestsSkeleton.bar(width: 110, height: 10, opacity: 0.09)
@@ -169,7 +169,7 @@ struct RequestDetailSkeleton: View {
                 RequestsSkeleton.bar(width: 300, height: 11, opacity: 0.09)
                 RequestsSkeleton.bar(width: 220, height: 11, opacity: 0.09)
             }
-            .padding(SiloTheme.padding)
+            .padding(WeFlixTheme.padding)
         }
         .frame(maxHeight: .infinity, alignment: .top)
         .allowsHitTesting(false)

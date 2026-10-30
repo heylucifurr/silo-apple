@@ -18,7 +18,7 @@ struct BrowseView: View {
         if let title {
             rootContent
                 .navigationTitle(title)
-                .siloNavigationTitleDisplayMode(.large)
+                .weFlixNavigationTitleDisplayMode(.large)
         } else {
             rootContent
         }
@@ -36,13 +36,13 @@ struct BrowseView: View {
                 scrollContent
             }
         }
-        .siloPageBackground()
+        .weFlixPageBackground()
         .overlay(alignment: .top) {
             // Grid is painted from cache but the server can't be reached —
             // flag the staleness instead of letting refresh fail silently.
             if ConnectionMonitor.shared.isOffline, !viewModel.items.isEmpty {
                 ServerUnreachablePill()
-                    .padding(.top, SiloTheme.padding)
+                    .padding(.top, WeFlixTheme.padding)
                     .transition(.move(edge: .top).combined(with: .opacity))
             }
         }
@@ -64,7 +64,7 @@ struct BrowseView: View {
 
     private var emptyContent: some View {
         ScrollView {
-            VStack(spacing: SiloTheme.padding) {
+            VStack(spacing: WeFlixTheme.padding) {
                 if showsSearchShortcut {
                     searchBar
                 }
@@ -77,7 +77,7 @@ struct BrowseView: View {
 
                 emptyState
                     .frame(minHeight: 320)
-                    .padding(.horizontal, SiloTheme.padding)
+                    .padding(.horizontal, WeFlixTheme.padding)
             }
             .frame(maxWidth: .infinity)
         }
@@ -95,7 +95,7 @@ struct BrowseView: View {
                 subtitle: "There is nothing in this library yet."
             )
         case .noFilterMatches:
-            VStack(spacing: SiloTheme.padding) {
+            VStack(spacing: WeFlixTheme.padding) {
                 EmptyStateView(
                     icon: "line.3.horizontal.decrease.circle",
                     title: "No items match your current filters"
@@ -103,7 +103,7 @@ struct BrowseView: View {
                 Button("Clear filters") {
                     Task { await viewModel.clearFilters() }
                 }
-                .siloPrimaryButton()
+                .weFlixPrimaryButton()
                 .frame(width: 200)
             }
         }
@@ -119,7 +119,7 @@ struct BrowseView: View {
 
     private var scrollContent: some View {
         ScrollView {
-            VStack(spacing: SiloTheme.padding) {
+            VStack(spacing: WeFlixTheme.padding) {
                 if showsSearchShortcut {
                     searchBar
                 }
@@ -140,7 +140,7 @@ struct BrowseView: View {
                         Task { await viewModel.loadItems() }
                     }
                 )
-                .padding(.horizontal, SiloTheme.padding)
+                .padding(.horizontal, WeFlixTheme.padding)
             }
         }
         .reportsPageChromeScroll()
@@ -155,25 +155,25 @@ struct BrowseView: View {
         } label: {
             HStack(spacing: 8) {
                 Image(systemName: "magnifyingglass")
-                    .foregroundColor(.siloSecondaryText)
+                    .foregroundColor(.weFlixSecondaryText)
                 Text("Search...")
-                    .foregroundColor(.siloSecondaryText)
+                    .foregroundColor(.weFlixSecondaryText)
                 Spacer()
             }
-            .font(.siloBody)
+            .font(.weFlixBody)
             .padding(.horizontal, 14)
             .padding(.vertical, 12)
             .background(
-                RoundedRectangle(cornerRadius: SiloTheme.cornerRadius)
-                    .fill(Color.siloSurfaceVariant)
+                RoundedRectangle(cornerRadius: WeFlixTheme.cornerRadius)
+                    .fill(Color.weFlixSurfaceVariant)
                     .overlay(
-                        RoundedRectangle(cornerRadius: SiloTheme.cornerRadius)
-                            .stroke(Color.siloOutline, lineWidth: 1)
+                        RoundedRectangle(cornerRadius: WeFlixTheme.cornerRadius)
+                            .stroke(Color.weFlixOutline, lineWidth: 1)
                     )
             )
         }
         .buttonStyle(.plain)
-        .padding(.horizontal, SiloTheme.padding)
+        .padding(.horizontal, WeFlixTheme.padding)
     }
 
     // MARK: - Control bar (Sort + Filter + Shuffle)
@@ -194,7 +194,7 @@ struct BrowseView: View {
                 shuffleButton
             }
         }
-        .padding(.horizontal, SiloTheme.padding)
+        .padding(.horizontal, WeFlixTheme.padding)
         .shuffleFailureAlert(shuffleLauncher)
     }
 
@@ -263,25 +263,25 @@ struct BrowseView: View {
             Image(systemName: icon)
                 .font(.system(size: 13, weight: .semibold))
             Text(text)
-                .font(.siloBody)
+                .font(.weFlixBody)
             if let trailing {
                 Text(trailing)
-                    .font(.siloCaption)
-                    .foregroundColor(.siloSecondaryText)
+                    .font(.weFlixCaption)
+                    .foregroundColor(.weFlixSecondaryText)
             }
             if let badge, badge > 0 {
                 Text("\(badge)")
                     .font(.system(size: 11, weight: .bold, design: .monospaced))
-                    .foregroundColor(.siloBackground)
+                    .foregroundColor(.weFlixBackground)
                     .padding(.horizontal, 5)
                     .padding(.vertical, 1)
-                    .background(Capsule().fill(Color.siloOnSurface))
+                    .background(Capsule().fill(Color.weFlixOnSurface))
             }
         }
-        .foregroundColor(.siloOnSurface)
+        .foregroundColor(.weFlixOnSurface)
         .padding(.horizontal, 13)
         .padding(.vertical, 8)
-        .siloGlass(in: .capsule)
+        .weFlixGlass(in: .capsule)
     }
 
     // MARK: - Active Filters
@@ -297,24 +297,24 @@ struct BrowseView: View {
                     }
                 }
             }
-            .padding(.horizontal, SiloTheme.padding)
+            .padding(.horizontal, WeFlixTheme.padding)
         }
     }
 
     private func filterChip(label: String, onRemove: @escaping () -> Void) -> some View {
         HStack(spacing: 4) {
             Text(label)
-                .font(.siloCaption)
-                .foregroundColor(.siloOnSurface)
+                .font(.weFlixCaption)
+                .foregroundColor(.weFlixOnSurface)
             Button(action: onRemove) {
                 Image(systemName: "xmark.circle.fill")
                     .font(.system(size: 14))
-                    .foregroundColor(.siloSecondaryText)
+                    .foregroundColor(.weFlixSecondaryText)
             }
         }
         .padding(.horizontal, 10)
         .padding(.vertical, 5)
-        .siloGlass(in: .capsule)
+        .weFlixGlass(in: .capsule)
     }
 }
 
@@ -365,26 +365,26 @@ struct LibraryPageTabSelector: View {
         HStack(spacing: 8) {
             ForEach(LibraryPageTab.allCases) { tab in
                 Button {
-                    withAnimation(.easeInOut(duration: SiloTheme.normalDuration)) {
+                    withAnimation(.easeInOut(duration: WeFlixTheme.normalDuration)) {
                         selectedTab = tab
                     }
                 } label: {
                     Text(tab.title)
-                        .font(.siloCaption)
+                        .font(.weFlixCaption)
                         .fontWeight(selectedTab == tab ? .semibold : .regular)
-                        .foregroundColor(selectedTab == tab ? Color.siloBackground : .siloSecondaryText)
+                        .foregroundColor(selectedTab == tab ? Color.weFlixBackground : .weFlixSecondaryText)
                         .padding(.horizontal, 16)
                         .padding(.vertical, 8)
                         .background(
                             Capsule()
-                                .fill(selectedTab == tab ? Color.siloOnSurface : Color.siloSurfaceElevated)
+                                .fill(selectedTab == tab ? Color.weFlixOnSurface : Color.weFlixSurfaceElevated)
                         )
                 }
                 .buttonStyle(.plain)
             }
         }
-        .padding(.horizontal, SiloTheme.padding)
-        .padding(.vertical, SiloTheme.smallPadding)
+        .padding(.horizontal, WeFlixTheme.padding)
+        .padding(.vertical, WeFlixTheme.smallPadding)
     }
 }
 
@@ -429,10 +429,10 @@ private class LibraryRecommendedViewModel {
             let incomplete: Bool
             if let mediaScope {
                 let scoped = try await mediaScope.refillSections(rows) { (row: ResolvedSection, cursor: APIv2CatalogContinuation?) in
-                    guard await SiloAPI.shared.isCurrentOwner(read.auth) else { throw HTTPError.requestIdentityChanged }
+                    guard await WeFlixAPI.shared.isCurrentOwner(read.auth) else { throw HTTPError.requestIdentityChanged }
                     let page: CatalogListPage
                     if let cursor {
-                        page = try await SiloAPI.shared.nextCatalogPage(cursor)
+                        page = try await WeFlixAPI.shared.nextCatalogPage(cursor)
                     } else {
                         var query = APIv2CatalogQuery()
                         query.source = "section"
@@ -440,9 +440,9 @@ private class LibraryRecommendedViewModel {
                         query.libraryId = String(libraryId)
                         query.sectionId = row.id
                         query.limit = 100
-                        page = try await SiloAPI.shared.catalogPage(query)
+                        page = try await WeFlixAPI.shared.catalogPage(query)
                     }
-                    guard await SiloAPI.shared.isCurrentOwner(read.auth) else { throw HTTPError.requestIdentityChanged }
+                    guard await WeFlixAPI.shared.isCurrentOwner(read.auth) else { throw HTTPError.requestIdentityChanged }
                     return LibraryScopedPage(items: page.response.items.map { SectionItem(browseItem: $0) },
                                              next: page.continuation, startsOver: page.startsOver)
                 }
@@ -452,7 +452,7 @@ private class LibraryRecommendedViewModel {
                 loaded = rows
                 incomplete = false
             }
-            guard await SiloAPI.shared.isCurrentOwner(read.auth) else { throw HTTPError.requestIdentityChanged }
+            guard await WeFlixAPI.shared.isCurrentOwner(read.auth) else { throw HTTPError.requestIdentityChanged }
             guard run == generation, !Task.isCancelled else { return }
             sections = loaded.filter { !$0.items.isEmpty }
             scopeIncomplete = incomplete
@@ -491,7 +491,7 @@ struct LibraryRecommendedView: View {
                     ErrorView(state: error, onRetry: { Task { await viewModel.loadSections(libraryId: libraryId, mediaScope: mediaScope) } })
                 } else if viewModel.isLoading {
                     PosterRowsSkeleton()
-                        .padding(.top, SiloTheme.padding)
+                        .padding(.top, WeFlixTheme.padding)
                 } else if viewModel.scopeIncomplete {
                     scopeNotice
                 } else {
@@ -505,13 +505,13 @@ struct LibraryRecommendedView: View {
 
             if ConnectionMonitor.shared.isOffline, !viewModel.sections.isEmpty {
                 ServerUnreachablePill()
-                    .padding(.top, SiloTheme.padding)
+                    .padding(.top, WeFlixTheme.padding)
                     .transition(.move(edge: .top).combined(with: .opacity))
                     .zIndex(2)
             }
         }
         .animation(.easeInOut(duration: 0.18), value: ConnectionMonitor.shared.isOffline)
-        .siloPageBackground()
+        .weFlixPageBackground()
         .task(id: "\(libraryId):\(mediaScope?.rawValue ?? "all")") {
             await viewModel.loadSections(libraryId: libraryId, mediaScope: mediaScope)
         }
@@ -522,7 +522,7 @@ struct LibraryRecommendedView: View {
 
     private var content: some View {
         ScrollView(.vertical, showsIndicators: false) {
-            LazyVStack(spacing: SiloTheme.largePadding) {
+            LazyVStack(spacing: WeFlixTheme.largePadding) {
                 if viewModel.scopeIncomplete { scopeNotice }
                 ForEach(viewModel.sections) { section in
                     SectionRow(
@@ -544,20 +544,20 @@ struct LibraryRecommendedView: View {
                     )
                 }
             }
-            .padding(.bottom, SiloTheme.largePadding)
+            .padding(.bottom, WeFlixTheme.largePadding)
         }
-        .siloScrollEdgeEffect()
+        .weFlixScrollEdgeEffect()
         .reportsPageChromeScroll()
         .environment(\.browseLibraryId, libraryId)
     }
 
     private var scopeNotice: some View {
-        VStack(spacing: SiloTheme.smallPadding) {
+        VStack(spacing: WeFlixTheme.smallPadding) {
             Text("Some shelves could not be fully loaded. Retry or open Library to browse all titles.")
-                .font(.siloCaption)
-                .foregroundStyle(Color.siloSecondaryText)
+                .font(.weFlixCaption)
+                .foregroundStyle(Color.weFlixSecondaryText)
             Button("Retry") { Task { await viewModel.loadSections(libraryId: libraryId, mediaScope: mediaScope) } }
         }
-        .padding(SiloTheme.padding)
+        .padding(WeFlixTheme.padding)
     }
 }

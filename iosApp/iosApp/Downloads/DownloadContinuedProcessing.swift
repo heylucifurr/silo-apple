@@ -5,16 +5,16 @@ import Observation
 import OSLog
 import Synchronization
 
-/// On iOS 26 and later, keeps Silo running while downloads the user started
+/// On iOS 26 and later, keeps WeFlix running while downloads the user started
 /// are in progress, through a continued processing task. iOS draws its own
 /// Live Activity for the task (title, subtitle, a progress ring, and a stop
-/// button), so the downloads' progress stays live after Silo leaves the
+/// button), so the downloads' progress stays live after WeFlix leaves the
 /// screen and the queue keeps moving without waiting for a background wake.
 ///
 /// The transfers themselves stay on the background `URLSession`. When the
 /// task ends early, downloads keep going: only the live progress goes away.
 /// iOS expires a task whose progress stops advancing for about 30 seconds and
-/// then labels it failed, so the reported progress only ever grows, and Silo
+/// then labels it failed, so the reported progress only ever grows, and WeFlix
 /// ends the task itself first whenever nothing is moving (waiting for Wi-Fi,
 /// a connection, or the server), saying what the downloads wait for.
 @MainActor
@@ -28,7 +28,7 @@ final class DownloadContinuedProcessing {
     /// Each request needs a unique identifier under the wildcard listed in
     /// `BGTaskSchedulerPermittedIdentifiers` (iosApp/Info.plist).
     private static var identifierPrefix: String {
-        (Bundle.main.bundleIdentifier ?? "org.siloserver.silo") + ".downloads.continued"
+        (Bundle.main.bundleIdentifier ?? "me.weflix") + ".downloads.continued"
     }
 
     /// The progress total until the first byte counts arrive.
@@ -36,7 +36,7 @@ final class DownloadContinuedProcessing {
     /// A submitted request iOS hasn't started by now never will be; iOS can
     /// accept a request and then drop it without reporting an error.
     private static let startDeadline: Duration = .seconds(5)
-    /// Silo ends the task after this long with no download moving at all,
+    /// WeFlix ends the task after this long with no download moving at all,
     /// before iOS's own stall check marks it failed. While anything moves,
     /// the task keeps running and iOS alone decides.
     private static let stallLimit: TimeInterval = 20
@@ -45,7 +45,7 @@ final class DownloadContinuedProcessing {
     /// names a download that is visibly moving.
     private static let minFractionPerSecond = 0.0005
 
-    /// How the queue stood when Silo ended the task.
+    /// How the queue stood when WeFlix ended the task.
     enum Outcome {
         /// Every download finished.
         case completed
@@ -63,7 +63,7 @@ final class DownloadContinuedProcessing {
         /// Holds the `BGContinuedProcessingTask`.
         case running(AnyObject, identifier: String)
         /// The user stopped the task. Nothing shows the queue's progress
-        /// until it empties, Silo comes back on screen, or the user starts
+        /// until it empties, WeFlix comes back on screen, or the user starts
         /// another download.
         case dismissed
     }
@@ -89,7 +89,7 @@ final class DownloadContinuedProcessing {
     private var completion: TaskCompletion?
     private var lastSubtitleUpdate = Date.distantPast
 
-    /// Whether this owns the queue's live progress, so Silo's own Live
+    /// Whether this owns the queue's live progress, so WeFlix's own Live
     /// Activity stays out of the way.
     var ownsProgress: Bool {
         if case .idle = state { return false }
@@ -119,7 +119,7 @@ final class DownloadContinuedProcessing {
             return
         }
         let request = BGContinuedProcessingTaskRequest(identifier: identifier, title: title, subtitle: "Starting…")
-        // Run now or not at all; Silo's own Live Activity covers the rest.
+        // Run now or not at all; WeFlix's own Live Activity covers the rest.
         request.strategy = .fail
         state = .submitted(identifier: identifier)
         #if compiler(>=6.4)
@@ -171,7 +171,7 @@ final class DownloadContinuedProcessing {
         apply(content, headline: headline, to: task)
     }
 
-    /// Ends the task on Silo's terms. A stop the user made stays in place
+    /// Ends the task on WeFlix's terms. A stop the user made stays in place
     /// while the queue still has downloads.
     func finish(_ outcome: Outcome) {
         switch state {
@@ -260,7 +260,7 @@ final class DownloadContinuedProcessing {
         task.updateTitle(task.title, subtitle: "\(reason) · Downloads resume on their own")
         completion?(success: true)
         endRun()
-        // Silo's own Live Activity takes over while the app is in front.
+        // WeFlix's own Live Activity takes over while the app is in front.
         DownloadManager.shared.syncLiveActivity()
     }
 
@@ -291,7 +291,7 @@ final class DownloadContinuedProcessing {
         DownloadManager.shared.syncLiveActivity()
     }
 
-    /// Silo is on screen, where its own Live Activity can show the queue.
+    /// WeFlix is on screen, where its own Live Activity can show the queue.
     func clearDismissal() {
         if case .dismissed = state { state = .idle }
     }
@@ -403,7 +403,7 @@ final class DownloadContinuedProcessing {
 }
 
 /// Completes a continued processing task at most once, whichever of the
-/// expiration handler (any thread) and Silo (main actor) gets there first.
+/// expiration handler (any thread) and WeFlix (main actor) gets there first.
 private final class TaskCompletion: @unchecked Sendable {
     private let done = Atomic<Bool>(false)
     private let complete: (Bool) -> Void

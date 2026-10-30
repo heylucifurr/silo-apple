@@ -36,7 +36,7 @@ struct RequestDetailView: View {
                 loadedContent(detail)
             } else if let error = viewModel.error {
                 ErrorView(state: error, onRetry: { Task { await viewModel.load() } })
-                    .siloPageBackground()
+                    .weFlixPageBackground()
             } else {
                 loadingContent
             }
@@ -85,7 +85,7 @@ struct RequestDetailView: View {
         #else
         RequestDetailSkeleton()
             .ignoresSafeArea(edges: .top)
-            .siloPageBackground()
+            .weFlixPageBackground()
         #endif
     }
 
@@ -130,7 +130,7 @@ struct RequestDetailView: View {
                     )
 
                     recommendationsRail
-                        .padding(.horizontal, SiloTheme.padding)
+                        .padding(.horizontal, WeFlixTheme.padding)
                 }
                 .padding(.bottom, 40)
             }
@@ -180,13 +180,13 @@ struct RequestDetailView: View {
 
             if let message = viewModel.actionErrorMessage {
                 Text(message)
-                    .font(.siloCaption)
-                    .foregroundColor(.siloSecondaryText)
+                    .font(.weFlixCaption)
+                    .foregroundColor(.weFlixSecondaryText)
                     .frame(maxWidth: .infinity, alignment: .center)
             } else if case .request = viewModel.primaryAction, viewModel.endedRequest == nil {
                 Text("Not in your library yet. Your server admin reviews requests.")
                     .font(.caption)
-                    .foregroundColor(.siloSecondaryText)
+                    .foregroundColor(.weFlixSecondaryText)
                     .multilineTextAlignment(.center)
                     .frame(maxWidth: .infinity)
             }
@@ -221,9 +221,9 @@ struct RequestDetailView: View {
             } label: {
                 Label(followTitle, systemImage: followIcon)
                     .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(Color.siloOnSurface)
+                    .foregroundStyle(Color.weFlixOnSurface)
                     .frame(maxWidth: .infinity, minHeight: 44)
-                    .background(Capsule().fill(Color.siloChromeSelectedFill))
+                    .background(Capsule().fill(Color.weFlixChromeSelectedFill))
                     .contentShape(Capsule())
             }
             .buttonStyle(.plain)
@@ -232,8 +232,8 @@ struct RequestDetailView: View {
 
             if let notice = viewModel.followNotice {
                 Text(notice)
-                    .font(.siloCaption)
-                    .foregroundColor(.siloSecondaryText)
+                    .font(.weFlixCaption)
+                    .foregroundColor(.weFlixSecondaryText)
                     .frame(maxWidth: .infinity, alignment: .center)
             }
         }
@@ -312,8 +312,8 @@ struct RequestDetailView: View {
 
             if let message = tvActionMessage {
                 Text(message)
-                    .font(.siloCaption)
-                    .foregroundColor(.siloSecondaryText)
+                    .font(.weFlixCaption)
+                    .foregroundColor(.weFlixSecondaryText)
             }
         }
         .focusSection()
@@ -427,13 +427,13 @@ struct RequestDetailView: View {
                 .lineLimit(1)
         }
         .font(.body.weight(.semibold))
-        .foregroundColor(action.isInteractive ? .black : .siloOnSurface)
+        .foregroundColor(action.isInteractive ? .black : .weFlixOnSurface)
         .frame(maxWidth: .infinity, minHeight: 52)
         .background(
-            Capsule().fill(action.isInteractive ? Color.white : Color.siloChromeRestingFill)
+            Capsule().fill(action.isInteractive ? Color.white : Color.weFlixChromeRestingFill)
         )
         .overlay(
-            Capsule().stroke(action.isInteractive ? Color.clear : Color.siloChromeRestingBorder, lineWidth: 1)
+            Capsule().stroke(action.isInteractive ? Color.clear : Color.weFlixChromeRestingBorder, lineWidth: 1)
         )
         .contentShape(Capsule())
         #endif
@@ -460,7 +460,7 @@ struct RequestDetailView: View {
         case .submitting:
             ProgressView()
                 .controlSize(.small)
-                .tint(.siloSecondaryText)
+                .tint(.weFlixSecondaryText)
         case .openInLibrary:
             Image(systemName: "arrow.up.right")
         case .status(let state):
@@ -567,7 +567,7 @@ struct RequestStatusCard: View {
             Text("REQUEST STATUS")
                 .font(.system(size: 11, weight: .bold))
                 .tracking(1.6)
-                .foregroundColor(.siloOnSurface.opacity(0.55))
+                .foregroundColor(.weFlixOnSurface.opacity(0.55))
                 .padding(.bottom, 14)
 
             ForEach(RequestStep.allCases, id: \.self) { step in
@@ -595,7 +595,7 @@ struct RequestStatusCard: View {
                 marker(isDone: isDone, isCurrent: isCurrent)
                 if !isLast {
                     Rectangle()
-                        .fill(isDone ? Color.siloOnSurface.opacity(0.6) : Color.white.opacity(0.14))
+                        .fill(isDone ? Color.weFlixOnSurface.opacity(0.6) : Color.white.opacity(0.14))
                         .frame(width: 2)
                         .frame(maxHeight: .infinity)
                 }
@@ -605,11 +605,11 @@ struct RequestStatusCard: View {
             VStack(alignment: .leading, spacing: 2) {
                 Text(title(for: step, isCurrent: isCurrent))
                     .font(.subheadline.weight(isCurrent ? .bold : .medium))
-                    .foregroundColor(isDone || isCurrent ? .siloOnSurface : .siloOnSurface.opacity(0.45))
+                    .foregroundColor(isDone || isCurrent ? .weFlixOnSurface : .weFlixOnSurface.opacity(0.45))
                 if let detail = detail(for: step, isDone: isDone, isCurrent: isCurrent) {
                     Text(detail)
                         .font(.caption)
-                        .foregroundColor(.siloSecondaryText)
+                        .foregroundColor(.weFlixSecondaryText)
                 }
             }
             .padding(.bottom, isLast ? 0 : 14)
@@ -624,7 +624,7 @@ struct RequestStatusCard: View {
                 .font(.system(size: 11, weight: .heavy))
                 .foregroundColor(.black)
                 .frame(width: 22, height: 22)
-                .background(Circle().fill(Color.siloOnSurface.opacity(0.9)))
+                .background(Circle().fill(Color.weFlixOnSurface.opacity(0.9)))
         } else if isCurrent {
             Circle()
                 .fill(progress.tint.color)
@@ -699,8 +699,8 @@ struct RequestStepTrackWithLabels: View {
 
     private func color(for step: RequestStep) -> Color {
         if step == progress.currentStep { return progress.tint.color }
-        if step.rawValue < progress.completedSteps { return .siloOnSurface }
-        return .siloOnSurface.opacity(0.45)
+        if step.rawValue < progress.completedSteps { return .weFlixOnSurface }
+        return .weFlixOnSurface.opacity(0.45)
     }
 }
 

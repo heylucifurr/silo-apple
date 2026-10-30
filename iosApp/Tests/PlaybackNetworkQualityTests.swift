@@ -1,5 +1,5 @@
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 /// Which quality pair playback asks for on the current connection, and the
 /// replan that follows a connection change.
@@ -45,8 +45,8 @@ final class PlaybackNetworkQualityTests: XCTestCase {
         // A refresh tells the flusher the server's revision, which the
         // cellular keys' writes wait for; the values apply locally at once.
         await harness.settings.refreshFromServer()
-        harness.settings.setQualityPreset(try XCTUnwrap(SiloQualityPresets.preset(id: "2160p")))
-        harness.settings.setCellularQualityPreset(try XCTUnwrap(SiloQualityPresets.preset(id: "720p")))
+        harness.settings.setQualityPreset(try XCTUnwrap(WeFlixQualityPresets.preset(id: "2160p")))
+        harness.settings.setCellularQualityPreset(try XCTUnwrap(WeFlixQualityPresets.preset(id: "720p")))
 
         let paths: [(name: String, cellular: Bool, expensive: Bool, constrained: Bool, metered: Bool)] = [
             ("Wi-Fi", false, false, false, false),
@@ -101,8 +101,8 @@ final class PlaybackNetworkQualityTests: XCTestCase {
     func testAutoPickedInThePlayerKeepsTheSavedCapForTheConnection() async throws {
         let harness = try PlayerSettingsHarness()
         await harness.settings.refreshFromServer()
-        harness.settings.setQualityPreset(try XCTUnwrap(SiloQualityPresets.preset(id: "1080p-high")))
-        harness.settings.setCellularQualityPreset(try XCTUnwrap(SiloQualityPresets.preset(id: "720p")))
+        harness.settings.setQualityPreset(try XCTUnwrap(WeFlixQualityPresets.preset(id: "1080p-high")))
+        harness.settings.setCellularQualityPreset(try XCTUnwrap(WeFlixQualityPresets.preset(id: "720p")))
 
         func autoPick(metered: Bool) -> ApplePlaybackV3QualitySelection {
             ApplePlaybackQuality.protocolV3Selection(

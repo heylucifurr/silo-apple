@@ -33,7 +33,7 @@ struct TVActionPopoverMenu: View {
     static let width: CGFloat = 560
     private static let maxRows = 7
     private static let shape = RoundedRectangle(
-        cornerRadius: SiloTheme.Skyline.dropdownCornerRadius,
+        cornerRadius: WeFlixTheme.Skyline.dropdownCornerRadius,
         style: .continuous
     )
 
@@ -42,12 +42,12 @@ struct TVActionPopoverMenu: View {
             header
             rows
         }
-        .padding(SiloTheme.Skyline.dropdownPadding)
+        .padding(WeFlixTheme.Skyline.dropdownPadding)
         .frame(width: Self.width, alignment: .leading)
         // Native tvOS context-menu look: Liquid Glass with a dark tint so
         // the page shows through, plus a faint lip so the edge reads on
         // bright backdrops.
-        .siloGlass(in: Self.shape, tint: Color.black.opacity(0.45))
+        .weFlixGlass(in: Self.shape, tint: Color.black.opacity(0.45))
         .overlay(Self.shape.strokeBorder(Color.white.opacity(0.10), lineWidth: 1))
         .shadow(color: .black.opacity(0.45), radius: 32, y: 18)
         .contentShape(Self.shape)
@@ -144,7 +144,7 @@ private struct TVActionPopoverRow: View {
 
             VStack(alignment: .leading, spacing: 2) {
                 Text(item.title)
-                    .font(.system(size: SiloTheme.Skyline.dropdownRowTextSize, weight: .semibold))
+                    .font(.system(size: WeFlixTheme.Skyline.dropdownRowTextSize, weight: .semibold))
                     .lineLimit(1)
                 if let detail = item.detail, !detail.isEmpty {
                     Text(detail)
@@ -158,18 +158,18 @@ private struct TVActionPopoverRow: View {
         }
         .foregroundStyle(foreground)
         .opacity(item.isEnabled ? 1 : 0.4)
-        .padding(.horizontal, SiloTheme.Skyline.cascadeRowPaddingHorizontal)
+        .padding(.horizontal, WeFlixTheme.Skyline.cascadeRowPaddingHorizontal)
         .padding(.vertical, 13)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(
-            RoundedRectangle(cornerRadius: SiloTheme.Skyline.cascadeRowCornerRadius, style: .continuous)
+            RoundedRectangle(cornerRadius: WeFlixTheme.Skyline.cascadeRowCornerRadius, style: .continuous)
                 .fill(isHighlighted ? Color.white : Color.clear)
         )
-        .animation(reduceMotion ? nil : SiloTheme.springAnimation, value: isHighlighted)
+        .animation(reduceMotion ? nil : WeFlixTheme.springAnimation, value: isHighlighted)
     }
 
     private var foreground: Color {
-        isHighlighted ? .siloBackground : .white.opacity(0.9)
+        isHighlighted ? .weFlixBackground : .white.opacity(0.9)
     }
 }
 
@@ -310,7 +310,7 @@ private struct TVActionPopoverHostModifier: ViewModifier {
                 }
                 .ignoresSafeArea()
                 .animation(
-                    reduceMotion ? nil : .easeOut(duration: SiloTheme.Skyline.cascadeOpenDuration),
+                    reduceMotion ? nil : .easeOut(duration: WeFlixTheme.Skyline.cascadeOpenDuration),
                     value: requests.last?.id
                 )
             }

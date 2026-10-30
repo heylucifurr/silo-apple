@@ -109,17 +109,17 @@ private struct TrailerCardLabel: View {
                 if let secondaryLine {
                     Text(secondaryLine)
                         .font(.system(size: 17, weight: .medium))
-                        .foregroundColor(.siloSecondaryText)
+                        .foregroundColor(.weFlixSecondaryText)
                         .lineLimit(1)
                 }
             }
-            .animation(.easeOut(duration: SiloTheme.fastDuration), value: isFocused)
+            .animation(.easeOut(duration: WeFlixTheme.fastDuration), value: isFocused)
         }
         .frame(width: cardWidth, alignment: .leading)
     }
 
     private var titleColor: Color {
-        isFocused ? .siloOnSurface : Color.siloOnSurface.opacity(0.92)
+        isFocused ? .weFlixOnSurface : Color.weFlixOnSurface.opacity(0.92)
     }
 
     /// Remote cards say where they go — selecting one leaves the app for
@@ -136,7 +136,7 @@ private struct TrailerCardLabel: View {
 
     private var thumbnail: some View {
         ZStack {
-            Color.siloSurfaceElevated
+            Color.weFlixSurfaceElevated
                 .frame(width: cardWidth, height: thumbHeight)
 
             artwork
@@ -164,7 +164,7 @@ private struct TrailerCardLabel: View {
         } else {
             Image(systemName: "film")
                 .font(.system(size: 48))
-                .foregroundColor(.siloSecondaryText)
+                .foregroundColor(.weFlixSecondaryText)
                 .frame(width: cardWidth, height: thumbHeight)
         }
     }
@@ -211,16 +211,16 @@ struct TVTrailerStatusPill: View {
         HStack(spacing: 14) {
             if isFetching {
                 ProgressView()
-                    .tint(.siloOnSurface)
+                    .tint(.weFlixOnSurface)
             } else {
                 Image(systemName: "info.circle")
                     .font(.system(size: 24, weight: .semibold))
-                    .foregroundColor(.siloOnSurface)
+                    .foregroundColor(.weFlixOnSurface)
             }
 
             Text(message)
                 .font(.system(size: 24, weight: .semibold))
-                .foregroundColor(.siloOnSurface)
+                .foregroundColor(.weFlixOnSurface)
                 .lineLimit(1)
         }
         .padding(.horizontal, 26)

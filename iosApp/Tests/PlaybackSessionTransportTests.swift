@@ -1,6 +1,6 @@
 import Foundation
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 /// The v2 playback session operations on the wire: the exact body each one
 /// sends, the one success status each accepts, and how the receipts are

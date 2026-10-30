@@ -1,5 +1,5 @@
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 /// Which rejected person refresh dispatches still leave the person page's
 /// read-only poll running. Viewing a person queues a provider refresh when one

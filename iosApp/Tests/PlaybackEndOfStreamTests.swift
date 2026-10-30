@@ -1,6 +1,6 @@
 import AetherEngine
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 /// An end of stream from a source that went away (a seek past the buffer
 /// while the server is down) is a lost connection, not the item finishing

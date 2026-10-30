@@ -19,9 +19,9 @@ import subprocess
 
 PLATFORMS = ("ios", "tvos", "macos")
 MATRIX_ENTRIES = {
-    "ios": {"scheme": "Silo", "destination": "platform=iOS Simulator,name=iPhone 17 Pro", "action": "test", "platform": "iOS", "test_target": "SiloTests"},
-    "tvos": {"scheme": "SiloTV", "destination": "platform=tvOS Simulator,name=Apple TV 4K (3rd generation)", "action": "test", "platform": "tvOS", "test_target": "SiloTVTests"},
-    "macos": {"scheme": "SiloMac", "destination": "generic/platform=macOS", "action": "build", "platform": "macOS"},
+    "ios": {"scheme": "WeFlix", "destination": "platform=iOS Simulator,name=iPhone 17 Pro", "action": "test", "platform": "iOS", "test_target": "WeFlixTests"},
+    "tvos": {"scheme": "WeFlixTV", "destination": "platform=tvOS Simulator,name=Apple TV 4K (3rd generation)", "action": "test", "platform": "tvOS", "test_target": "WeFlixTVTests"},
+    "macos": {"scheme": "WeFlixMac", "destination": "generic/platform=macOS", "action": "build", "platform": "macOS"},
 }
 PROJECT = "iosApp/project.yml"
 # The meaningful lines of project.yml and every committed Signing/*.xcconfig.

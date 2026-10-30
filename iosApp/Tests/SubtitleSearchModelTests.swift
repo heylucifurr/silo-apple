@@ -1,6 +1,6 @@
 //
 //  SubtitleSearchModelTests.swift
-//  SiloTests
+//  WeFlixTests
 //
 //  Focused tests for the subtitle provider-search models: the download body
 //  echoing the chosen result (the server re-fetches by provider +
@@ -9,7 +9,7 @@
 //
 
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 final class SubtitleSearchModelTests: XCTestCase {
     private var encoder: JSONEncoder {

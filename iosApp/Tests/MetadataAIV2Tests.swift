@@ -1,6 +1,6 @@
 import Foundation
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 /// Metadata AI on v2: the profile-scoped capability read and the on-view
 /// description translation, including the owner the translation runs for.
@@ -213,7 +213,7 @@ final class MetadataAIV2Tests: XCTestCase {
     func testSeasonJobLeavesTheSeriesDescriptionStatusAlone() async throws {
         let (api, _) = try await client()
         stub.reply(202, Self.job.replacingOccurrences(of: "movie/heat?1995", with: "season-1"))
-        let season = DescriptionTranslationCoordinator(api: SiloAI(v2: api), schedule: [.seconds(60)],
+        let season = DescriptionTranslationCoordinator(api: WeFlixAI(v2: api), schedule: [.seconds(60)],
                                                        sleep: { try await Task.sleep(for: $0) })
         let viewModel = ItemDetailViewModel(seasonDescriptionTranslation: season)
         viewModel.detail = try Self.detail(#","machine_translated_fields":["overview"]"#)
@@ -236,7 +236,7 @@ final class MetadataAIV2Tests: XCTestCase {
         sleep: @escaping @Sendable (Duration) async throws -> Void = { _ in await Task.yield() }
     ) async throws -> DescriptionTranslationCoordinator {
         let (api, _) = try await client()
-        return DescriptionTranslationCoordinator(api: SiloAI(v2: api), schedule: [.zero, .zero, .zero], sleep: sleep)
+        return DescriptionTranslationCoordinator(api: WeFlixAI(v2: api), schedule: [.zero, .zero, .zero], sleep: sleep)
     }
 
     @MainActor
@@ -322,7 +322,7 @@ final class MetadataAIV2Tests: XCTestCase {
         var mode = MetadataAIStatus.OnViewMode.button
         let landed = try Self.detail(#","machine_translated_fields":["overview"]"#)
         let store = CardDescriptionTranslation(
-            makeCoordinator: { DescriptionTranslationCoordinator(api: SiloAI(v2: api), schedule: [.zero], sleep: { _ in }) },
+            makeCoordinator: { DescriptionTranslationCoordinator(api: WeFlixAI(v2: api), schedule: [.zero], sleep: { _ in }) },
             fetchDetail: { _, _ in landed },
             onViewMode: { mode }
         )

@@ -197,7 +197,7 @@ struct PlayerSettingsSheet: View {
                         viewModel.setSubtitleMatchesSystemAppearance(enabled)
                     }
                 ))
-                .tint(.siloSwitchOn)
+                .tint(.weFlixSwitchOn)
 
                 Toggle("Only on this device", isOn: Binding(
                     get: { viewModel.settings.subtitleUsesDeviceAppearanceOverride },
@@ -205,7 +205,7 @@ struct PlayerSettingsSheet: View {
                         Task { await viewModel.setSubtitleDeviceOverrideEnabled(enabled) }
                     }
                 ))
-                .tint(.siloSwitchOn)
+                .tint(.weFlixSwitchOn)
                 .disabled(matchesSystem)
             } footer: {
                 Text(matchesSystem
@@ -237,7 +237,7 @@ struct PlayerSettingsSheet: View {
                 }
 
                 Toggle("Text outline", isOn: appearanceBoolBinding(\.textOutline))
-                    .tint(.siloSwitchOn)
+                    .tint(.weFlixSwitchOn)
 
                 Picker("Outline color", selection: appearanceStringBinding(\.textOutlineColor)) {
                     ForEach(SubtitleAppearance.outlineColors, id: \.hex) { color in
@@ -334,7 +334,7 @@ struct PlayerSettingsSheet: View {
                     get: { viewModel.settings.autoPlayNextEpisode },
                     set: { viewModel.settings.setAutoPlayNextEpisode($0) }
                 ))
-                .tint(.siloSwitchOn)
+                .tint(.weFlixSwitchOn)
             }
         }
     }
@@ -350,7 +350,7 @@ struct PlayerSettingsSheet: View {
                             .foregroundStyle(.secondary)
                     }
                 }
-                .tint(.siloSwitchOn)
+                .tint(.weFlixSwitchOn)
             }
 
             NavigationLink {

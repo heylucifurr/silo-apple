@@ -27,7 +27,7 @@ struct TVServerNeedsSetupView: View {
             Text("This server\nisn't ready")
                 .font(.system(size: MarqueeMetrics.heroFont, weight: .heavy))
                 .kerning(-2)
-                .foregroundStyle(Color.siloOnSurface)
+                .foregroundStyle(Color.weFlixOnSurface)
                 .padding(.top, 52)
                 .accessibilityAddTraits(.isHeader)
             MarqueeTVBody("Ask the server administrator to finish setup. When it is ready, check again.")

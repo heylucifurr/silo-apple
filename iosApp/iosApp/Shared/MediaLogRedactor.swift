@@ -43,7 +43,7 @@ enum MediaLogRedactor {
         + #"|System|Network|Developer|opt|usr|etc|mnt|home|data))"#
 
     /// Credential-bearing key names, matched case-insensitively as a substring
-    /// of the surrounding header or parameter name (`X-Silo-Auth`, `st`, …).
+    /// of the surrounding header or parameter name (`X-WeFlix-Auth`, `st`, …).
     private static let credentialKey =
         #"[a-z0-9_-]*(?:authorization|auth|cookie|token|secret|credential|api[-_]?key|session)[a-z0-9_-]*"#
 

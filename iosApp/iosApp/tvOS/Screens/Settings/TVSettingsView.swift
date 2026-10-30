@@ -86,7 +86,7 @@ struct TVSettingsView: View {
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-        .animation(.easeOut(duration: SiloTheme.fastDuration), value: showSignOutConfirm)
+        .animation(.easeOut(duration: WeFlixTheme.fastDuration), value: showSignOutConfirm)
         .onAppear(perform: focusGeneralOnEntry)
         .task {
             await viewModel.loadSettings()
@@ -106,7 +106,7 @@ struct TVSettingsView: View {
             if case .category(let category) = focus {
                 preferredDetailFocus = initialDetailFocus(for: category)
                 if category != selectedCategory {
-                    withAnimation(.easeOut(duration: SiloTheme.normalDuration)) {
+                    withAnimation(.easeOut(duration: WeFlixTheme.normalDuration)) {
                         selectedCategory = category
                     }
                 }
@@ -185,7 +185,7 @@ struct TVSettingsView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         .focusScope(settingsFocusScope)
-        .safeAreaPadding(.horizontal, SiloTheme.Skyline.safeAreaX)
+        .safeAreaPadding(.horizontal, WeFlixTheme.Skyline.safeAreaX)
         .safeAreaPadding(.top, 48)
         .safeAreaPadding(.bottom, 44)
     }
@@ -196,7 +196,7 @@ struct TVSettingsView: View {
         VStack(alignment: .leading, spacing: 6) {
             Text("Settings")
                 .font(.system(size: 48, weight: .bold))
-                .foregroundStyle(Color.siloOnSurface)
+                .foregroundStyle(Color.weFlixOnSurface)
                 .padding(.horizontal, 20)
                 .padding(.bottom, 20)
 
@@ -211,9 +211,9 @@ struct TVSettingsView: View {
 
             signOutRow
 
-            Text("Silo \(Self.versionString)")
+            Text("weflix \(Self.versionString)")
                 .font(.system(size: 18))
-                .foregroundColor(.siloSecondaryText.opacity(0.7))
+                .foregroundColor(.weFlixSecondaryText.opacity(0.7))
                 .padding(.leading, 20)
                 .padding(.top, 10)
         }
@@ -367,13 +367,13 @@ struct TVSettingsView: View {
         preferredDetailFocus = .serverPrivacyPolicy
         railFocus = nil
         detailFocus = nil
-        withAnimation(.easeOut(duration: SiloTheme.fastDuration)) {
+        withAnimation(.easeOut(duration: WeFlixTheme.fastDuration)) {
             showPrivacyPolicy = true
         }
     }
 
     private func dismissPrivacyPolicy() {
-        withAnimation(.easeOut(duration: SiloTheme.fastDuration)) {
+        withAnimation(.easeOut(duration: WeFlixTheme.fastDuration)) {
             showPrivacyPolicy = false
         }
         preferredFocusOwner = .detail
@@ -386,13 +386,13 @@ struct TVSettingsView: View {
         preferredDetailFocus = .serverOpenSourceLicenses
         railFocus = nil
         detailFocus = nil
-        withAnimation(.easeOut(duration: SiloTheme.fastDuration)) {
+        withAnimation(.easeOut(duration: WeFlixTheme.fastDuration)) {
             showOpenSourceAcknowledgements = true
         }
     }
 
     private func dismissOpenSourceAcknowledgements() {
-        withAnimation(.easeOut(duration: SiloTheme.fastDuration)) {
+        withAnimation(.easeOut(duration: WeFlixTheme.fastDuration)) {
             showOpenSourceAcknowledgements = false
         }
         preferredFocusOwner = .detail
@@ -484,7 +484,7 @@ struct TVSettingsView: View {
                 .foregroundStyle(.white)
                 .frame(width: 72, height: 72)
                 .background(
-                    Color.siloIconTile,
+                    Color.weFlixIconTile,
                     in: RoundedRectangle(cornerRadius: 18, style: .continuous)
                 )
                 .accessibilityHidden(true)
@@ -492,11 +492,11 @@ struct TVSettingsView: View {
             VStack(alignment: .leading, spacing: 5) {
                 Text(selectedCategory.title)
                     .font(.system(size: 42, weight: .bold))
-                    .foregroundStyle(Color.siloOnSurface)
+                    .foregroundStyle(Color.weFlixOnSurface)
 
                 Text(selectedCategory.blurb)
                     .font(.system(size: 20))
-                    .foregroundStyle(Color.siloSecondaryText)
+                    .foregroundStyle(Color.weFlixSecondaryText)
             }
         }
         .padding(.horizontal, 24)
@@ -723,9 +723,9 @@ enum TVSettingsCategory: String, CaseIterable, Identifiable {
         case .subtitles:
             return "Language, behavior, and on-screen appearance."
         case .diagnostics:
-            return "Review and send diagnostics to this Silo server."
+            return "Review and send diagnostics to this weflix server."
         case .server:
-            return "The Silo server this Apple TV is connected to."
+            return "The weflix server this Apple TV is connected to."
         }
     }
 

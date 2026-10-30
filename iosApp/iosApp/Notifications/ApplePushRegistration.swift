@@ -57,7 +57,7 @@ extension ApplePushDisplayTargetStore {
 }
 
 enum ApplePushRegistrationWire {
-    static let defaultTopic = "org.siloserver.silo"
+    static let defaultTopic = "me.weflix"
     static let privatePushMode = "private_push"
     static let offPushMode = "off"
 
@@ -189,7 +189,7 @@ actor ApplePushRegistrar {
     }
 
     private static let logger = Logger(
-        subsystem: Bundle.main.bundleIdentifier ?? "org.siloserver.silo",
+        subsystem: Bundle.main.bundleIdentifier ?? "me.weflix",
         category: "ApplePush"
     )
     /// How long a held generation is not sent again: after a registration
@@ -228,7 +228,7 @@ actor ApplePushRegistrar {
     private var isRegistering = false
     private var queued: [CheckedContinuation<Void, Never>] = []
 
-    init(api: APIv2Client = SiloAPI.shared.apiV2Client, tokenStore: TokenStore = .shared,
+    init(api: APIv2Client = WeFlixAPI.shared.apiV2Client, tokenStore: TokenStore = .shared,
          journal: ApplePushInstallationJournal = ApplePushInstallationJournal(),
          displayTargets: ApplePushDisplayTargetStore = ApplePushDisplayTargetStore(
              keychain: SharedKeychain(audience: TokenStore.profileCredentialAudience)),
@@ -542,7 +542,7 @@ actor ApplePushRegistrar {
         }
         held[serverID] = registration.isActive && receipt.displayToken == nil
             ? (command.generation, now()) : nil
-        Self.logger.info("Registered APNs token with Silo generation=\(command.generation, privacy: .public) renewal=\(command.isRenewal, privacy: .public) push_mode=\(body.pushMode, privacy: .public) server_device_id=\(receipt.serverDeviceId, privacy: .private) enabled=\(receipt.enabled, privacy: .public) removed=\(receipt.removed, privacy: .public) displayToken=\(target != nil, privacy: .public)")
+        Self.logger.info("Registered APNs token with weflix generation=\(command.generation, privacy: .public) renewal=\(command.isRenewal, privacy: .public) push_mode=\(body.pushMode, privacy: .public) server_device_id=\(receipt.serverDeviceId, privacy: .private) enabled=\(receipt.enabled, privacy: .public) removed=\(receipt.removed, privacy: .public) displayToken=\(target != nil, privacy: .public)")
         return .registered(registration)
     }
 
@@ -674,7 +674,7 @@ final class ApplePushRegistrationCoordinator {
     static let shared = ApplePushRegistrationCoordinator()
 
     private static let logger = Logger(
-        subsystem: Bundle.main.bundleIdentifier ?? "org.siloserver.silo",
+        subsystem: Bundle.main.bundleIdentifier ?? "me.weflix",
         category: "ApplePush"
     )
 

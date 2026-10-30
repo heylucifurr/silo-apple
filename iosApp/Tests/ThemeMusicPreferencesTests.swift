@@ -1,5 +1,5 @@
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 /// `ui.theme_music_enabled` and `ui.theme_music_loop`: opt-in, read from the
 /// server's effective answer and written as this device's choice.

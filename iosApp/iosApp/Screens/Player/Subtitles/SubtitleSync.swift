@@ -12,27 +12,27 @@ struct SubtitleSyncEndpoints {
     /// The sync-key operations (`listSubtitleSync` and its siblings): stored
     /// subtitles and sidecar files alike.
     static let keyed = SubtitleSyncEndpoints(
-        list: { try await SiloAI.shared.subtitleSyncStates(mediaFileId: $0) },
-        read: { try await SiloAI.shared.subtitleSyncState(mediaFileId: $0, key: $1) },
+        list: { try await WeFlixAI.shared.subtitleSyncStates(mediaFileId: $0) },
+        read: { try await WeFlixAI.shared.subtitleSyncState(mediaFileId: $0, key: $1) },
         start: { file, key in
-            guard let job = try await SiloAI.shared.startSubtitleSync(mediaFileId: file, key: key).sync else {
+            guard let job = try await WeFlixAI.shared.startSubtitleSync(mediaFileId: file, key: key).sync else {
                 throw APIv2Error.invalidSubtitleResponse
             }
             return job
         },
-        resetTiming: { try await SiloAI.shared.resetSubtitleTiming(mediaFileId: $0, key: $1) }
+        resetTiming: { try await WeFlixAI.shared.resetSubtitleTiming(mediaFileId: $0, key: $1) }
     )
 
     /// A server that predates sync keys syncs stored subtitles only, through
     /// their own routes; the player names them `stored-{id}`.
     static let storedOnly = SubtitleSyncEndpoints(
-        list: { try await SiloAI.shared.downloadedSubtitles(mediaFileId: $0).map(\.syncState) },
+        list: { try await WeFlixAI.shared.downloadedSubtitles(mediaFileId: $0).map(\.syncState) },
         read: { file, key in
-            try await SiloAI.shared.storedSubtitleSync(id: storedId(key), mediaFileId: file).syncState
+            try await WeFlixAI.shared.storedSubtitleSync(id: storedId(key), mediaFileId: file).syncState
         },
-        start: { _, key in try await SiloAI.shared.requestStoredSubtitleSync(id: storedId(key)) },
+        start: { _, key in try await WeFlixAI.shared.requestStoredSubtitleSync(id: storedId(key)) },
         resetTiming: { file, key in
-            try await SiloAI.shared.resetStoredSubtitleTiming(id: storedId(key), mediaFileId: file).syncState
+            try await WeFlixAI.shared.resetStoredSubtitleTiming(id: storedId(key), mediaFileId: file).syncState
         }
     )
 
@@ -49,7 +49,7 @@ struct SubtitleSyncService {
     var endpoints: (APIv2SubtitleSyncStatus) -> SubtitleSyncEndpoints
 
     static let live = SubtitleSyncService(
-        status: { try await SiloAI.shared.subtitleSyncStatus() },
+        status: { try await WeFlixAI.shared.subtitleSyncStatus() },
         endpoints: { $0.usesSyncKeys ? .keyed : .storedOnly }
     )
 }
@@ -902,7 +902,7 @@ enum SubtitleSyncLabel {
     static func failure(_ failure: String?) -> String {
         switch failure {
         case "subtitle_changed": return "The subtitle changed while it was syncing. Try again."
-        case "no_audio": return "This video has no audio Silo can read."
+        case "no_audio": return "This video has no audio weflix can read."
         case "unavailable": return "The server is busy. Try again in a few minutes."
         default: return "Sync failed. Try again."
         }

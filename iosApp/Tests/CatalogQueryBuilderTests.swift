@@ -1,5 +1,5 @@
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 /// Verifies the v2 catalog query `CatalogQueryBuilder` produces: the GET
 /// parameters and the JSON rule groups the server's query executor reads.

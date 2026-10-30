@@ -45,7 +45,7 @@ struct TVAudiobookDetailView: View {
             background
             scrollBody
         }
-        .siloBackground()
+        .weFlixBackground()
         .fullScreenCover(isPresented: $showChapters) {
             TVAudiobookChaptersView(detail: detail, libraryId: libraryId)
         }
@@ -74,7 +74,7 @@ struct TVAudiobookDetailView: View {
                         detail: detail,
                         onNavigateToItem: onNavigateToItem
                     )
-                    .padding(.horizontal, SiloTheme.safePadding)
+                    .padding(.horizontal, WeFlixTheme.safePadding)
                     .padding(.top, 64)
                     .padding(.bottom, 80)
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -119,7 +119,7 @@ struct TVAudiobookDetailView: View {
             identity
                 .frame(maxWidth: .infinity, alignment: .leading)
         }
-        .padding(.horizontal, SiloTheme.safePadding)
+        .padding(.horizontal, WeFlixTheme.safePadding)
         .padding(.leading, 12)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
@@ -134,9 +134,9 @@ struct TVAudiobookDetailView: View {
             placeholderSymbol: ArtworkPlaceholderSymbol.audiobook
         )
         .frame(width: 460, height: 460)
-        .clipShape(RoundedRectangle(cornerRadius: SiloTheme.cornerRadius, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: WeFlixTheme.cornerRadius, style: .continuous))
         .overlay(
-            RoundedRectangle(cornerRadius: SiloTheme.cornerRadius, style: .continuous)
+            RoundedRectangle(cornerRadius: WeFlixTheme.cornerRadius, style: .continuous)
                 .stroke(Color.white.opacity(0.14), lineWidth: 1)
         )
         .shadow(color: .black.opacity(0.65), radius: 40, x: 0, y: 24)

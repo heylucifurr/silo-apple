@@ -54,7 +54,7 @@ struct UserProfile: Codable, Identifiable, Hashable {
 
 // MARK: - Profile PIN
 
-/// The profile PIN every Silo client can enter: exactly `length` ASCII
+/// The profile PIN every WeFlix client can enter: exactly `length` ASCII
 /// digits. Android and the web editor enforce the same rule; the server
 /// accepts 1-72 bytes, so the clients hold the line.
 enum ProfilePIN {

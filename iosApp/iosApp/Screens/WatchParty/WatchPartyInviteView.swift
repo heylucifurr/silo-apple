@@ -19,7 +19,7 @@ struct WatchPartyInviteView: View {
                 .ignoresSafeArea()
             tvLayout
             #else
-            Color.siloBackground.ignoresSafeArea()
+            Color.weFlixBackground.ignoresSafeArea()
             ScrollView { phoneLayout }
             #endif
         }
@@ -33,10 +33,10 @@ struct WatchPartyInviteView: View {
             WatchPartyEyebrow(text: "Invite friends")
             Text("Join with this code")
                 .font(.system(size: WatchPartyMetrics.heroTitle * 0.8, weight: .bold))
-                .foregroundStyle(Color.siloOnSurface)
-            Text("Anyone with a profile on this Silo server can enter it from Watch Party.")
+                .foregroundStyle(Color.weFlixOnSurface)
+            Text("Anyone with a profile on this weflix server can enter it from Watch Party.")
                 .font(.system(size: WatchPartyMetrics.body))
-                .foregroundStyle(Color.siloSecondaryText)
+                .foregroundStyle(Color.weFlixSecondaryText)
         }
     }
 
@@ -44,7 +44,7 @@ struct WatchPartyInviteView: View {
         Text(code)
             .font(.system(size: codeSize, weight: .bold, design: .monospaced))
             .tracking(codeSize * 0.2)
-            .foregroundStyle(Color.siloOnSurface)
+            .foregroundStyle(Color.weFlixOnSurface)
             .padding(.leading, codeSize * 0.2)
             .lineLimit(1)
             .minimumScaleFactor(0.5)
@@ -61,7 +61,7 @@ struct WatchPartyInviteView: View {
     private var scanHint: some View {
         Text("Or scan to open the invitation on a phone.")
             .font(.system(size: WatchPartyMetrics.caption))
-            .foregroundStyle(Color.siloSecondaryText)
+            .foregroundStyle(Color.weFlixSecondaryText)
     }
 
     private var doneButton: some View {
@@ -100,8 +100,8 @@ struct WatchPartyInviteView: View {
                     qrCard(url)
                     scanHint
                     VStack(spacing: 10) {
-                        ShareLink(item: url, subject: Text("Join my Silo Watch Party"),
-                                  message: Text("Watch together on Silo. Party code: \(room.code)")) {
+                        ShareLink(item: url, subject: Text("Join my weflix Watch Party"),
+                                  message: Text("Watch together on weflix. Party code: \(room.code)")) {
                             Label("Share invitation", systemImage: "square.and.arrow.up")
                         }
                         .buttonStyle(WatchPartyButtonStyle(kind: .primary))

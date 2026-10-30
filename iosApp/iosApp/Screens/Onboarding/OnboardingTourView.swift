@@ -120,13 +120,13 @@ struct OnboardingTourView: View {
 
             if let title = step.title {
                 Text(title)
-                    .font(.siloTitle)
+                    .font(.weFlixTitle)
                     .foregroundStyle(Color.auroraInk)
                     .fixedSize(horizontal: false, vertical: true)
             }
             if let body = step.body {
                 Text(body)
-                    .font(.siloBody)
+                    .font(.weFlixBody)
                     .foregroundStyle(Color.auroraInkSecondary)
                     .fixedSize(horizontal: false, vertical: true)
                     .padding(.top, 12)
@@ -171,10 +171,10 @@ struct OnboardingTourView: View {
                     }
                 )
             )
-            .font(.siloBody)
+            .font(.weFlixBody)
             .foregroundStyle(Color.auroraInk)
             // The accent is near-white, which would hide an on switch's knob.
-            .tint(.siloSwitchOn)
+            .tint(.weFlixSwitchOn)
             .disabled(viewModel.isSaving)
             .padding(14)
             .auroraGlass(cornerRadius: 20)
@@ -200,7 +200,7 @@ struct OnboardingTourView: View {
                             .background(Circle().fill(isSelected ? Color.auroraInk : .clear).padding(3))
                             .frame(width: 16, height: 16)
                         Text(option.label)
-                            .font(.siloBody.weight(isSelected ? .semibold : .regular))
+                            .font(.weFlixBody.weight(isSelected ? .semibold : .regular))
                             .foregroundStyle(Color.auroraInk)
                         Spacer()
                     }

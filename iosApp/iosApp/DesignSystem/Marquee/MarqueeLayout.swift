@@ -312,7 +312,7 @@ struct MarqueeTVScreen<Copy: View, Card: View, Accessory: View>: View {
             MarqueeScrim(style: scrim)
             VStack(spacing: 0) {
                 HStack {
-                    SiloWordmarkView(width: 150)
+                    WeFlixWordmarkView(width: 150)
                     Spacer(minLength: 0)
                     accessory()
                 }
@@ -369,7 +369,7 @@ struct MarqueeTVCard<Content: View>: View {
                         RoundedRectangle(cornerRadius: 40, style: .continuous)
                             .strokeBorder(Color.white.opacity(0.14), lineWidth: 1)
                     )
-                    .siloGlass(in: RoundedRectangle(cornerRadius: 40, style: .continuous))
+                    .weFlixGlass(in: RoundedRectangle(cornerRadius: 40, style: .continuous))
             }
             .shadow(color: .black.opacity(0.55), radius: 40, y: 24)
     }
@@ -391,7 +391,7 @@ struct MarqueeTVStatusChip: View {
             Text(text)
         }
         .font(.system(size: 22, weight: .medium))
-        .foregroundStyle(Color.siloOnSurface.opacity(0.62))
+        .foregroundStyle(Color.weFlixOnSurface.opacity(0.62))
         .padding(.horizontal, 22)
         .frame(height: 52)
         .background(

@@ -1,8 +1,8 @@
 //
 //  SubtitleTrackIdentity.swift
-//  Silo (iOS + tvOS)
+//  WeFlix (iOS + tvOS)
 //
-//  Product identity shared by Aether-backed subtitle selection and Silo's
+//  Product identity shared by Aether-backed subtitle selection and WeFlix's
 //  realtime AI cue overlay.
 //
 
@@ -25,7 +25,7 @@ enum SubtitleSlot: Int, CaseIterable, Hashable {
 ///   - `sidecarBase` (`0x4000_0000 ..< 0x6000_0000`): server-provided
 ///     sidecar URL, ordinal = `subtitle_urls[].index`.
 ///   - `aiLiveBase` (`0x6000_0000 ..< 0x8000_0000`): synthetic live AI
-///     subtitle track (cues streamed over the playback websocket into Silo's
+///     subtitle track (cues streamed over the playback websocket into WeFlix's
 ///     Aether-clocked overlay), ordinal = a controller-assigned
 ///     slot ordinal (the `track_key` string → ordinal mapping lives in the
 ///     controller, since `track_key` is not numeric).

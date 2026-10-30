@@ -13,23 +13,23 @@ extension Notification.Name {
     /// active server. `ContentView` observes it and drops to the login
     /// screen — the registry entry is preserved so the user only has to
     /// re-enter credentials.
-    static let siloSessionExpired = Notification.Name("siloSessionExpired")
+    static let weFlixSessionExpired = Notification.Name("weFlixSessionExpired")
     /// Posted when a playback-only remote handoff session expires. The TV
     /// restores its persistent identity instead of routing the app to login.
     static let temporaryRemoteAuthExpired = Notification.Name("temporaryRemoteAuthExpired")
     /// Posted when the account remains valid but the selected profile was
     /// removed or its saved PIN proof is no longer accepted.
-    static let siloProfileSelectionRequired = Notification.Name(
-        "siloProfileSelectionRequired"
+    static let weFlixProfileSelectionRequired = Notification.Name(
+        "weFlixProfileSelectionRequired"
     )
     /// Posted by `HTTPClient` when the server answers 403
     /// `profile_verification_required` to a request that carried the active
     /// profile's current proof. The object is a
     /// ``ProfileVerificationRequiredEvent``. `ContentView` hands it to
     /// `AuthService`, which runs the invalid-profile recovery and then posts
-    /// ``siloProfileSelectionRequired``.
-    static let siloProfileVerificationRequired = Notification.Name(
-        "siloProfileVerificationRequired"
+    /// ``weFlixProfileSelectionRequired``.
+    static let weFlixProfileVerificationRequired = Notification.Name(
+        "weFlixProfileVerificationRequired"
     )
 }
 
@@ -377,13 +377,13 @@ final class AppRouter {
 
     #if os(iOS)
     /// Where a streaming play request should go. Installed by the root view
-    /// with the SiloControl client so every local-play entry point (detail
+    /// with the WeFlixControl client so every local-play entry point (detail
     /// page, home rail badge, deep links, restored alerts) routes through one
     /// decision instead of each call site re-checking the remote session.
     /// Returns true when the request was taken by an engaged TV.
     /// `replaceConsent` is set once the user agreed to replace what the TV
     /// is playing, so the TV doesn't ask them a second time.
-    var remotePlaybackInterceptor: ((_ request: SiloControlPlaybackRequest, _ replaceConsent: SiloControlReplaceConsent?) async -> Bool)?
+    var remotePlaybackInterceptor: ((_ request: WeFlixControlPlaybackRequest, _ replaceConsent: WeFlixControlReplaceConsent?) async -> Bool)?
     /// Whether a TV is engaged right now, for sites that must not open the
     /// local player at all (a PiP restore) rather than route a request.
     var isRemotePlaybackEngaged: (() -> Bool)?
@@ -398,7 +398,7 @@ final class AppRouter {
     struct OfflinePlayChoice: Identifiable, Equatable {
         let id = UUID()
         let presentation: PlayerPresentation
-        let request: SiloControlPlaybackRequest
+        let request: WeFlixControlPlaybackRequest
     }
     var pendingOfflinePlayChoice: OfflinePlayChoice?
 
@@ -407,7 +407,7 @@ final class AppRouter {
     /// so the root view asks before the request goes to the TV.
     struct ReplaceRemotePlaybackChoice: Identifiable, Equatable {
         let id = UUID()
-        let request: SiloControlPlaybackRequest
+        let request: WeFlixControlPlaybackRequest
         let currentTitle: String
         let currentContentId: String?
         let targetName: String
@@ -423,7 +423,7 @@ final class AppRouter {
         guard let choice = pendingReplaceRemotePlayback else { return }
         pendingReplaceRemotePlayback = nil
         guard let remotePlaybackInterceptor else { return }
-        let consent = SiloControlReplaceConsent(contentId: choice.currentContentId)
+        let consent = WeFlixControlReplaceConsent(contentId: choice.currentContentId)
         Task { _ = await remotePlaybackInterceptor(choice.request, consent) }
     }
 
@@ -548,7 +548,7 @@ final class AppRouter {
             // Decide the destination before touching `presentedPlayer`, so
             // an engaged TV never sees the local cover flash. The request
             // mirrors the values the local player would have used.
-            let request = SiloControlPlaybackRequest(
+            let request = WeFlixControlPlaybackRequest(
                 contentId: contentId,
                 fileId: fileId,
                 audioTrackIndex: audioTrackIndex,
@@ -654,7 +654,7 @@ final class AppRouter {
         if isRemotePlaybackEngaged?() == true {
             pendingOfflinePlayChoice = OfflinePlayChoice(
                 presentation: presentation,
-                request: SiloControlPlaybackRequest(
+                request: WeFlixControlPlaybackRequest(
                     contentId: contentId,
                     fileId: nil,
                     audioTrackIndex: nil,
@@ -993,7 +993,7 @@ final class AppRouter {
     }
 
     /// "Not you?" on a TV approval for `server`: make it the active server
-    /// and sign out of it in Silo only (the provider's own session is left
+    /// and sign out of it in WeFlix only (the provider's own session is left
     /// alone). When the server advertises `select_account`
     /// (`choosingAccount`), the provider sign-in that follows starts by
     /// itself with `prompt=select_account`, so the provider lets the person
@@ -1058,18 +1058,18 @@ final class AppRouter {
             #endif
             var durable = outcome != .localOnly
             if outcome == .diagnosticsCleanupFailed {
-                accountActionError = "You're signed out, but Silo couldn't erase local diagnostics. Remove this server from the server list to retry cleanup."
+                accountActionError = "You're signed out, but weflix couldn't erase local diagnostics. Remove this server from the server list to retry cleanup."
             }
             if removingServer, let serverID {
                 let removed = await ServerRegistry.shared.remove(serverId: serverID, resolveFallbackProfile: true)
                 durable = durable || removed
                 if removed { accountActionError = nil }
                 if !removed {
-                    accountActionError = "Silo couldn't remove the saved server. Please try again."
+                    accountActionError = "weflix couldn't remove the saved server. Please try again."
                 }
             }
             if !durable, accountActionError == nil {
-                accountActionError = "Silo couldn't clear the saved sign-in on this device. Please try signing out again."
+                accountActionError = "weflix couldn't clear the saved sign-in on this device. Please try signing out again."
             }
             let state: AuthState
             if !ServerRegistry.shared.hasActiveServer {
@@ -1263,6 +1263,8 @@ private extension Route {
             return "watchParty"
         case .requestsHub:
             return "requestsHub"
+        case .downloads:
+            return "downloads"
         case .requestDetail:
             return "requestDetail"
         case .myRequests:

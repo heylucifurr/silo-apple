@@ -1,6 +1,6 @@
 import Foundation
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 /// A small v2 onboarding server on the shared `StubURLProtocol.Handler`: one
 /// profile's tour state with a revision, the `ETag` rule (`"r<revision>"`),

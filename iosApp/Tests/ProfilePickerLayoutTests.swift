@@ -1,7 +1,7 @@
 #if !os(tvOS)
 import SwiftUI
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 /// "Who's watching?" must lay out 1–20 profiles (plus "Add profile") on every
 /// iPhone and iPad size: avatars that fit their columns and the screen, and

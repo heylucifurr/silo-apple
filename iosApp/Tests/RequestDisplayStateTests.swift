@@ -1,5 +1,5 @@
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 /// The status mapper is the single source of truth for every request chip,
 /// ribbon, bucket, and primary-action state across iOS/tvOS — branch-heavy

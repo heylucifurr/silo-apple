@@ -83,7 +83,7 @@ struct StatusColumnBar: View {
             topBarActions
                 .padding(.vertical, 4)
                 .frame(width: pillWidth)
-                .siloGlass(in: Capsule())
+                .weFlixGlass(in: Capsule())
 
             Spacer(minLength: 12)
 
@@ -97,7 +97,7 @@ struct StatusColumnBar: View {
             }
             .padding(.vertical, 4)
             .frame(width: pillWidth)
-            .siloGlass(in: Capsule())
+            .weFlixGlass(in: Capsule())
             .animation(.snappy(duration: 0.25), value: selection)
         }
         .padding(.top, Self.actionsTop)
@@ -112,7 +112,7 @@ struct StatusColumnBar: View {
             selection = destination.id
         } label: {
             itemLabel(
-                systemImage: isSelected ? destination.selectedIcon : destination.icon,
+                name: isSelected ? destination.selectedIcon : destination.icon,
                 isSelected: isSelected
             )
         }
@@ -126,8 +126,12 @@ struct StatusColumnBar: View {
         return Menu {
             Picker("More", selection: $selection) {
                 ForEach(overflow) { destination in
-                    Label(destination.title, systemImage: destination.icon)
-                        .tag(destination.id)
+                    Label {
+                        Text(destination.title)
+                    } icon: {
+                        menuIcon(destination.icon)
+                    }
+                    .tag(destination.id)
                 }
             }
             .pickerStyle(.inline)
@@ -135,7 +139,7 @@ struct StatusColumnBar: View {
             // An overflow destination takes over the More slot's glyph while
             // it is open, so the column always shows where you are.
             itemLabel(
-                systemImage: selectedOverflow?.selectedIcon ?? "ellipsis",
+                name: selectedOverflow?.selectedIcon ?? "ellipsis",
                 isSelected: selectedOverflow != nil
             )
         }
@@ -146,10 +150,10 @@ struct StatusColumnBar: View {
         .accessibilityValue(selectedOverflow?.title ?? "")
     }
 
-    private func itemLabel(systemImage: String, isSelected: Bool) -> some View {
-        Image(systemName: systemImage)
+    private func itemLabel(name: String, isSelected: Bool) -> some View {
+        menuIcon(name)
             .font(.system(size: 19, weight: .semibold))
-            .foregroundStyle(isSelected ? Color.siloOnSurface : Color.siloOnSurface.opacity(0.72))
+            .foregroundStyle(isSelected ? Color.weFlixOnSurface : Color.weFlixOnSurface.opacity(0.72))
             .frame(width: pillWidth - 8, height: itemHeight - 6)
             .background {
                 if isSelected {

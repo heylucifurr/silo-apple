@@ -1,5 +1,5 @@
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 final class LogRingTests: XCTestCase {
     func testCapacityOrderingAndDroppedCount() {

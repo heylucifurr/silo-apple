@@ -15,7 +15,7 @@ struct AppleDeviceIdentity: Sendable {
     /// metadata (`iOS`, `tvOS`, `macOS`), while this intentionally groups
     /// interchangeable form factors across operating systems.
     let clientFamily: String
-    /// Product name the server shows in admin Activity (e.g. `Silo Apple TV`).
+    /// Product name the server shows in admin Activity (e.g. `WeFlix Apple TV`).
     /// Deliberately human-facing and stable per product, not per device.
     let clientName: String
     /// `CFBundleShortVersionString` (marketing version), or `unknown`.
@@ -35,7 +35,7 @@ struct AppleDeviceIdentity: Sendable {
         name: String,
         platform: String,
         clientFamily: String,
-        clientName: String = "Silo",
+        clientName: String = "weflix",
         appVersion: String = "unknown",
         appBuild: String = "unknown",
         channel: String = "unknown"
@@ -111,13 +111,13 @@ struct AppleDeviceIdentity: Sendable {
     /// running the same binary are distinguishable in admin Activity.
     private static func currentClientName() -> String {
         #if os(tvOS)
-        return "Silo Apple TV"
+        return "weflix Apple TV"
         #elseif os(macOS)
-        return "Silo Mac"
+        return "weflix Mac"
         #elseif os(iOS)
-        return UIDevice.current.userInterfaceIdiom == .pad ? "Silo iPad" : "Silo iPhone"
+        return UIDevice.current.userInterfaceIdiom == .pad ? "weflix iPad" : "weflix iPhone"
         #else
-        return "Silo"
+        return "weflix"
         #endif
     }
 
@@ -137,7 +137,7 @@ struct AppleDeviceIdentity: Sendable {
 
     /// How this binary was produced: `dev`, `sideload`, or `release`.
     ///
-    /// `SiloBuildChannel` is fed by the `SILO_BUILD_CHANNEL` build setting
+    /// `WeFlixBuildChannel` is fed by the `WEFLIX_BUILD_CHANNEL` build setting
     /// (see project.yml), which the unsigned sideload lanes override. An
     /// absent or unexpanded value means an ordinary release build — so every
     /// target carrying that build setting must also declare the Info.plist
@@ -146,7 +146,7 @@ struct AppleDeviceIdentity: Sendable {
         #if DEBUG
         return "dev"
         #else
-        let raw = Bundle.main.object(forInfoDictionaryKey: "SiloBuildChannel") as? String
+        let raw = Bundle.main.object(forInfoDictionaryKey: "WeFlixBuildChannel") as? String
         let trimmed = raw?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
         return trimmed.isEmpty ? "release" : trimmed
         #endif
@@ -162,22 +162,28 @@ struct AppleDeviceIdentity: Sendable {
 }
 
 extension AppleDeviceIdentity {
-    /// The device + client identity headers every Silo request carries.
+    /// The device + client identity headers every WeFlix request carries.
     /// Kept here so no call site drifts from the others; empty values are
     /// omitted rather than sent as blank headers.
     func applyHeaders(to request: inout URLRequest) {
-        let headers: [(String, String)] = [
-            ("X-Silo-Device-Id", id),
-            ("X-Silo-Device-Name", name),
-            ("X-Silo-Device-Platform", platform),
-            ("X-Silo-Client-Family", clientFamily),
-            ("X-Silo-Client", clientName),
-            ("X-Silo-Client-Version", appVersion),
-            ("X-Silo-Client-Build", appBuild),
-            ("X-Silo-Client-Channel", channel)
+        let values: [(String, String)] = [
+            ("Device-Id", id),
+            ("Device-Name", name),
+            ("Device-Platform", platform),
+            ("Client-Family", clientFamily),
+            ("Client", clientName),
+            ("Client-Version", appVersion),
+            ("Client-Build", appBuild),
+            ("Client-Channel", channel)
         ]
-        for (field, value) in headers where !value.isEmpty {
-            request.setValue(value, forHTTPHeaderField: field)
+        // Both the current and the pre-rename field-name prefixes are sent,
+        // with identical values, so a server built against either naming
+        // resolves the same device. The `X-Silo-` copy can be dropped once no
+        // supported server reads it.
+        for prefix in ["X-WeFlix-", "X-Silo-"] {
+            for (suffix, value) in values where !value.isEmpty {
+                request.setValue(value, forHTTPHeaderField: prefix + suffix)
+            }
         }
     }
 }

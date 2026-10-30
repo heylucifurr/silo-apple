@@ -26,9 +26,9 @@ struct CollectionDetailView: View {
                 )
             }
         }
-        .siloPageBackground()
+        .weFlixPageBackground()
         .navigationTitle("Collection")
-        .siloNavigationTitleDisplayMode(.large)
+        .weFlixNavigationTitleDisplayMode(.large)
         .task {
             await loadItems()
         }
@@ -47,8 +47,8 @@ struct CollectionDetailView: View {
                     }
                     Spacer(minLength: 0)
                 }
-                .padding(.horizontal, SiloTheme.padding)
-                .padding(.top, SiloTheme.smallPadding)
+                .padding(.horizontal, WeFlixTheme.padding)
+                .padding(.top, WeFlixTheme.smallPadding)
                 #if os(tvOS)
                 // Up from any grid column reaches the Shuffle button.
                 .focusSection()
@@ -66,7 +66,7 @@ struct CollectionDetailView: View {
                     onLoadMore: {}
                 )
             }
-            .padding(SiloTheme.padding)
+            .padding(WeFlixTheme.padding)
         }
     }
 
@@ -83,7 +83,7 @@ struct CollectionDetailView: View {
         }
         error = nil
         do {
-            let response = try await SiloAPI.shared.collectionItems(collectionId: collectionId)
+            let response = try await WeFlixAPI.shared.collectionItems(collectionId: collectionId)
             ResponseCache.shared.set(response, for: cacheKey)
             items = response.items
         } catch let err {

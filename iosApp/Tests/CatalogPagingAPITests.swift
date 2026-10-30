@@ -1,16 +1,16 @@
 import Foundation
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 /// Catalog lists (browse, search, history, person credits, collection items)
-/// through the `SiloAPI` funnel on `/api/v2/catalog`: the first page's
+/// through the `WeFlixAPI` funnel on `/api/v2/catalog`: the first page's
 /// request, cursor paging from the continuation, and the switch to
 /// `POST /catalog/query` for filter sets too long for a GET.
 final class CatalogPagingAPITests: XCTestCase {
     private let firstPage = #"{"items":[{"content_id":"movie:heat","type":"movie","title":"Heat"}],"page":{"has_more":true,"next_cursor":"cursor-2"},"total":2,"total_exact":true,"window_cursor":"w"}"#
     private let lastPage = #"{"items":[{"content_id":"movie:ronin","type":"movie","title":"Ronin"}],"page":{"has_more":false},"total":2,"total_exact":true,"window_cursor":"w"}"#
 
-    private func client(stub: APIv2TestStub) async throws -> (SiloAPI, TokenStore) {
+    private func client(stub: APIv2TestStub) async throws -> (WeFlixAPI, TokenStore) {
         let name = "CatalogPagingAPITests.\(UUID().uuidString)"
         let suite = try XCTUnwrap(UserDefaults(suiteName: name))
         addTeardownBlock { UserDefaults().removePersistentDomain(forName: name) }
@@ -20,7 +20,7 @@ final class CatalogPagingAPITests: XCTestCase {
         await tokens.setServerUrl("https://catalog.example")
         await tokens.setProfileId("profile-one")
         let http = HTTPClient(session: stub.makeSession(), tokenStore: tokens)
-        return (SiloAPI(http: http, tokenStore: tokens), tokens)
+        return (WeFlixAPI(http: http, tokenStore: tokens), tokens)
     }
 
     func testHistoryPagesByCursorWithTheFirstPageQuery() async throws {

@@ -1,13 +1,13 @@
 import Foundation
 
-/// The outside services whose data or artwork Silo shows, for Settings >
+/// The outside services whose data or artwork WeFlix shows, for Settings >
 /// About > Acknowledgements. List only services the app itself names or
 /// loads from; providers the server uses without the app showing them are out
 /// of scope here.
 enum ThirdPartyCredits {
     struct Credit: Identifiable, Sendable {
         let name: String
-        /// What Silo shows or loads from the service.
+        /// What WeFlix shows or loads from the service.
         let use: String
         /// Wording the service's terms require, shown verbatim.
         var notice: String? = nil
@@ -48,5 +48,5 @@ enum ThirdPartyCredits {
         Credit(name: "YouTube", use: "Trailer thumbnails. Trailers open in the YouTube app or website."),
     ]
 
-    static let trademarkNotice = "These names and logos belong to their owners. Silo is not affiliated with or endorsed by them."
+    static let trademarkNotice = "These names and logos belong to their owners. weflix is not affiliated with or endorsed by them."
 }

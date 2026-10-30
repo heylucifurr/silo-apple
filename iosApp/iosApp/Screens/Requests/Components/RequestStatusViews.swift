@@ -11,7 +11,7 @@ extension RequestStatusTint {
         case .sky: .requestSky
         case .emerald: .requestEmerald
         case .rose: .requestRose
-        case .neutral: .siloSecondaryText
+        case .neutral: .weFlixSecondaryText
         }
     }
 }
@@ -37,7 +37,7 @@ struct RequestStageTrack: View {
 
     private func fill(for step: RequestStep) -> Color {
         if step == progress.currentStep { return progress.tint.color }
-        if step.rawValue < progress.completedSteps { return Color.siloOnSurface.opacity(0.82) }
+        if step.rawValue < progress.completedSteps { return Color.weFlixOnSurface.opacity(0.82) }
         return Color.white.opacity(0.14)
     }
 
@@ -54,8 +54,8 @@ struct RequestStageTrack: View {
 struct RequestStatusLabel: View {
     let progress: RequestProgress
     var text: String? = nil
-    var font: Font = .siloCaption
-    var color: Color = .siloSecondaryText
+    var font: Font = .weFlixCaption
+    var color: Color = .weFlixSecondaryText
     var lineLimit = 1
 
     var body: some View {

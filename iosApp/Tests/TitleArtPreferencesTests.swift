@@ -1,6 +1,6 @@
 import XCTest
 import Observation
-@testable import Silo
+@testable import WeFlix
 
 final class TitleArtWritePlanTests: XCTestCase {
     private let perDevice = TitleArtSetting(showTitleArt: true, appliesToAllDevices: false)

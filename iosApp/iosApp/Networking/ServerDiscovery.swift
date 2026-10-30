@@ -4,10 +4,10 @@ import Network
 import OSLog
 import Synchronization
 
-/// Finds Silo servers this device can reach without an address
+/// Finds WeFlix servers this device can reach without an address
 /// (`docs/architecture/server-discovery.md` in silo-server). Two sources:
 ///
-/// - The local network: every API server advertises DNS-SD `_silo._tcp`
+/// - The local network: every API server advertises DNS-SD `_weflix._tcp`
 ///   with its deployment identity in the TXT `id`.
 /// - An overlay network (Tailscale): a provider's API node answers plain HTTP
 ///   on its bare machine name with a redirect to its HTTPS origin, and the
@@ -17,11 +17,20 @@ import Synchronization
 /// operation at the resolved address reports the advertised `id`, and an
 /// overlay result only when the redirect lands on HTTPS and answers identity.
 enum ServerDiscoveryProtocol {
-    static let serviceType = "_silo._tcp"
+    static let serviceType = "_weflix._tcp"
+    /// The advertisement this client browsed for before the rename. Silo
+    /// servers running an older release still publish it, so discovery keeps
+    /// listening for it and finds either generation of server.
+    static let legacyServiceType = "_silo._tcp"
+    /// Every type discovery browses, new first.
+    static let serviceTypes = [serviceType, legacyServiceType]
     static let txtServerID = "id"
     /// Bare names probed automatically: the Tailscale plugin's default
     /// machine name and the suffixes a second and third server on one
     /// tailnet receive. Any other name is found by typing it.
+    ///
+    /// These are the *server's* hostnames, not this app's brand, so they keep
+    /// their upstream spelling.
     static let overlayNames = ["silo", "silo-1", "silo-2"]
     /// Discovery runs while someone looks at the setup screen, so a name that
     /// does not resolve or answer must give up quickly.
@@ -87,11 +96,11 @@ struct OverlayNameResolver: Sendable {
     }
 
     /// The HTTPS origin a plain-HTTP server address redirects to, when the
-    /// redirect stays on that host, or completes its name (`http://silo` ->
-    /// `https://silo.tail1234.ts.net`) over the overlay, and lands on a Silo
+    /// redirect stays on that host, or completes its name (`http://weFlix` ->
+    /// `https://silo.tail1234.ts.net`) over the overlay, and lands on a WeFlix
     /// server. Such an address answers reads only, so the origin is what
     /// should be saved. A completed name off the overlay is refused: anyone
-    /// who can answer plain HTTP for `silo` could otherwise send the app to a
+    /// who can answer plain HTTP for `weFlix` could otherwise send the app to a
     /// certificate-valid `silo.<their domain>`. Nil for any other address,
     /// answer or failure.
     func secureOrigin(redirectedFrom address: String) async -> String? {
@@ -129,7 +138,7 @@ struct OverlayNameResolver: Sendable {
         return IdentityAnswer(finalURL: final, serverId: id, ranOverOverlay: await policy.ranOverOverlay())
     }
 
-    /// True when `host` is `name` completed with a domain (`silo` ->
+    /// True when `host` is `name` completed with a domain (`weFlix` ->
     /// `silo.tail1234.ts.net`). The redirect must not name another machine.
     static func isExpansion(of name: String, host: String?) -> Bool {
         guard let host = host?.lowercased() else { return false }
@@ -299,7 +308,7 @@ final class ServerDiscovery {
     }
 
     private var isRunning = false
-    private var browser: NWBrowser?
+    private var browsers: [NWBrowser] = []
     /// Advances on start and stop; work started for an earlier visit to the
     /// screen checks it and drops its result.
     private var session = 0
@@ -326,11 +335,11 @@ final class ServerDiscovery {
     private static let overlayRefreshInterval: Duration = .seconds(30)
     private let identity = ServerIdentityResolver()
     private let resolver = OverlayNameResolver()
-    private nonisolated static let logger = Logger(subsystem: "org.siloserver.silo", category: "server.discovery")
+    private nonisolated static let logger = Logger(subsystem: "me.weflix", category: "server.discovery")
 
     func start() {
-        // Not `browser == nil`: the browser is also nil while a failed one
-        // waits to be replaced.
+        // Not `browsers.isEmpty`: the browsers are also empty while a failed
+        // set waits to be replaced.
         guard !isRunning else { return }
         isRunning = true
         session += 1
@@ -375,37 +384,43 @@ final class ServerDiscovery {
         let gen = browserGeneration
         let params = NWParameters()
         params.includePeerToPeer = false
-        let browser = NWBrowser(for: .bonjourWithTXTRecord(type: ServerDiscoveryProtocol.serviceType, domain: nil), using: params)
-        browser.browseResultsChangedHandler = { [weak self] results, _ in
-            Task { @MainActor in
-                guard let self, self.browserGeneration == gen else { return }
-                self.update(results: results, generation: gen)
+        // One browser per service type. Both the current and the pre-rename
+        // advertisement are watched, so a server published by either
+        // generation is found.
+        browsers = ServerDiscoveryProtocol.serviceTypes.map { type in
+            let browser = NWBrowser(for: .bonjourWithTXTRecord(type: type, domain: nil), using: params)
+            browser.browseResultsChangedHandler = { [weak self] results, _ in
+                Task { @MainActor in
+                    guard let self, self.browserGeneration == gen else { return }
+                    self.update(results: results, generation: gen)
+                }
             }
-        }
-        browser.stateUpdateHandler = { [weak self] state in
-            guard case .failed(let error) = state else { return }
-            Self.logger.error("browser failed: \(String(describing: error), privacy: .public)")
-            // A failed NWBrowser (for example after the network stack resets
-            // in the background) never recovers; replace it.
-            Task { @MainActor in
-                guard let self, self.browserGeneration == gen else { return }
-                self.browser?.cancel()
-                self.browser = nil
-                try? await Task.sleep(for: .seconds(2))
-                guard self.isRunning, self.browserGeneration == gen, self.browser == nil else { return }
-                self.startBrowser()
+            browser.stateUpdateHandler = { [weak self] state in
+                guard case .failed(let error) = state else { return }
+                Self.logger.error("browser failed: \(String(describing: error), privacy: .public)")
+                // A failed NWBrowser (for example after the network stack
+                // resets in the background) never recovers; replace the whole
+                // set so the two types never fall out of step.
+                Task { @MainActor in
+                    guard let self, self.browserGeneration == gen else { return }
+                    self.browsers.forEach { $0.cancel() }
+                    self.browsers = []
+                    try? await Task.sleep(for: .seconds(2))
+                    guard self.isRunning, self.browserGeneration == gen, self.browsers.isEmpty else { return }
+                    self.startBrowser()
+                }
             }
+            browser.start(queue: .main)
+            return browser
         }
-        browser.start(queue: .main)
-        self.browser = browser
     }
 
     func stop() {
         isRunning = false
         session += 1
         browserGeneration += 1
-        browser?.cancel()
-        browser = nil
+        browsers.forEach { $0.cancel() }
+        browsers = []
         pathMonitor?.cancel()
         pathMonitor = nil
         overlayProbe?.cancel()
@@ -508,7 +523,7 @@ final class ServerDiscovery {
             return nil
         }
         let name = await identity.fetchServerName(serverURL: origin, timeout: ServerDiscoveryProtocol.probeTimeout)
-            ?? instanceName ?? "Silo"
+            ?? instanceName ?? "weflix"
         return DiscoveredServer(serverId: id, name: name, url: origin, route: .localNetwork)
     }
 
@@ -522,7 +537,7 @@ final class ServerDiscovery {
                 group.addTask {
                     guard let resolution = await resolver.resolve(name: name) else { return nil }
                     let label = await identity.fetchServerName(
-                        serverURL: resolution.origin, timeout: ServerDiscoveryProtocol.probeTimeout) ?? "Silo"
+                        serverURL: resolution.origin, timeout: ServerDiscoveryProtocol.probeTimeout) ?? "weflix"
                     return DiscoveredServer(serverId: resolution.serverId, name: label, url: resolution.origin, route: .overlay)
                 }
             }

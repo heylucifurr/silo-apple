@@ -1,6 +1,6 @@
 import Foundation
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 /// The personal-collections screen on v2: group controls follow the groups
 /// capability (a failed read is retryable, not "unsupported"), and an edit
@@ -36,7 +36,7 @@ final class CollectionsViewModelTests: XCTestCase {
         await tokens.setServerUrl("https://collections.example")
         await tokens.setProfileId("profile-one")
         let http = HTTPClient(session: stub.makeSession(), tokenStore: tokens)
-        return (CollectionsViewModel(api: SiloAPI(http: http, tokenStore: tokens)), http)
+        return (CollectionsViewModel(api: WeFlixAPI(http: http, tokenStore: tokens)), http)
     }
 
     private func capabilities(groups: Bool) -> String {
@@ -266,7 +266,7 @@ final class CollectionsViewModelTests: XCTestCase {
         stub.release()
         await create.value
 
-        XCTAssertEqual(model.createError, "Silo couldn't confirm this was created. Check the list before trying again.")
+        XCTAssertEqual(model.createError, "weflix couldn't confirm this was created. Check the list before trying again.")
         XCTAssertEqual(requests("POST", path: "/api/v2/collections").count, 1)
         XCTAssertEqual(requests("GET", path: "/api/v2/collections").count, 1, "the list is read again")
         XCTAssertEqual(model.collections.map(\.id), ["c1"])

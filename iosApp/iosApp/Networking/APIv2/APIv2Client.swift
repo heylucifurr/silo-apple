@@ -1125,7 +1125,7 @@ struct APIv2Client: Sendable {
         return try HTTPClient.makeJSONDecoder().decode(APIv2DeviceCapability.self, from: response.data)
     }
 
-    /// The approving side of a SiloRemote handoff reads and decides under
+    /// The approving side of a WeFlixRemote handoff reads and decides under
     /// the caller's captured owner: `expectedAuth`, when given, refuses the
     /// dispatch once the credential or profile behind it has changed.
     func deviceLookup(code: String, identity: HTTPRequestIdentity, expectedAccount: RefreshAccountIdentity,

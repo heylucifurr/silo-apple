@@ -1,5 +1,5 @@
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 /// Contract tests for the app-owned, engine-neutral realtime subtitle seam.
 final class LiveSubtitleTrackTests: XCTestCase {

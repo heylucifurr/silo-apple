@@ -2,7 +2,7 @@ import OSLog
 import UserNotifications
 
 final class NotificationService: UNNotificationServiceExtension {
-    private static let logger = Logger(subsystem: "org.siloserver.silo.NotificationService", category: "display")
+    private static let logger = Logger(subsystem: "me.weflix.NotificationService", category: "display")
 
     private let completion = ApplePushDisplayCompletion { outcome in
         NotificationService.logger.log("Push display \(outcome.kind.rawValue, privacy: .public) reason=\(outcome.reason ?? "-", privacy: .public) attempts=\(outcome.attempts, privacy: .public) duration_ms=\(outcome.durationMs, privacy: .public) credential=\(outcome.credential ?? "-", privacy: .public)")

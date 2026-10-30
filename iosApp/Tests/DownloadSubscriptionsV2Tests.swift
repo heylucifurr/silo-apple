@@ -1,6 +1,6 @@
 import Foundation
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 /// The v2 series monitors: create (`non_retryable`), PATCH and DELETE under
 /// `If-Match` (412 re-reads and applies again once, 428 is never retried),

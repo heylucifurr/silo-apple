@@ -82,7 +82,7 @@ enum AppleDecodeCapabilities {
         machineIdentifier == "AppleTV5,3"
     }
 
-    /// Silo's declared online video set for the pinned AetherEngine and
+    /// WeFlix's declared online video set for the pinned AetherEngine and
     /// FFmpegBuild. Newly bundled formats await capability and playback
     /// validation in silo-apple#299. Aether routes H.264, HEVC, and
     /// hardware-decodable AV1 natively when the exact probed stream permits;
@@ -103,7 +103,7 @@ enum AppleDecodeCapabilities {
         "opus", "vorbis", "pcm", "pcm_s16le", "pcm_s24le"
     ]
 
-    /// Silo's declared online audio set from the same Aether/FFmpeg build.
+    /// WeFlix's declared online audio set from the same Aether/FFmpeg build.
     /// Newly bundled WMA and legacy Flash audio are tracked in silo-apple#299.
     /// Aliases are intentional because scanners do not all spell DTS-HD or PCM alike.
     /// `pcm_bluray` is the Blu-ray LPCM decoder FFmpegBuild ships for M2TS;
@@ -122,7 +122,7 @@ enum AppleDecodeCapabilities {
         "mp4", "mov", "m4v", "mkv", "matroska", "webm", "avi", "ts", "m2ts", "mpegts"
     ]
 
-    /// Bare audio containers proven by the first Aether-only Silo fixture
+    /// Bare audio containers proven by the first Aether-only WeFlix fixture
     /// matrix. The scanner currently normalizes M4A/M4B to `mp4`, but the
     /// aliases remain honest for legacy metadata and future scanner changes.
     ///
@@ -144,8 +144,8 @@ enum AppleDecodeCapabilities {
         ("wav", "pcm"),
     ]
 
-    /// Silo's declared containers for online original HTTP.
-    /// Silo's scanner records MPEG program streams (`.mpg`/`.vob`) as `mpeg`,
+    /// WeFlix's declared containers for online original HTTP.
+    /// WeFlix's scanner records MPEG program streams (`.mpg`/`.vob`) as `mpeg`,
     /// so that token is what carries FFmpegBuild's `mpegps` demuxer claim.
     /// The pinned FFmpegBuild includes ASF/WMV support. Advertising it together with
     /// the matching audio codecs awaits playback validation in silo-apple#299.

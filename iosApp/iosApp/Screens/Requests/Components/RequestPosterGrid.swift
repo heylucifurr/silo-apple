@@ -52,7 +52,7 @@ struct RequestPosterGrid: View {
         // column count says nothing about the cell. Work the cell out the
         // way the grid does. Before the first measurement the fit is nil
         // and the card takes the cell's minimum width.
-        let minimumWidth = SiloTheme.posterCardWidth * uiCustomization.cardPresentation.posterSize.scale
+        let minimumWidth = WeFlixTheme.posterCardWidth * uiCustomization.cardPresentation.posterSize.scale
         return AdaptiveColumns.widthFittedPosters(
             containerWidth: gridWidth,
             minimumCardWidth: minimumWidth,
@@ -62,7 +62,7 @@ struct RequestPosterGrid: View {
         #else
         // Before the first measurement, a standard poster: the uncapped fit
         // below would return its infinite maximum.
-        guard gridWidth > 0 else { return SiloTheme.posterCardWidth }
+        guard gridWidth > 0 else { return WeFlixTheme.posterCardWidth }
         if let fit = widePhonePosterFit { return fit.cardWidth }
         return AdaptiveColumns.fittedPosterWidth(
             containerWidth: gridWidth,
@@ -80,8 +80,8 @@ struct RequestPosterGrid: View {
                     VStack(alignment: .leading, spacing: 7) {
                         RequestsSkeleton.block(
                             width: nil,
-                            height: cardWidth * (SiloTheme.posterCardHeight / SiloTheme.posterCardWidth),
-                            cornerRadius: SiloTheme.cornerRadius
+                            height: cardWidth * (WeFlixTheme.posterCardHeight / WeFlixTheme.posterCardWidth),
+                            cornerRadius: WeFlixTheme.cornerRadius
                         )
                         RequestsSkeleton.bar(width: cardWidth * 0.7, height: 10, opacity: 0.14)
                     }

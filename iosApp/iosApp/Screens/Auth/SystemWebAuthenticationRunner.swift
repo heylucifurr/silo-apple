@@ -151,7 +151,7 @@ extension ExternalSignInService {
     /// The app's service: the shared v2 client and token store, the system
     /// browser, and the saved server's verified identity.
     @MainActor static let live = ExternalSignInService(
-        api: SiloAPI.shared.apiV2Client,
+        api: WeFlixAPI.shared.apiV2Client,
         tokenStore: .shared,
         runner: SystemWebAuthenticationRunner.shared,
         verifiedServerId: { await AuthService.shared.verifiedIdentityOfActiveServer() },

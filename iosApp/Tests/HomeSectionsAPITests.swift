@@ -1,12 +1,12 @@
 import Foundation
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
-/// Home rows and dismissals through the `SiloAPI` facade on `/api/v2`.
+/// Home rows and dismissals through the `WeFlixAPI` facade on `/api/v2`.
 final class HomeSectionsAPITests: XCTestCase {
     private let sectionsJSON = #"{"sections":[{"id":"cw","section_type":"continue_watching","title":"Continue Watching","items":[{"content_id":"movie:heat","type":"movie","title":"Heat"}]}]}"#
 
-    private func client(stub: APIv2TestStub) async throws -> (SiloAPI, TokenStore) {
+    private func client(stub: APIv2TestStub) async throws -> (WeFlixAPI, TokenStore) {
         let name = "HomeSectionsAPITests.\(UUID().uuidString)"
         let suite = try XCTUnwrap(UserDefaults(suiteName: name))
         addTeardownBlock { UserDefaults().removePersistentDomain(forName: name) }
@@ -16,7 +16,7 @@ final class HomeSectionsAPITests: XCTestCase {
         await tokens.setServerUrl("https://home.example")
         await tokens.setProfileId("profile-one")
         let http = HTTPClient(session: stub.makeSession(), tokenStore: tokens)
-        return (SiloAPI(http: http, tokenStore: tokens), tokens)
+        return (WeFlixAPI(http: http, tokenStore: tokens), tokens)
     }
 
     private func jsonObject(_ data: Data?) throws -> [String: String] {

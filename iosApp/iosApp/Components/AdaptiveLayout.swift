@@ -17,7 +17,7 @@ enum AdaptiveColumns {
         // the row holds instead of spreading a fixed count of columns apart.
         return [
             GridItem(
-                .adaptive(minimum: SiloTheme.posterCardWidth * posterSize.scale),
+                .adaptive(minimum: WeFlixTheme.posterCardWidth * posterSize.scale),
                 spacing: spacing,
                 alignment: .top
             ),
@@ -134,7 +134,7 @@ enum AdaptiveColumns {
         containerWidth: CGFloat,
         columnCount: Int,
         spacing: CGFloat,
-        maximumWidth: CGFloat = SiloTheme.posterCardWidth
+        maximumWidth: CGFloat = WeFlixTheme.posterCardWidth
     ) -> CGFloat {
         guard containerWidth > 0, columnCount > 0 else { return maximumWidth }
         let totalSpacing = CGFloat(max(0, columnCount - 1)) * spacing
@@ -147,7 +147,7 @@ extension View {
     /// Caps form/content width so text fields and buttons don't stretch
     /// edge-to-edge on iPad. iPhones are already narrower than the cap, so
     /// this is a no-op on phone. The second `frame` centers the capped view.
-    func siloFormWidth(_ maxWidth: CGFloat = 600) -> some View {
+    func weFlixFormWidth(_ maxWidth: CGFloat = 600) -> some View {
         self
             .frame(maxWidth: maxWidth)
             .frame(maxWidth: .infinity, alignment: .center)

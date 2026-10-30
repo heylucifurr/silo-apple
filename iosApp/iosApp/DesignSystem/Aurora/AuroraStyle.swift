@@ -5,10 +5,10 @@ import SwiftUI
 // First-run aliases of the core palette.
 
 extension Color {
-    static let auroraInk = Color.siloOnSurface
-    static let auroraAccent = Color.siloBrandOrange
-    static let auroraNightBottom = Color.siloBackground
-    static let auroraGlassTint = Color.siloSurfaceVariant
+    static let auroraInk = Color.weFlixOnSurface
+    static let auroraAccent = Color.weFlixBrandOrange
+    static let auroraNightBottom = Color.weFlixBackground
+    static let auroraGlassTint = Color.weFlixSurfaceVariant
 
     static var auroraInkSecondary: Color { auroraInk.opacity(0.62) }
 }
@@ -20,7 +20,7 @@ struct AuroraGlassPanel: ViewModifier {
 
     func body(content: Content) -> some View {
         content
-            .siloGlass(in: RoundedRectangle(cornerRadius: cornerRadius),
+            .weFlixGlass(in: RoundedRectangle(cornerRadius: cornerRadius),
                        tint: Color.auroraGlassTint.opacity(0.72))
             .overlay {
                 RoundedRectangle(cornerRadius: cornerRadius)
@@ -61,19 +61,19 @@ private struct AuroraPrimaryBody: View {
         HStack(spacing: 10) {
             if isLoading {
                 ProgressView()
-                    .tint(Color.siloBackground)
+                    .tint(Color.weFlixBackground)
                     .scaleEffect(0.8)
             }
             configuration.label
         }
         .font(.system(size: buttonFontSize, weight: .semibold))
-        .foregroundStyle(Color.siloBackground)
+        .foregroundStyle(Color.weFlixBackground)
         .frame(maxWidth: .infinity)
         .frame(minHeight: AuroraControl.height)
         .padding(.horizontal, buttonHorizontalPadding)
         .background(
             RoundedRectangle(cornerRadius: AuroraControl.corner)
-                .fill(Color.siloOnSurface)
+                .fill(Color.weFlixOnSurface)
         )
         .overlay(
             RoundedRectangle(cornerRadius: AuroraControl.corner)
@@ -93,7 +93,7 @@ private struct AuroraPrimaryBody: View {
             radius: isFocused ? 20 : 10, y: 6)
         .opacity(!isEnabled ? 0.4 : configuration.isPressed ? 0.75 : 1.0)
         .focusEffectDisabled()
-        .animation(SiloTheme.springAnimation, value: isFocused)
+        .animation(WeFlixTheme.springAnimation, value: isFocused)
     }
 
     #if os(tvOS)
@@ -131,7 +131,7 @@ private struct AuroraGhostBody: View {
     var body: some View {
         configuration.label
             .font(.system(size: fontSize, weight: .medium))
-            .foregroundStyle(isFocused ? Color.siloBackground : Color.auroraInkSecondary)
+            .foregroundStyle(isFocused ? Color.weFlixBackground : Color.auroraInkSecondary)
             .padding(.horizontal, hPadding)
             .padding(.vertical, vPadding)
             .background(
@@ -146,7 +146,7 @@ private struct AuroraGhostBody: View {
             .scaleEffect(isFocused ? 1.025 : 1.0)
             .opacity(configuration.isPressed ? 0.7 : 1.0)
             .focusEffectDisabled()
-            .animation(SiloTheme.springAnimation, value: isFocused)
+            .animation(WeFlixTheme.springAnimation, value: isFocused)
     }
 }
 

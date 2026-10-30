@@ -19,19 +19,43 @@ struct LoginView: View {
 
     private enum Field: Hashable { case username, password }
 
+    /// A build that ships one server has no server list to go back to, and the
+    /// setup screen behind Sign in is not a place to send anyone. An empty
+    /// `DefaultServer.host` restores the back control, the swipe that mirrors
+    /// it, and the server chip.
+    private var allowsServerChange: Bool { DefaultServer.host.isEmpty }
+
     var body: some View {
         // Leaving mid-sign-in would let the finished sign-in pull the app
         // back from server setup, so going back waits until it settles.
-        MarqueeStage(scrim: .bottomDeep, frostStart: 0.40, onBack: viewModel.isBusy ? nil : { router.resetToServerSetup() }) {
+        //
+        // `onBack` is what puts the back control's swipe-back gesture on the
+        // page, so leaving it set while hiding the button would keep the way
+        // out on screen.
+        MarqueeStage(
+            scrim: .bottomDeep,
+            frostStart: 0.40,
+            onBack: allowsServerChange && !viewModel.isBusy ? { router.resetToServerSetup() } : nil
+        ) {
             MarqueeTopBar {
-                MarqueeIconButton(systemImage: "chevron.left", accessibilityLabel: "Change server") {
-                    router.resetToServerSetup()
+                if allowsServerChange {
+                    MarqueeIconButton(systemImage: "chevron.left", accessibilityLabel: "Change server") {
+                        router.resetToServerSetup()
+                    }
+                    .disabled(viewModel.isBusy)
                 }
-                .disabled(viewModel.isBusy)
             } trailing: {
-                serverMenu
+                if allowsServerChange {
+                    serverMenu
+                }
             }
         } content: {
+            // The wordmark fills the empty run above the form. The stage's column
+            // is bottom-anchored behind its own flexible spacer, so a spacer of
+            // our own does not split that gap — the logo has to be the flexible
+            // child, and then it centres in the space it absorbs.
+            WeFlixWordmarkView(width: 180)
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
             MarqueeHeadline(
                 title: "Sign in",
                 // An expired session says why sign-in is back on screen.
@@ -137,7 +161,7 @@ struct LoginView: View {
                     }
                     if foldsPasswordForm {
                         Button {
-                            withAnimation(SiloTheme.springAnimation) { expandsPasswordForm = true }
+                            withAnimation(WeFlixTheme.springAnimation) { expandsPasswordForm = true }
                             focusedField = .username
                         } label: {
                             Label("Sign in with a password", systemImage: "key")
@@ -257,7 +281,7 @@ struct LoginView: View {
             }
             .buttonStyle(.marqueePressable)
             .font(.system(size: 15, weight: .semibold))
-            .foregroundStyle(Color.siloOnSurface)
+            .foregroundStyle(Color.weFlixOnSurface)
             .disabled(viewModel.isBusy)
             .accessibilityIdentifier("login.retryDiscovery")
         }
@@ -322,7 +346,7 @@ struct LoginView: View {
     private func footnoteText(_ text: String) -> some View {
         Text(text)
             .font(.system(size: 13))
-            .foregroundStyle(Color.siloOnSurface.opacity(0.4))
+            .foregroundStyle(Color.weFlixOnSurface.opacity(0.4))
             .frame(maxWidth: .infinity)
             .padding(.top, 16)
     }

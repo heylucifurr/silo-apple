@@ -1,6 +1,6 @@
 import Foundation
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 /// The v2 download registry: capability, create (`non_retryable`), paged
 /// list, status events (`domain_identity`) and delete, with the failure

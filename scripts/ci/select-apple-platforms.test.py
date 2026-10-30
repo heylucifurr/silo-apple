@@ -106,7 +106,7 @@ class PlatformSelectionTests(unittest.TestCase):
             "iosApp/iosApp/Shared/Storage.swift",
             "iosApp/Resources/license.md",
             "iosApp/Tests/Test.swift",
-            "iosApp/Signing/SiloMac.xcconfig",
+            "iosApp/Signing/WeFlixMac.xcconfig",
             "iosApp/Package.resolved",
             "iosApp/iosApp/macOS-Info.plist",
             "LICENSE", "APPSTORE-EXCEPTION.md",
@@ -237,14 +237,14 @@ class PlatformSelectionTests(unittest.TestCase):
     def test_comments_do_not_invalidate_reviewed_input_ownership(self):
         project = PROJECT.read_text().replace("      - path: TopShelf", "      # additional explanation\n      - path: TopShelf")
         self.write("iosApp/project.yml", project)
-        self.write("iosApp/Signing/Silo.xcconfig", "// more explanation\n" + CONFIGS["iosApp/Signing/Silo.xcconfig"])
+        self.write("iosApp/Signing/WeFlix.xcconfig", "// more explanation\n" + CONFIGS["iosApp/Signing/WeFlix.xcconfig"])
         changed_settings = self.commit("update comments")
         self.write("iosApp/iosApp/macOS/Player.swift")
         self.commit()
         self.assertEqual(self.push_selection(before=changed_settings)["platforms"], ["macos"])
 
     def test_settings_redirecting_into_docs_disable_narrowing_in_later_commits(self):
-        for config_path in ("iosApp/project.yml", "iosApp/Signing/Silo.xcconfig"):
+        for config_path in ("iosApp/project.yml", "iosApp/Signing/WeFlix.xcconfig"):
             with self.subTest(config_path=config_path):
                 self.git("reset", "--hard", self.base)
                 if config_path == "iosApp/project.yml":
@@ -261,7 +261,7 @@ class PlatformSelectionTests(unittest.TestCase):
     def test_template_sources_and_target_inheritance_require_review(self):
         for project in (
             PROJECT.read_text().replace("  ShippableProduct:\n", "  ShippableProduct:\n    sources:\n      - path: Other\n"),
-            PROJECT.read_text().replace("  SiloMac:\n", "  SiloMac:\n    <<: *OtherTarget\n", 1),
+            PROJECT.read_text().replace("  WeFlixMac:\n", "  WeFlixMac:\n    <<: *OtherTarget\n", 1),
         ):
             with self.subTest(project=project[:20]):
                 self.git("reset", "--hard", self.base)
@@ -452,7 +452,7 @@ class KnownTestSourceTests(unittest.TestCase):
                 self.assertEqual(self.selection()["platforms"], ALL)
 
     def test_prior_non_test_changes_invalidate_ownership_even_when_the_new_diff_only_touches_tests(self):
-        for path in ("README.md", "iosApp/iosApp/macOS/HiddenTestConsumer.swift", ".github/actions/install-xcodegen/action.yml", "scripts/ci/apple-build-metadata.py", "iosApp/Signing/SiloMac.xcconfig"):
+        for path in ("README.md", "iosApp/iosApp/macOS/HiddenTestConsumer.swift", ".github/actions/install-xcodegen/action.yml", "scripts/ci/apple-build-metadata.py", "iosApp/Signing/WeFlixMac.xcconfig"):
             with self.subTest(path=path):
                 self.reset()
                 self.store(path)
@@ -597,7 +597,7 @@ class AggregateResultTests(unittest.TestCase):
             ("platforms", "[]"),
             ("has_platforms", "false"),
             ("matrix", '{"include":[]}'),
-            ("matrix", '{"include":[{"scheme":"SiloMac","action":"test"}]}'),
+            ("matrix", '{"include":[{"scheme":"WeFlixMac","action":"test"}]}'),
         ):
             with self.subTest(field=field), self.assertRaises(apple_platforms.SelectionUnavailable):
                 needs = self.fixture()

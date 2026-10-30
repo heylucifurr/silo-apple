@@ -167,7 +167,7 @@ extension TVMarqueeContent {
         let state = EpisodeWatchState(sectionItem: item)
         let hidesBackdrop = isEpisode && spoilers.hidesImage(for: state, isEpisodeStill: item.backdropIsEpisodeStill)
         let hidesPoster = isEpisode && spoilers.hidesImage(for: state, isEpisodeStill: item.posterIsEpisodeStill)
-        let isSeries = SiloMediaType.isSeries(item.type)
+        let isSeries = WeFlixMediaType.isSeries(item.type)
         // Series art is never a still, so spoiler protection leaves it shown.
         let seriesBackdrop = item.episodeSeriesBackdrop
         let backdrop: (url: String?, thumbhash: String?) = if let seriesBackdrop {
@@ -662,7 +662,7 @@ final class TVFocusMarqueeModel {
     private(set) var enrichment: TVMarqueeEnrichment?
     /// Color washes behind the backdrop, sampled per displayed backdrop via
     /// HeroBackdropPalette.
-    private(set) var tints: HeroBackdropPalette.Tints = .flat(.siloBackground)
+    private(set) var tints: HeroBackdropPalette.Tints = .flat(.weFlixBackground)
 
     /// Backdrop art for the root hero. Episodes need their detail-level series
     /// backdrop unless the card already carries it, and any item missing a
@@ -753,7 +753,7 @@ final class TVFocusMarqueeModel {
         enrichment = nil
         enrichmentState = .notStarted
         displayedArtwork = nil
-        tints = .flat(.siloBackground)
+        tints = .flat(.weFlixBackground)
         pendingNeighborBackdropURLs = []
         if wasActive { resume() }
     }
@@ -800,7 +800,7 @@ final class TVFocusMarqueeModel {
         }
         loadEnrichment(for: candidate, deferNetwork: true)
         backdropTask = Task { [weak self] in
-            try? await Task.sleep(for: .milliseconds(SiloTheme.Skyline.marqueeRestDebounceMilliseconds))
+            try? await Task.sleep(for: .milliseconds(WeFlixTheme.Skyline.marqueeRestDebounceMilliseconds))
             guard !Task.isCancelled, let self,
                   self.isActive, let content = self.content,
                   content.id == candidate.id else { return }
@@ -909,7 +909,7 @@ final class TVFocusMarqueeModel {
         backdropHoldCapElapsed = false
         backdropHoldCapTask = Task { [weak self] in
             try? await Task.sleep(
-                for: .milliseconds(SiloTheme.Skyline.marqueeBackdropHoldCapMilliseconds)
+                for: .milliseconds(WeFlixTheme.Skyline.marqueeBackdropHoldCapMilliseconds)
             )
             guard !Task.isCancelled, let self, self.isBackdropDeferred else { return }
             self.backdropHoldCapElapsed = true
@@ -938,7 +938,7 @@ final class TVFocusMarqueeModel {
             sampleTintIfNeeded(for: artwork.url)
         } else if enrichmentState.permitsFallback {
             displayedArtwork = nil
-            tints = .flat(.siloBackground)
+            tints = .flat(.weFlixBackground)
             tintTask?.cancel()
             lastSampledTintURL = nil
         }
@@ -965,7 +965,7 @@ final class TVFocusMarqueeModel {
 
     private static func waitForEnrichmentRest(_ deferred: Bool) async -> Bool {
         if deferred {
-            try? await Task.sleep(for: .milliseconds(SiloTheme.Skyline.marqueeRestDebounceMilliseconds))
+            try? await Task.sleep(for: .milliseconds(WeFlixTheme.Skyline.marqueeRestDebounceMilliseconds))
         }
         return !Task.isCancelled
     }
@@ -1195,22 +1195,22 @@ struct TVFocusMarquee: View {
 
         var bottomInset: CGFloat {
             switch self {
-            case .home: SiloTheme.Skyline.marqueeBottomInsetHome
-            case .library: SiloTheme.Skyline.marqueeBottomInsetLibrary
+            case .home: WeFlixTheme.Skyline.marqueeBottomInsetHome
+            case .library: WeFlixTheme.Skyline.marqueeBottomInsetLibrary
             }
         }
 
         var titleSize: CGFloat {
             switch self {
-            case .home: SiloTheme.Skyline.marqueeTitleSizeHome
-            case .library: SiloTheme.Skyline.marqueeTitleSizeLibrary
+            case .home: WeFlixTheme.Skyline.marqueeTitleSizeHome
+            case .library: WeFlixTheme.Skyline.marqueeTitleSizeLibrary
             }
         }
 
         var metaSize: CGFloat {
             switch self {
-            case .home: SiloTheme.Skyline.marqueeMetaSizeHome
-            case .library: SiloTheme.Skyline.marqueeMetaSizeLibrary
+            case .home: WeFlixTheme.Skyline.marqueeMetaSizeHome
+            case .library: WeFlixTheme.Skyline.marqueeMetaSizeLibrary
             }
         }
 
@@ -1218,8 +1218,8 @@ struct TVFocusMarquee: View {
         /// scale, so a logo never pushes the block past the row slot.
         var logoMaxHeight: CGFloat {
             switch self {
-            case .home: SiloTheme.Skyline.marqueeLogoMaxHeightHome
-            case .library: SiloTheme.Skyline.marqueeLogoMaxHeightLibrary
+            case .home: WeFlixTheme.Skyline.marqueeLogoMaxHeightHome
+            case .library: WeFlixTheme.Skyline.marqueeLogoMaxHeightLibrary
             }
         }
     }
@@ -1246,7 +1246,7 @@ struct TVFocusMarquee: View {
             maxHeight: .infinity,
             alignment: .bottomLeading
         )
-        .padding(.leading, SiloTheme.Skyline.safeAreaX)
+        .padding(.leading, WeFlixTheme.Skyline.safeAreaX)
         .padding(.bottom, scale.bottomInset)
         .ignoresSafeArea(edges: [.top, .horizontal])
         .allowsHitTesting(false)
@@ -1259,7 +1259,7 @@ struct TVFocusMarquee: View {
         .accessibilityAddTraits(.updatesFrequently)
         .task(id: content?.id) {
             guard content != nil, UIAccessibility.isVoiceOverRunning else { return }
-            try? await Task.sleep(for: .milliseconds(SiloTheme.Skyline.marqueeRestDebounceMilliseconds))
+            try? await Task.sleep(for: .milliseconds(WeFlixTheme.Skyline.marqueeRestDebounceMilliseconds))
             guard !Task.isCancelled else { return }
             announce()
         }
@@ -1363,11 +1363,11 @@ private struct TVMarqueeBlock: View {
 
             if let synopsis = content.synopsis, !synopsis.isEmpty {
                 Text(synopsis)
-                    .font(.system(size: SiloTheme.Skyline.marqueeSynopsisSize, weight: .regular))
+                    .font(.system(size: WeFlixTheme.Skyline.marqueeSynopsisSize, weight: .regular))
                     .lineSpacing(6)
-                    .foregroundStyle(Color.siloSecondaryText)
+                    .foregroundStyle(Color.weFlixSecondaryText)
                     .lineLimit(synopsisLineLimit)
-                    .frame(maxWidth: SiloTheme.Skyline.marqueeSynopsisMaxWidth, alignment: .leading)
+                    .frame(maxWidth: WeFlixTheme.Skyline.marqueeSynopsisMaxWidth, alignment: .leading)
                     .opacity(content.translationStatus == .translating ? 0.5 : 1)
             }
 
@@ -1377,7 +1377,7 @@ private struct TVMarqueeBlock: View {
 
             badgeLine
         }
-        .frame(maxWidth: SiloTheme.Skyline.marqueeContentWidth, alignment: .leading)
+        .frame(maxWidth: WeFlixTheme.Skyline.marqueeContentWidth, alignment: .leading)
         // Re-run when the profile turns title art back on; turning it off
         // cancels a fetch in flight, and `shownLogo` hides any cached art.
         .task(id: TitleArtPreferences.shared.showsTitleArt) { await loadLogo() }
@@ -1391,7 +1391,7 @@ private struct TVMarqueeBlock: View {
                     progress: progress,
                     text: content.requestStatusText,
                     font: .system(size: 22, weight: .semibold),
-                    color: .siloOnSurface
+                    color: .weFlixOnSurface
                 )
                 .fixedSize()
                 RequestStageTrack(progress: progress)
@@ -1427,7 +1427,7 @@ private struct TVMarqueeBlock: View {
                 .font(.system(size: scale.metaSize, weight: .medium))
                 .lineLimit(1)
                 .opacity(0)
-                .frame(maxWidth: SiloTheme.Skyline.marqueeSynopsisMaxWidth, alignment: .leading)
+                .frame(maxWidth: WeFlixTheme.Skyline.marqueeSynopsisMaxWidth, alignment: .leading)
                 .overlay(alignment: .leading) {
                     // The translation status leads the line rather than adding
                     // one, so the bottom-anchored block keeps its height.
@@ -1439,12 +1439,12 @@ private struct TVMarqueeBlock: View {
                         if let line = enrichment?.detailLine, !line.isEmpty {
                             Text(line)
                                 .font(.system(size: scale.metaSize, weight: .medium))
-                                .foregroundStyle(Color.siloOnSurface.opacity(0.5))
+                                .foregroundStyle(Color.weFlixOnSurface.opacity(0.5))
                                 .lineLimit(1)
                                 .transition(.identity)
                         }
                     }
-                    .frame(maxWidth: SiloTheme.Skyline.marqueeSynopsisMaxWidth, alignment: .leading)
+                    .frame(maxWidth: WeFlixTheme.Skyline.marqueeSynopsisMaxWidth, alignment: .leading)
                 }
         }
     }
@@ -1456,7 +1456,7 @@ private struct TVMarqueeBlock: View {
                 .resizable()
                 .aspectRatio(contentMode: .fit)
                 .frame(
-                    maxWidth: SiloTheme.Skyline.marqueeLogoMaxWidth,
+                    maxWidth: WeFlixTheme.Skyline.marqueeLogoMaxWidth,
                     maxHeight: scale.logoMaxHeight,
                     alignment: .leading
                 )
@@ -1493,7 +1493,7 @@ private struct TVMarqueeBlock: View {
             // natural width leaves only the stack spacing before the text.
             .frame(height: 27, alignment: .leading)
             .frame(
-                maxWidth: SiloTheme.Skyline.marqueeSynopsisMaxWidth,
+                maxWidth: WeFlixTheme.Skyline.marqueeSynopsisMaxWidth,
                 alignment: .leading
             )
         }
@@ -1522,7 +1522,7 @@ private struct TVMarqueeBlock: View {
             }
         }
         .font(.system(size: scale.metaSize, weight: .medium))
-        .foregroundStyle(Color.siloSecondaryText)
+        .foregroundStyle(Color.weFlixSecondaryText)
         .lineLimit(1)
     }
 
@@ -1567,14 +1567,14 @@ private struct TVMarqueeBlock: View {
 
     private func badgeChip(_ label: String) -> some View {
         Text(label)
-            .font(.system(size: SiloTheme.Skyline.marqueeBadgeSize, weight: .semibold))
-            .tracking(SiloTheme.Skyline.marqueeBadgeSize * 0.08)
+            .font(.system(size: WeFlixTheme.Skyline.marqueeBadgeSize, weight: .semibold))
+            .tracking(WeFlixTheme.Skyline.marqueeBadgeSize * 0.08)
             .foregroundStyle(Color.white.opacity(0.92))
             .padding(.horizontal, 10)
             .padding(.vertical, 5)
             .background(
                 RoundedRectangle(cornerRadius: 6)
-                    .fill(Color.siloChromeRestingFill)
+                    .fill(Color.weFlixChromeRestingFill)
             )
             .overlay {
                 RoundedRectangle(cornerRadius: 6)

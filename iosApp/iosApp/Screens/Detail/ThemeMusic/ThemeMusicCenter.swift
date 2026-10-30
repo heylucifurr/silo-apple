@@ -28,13 +28,13 @@ struct ThemeMusicPage: Equatable {
 final class ThemeMusicCenter {
     static let shared = ThemeMusicCenter(
         controller: ThemeMusicController(
-            grant: { owner, theme in try await SiloAPI.shared.themePlayback(ownerId: owner, themeId: theme) },
+            grant: { owner, theme in try await WeFlixAPI.shared.themePlayback(ownerId: owner, themeId: theme) },
             makeOutput: { AVThemeAudioOutput(grant: $0) }
         ),
         identity: {
             TitleArtPreferences.activeRequestIdentity()?.profileKey
         },
-        capability: { try await SiloAPI.shared.themeSongsCapability().isAvailable },
+        capability: { try await WeFlixAPI.shared.themeSongsCapability().isAvailable },
         seasonThemes: { try await MetadataRequestPool.shared.itemDetail(contentId: $0).themes }
     )
 

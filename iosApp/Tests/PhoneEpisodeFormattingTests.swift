@@ -1,6 +1,6 @@
 #if !os(tvOS)
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 final class PhoneEpisodeFormattingTests: XCTestCase {
     func testTitleLeadsWithSeasonAndEpisodeCode() {

@@ -1,6 +1,6 @@
 import XCTest
 import Foundation
-@testable import Silo
+@testable import WeFlix
 
 /// Covers reclaiming download storage no store tracks: when a store load
 /// allows the sweep, which directories in the loaded scope it removes, and
@@ -12,7 +12,7 @@ final class DownloadStorageReclaimTests: XCTestCase {
     override func setUpWithError() throws {
         sandbox = FileManager.default.temporaryDirectory
             .appendingPathComponent("DownloadStorageReclaimTests-\(UUID().uuidString)", isDirectory: true)
-        root = sandbox.appendingPathComponent("SiloDownloads", isDirectory: true)
+        root = sandbox.appendingPathComponent("WeFlixDownloads", isDirectory: true)
         try FileManager.default.createDirectory(at: root, withIntermediateDirectories: true)
     }
 
@@ -95,19 +95,19 @@ final class DownloadStorageReclaimTests: XCTestCase {
         try writeFile("server/profile/orphan/poster.jpg", bytes: 5)
         try writeFile("server/profile/owned/media.mp4", bytes: 7)
         // Left by a process that ended before deleting what it set aside.
-        let holding = sandbox.appendingPathComponent("SiloDownloads.reclaimed/earlier", isDirectory: true)
+        let holding = sandbox.appendingPathComponent("WeFlixDownloads.reclaimed/earlier", isDirectory: true)
         try FileManager.default.createDirectory(at: holding, withIntermediateDirectories: true)
         try Data(count: 3).write(to: holding.appendingPathComponent("media.mp4"))
 
         let moved = DownloadStorageReclaim.setAside([scope.appendingPathComponent("orphan")], root: root)
 
         XCTAssertEqual(moved, 1)
-        let holdingFolder = sandbox.appendingPathComponent("SiloDownloads.reclaimed", isDirectory: true)
+        let holdingFolder = sandbox.appendingPathComponent("WeFlixDownloads.reclaimed", isDirectory: true)
         XCTAssertEqual(try holdingFolder.resourceValues(forKeys: [.isExcludedFromBackupKey]).isExcludedFromBackup, true)
         XCTAssertEqual(try contents(of: scope), ["owned"])
         XCTAssertEqual(DownloadFilePaths.bytes(under: root), 7, "set-aside data no longer counts as the root's")
         XCTAssertEqual(DownloadStorageReclaim.deleteSetAside(root: root), 18)
-        XCTAssertEqual(try contents(of: sandbox), ["SiloDownloads"])
+        XCTAssertEqual(try contents(of: sandbox), ["WeFlixDownloads"])
         XCTAssertEqual(DownloadStorageReclaim.deleteSetAside(root: root), 0)
     }
 

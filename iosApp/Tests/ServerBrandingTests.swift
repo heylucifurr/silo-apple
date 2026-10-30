@@ -1,5 +1,5 @@
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 /// Server branding read before sign-in.
 final class ServerBrandingTests: XCTestCase {
@@ -26,7 +26,7 @@ final class ServerBrandingTests: XCTestCase {
 
     func testBrandingAssetsTreatTheDefaultPortAsSameOrigin() {
         XCTAssertNotNil(ServerBranding.resolve("https://silo.example.com:443/mark.png", base: "https://silo.example.com"))
-        XCTAssertNotNil(ServerBranding.resolve("http://SILO.example.com/mark.png", base: "http://silo.example.com:80"))
+        XCTAssertNotNil(ServerBranding.resolve("http://silo.EXAMPLE.com/mark.png", base: "http://silo.example.com:80"))
         XCTAssertNil(ServerBranding.resolve("https://silo.example.com:8443/mark.png", base: "https://silo.example.com"))
         XCTAssertNil(ServerBranding.resolve("http://silo.example.com/mark.png", base: "https://silo.example.com"))
     }

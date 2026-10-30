@@ -2,9 +2,9 @@ import Foundation
 
 /// Why a remembered server cannot safely continue into authenticated content.
 enum ServerRecoveryReason: String, Equatable, Hashable, Sendable {
-    /// The URL still serves Silo, but its database has not been provisioned.
+    /// The URL still serves WeFlix, but its database has not been provisioned.
     case needsSetup
-    /// The URL no longer exposes the native Silo setup/session contract.
+    /// The URL no longer exposes the native WeFlix setup/session contract.
     case serverNotRecognized
     /// The server is v1-only and must be updated for this app version.
     case serverUpdateRequired
@@ -72,7 +72,7 @@ struct RestoredSessionValidator: Sendable {
     }
 
     static var live: RestoredSessionValidator {
-        live(client: SiloAPI.shared.apiV2Client, tokenStore: .shared)
+        live(client: WeFlixAPI.shared.apiV2Client, tokenStore: .shared)
     }
 
     /// `GET /api/v2/system/setup` by the remembered URL, then

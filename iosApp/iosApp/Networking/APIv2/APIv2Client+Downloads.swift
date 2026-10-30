@@ -4,7 +4,7 @@ import Foundation
 //
 // Every call, including the series-monitor calls in
 // APIv2Client+DownloadSubscriptions.swift, names the calling device:
-// `HTTPClient` attaches this installation's `X-Silo-Device-Id` to each
+// `HTTPClient` attaches this installation's `X-WeFlix-Device-Id` to each
 // request, and the server scopes the registry and the monitors to (account,
 // profile, device). Adding the header here as well would send it twice.
 

@@ -9,7 +9,7 @@ import Synchronization
 /// but leaves activation to the playback path, and only releases the session on a
 /// final teardown when the host opts in via `deactivatesAudioSessionOnStop`
 /// (AetherEngine README, "Who owns the audio session"). That opt-in is only correct
-/// when the app owns the session outright — Silo runs two engines (audiobooks and
+/// when the app owns the session outright — WeFlix runs two engines (audiobooks and
 /// video), so an audiobook that stops while a video is playing would otherwise pull
 /// the session out from under the video.
 ///
@@ -24,8 +24,8 @@ import Synchronization
 /// Counting live engines is not on its own a usable safety test: an engine that
 /// exists but has no media loaded is not holding the session, and gating on mere
 /// existence means the session is never released while such an engine is alive —
-/// leaving whatever Silo interrupted (another app's audio) paused or ducked until
-/// Silo is killed. A claim therefore carries an *activity probe*, and the release
+/// leaving whatever WeFlix interrupted (another app's audio) paused or ducked until
+/// WeFlix is killed. A claim therefore carries an *activity probe*, and the release
 /// test asks whether any **other** claim is actually holding audio right now.
 enum AetherAudioSessionOwnership {
     private static let registrations = Mutex<[ObjectIdentifier: Registration]>([:])

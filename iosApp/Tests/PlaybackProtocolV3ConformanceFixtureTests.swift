@@ -1,6 +1,6 @@
 import Foundation
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 final class PlaybackProtocolV3ConformanceFixtureTests: XCTestCase {
     /// The vendored server matrix decodes through the production playback

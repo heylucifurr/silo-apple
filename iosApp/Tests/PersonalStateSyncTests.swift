@@ -1,6 +1,6 @@
 import Foundation
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 /// Favorite, watchlist and watched writes through `PersonalStateSync`: one
 /// dispatch under a captured owner, and the §9 outcome for each way a

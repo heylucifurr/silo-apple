@@ -53,7 +53,7 @@ enum DownloadSessionEvent: Sendable {
 /// Why a transfer ended without a file, where that changes what happens next.
 enum DownloadFailureCause: Sendable, Equatable {
     case other
-    /// The user closed Silo from the app switcher, which cancels every
+    /// The user closed WeFlix from the app switcher, which cancels every
     /// background transfer. Not the transfer's fault.
     case forceQuit
     /// The device ran out of space for the file. Retrying won't help.
@@ -65,9 +65,9 @@ enum DownloadFailureCause: Sendable, Equatable {
 /// resumes via HTTP Range, so this is an `NSObject` delegate (background
 /// sessions cannot use the async `URLSession` data API).
 final class DownloadSessionDelegate: NSObject, URLSessionDownloadDelegate, @unchecked Sendable {
-    static let sessionIdentifier = "org.siloserver.silo.downloads"
+    static let sessionIdentifier = "me.weflix.downloads"
 
-    /// Builds before the continuum → silo rename ran their transfers in a
+    /// Builds before the continuum → weFlix rename ran their transfers in a
     /// session with this identifier. The system keeps that session's tasks
     /// across an update, but nothing would ever collect their results.
     static let legacySessionIdentifier = "com.continuum.play.downloads"

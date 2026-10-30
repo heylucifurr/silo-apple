@@ -64,7 +64,7 @@ struct RecommendationsView: View {
                         PageChromeGlass(scrollState: chromeScrollState)
                     }
             }
-        .siloPageBackground()
+        .weFlixPageBackground()
         #if os(iOS)
         .toolbar(.hidden, for: .navigationBar)
         #endif
@@ -77,8 +77,8 @@ struct RecommendationsView: View {
             SidebarToggleButton()
 
             Text("Recommendations")
-                .font(.siloTitle)
-                .foregroundColor(.siloOnSurface)
+                .font(.weFlixTitle)
+                .foregroundColor(.weFlixOnSurface)
                 .pageChromeBacking(
                     scrollState: chromeScrollState,
                     outset: EdgeInsets(top: 6, leading: 10, bottom: 6, trailing: 10)
@@ -89,7 +89,7 @@ struct RecommendationsView: View {
             TabTopBarActions(
                 onSearch: { router.navigate(to: .search) },
                 onOpenSettings: { router.navigate(to: .settings) },
-                onOpenRequests: { router.navigate(to: .requestsHub) },
+                onOpenDownloads: { router.navigate(to: .downloads) },
                 onSwitchProfile: {
                     router.switchProfile()
                 },
@@ -98,9 +98,9 @@ struct RecommendationsView: View {
             )
         }
         .clearsWindowControls()
-        .padding(.horizontal, SiloTheme.padding)
-        .padding(.top, SiloTheme.smallPadding)
-        .padding(.bottom, SiloTheme.smallPadding)
+        .padding(.horizontal, WeFlixTheme.padding)
+        .padding(.top, WeFlixTheme.smallPadding)
+        .padding(.bottom, WeFlixTheme.smallPadding)
     }
     #endif
 
@@ -188,7 +188,7 @@ struct RecommendationsView: View {
             let details = await withTaskGroup(of: (String, ItemDetail?).self) { group in
                 for contentId in batch {
                     group.addTask {
-                        let detail = try? await SiloAPI.shared.itemDetail(
+                        let detail = try? await WeFlixAPI.shared.itemDetail(
                             contentId: contentId
                         )
                         return (contentId, detail)
@@ -221,7 +221,7 @@ struct RecommendationsView: View {
         } else {
             VStack(spacing: 0) {
                 shortcutsRow
-                    .padding(.horizontal, SiloTheme.padding)
+                    .padding(.horizontal, WeFlixTheme.padding)
 
                 Group {
                     if let error = viewModel.error {
@@ -260,9 +260,9 @@ struct RecommendationsView: View {
 
     private var content: some View {
         ScrollView(.vertical, showsIndicators: false) {
-            LazyVStack(spacing: SiloTheme.largePadding) {
+            LazyVStack(spacing: WeFlixTheme.largePadding) {
                 shortcutsRow
-                    .padding(.horizontal, SiloTheme.padding)
+                    .padding(.horizontal, WeFlixTheme.padding)
 
                 ForEach(viewModel.sections) { section in
                     SectionRow(
@@ -278,7 +278,7 @@ struct RecommendationsView: View {
                     )
                 }
             }
-            .padding(.bottom, SiloTheme.largePadding)
+            .padding(.bottom, WeFlixTheme.largePadding)
         }
         .reportsPageChromeScroll()
     }
@@ -288,13 +288,13 @@ struct RecommendationsView: View {
     /// above acts as the selector between the two.
     @ViewBuilder
     private var savedListsFallback: some View {
-        VStack(spacing: SiloTheme.smallPadding) {
+        VStack(spacing: WeFlixTheme.smallPadding) {
             Text("No recommendations yet — showing your saved titles.")
-                .font(.siloCaption)
-                .foregroundColor(.siloSecondaryText)
+                .font(.weFlixCaption)
+                .foregroundColor(.weFlixSecondaryText)
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.horizontal, SiloTheme.padding)
-                .padding(.top, SiloTheme.smallPadding)
+                .padding(.horizontal, WeFlixTheme.padding)
+                .padding(.top, WeFlixTheme.smallPadding)
 
             switch savedListSelection {
             case .watchlist:
@@ -385,14 +385,14 @@ private struct SavedShortcutButtonBody: View {
 
     var body: some View {
         configuration.label
-            .foregroundColor(isProminent ? .siloBackground : .siloOnSurface)
+            .foregroundColor(isProminent ? .weFlixBackground : .weFlixOnSurface)
             .padding(.horizontal, 15)
             .frame(height: 40)
             .background(
                 Capsule()
                     .fill(
                         isProminent
-                            ? Color.siloOnSurface.opacity(0.96)
+                            ? Color.weFlixOnSurface.opacity(0.96)
                             : (isSelected ? Color.white.opacity(0.14) : Color.clear)
                     )
             )
@@ -404,14 +404,14 @@ private struct SavedShortcutButtonBody: View {
             )
             .scaleEffect(isFocused ? 1.045 : 1.0)
             .shadow(
-                color: isFocused ? Color.siloOnSurface.opacity(0.36) : .clear,
+                color: isFocused ? Color.weFlixOnSurface.opacity(0.36) : .clear,
                 radius: isFocused ? 18 : 0,
                 y: isFocused ? 6 : 0
             )
             .opacity(configuration.isPressed ? 0.7 : 1.0)
-            .animation(.easeOut(duration: SiloTheme.fastDuration), value: configuration.isPressed)
-            .animation(SiloTheme.springAnimation, value: isFocused)
-            .animation(SiloTheme.springAnimation, value: isSelected)
+            .animation(.easeOut(duration: WeFlixTheme.fastDuration), value: configuration.isPressed)
+            .animation(WeFlixTheme.springAnimation, value: isFocused)
+            .animation(WeFlixTheme.springAnimation, value: isSelected)
     }
 }
 #endif

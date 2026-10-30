@@ -1,6 +1,6 @@
 import Foundation
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 /// Per-series audio and subtitle preferences on the v2 wire. Both request
 /// schemas are closed (`additionalProperties: false`), so the bodies are

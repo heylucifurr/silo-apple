@@ -10,18 +10,18 @@ struct EmptyStateView: View {
         VStack(spacing: 12) {
             Image(systemName: icon)
                 .font(.system(size: 44))
-                .foregroundColor(.siloOnSurface.opacity(0.3))
+                .foregroundColor(.weFlixOnSurface.opacity(0.3))
 
             Text(title)
-                .font(.siloSubheadline)
-                .foregroundColor(.siloOnSurface)
+                .font(.weFlixSubheadline)
+                .foregroundColor(.weFlixOnSurface)
 
             if let subtitle {
                 Text(subtitle)
-                    .font(.siloCaption)
-                    .foregroundColor(.siloSecondaryText)
+                    .font(.weFlixCaption)
+                    .foregroundColor(.weFlixSecondaryText)
                     .multilineTextAlignment(.center)
-                    .padding(.horizontal, SiloTheme.largePadding)
+                    .padding(.horizontal, WeFlixTheme.largePadding)
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)

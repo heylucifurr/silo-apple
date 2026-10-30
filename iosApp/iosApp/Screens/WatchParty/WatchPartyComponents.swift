@@ -47,7 +47,7 @@ struct WatchPartyEyebrow: View {
         Text(text.uppercased())
             .font(.system(size: WatchPartyMetrics.eyebrow, weight: .semibold))
             .tracking(WatchPartyMetrics.eyebrow * 0.12)
-            .foregroundStyle(Color.siloSecondaryText)
+            .foregroundStyle(Color.weFlixSecondaryText)
     }
 }
 
@@ -65,7 +65,7 @@ struct WatchPartyBackdrop: View {
     var body: some View {
         GeometryReader { geometry in
             ZStack {
-                Color.siloBackground
+                Color.weFlixBackground
                 if let url, !url.isEmpty {
                     AsyncImageView(url: url, thumbhash: thumbhash, contentMode: .fill, placeholderStyle: .clear)
                         .frame(width: geometry.size.width, height: geometry.size.height)
@@ -80,7 +80,7 @@ struct WatchPartyBackdrop: View {
         }
         .ignoresSafeArea()
         .accessibilityHidden(true)
-        .animation(.easeOut(duration: SiloTheme.slowDuration), value: url)
+        .animation(.easeOut(duration: WeFlixTheme.slowDuration), value: url)
     }
 
     private var gradient: some View {
@@ -124,23 +124,23 @@ struct WatchPartyCodePill: View {
             Text("JOIN WITH")
                 .font(.system(size: 15, weight: .semibold))
                 .tracking(2)
-                .foregroundStyle(isFocused ? Color.black.opacity(0.5) : Color.siloSecondaryText)
+                .foregroundStyle(isFocused ? Color.black.opacity(0.5) : Color.weFlixSecondaryText)
             #endif
             Text(code)
                 .font(.system(size: WatchPartyMetrics.code, weight: .bold, design: .monospaced))
                 .tracking(WatchPartyMetrics.code * 0.18)
             Image(systemName: "qrcode")
                 .font(.system(size: WatchPartyMetrics.code * 0.8, weight: .medium))
-                .foregroundStyle(isFocused ? Color.black.opacity(0.6) : Color.siloSecondaryText)
+                .foregroundStyle(isFocused ? Color.black.opacity(0.6) : Color.weFlixSecondaryText)
         }
         #if os(iOS)
-        .foregroundStyle(isFocused ? Color.black : Color.siloOnSurface)
+        .foregroundStyle(isFocused ? Color.black : Color.weFlixOnSurface)
         .padding(.horizontal, WatchPartyMetrics.code * 0.75)
         .padding(.vertical, WatchPartyMetrics.code * 0.4)
-        .background(Capsule().fill(isFocused ? Color.siloOnSurface : Color.siloChromeRestingFill))
-        .overlay(Capsule().stroke(isFocused ? Color.clear : Color.siloChromeRestingBorder, lineWidth: 1))
+        .background(Capsule().fill(isFocused ? Color.weFlixOnSurface : Color.weFlixChromeRestingFill))
+        .overlay(Capsule().stroke(isFocused ? Color.clear : Color.weFlixChromeRestingBorder, lineWidth: 1))
         .scaleEffect(isFocused ? 1.04 : 1)
-        .animation(.easeOut(duration: SiloTheme.fastDuration), value: isFocused)
+        .animation(.easeOut(duration: WeFlixTheme.fastDuration), value: isFocused)
         #endif
         .accessibilityLabel("Party code \(code.map(String.init).joined(separator: " ")). Invite friends")
     }
@@ -166,7 +166,7 @@ struct WatchPartySeat: View {
                     .overlay {
                         Text(initial)
                             .font(.system(size: size * 0.36, weight: .semibold))
-                            .foregroundStyle(Color.siloOnSurface)
+                            .foregroundStyle(Color.weFlixOnSurface)
                     }
                     .frame(width: size, height: size)
                     .opacity(state == .away ? 0.45 : 1)
@@ -178,7 +178,7 @@ struct WatchPartySeat: View {
                 if state == .ready || state == .watching {
                     // Sits on the ring at 4:30, cutting into it.
                     Circle()
-                        .fill(Color.siloOnSurface)
+                        .fill(Color.weFlixOnSurface)
                         .overlay {
                             Image(systemName: "checkmark")
                                 .font(.system(size: size * 0.15, weight: .heavy))
@@ -194,13 +194,13 @@ struct WatchPartySeat: View {
             VStack(spacing: size * 0.02) {
                 Text(member.displayName)
                     .font(.system(size: size * 0.19, weight: .medium))
-                    .foregroundStyle(Color.siloOnSurface)
+                    .foregroundStyle(Color.weFlixOnSurface)
                     .lineLimit(1)
                     .truncationMode(.tail)
                 if let detailText {
                     Text(detailText)
                         .font(.system(size: size * 0.16))
-                        .foregroundStyle(Color.siloSecondaryText)
+                        .foregroundStyle(Color.weFlixSecondaryText)
                         .lineLimit(1)
                 }
             }
@@ -245,9 +245,9 @@ struct WatchPartySeat: View {
 
     private var ringColor: Color {
         switch state {
-        case .ready, .watching: return .siloOnSurface
-        case .away: return .siloOnSurface.opacity(0.25)
-        default: return .siloOnSurface.opacity(0.38)
+        case .ready, .watching: return .weFlixOnSurface
+        case .away: return .weFlixOnSurface.opacity(0.25)
+        default: return .weFlixOnSurface.opacity(0.38)
         }
     }
 
@@ -285,24 +285,24 @@ struct WatchPartyInviteSeatLabel: View {
         VStack(spacing: size * 0.11) {
             ZStack {
                 Circle()
-                    .fill(isFocused ? Color.siloOnSurface : Color.clear)
+                    .fill(isFocused ? Color.weFlixOnSurface : Color.clear)
                     .frame(width: size, height: size)
                 Circle()
-                    .strokeBorder(isFocused ? Color.clear : Color.siloOutline, lineWidth: size * 0.035)
+                    .strokeBorder(isFocused ? Color.clear : Color.weFlixOutline, lineWidth: size * 0.035)
                     .frame(width: size * 1.14, height: size * 1.14)
                 Image(systemName: "plus")
                     .font(.system(size: size * 0.4, weight: .light))
-                    .foregroundStyle(isFocused ? Color.black : Color.siloSecondaryText)
+                    .foregroundStyle(isFocused ? Color.black : Color.weFlixSecondaryText)
             }
             .frame(width: size * 1.14, height: size * 1.14)
             .padding(.top, size * 0.1)
             .scaleEffect(isFocused ? 1.06 : 1)
             Text("Invite")
                 .font(.system(size: size * 0.19, weight: .medium))
-                .foregroundStyle(Color.siloSecondaryText)
+                .foregroundStyle(Color.weFlixSecondaryText)
         }
         .frame(width: size * 1.4)
-        .animation(.easeOut(duration: SiloTheme.fastDuration), value: isFocused)
+        .animation(.easeOut(duration: WeFlixTheme.fastDuration), value: isFocused)
         #if os(tvOS)
         .focusEffectDisabled()
         #endif
@@ -329,7 +329,7 @@ struct WatchPartySeatsRow: View {
                 WatchPartyEyebrow(text: "Here now")
                 Text(WatchPartyLobbyPolicy.presenceSummary(members: members, phase: phase))
                     .font(.system(size: WatchPartyMetrics.caption))
-                    .foregroundStyle(Color.siloSecondaryText.opacity(0.7))
+                    .foregroundStyle(Color.weFlixSecondaryText.opacity(0.7))
                 Spacer(minLength: 0)
             }
             seats
@@ -362,7 +362,7 @@ struct WatchPartySeatsRow: View {
                 WatchPartySeat(member: member, state: WatchPartyLobbyPolicy.seatState(member, phase: phase), size: seatSize)
             }
             Button(action: onInvite) { WatchPartyInviteSeatLabel(size: seatSize) }
-                .buttonStyle(.siloFlat)
+                .buttonStyle(.weFlixFlat)
                 .accessibilityLabel("Invite friends")
                 .accessibilityIdentifier("watchParty.invite")
         }
@@ -412,8 +412,8 @@ private struct WatchPartyButtonBody: View {
             .overlay(shape.stroke(border, lineWidth: 1))
             .scaleEffect(isFocused ? 1.05 : (configuration.isPressed ? 0.98 : 1))
             .opacity(isEnabled ? 1 : 0.45)
-            .animation(.easeOut(duration: SiloTheme.fastDuration), value: isFocused)
-            .animation(.easeOut(duration: SiloTheme.fastDuration), value: configuration.isPressed)
+            .animation(.easeOut(duration: WeFlixTheme.fastDuration), value: isFocused)
+            .animation(.easeOut(duration: WeFlixTheme.fastDuration), value: configuration.isPressed)
     }
 
     private var fontSize: CGFloat { 17 }
@@ -426,15 +426,15 @@ private struct WatchPartyButtonBody: View {
         if isFocused { return .black }
         switch kind {
         case .primary: return .black
-        case .secondary, .outlined: return .siloOnSurface
+        case .secondary, .outlined: return .weFlixOnSurface
         }
     }
 
     private var background: Color {
-        if isFocused { return .siloOnSurface }
+        if isFocused { return .weFlixOnSurface }
         switch kind {
-        case .primary: return .siloOnSurface
-        case .secondary: return .siloChromeRestingFill
+        case .primary: return .weFlixOnSurface
+        case .secondary: return .weFlixChromeRestingFill
         case .outlined: return .clear
         }
     }
@@ -443,8 +443,8 @@ private struct WatchPartyButtonBody: View {
         if isFocused { return .clear }
         switch kind {
         case .primary: return .clear
-        case .secondary: return .siloChromeRestingBorder
-        case .outlined: return .siloOnSurface
+        case .secondary: return .weFlixChromeRestingBorder
+        case .outlined: return .weFlixOnSurface
         }
     }
 }
@@ -462,21 +462,21 @@ struct WatchPartyBanner: View {
     var body: some View {
         HStack(alignment: .firstTextBaseline, spacing: 10) {
             Circle()
-                .fill(tone == .warning ? Color.requestAmber : Color.siloSecondaryText)
+                .fill(tone == .warning ? Color.requestAmber : Color.weFlixSecondaryText)
                 .frame(width: WatchPartyMetrics.caption * 0.6, height: WatchPartyMetrics.caption * 0.6)
                 .alignmentGuide(.firstTextBaseline) { $0[.bottom] - 1 }
             Text(message)
                 .font(.system(size: WatchPartyMetrics.caption + 1))
-                .foregroundStyle(tone == .warning ? Color(hex: "#F5C563") : Color.siloOnSurface)
+                .foregroundStyle(tone == .warning ? Color(hex: "#F5C563") : Color.weFlixOnSurface)
                 .fixedSize(horizontal: false, vertical: true)
         }
         .padding(.horizontal, WatchPartyMetrics.caption)
         .padding(.vertical, WatchPartyMetrics.caption * 0.8)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(RoundedRectangle(cornerRadius: 12, style: .continuous)
-            .fill(tone == .warning ? Color.requestAmber.opacity(0.12) : Color.siloChromeRestingFill))
+            .fill(tone == .warning ? Color.requestAmber.opacity(0.12) : Color.weFlixChromeRestingFill))
         .overlay(RoundedRectangle(cornerRadius: 12, style: .continuous)
-            .stroke(tone == .warning ? Color.requestAmber.opacity(0.3) : Color.siloChromeRestingBorder, lineWidth: 1))
+            .stroke(tone == .warning ? Color.requestAmber.opacity(0.3) : Color.weFlixChromeRestingBorder, lineWidth: 1))
         .accessibilityIdentifier("watchParty.error")
     }
 }
@@ -497,8 +497,8 @@ struct WatchPartyPoster: View {
                 AsyncImageView(url: url, thumbhash: thumbhash, targetSize: CGSize(width: width, height: width * 1.5), contentMode: .fill)
                     .episodeSpoilerBlur(hidesStill)
             } else {
-                Rectangle().fill(Color.siloSurfaceElevated)
-                    .overlay { Image(systemName: "film").foregroundStyle(Color.siloSecondaryText) }
+                Rectangle().fill(Color.weFlixSurfaceElevated)
+                    .overlay { Image(systemName: "film").foregroundStyle(Color.weFlixSecondaryText) }
             }
         }
         .frame(width: width, height: width * 1.5)

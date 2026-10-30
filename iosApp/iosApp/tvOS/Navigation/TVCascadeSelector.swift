@@ -142,11 +142,11 @@ struct TVCascadeSelector: View {
         // Layout padding, not `.offset(y:)`: offset is render-only, so the
         // composite's layout (and focus) frame would stop covering the visible
         // flyout.
-        HStack(alignment: .top, spacing: SiloTheme.Skyline.flyoutGap) {
+        HStack(alignment: .top, spacing: WeFlixTheme.Skyline.flyoutGap) {
             librariesPanel
 
             flyout
-                .frame(width: SiloTheme.Skyline.flyoutWidth, alignment: .top)
+                .frame(width: WeFlixTheme.Skyline.flyoutWidth, alignment: .top)
                 .opacity(flyoutAnchorId != nil ? 1 : 0)
                 .padding(.top, flyoutTopPadding)
                 // Animate the follow on the *discrete* anchor change, never on
@@ -156,7 +156,7 @@ struct TVCascadeSelector: View {
                 // layout pass, so `AnimatorState.combine` accumulates without
                 // bound and the CA transaction never commits (hard UI freeze).
                 .animation(
-                    reduceMotion ? nil : .easeInOut(duration: SiloTheme.Skyline.flyoutOpenDuration),
+                    reduceMotion ? nil : .easeInOut(duration: WeFlixTheme.Skyline.flyoutOpenDuration),
                     value: flyoutAnchorId
                 )
         }
@@ -200,10 +200,10 @@ struct TVCascadeSelector: View {
 
             libraryRows
         }
-        .padding(SiloTheme.Skyline.dropdownPadding)
-        .frame(width: SiloTheme.Skyline.dropdownWidth, alignment: .leading)
+        .padding(WeFlixTheme.Skyline.dropdownPadding)
+        .frame(width: WeFlixTheme.Skyline.dropdownWidth, alignment: .leading)
         .modifier(TVSkylinePanelChrome(
-            cornerRadius: SiloTheme.Skyline.dropdownCornerRadius
+            cornerRadius: WeFlixTheme.Skyline.dropdownCornerRadius
         ))
         .accessibilityElement(children: .contain)
         .accessibilityLabel("\(type.title) libraries")
@@ -215,7 +215,7 @@ struct TVCascadeSelector: View {
             libraryRow(library)
         }
 
-        if libraries.count > SiloTheme.Skyline.cascadeMaxVisibleRows {
+        if libraries.count > WeFlixTheme.Skyline.cascadeMaxVisibleRows {
             // Cap the visible height at the spec's 6 rows, then scroll
             // internally as the composite cascade focus rolls the list.
             ScrollViewReader { proxy in
@@ -225,7 +225,7 @@ struct TVCascadeSelector: View {
                 .onAppear { scrollFocusedLibrary(with: proxy) }
                 .onChange(of: focus) { _, _ in scrollFocusedLibrary(with: proxy) }
             }
-            .frame(maxHeight: estimatedRowHeight * CGFloat(SiloTheme.Skyline.cascadeMaxVisibleRows))
+            .frame(maxHeight: estimatedRowHeight * CGFloat(WeFlixTheme.Skyline.cascadeMaxVisibleRows))
         } else {
             VStack(alignment: .leading, spacing: 0) { rows }
         }
@@ -277,10 +277,10 @@ struct TVCascadeSelector: View {
                 }
             }
         }
-        .padding(SiloTheme.Skyline.dropdownPadding)
-        .frame(width: SiloTheme.Skyline.dropdownWidth, alignment: .leading)
+        .padding(WeFlixTheme.Skyline.dropdownPadding)
+        .frame(width: WeFlixTheme.Skyline.dropdownWidth, alignment: .leading)
         .modifier(TVSkylinePanelChrome(
-            cornerRadius: SiloTheme.Skyline.dropdownCornerRadius
+            cornerRadius: WeFlixTheme.Skyline.dropdownCornerRadius
         ))
         .fixedSize()
         .accessibilityElement(children: .contain)
@@ -307,10 +307,10 @@ struct TVCascadeSelector: View {
                     }
                 }
             }
-            .padding(SiloTheme.Skyline.flyoutPadding)
-            .frame(width: SiloTheme.Skyline.flyoutWidth, alignment: .leading)
+            .padding(WeFlixTheme.Skyline.flyoutPadding)
+            .frame(width: WeFlixTheme.Skyline.flyoutWidth, alignment: .leading)
             .modifier(TVSkylinePanelChrome(
-                cornerRadius: SiloTheme.Skyline.flyoutCornerRadius
+                cornerRadius: WeFlixTheme.Skyline.flyoutCornerRadius
             ))
             .fixedSize()
             .coordinateSpace(name: Self.flyoutSpace)
@@ -356,7 +356,7 @@ struct TVCascadeSelector: View {
     private func flyoutHeader(_ text: String) -> some View {
         TVSkylinePanelHeader(
             text: text.uppercased(),
-            size: SiloTheme.Skyline.flyoutHeaderSize,
+            size: WeFlixTheme.Skyline.flyoutHeaderSize,
             horizontalPadding: 14,
             topPadding: 6,
             bottomPadding: 8
@@ -410,7 +410,7 @@ struct TVCascadeSelector: View {
         flyoutFollowTask?.cancel()
         flyoutFollowTask = Task { @MainActor in
             try? await Task.sleep(
-                nanoseconds: SiloTheme.Skyline.flyoutFollowDebounceMilliseconds * 1_000_000
+                nanoseconds: WeFlixTheme.Skyline.flyoutFollowDebounceMilliseconds * 1_000_000
             )
             guard !Task.isCancelled else { return }
             // Only follow if focus is still on this library row.
@@ -424,14 +424,14 @@ struct TVCascadeSelector: View {
     }
 
     private var estimatedRowHeight: CGFloat {
-        SiloTheme.Skyline.cascadeRowTextSize
-            + SiloTheme.Skyline.cascadeRowPaddingVertical * 2
+        WeFlixTheme.Skyline.cascadeRowTextSize
+            + WeFlixTheme.Skyline.cascadeRowPaddingVertical * 2
             + 6 // row spacing slack so the 6th row isn't clipped mid-glyph
     }
 
     private func scrollFocusedLibrary(with proxy: ScrollViewProxy) {
         guard case .library(let libraryId) = focus else { return }
-        withAnimation(reduceMotion ? nil : .easeInOut(duration: SiloTheme.Skyline.flyoutOpenDuration)) {
+        withAnimation(reduceMotion ? nil : .easeInOut(duration: WeFlixTheme.Skyline.flyoutOpenDuration)) {
             proxy.scrollTo(Focus.library(libraryId), anchor: .center)
         }
     }
@@ -542,10 +542,10 @@ private struct TVCascadeLibraryRowLabel: View {
         HStack(spacing: 14) {
             Image(systemName: systemImage)
                 .font(.system(size: 22, weight: .semibold))
-                .frame(width: SiloTheme.Skyline.cascadeRowIconSize)
+                .frame(width: WeFlixTheme.Skyline.cascadeRowIconSize)
 
             Text(title)
-                .font(.system(size: SiloTheme.Skyline.cascadeRowTextSize, weight: .semibold))
+                .font(.system(size: WeFlixTheme.Skyline.cascadeRowTextSize, weight: .semibold))
                 .lineLimit(1)
 
             Spacer(minLength: 12)
@@ -555,10 +555,10 @@ private struct TVCascadeLibraryRowLabel: View {
                 .foregroundStyle(foreground.opacity(isFocused ? 1 : 0.5))
         }
         .foregroundStyle(foreground)
-        .padding(.horizontal, SiloTheme.Skyline.cascadeRowPaddingHorizontal)
-        .padding(.vertical, SiloTheme.Skyline.cascadeRowPaddingVertical)
+        .padding(.horizontal, WeFlixTheme.Skyline.cascadeRowPaddingHorizontal)
+        .padding(.vertical, WeFlixTheme.Skyline.cascadeRowPaddingVertical)
         .background(
-            RoundedRectangle(cornerRadius: SiloTheme.Skyline.cascadeRowCornerRadius, style: .continuous)
+            RoundedRectangle(cornerRadius: WeFlixTheme.Skyline.cascadeRowCornerRadius, style: .continuous)
                 .fill(isFocused ? Color.white : Color.clear)
         )
         // Row selection should read immediately as the remote moves.
@@ -566,7 +566,7 @@ private struct TVCascadeLibraryRowLabel: View {
     }
 
     private var foreground: Color {
-        isFocused ? .siloBackground : .white.opacity(0.9)
+        isFocused ? .weFlixBackground : .white.opacity(0.9)
     }
 }
 
@@ -584,16 +584,16 @@ private struct TVCascadeSectionRowLabel: View {
                 .frame(width: 26)
 
             Text(title)
-                .font(.system(size: SiloTheme.Skyline.flyoutRowTextSize, weight: .semibold))
+                .font(.system(size: WeFlixTheme.Skyline.flyoutRowTextSize, weight: .semibold))
                 .lineLimit(1)
 
             Spacer(minLength: 0)
         }
-        .foregroundStyle(isFocused ? Color.siloBackground : .white.opacity(0.86))
-        .padding(.horizontal, SiloTheme.Skyline.flyoutRowPaddingHorizontal)
-        .padding(.vertical, SiloTheme.Skyline.flyoutRowPaddingVertical)
+        .foregroundStyle(isFocused ? Color.weFlixBackground : .white.opacity(0.86))
+        .padding(.horizontal, WeFlixTheme.Skyline.flyoutRowPaddingHorizontal)
+        .padding(.vertical, WeFlixTheme.Skyline.flyoutRowPaddingVertical)
         .background(
-            RoundedRectangle(cornerRadius: SiloTheme.Skyline.flyoutRowCornerRadius, style: .continuous)
+            RoundedRectangle(cornerRadius: WeFlixTheme.Skyline.flyoutRowCornerRadius, style: .continuous)
                 .fill(isFocused ? Color.white : Color.clear)
         )
         // Row selection should read immediately as the remote moves.

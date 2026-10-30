@@ -4,7 +4,7 @@ import OSLog
 /// Waits on a device code until its request is decided: the one polling
 /// policy for `POST /api/v2/auth/device/poll` when a phone approves a code it
 /// started for the TV. Phone-to-TV pairing (`ReceiverPairingCoordinator`) and
-/// the SiloRemote profile handoff (`RemotePlaybackIdentityManager`) poll
+/// the WeFlixRemote profile handoff (`RemotePlaybackIdentityManager`) poll
 /// through it; silo-android's `DeviceLoginRepository` follows the same rules.
 /// The TV sign-in screen (`QRLoginViewModel`) keeps its own loop, because it
 /// renews codes and backs off while it shows them.
@@ -51,7 +51,7 @@ enum DeviceLoginPoller {
         case terminal
     }
 
-    private static let logger = Logger(subsystem: "org.siloserver.silo", category: "auth.device-poll")
+    private static let logger = Logger(subsystem: "me.weflix", category: "auth.device-poll")
 
     static func classify(_ error: Error) -> ErrorClass {
         // A v1-only server or a 410 `client_upgrade_required`.

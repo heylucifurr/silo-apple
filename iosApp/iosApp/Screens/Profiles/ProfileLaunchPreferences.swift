@@ -7,7 +7,7 @@ final class ProfileLaunchPreferences {
     static let shared = ProfileLaunchPreferences()
 
     private static let logger = Logger(
-        subsystem: Bundle.main.bundleIdentifier ?? "org.siloserver.silo",
+        subsystem: Bundle.main.bundleIdentifier ?? "me.weflix",
         category: "ProfileLaunchPreferences"
     )
 

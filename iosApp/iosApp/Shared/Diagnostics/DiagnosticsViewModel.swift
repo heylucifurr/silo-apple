@@ -34,16 +34,16 @@ final class DiagnosticsViewModel {
 
     var destinationServerName: String {
         if selectedDestination == .hosted {
-            return "Silo Diagnostics"
+            return "weflix Diagnostics"
         }
-        return ServerRegistry.shared.activeServer?.displayName ?? "Current Silo server"
+        return ServerRegistry.shared.activeServer?.displayName ?? "Current weflix server"
     }
 
     var hostedPrivacyDisclosure: String {
         let retentionDays = statusSnapshot?.status.retentionDays
             ?? HostedDiagnosticsCapabilities.conservativeCaptureStatus.retentionDays
         let dayLabel = retentionDays == 1 ? "day" : "days"
-        return "Hosted reports use a pseudonymous installation credential that is not linked to your Silo account. They omit account, profile, server address, and playback session identifiers, are retained for up to \(retentionDays) \(dayLabel), and are never sent automatically."
+        return "Hosted reports use a pseudonymous installation credential that is not linked to your weflix account. They omit account, profile, server address, and playback session identifiers, are retained for up to \(retentionDays) \(dayLabel), and are never sent automatically."
     }
 
     private let coordinator: DiagnosticsCoordinator
@@ -330,7 +330,7 @@ final class DiagnosticsViewModel {
             categories: logSummary.categories,
             lineCount: logSummary.lines,
             destinationServerName: report.binding.binding.destinationChoice == .hosted
-                ? "Silo Diagnostics"
+                ? "weflix Diagnostics"
                 : destinationServerName
         )
     }
@@ -509,14 +509,14 @@ final class DiagnosticsViewModel {
             }
             return "Sent as \(response.shortID)."
         case .keptProcessing(let shortID):
-            return "Received as \(shortID); Silo Diagnostics is validating it."
+            return "Received as \(shortID); weflix Diagnostics is validating it."
         case .keptRejected(let code):
             if let code, !code.isEmpty {
                 return "Collector rejected the report (\(code)); the local copy was kept."
             }
             return "Collector rejected the report; the local copy was kept."
         case .keptRetryable:
-            return "Report kept; Silo will retry."
+            return "Report kept; weflix will retry."
         case .keptNeedsServerUpdate:
             return "Report kept; your server needs an update."
         case .keptTooLarge:

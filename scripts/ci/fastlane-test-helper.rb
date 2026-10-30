@@ -85,10 +85,10 @@ class FastfileHarness
 
   def lane_context
     { SharedValues::MATCH_PROVISIONING_PROFILE_MAPPING => {
-      "org.siloserver.silo" => "app-profile",
-      "org.siloserver.silo.NotificationService" => "notifications-profile",
-      "org.siloserver.silo.DownloadsActivity" => "activity-profile",
-      "org.siloserver.silo.topshelf" => "topshelf-profile"
+      "me.weflix" => "app-profile",
+      "me.weflix.NotificationService" => "notifications-profile",
+      "me.weflix.DownloadsActivity" => "activity-profile",
+      "me.weflix.topshelf" => "topshelf-profile"
     } }
   end
 

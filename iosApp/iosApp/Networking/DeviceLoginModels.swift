@@ -41,7 +41,7 @@ enum DeviceLoginStatus: String {
 }
 
 /// A pairing request as the approving client shows it: the authoritative
-/// match code and the requesting device. Pairing and the SiloRemote handoff
+/// match code and the requesting device. Pairing and the WeFlixRemote handoff
 /// both build it from the v2 lookup (`APIv2DeviceLookup.presentation`).
 struct DeviceLookupResponse {
     let matchCode: String?

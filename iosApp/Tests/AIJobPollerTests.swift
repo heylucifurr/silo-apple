@@ -1,15 +1,15 @@
 //
 //  AIJobPollerTests.swift
-//  SiloTests
+//  WeFlixTests
 //
 //  Behavioral tests for `AIJobPoller` using an injected fake `fetch` closure
-//  (no live `SiloAI`, no network): terminal-state stop on each terminal
+//  (no live `WeFlixAI`, no network): terminal-state stop on each terminal
 //  status, progress passthrough across snapshots, and cancellation.
 //
 
 import XCTest
 import Foundation
-@testable import Silo
+@testable import WeFlix
 
 final class AIJobPollerTests: XCTestCase {
 

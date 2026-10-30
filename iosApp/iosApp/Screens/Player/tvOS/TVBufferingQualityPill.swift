@@ -31,7 +31,7 @@ struct TVBufferingQualityPill: View {
 
     var body: some View {
         PlayerBufferingPillCard(pill: pill, title: title) {
-            HStack(spacing: SiloTheme.spacing) {
+            HStack(spacing: WeFlixTheme.spacing) {
                 Button(action: onPrimary) {
                     Text(pill.kind.primaryAction)
                 }
@@ -80,7 +80,7 @@ struct TVBufferingQualityPill: View {
     PlayerNoticeStack {
         PlayerNoticeOverlay(notice: .preview)
         TVBufferingQualityPill(pill: .preview(.prompt), focus: $focus, onPrimary: {}, onSecondary: {})
-            .padding(.horizontal, SiloTheme.safePadding)
+            .padding(.horizontal, WeFlixTheme.safePadding)
             .playerNoticeStackPill()
     }
     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)

@@ -260,7 +260,7 @@ enum ApplePlaybackQuality {
     /// preference and its cap the bandwidth cap. Used when the connection
     /// changes and playback moves to the other pair.
     static func protocolV3Selection(axes: AppleQualityAxes) -> ApplePlaybackV3QualitySelection {
-        let resolution = SiloQualityPresets.normalizeResolution(axes.resolution)
+        let resolution = WeFlixQualityPresets.normalizeResolution(axes.resolution)
         let bitrateKbps = axes.bitrateKbps.flatMap(positiveBitrate)
         return ApplePlaybackV3QualitySelection(
             clientQualityId: AppleQualityAxes.join(resolution: resolution, bitrateKbps: bitrateKbps),

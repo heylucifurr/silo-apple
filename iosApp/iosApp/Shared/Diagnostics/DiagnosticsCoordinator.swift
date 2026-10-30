@@ -366,7 +366,7 @@ actor DiagnosticsCoordinator {
 
     private let api: DiagnosticsAPI
     private let hostedAPI: HostedDiagnosticsAPI
-    private let siloAPI: SiloAPI
+    private let weFlixAPI: WeFlixAPI
     private let consentStore: DiagnosticsConsentStore
     private let destinationStore: DiagnosticsDestinationStore
     private let pendingStore: PendingReportStore
@@ -399,7 +399,7 @@ actor DiagnosticsCoordinator {
     init(
         api: DiagnosticsAPI = .shared,
         hostedAPI: HostedDiagnosticsAPI = .shared,
-        siloAPI: SiloAPI = .shared,
+        weFlixAPI: WeFlixAPI = .shared,
         consentStore: DiagnosticsConsentStore = .shared,
         destinationStore: DiagnosticsDestinationStore = .shared,
         pendingStore: PendingReportStore = .shared,
@@ -409,7 +409,7 @@ actor DiagnosticsCoordinator {
     ) {
         self.api = api
         self.hostedAPI = hostedAPI
-        self.siloAPI = siloAPI
+        self.weFlixAPI = weFlixAPI
         self.consentStore = consentStore
         self.destinationStore = destinationStore
         self.pendingStore = pendingStore
@@ -447,8 +447,8 @@ actor DiagnosticsCoordinator {
             throw DiagnosticsCoordinatorError.identityChanged
         }
 
-        async let statusRequest = siloAPI.apiV2Client.diagnosticsCapabilities()
-        async let userRequest = siloAPI.currentUser()
+        async let statusRequest = weFlixAPI.apiV2Client.diagnosticsCapabilities()
+        async let userRequest = weFlixAPI.currentUser()
         let (status, user) = try await (statusRequest, userRequest)
         // Re-check the *stable* identity after the awaits: the active server
         // registry id plus the freshly fetched account user id. Comparing
@@ -514,7 +514,7 @@ actor DiagnosticsCoordinator {
         }
 
         async let capabilitiesRequest = hostedAPI.capabilities()
-        async let currentUserRequest = siloAPI.currentUser()
+        async let currentUserRequest = weFlixAPI.currentUser()
         let (capabilities, user) = try await (capabilitiesRequest, currentUserRequest)
         guard statusRefreshEpoch.isCurrent(requestGeneration, destination: .hosted),
               requestServerRegistryID == ServerRegistry.activeServerIDSnapshot,
@@ -707,7 +707,7 @@ actor DiagnosticsCoordinator {
             deleting = Set(hostedDeletionIntents)
         } else {
             // Hosted erasure bookkeeping does not govern the compatibility
-            // path to a user's own Silo server.
+            // path to a user's own WeFlix server.
             deleting = []
         }
         let reports = pendingStore.listReports(for: binding, now: Date()).filter {
@@ -754,7 +754,7 @@ actor DiagnosticsCoordinator {
 
     /// Implements the user-facing Turn Off and Delete boundary. Potentially
     /// remote hosted reports become durable UUID-only deletion intents before
-    /// their local logs are removed; retries need no Silo account/server data.
+    /// their local logs are removed; retries need no WeFlix account/server data.
     /// Self-hosted reports have no collector state, so they are purged directly
     /// and remain independent of hosted erasure-ledger health.
     @discardableResult
@@ -1045,8 +1045,8 @@ actor DiagnosticsCoordinator {
         }
         if destination == .hosted, report.state.hostedRemoteShortID != nil {
             // Once the collector has durably accepted the bytes, completion no
-            // longer depends on a fresh capability or Silo consent request.
-            // Poll first so a temporary kill switch, storage outage, or Silo
+            // longer depends on a fresh capability or WeFlix consent request.
+            // Poll first so a temporary kill switch, storage outage, or WeFlix
             // connectivity failure cannot strand a processing report locally.
             hostedNetworkCandidates[report.id] = report.binding.binding
             return await pollHostedStatus(report)
@@ -1650,7 +1650,7 @@ actor DiagnosticsCoordinator {
         }
         let serverRegistryID = requestCredentialIdentity.serverId
 
-        if let user = try? await siloAPI.currentUser(),
+        if let user = try? await weFlixAPI.currentUser(),
            Self.hostedCredentialIdentityMatches(
                expected: requestCredentialIdentity,
                current: await TokenStore.shared.refreshAccountIdentity(),
@@ -1883,7 +1883,7 @@ actor DiagnosticsCoordinator {
         let occurredAt = lastKnownAliveAt.map(DiagnosticsTimestamp.string(from:))
             ?? DiagnosticsTimestamp.string(from: capturedAt)
         let crash = DiagnosticsCrashInfo(
-            summary: "Silo did not shut down cleanly last time",
+            summary: "weflix did not shut down cleanly last time",
             stackExcerpt: nil,
             thread: nil,
             foreground: true,
@@ -1945,7 +1945,7 @@ actor DiagnosticsCoordinator {
     /// trail, which is what the tvOS abnormal-exit report is made of. Asking it
     /// "may I write?" during the pre-consent window therefore destroys the
     /// evidence before anyone reads it, and the launch breadcrumbs this
-    /// subsystem emits from `SiloApp.init` onward hit that window on every
+    /// subsystem emits from `WeFlixApp.init` onward hit that window on every
     /// cold launch. So the routing decision is made here instead:
     ///
     /// * decision not in effect -> stage in memory, leave the journal alone
@@ -2376,7 +2376,7 @@ actor DiagnosticsCoordinator {
                 return false
             }
         }
-        // The capabilities read and the account read (`SiloAPI.currentUser`)
+        // The capabilities read and the account read (`WeFlixAPI.currentUser`)
         // are v2, so their non-2xx answers arrive as `APIv2Error`; transport
         // failures stay `HTTPError`.
         if let apiError = error as? APIv2Error {
@@ -2499,7 +2499,7 @@ actor DiagnosticsCoordinator {
         ExitSentinel.shared.setCaptureEnabled {
             DiagnosticsCoordinator.breadcrumbCaptureEnabled()
         }
-        // The tvOS sentinel arms in SiloApp.init, before the first status
+        // The tvOS sentinel arms in WeFlixApp.init, before the first status
         // refresh. With no last-known snapshot the current run's marker was
         // written with binding == nil and would otherwise only be back-filled
         // on a later foreground event. Bind it now — the moment the diagnostics

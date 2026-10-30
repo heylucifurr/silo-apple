@@ -1,6 +1,6 @@
 import XCTest
 import Foundation
-@testable import Silo
+@testable import WeFlix
 
 /// Pure-logic coverage for the Downloads redesign grouping/sorting rules
 /// (`DownloadGroupBuilder`). These are the highest-risk new behaviors:

@@ -4,7 +4,7 @@ import UIKit
 #elseif canImport(AppKit)
 import AppKit
 #endif
-@testable import Silo
+@testable import WeFlix
 
 // MARK: - Contract helpers
 

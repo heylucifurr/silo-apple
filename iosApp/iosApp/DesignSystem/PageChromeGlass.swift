@@ -74,7 +74,7 @@ struct PageChromeGlass: View {
             // Extend the strip a little below the chrome and fade only that
             // extension, so the title and pills keep a full blur behind them
             // while the strip still melts into the page with no hard line.
-            .padding(.bottom, -SiloTheme.macPageChromeFadeLength)
+            .padding(.bottom, -WeFlixTheme.macPageChromeFadeLength)
             .mask {
                 VStack(spacing: 0) {
                     Color.black
@@ -83,7 +83,7 @@ struct PageChromeGlass: View {
                         startPoint: .top,
                         endPoint: .bottom
                     )
-                    .frame(height: SiloTheme.macPageChromeFadeLength)
+                    .frame(height: WeFlixTheme.macPageChromeFadeLength)
                 }
             }
             // Run under the Mac sidebar too, so the strip does not end in a
@@ -158,7 +158,7 @@ private struct PageChromeStaticGlass: View, Equatable {
                 .clipShape(shape)
         } else {
             Color.clear
-                .siloGlass(in: shape, tint: Color.black.opacity(0.10))
+                .weFlixGlass(in: shape, tint: Color.black.opacity(0.10))
                 .overlay(Color.white.opacity(0.025).clipShape(shape))
         }
     }

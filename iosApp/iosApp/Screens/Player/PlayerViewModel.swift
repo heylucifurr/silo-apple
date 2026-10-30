@@ -10,7 +10,7 @@ import UIKit
 import AppKit
 #endif
 
-/// Engine-neutral chapter projection consumed by Silo's controls.
+/// Engine-neutral chapter projection consumed by WeFlix's controls.
 struct PlayerChapterInfo: Equatable, Identifiable, Sendable {
     let index: Int
     let title: String?
@@ -246,7 +246,7 @@ class PlayerViewModel {
         return initialLibraryId
     }
     private static let logger = Logger(
-        subsystem: Bundle.main.bundleIdentifier ?? "org.siloserver.silo",
+        subsystem: Bundle.main.bundleIdentifier ?? "me.weflix",
         category: "Player"
     )
 
@@ -338,7 +338,7 @@ class PlayerViewModel {
         serverTrickplayTask = Task { [weak self] in
             let trickplay: ServerTrickplay
             do {
-                trickplay = try await SiloAPI.shared.watchTrickplay(contentId: contentId, fileId: fileId)
+                trickplay = try await WeFlixAPI.shared.watchTrickplay(contentId: contentId, fileId: fileId)
             } catch {
                 // A cancelled request was cleared, and the key may already
                 // name its replacement.
@@ -365,7 +365,7 @@ class PlayerViewModel {
         guard !Task.isCancelled, serverTrickplayKey == key else { return nil }
         let fileId = trickplay.fileId
         let sheets = ServerTrickplaySheets(trickplay) {
-            try? await SiloAPI.shared.watchTrickplay(contentId: contentId, fileId: fileId)
+            try? await WeFlixAPI.shared.watchTrickplay(contentId: contentId, fileId: fileId)
         }
         scrubPreviewProvider.serverPreviews = sheets
         return sheets
@@ -473,13 +473,13 @@ class PlayerViewModel {
         tone: .info
     )
     static let connectionLostMessage =
-        "Connection lost\nSilo couldn't reconnect to the server. Check your connection, then try again to continue where you left off."
+        "Connection lost\nweflix couldn't reconnect to the server. Check your connection, then try again to continue where you left off."
     var remoteDismissToken: UUID?
     var audioTracks: [PlayerTrack] = []
     var subtitleTracks: [PlayerTrack] = [] {
         didSet { updateSubtitleSyncActiveTrack() }
     }
-    /// Realtime AI cues stay in Silo's product layer because Aether 6.34 does
+    /// Realtime AI cues stay in WeFlix's product layer because Aether 6.34 does
     /// not expose a host cue-injection API. The presentation overlay merges
     /// these normalized source-time cues with Aether's decoded cue arrays.
     var livePrimarySubtitleCues: [LiveSubtitleCue] = []
@@ -980,7 +980,7 @@ class PlayerViewModel {
     /// Reads the file-specific markers for a reconcile. Tests replace it.
     @ObservationIgnored
     var markerDetailLoader: @MainActor (_ contentId: String, _ libraryId: Int?) async throws -> WatchDetail = {
-        try await SiloAPI.shared.watchDetail(contentId: $0, libraryId: $1)
+        try await WeFlixAPI.shared.watchDetail(contentId: $0, libraryId: $1)
     }
 
     /// Whether the realtime websocket can currently receive live AI-subtitle
@@ -2300,7 +2300,7 @@ class PlayerViewModel {
     }
 
     /// Rebuilds the committed plan with the account bearer currently held by
-    /// `SiloAPI`. Protocol V3 media URLs are stable across access-token
+    /// `WeFlixAPI`. Protocol V3 media URLs are stable across access-token
     /// refreshes, but Aether/AVPlayer freezes request headers at asset load.
     /// A normal authenticated progress request first gives the shared HTTP
     /// client a chance to refresh an expired token; the reload proceeds only
@@ -3325,8 +3325,8 @@ class PlayerViewModel {
             }
 
             do {
-                let read = try await SiloAPI.shared.homeSections()
-                let isCurrentOwner = await SiloAPI.shared.isCurrentOwner(read.auth)
+                let read = try await WeFlixAPI.shared.homeSections()
+                let isCurrentOwner = await WeFlixAPI.shared.isCurrentOwner(read.auth)
                 guard !Task.isCancelled, !self.isDisposed else { return }
                 guard isCurrentOwner else { throw HTTPError.requestIdentityChanged }
                 let response = read.response
@@ -3451,7 +3451,7 @@ class PlayerViewModel {
         return await withTaskGroup(of: (SeasonKey, [EpisodeListItem])?.self) { group in
             for key in keys {
                 group.addTask {
-                    guard let response = try? await SiloAPI.shared.episodes(
+                    guard let response = try? await WeFlixAPI.shared.episodes(
                         seriesId: key.seriesId,
                         seasonNumber: key.seasonNumber
                     ) else { return nil }
@@ -3487,7 +3487,7 @@ class PlayerViewModel {
         }
 
         do {
-            let detail = try await SiloAPI.shared.itemDetail(contentId: item.contentId)
+            let detail = try await WeFlixAPI.shared.itemDetail(contentId: item.contentId)
             if let backdropUrl = nonEmpty(detail.backdropUrl) {
                 return (backdropUrl, detail.backdropThumbhash)
             }
@@ -3512,7 +3512,7 @@ class PlayerViewModel {
         seriesTitle: String?,
         seasonNumber: Int,
         episodeNumber: Int,
-        api: SiloAPI = .shared
+        api: WeFlixAPI = .shared
     ) async throws -> PlayerNextUpEpisode? {
         let libraryId = self.libraryId
         async let seasonsTask = api.seasons(seriesId: seriesId, libraryId: libraryId)
@@ -3814,7 +3814,7 @@ class PlayerViewModel {
         )
     }
 
-    /// A quality the viewer picked in the player (or SiloRemote picked for
+    /// A quality the viewer picked in the player (or WeFlixRemote picked for
     /// them) took effect. A fixed rung holds over the connection's saved pair
     /// for the rest of this title, reloads included, and never carries to the
     /// next episode. Auto is not such a pick: it follows the saved settings
@@ -3857,7 +3857,7 @@ class PlayerViewModel {
         highlightedQualityOptionId.flatMap { id in qualityOptions.first { $0.id == id } }
     }
 
-    /// The quality SiloRemote checks and reads out: the lit row, or with none
+    /// The quality WeFlixRemote checks and reads out: the lit row, or with none
     /// the session's resolution. The remote checks whichever row matches, so
     /// a resolution a row is named after (or a server rung id Settings can't
     /// split) goes as its display name instead.
@@ -3921,7 +3921,7 @@ class PlayerViewModel {
         shuffleRefreshTask = Task { @MainActor [weak self] in
             let result: Result<APIv2Shuffle, Error>
             do {
-                result = .success(try await SiloAPI.shared.shuffle(id: shuffleId))
+                result = .success(try await WeFlixAPI.shared.shuffle(id: shuffleId))
             } catch {
                 result = .failure(error)
             }
@@ -3952,7 +3952,7 @@ class PlayerViewModel {
         shuffleTask = Task { @MainActor [weak self] in
             let result: Result<APIv2Shuffle, Error>
             do {
-                result = .success(try await SiloAPI.shared.advanceShuffle(id: shuffleId, fromContentId: playedContentId))
+                result = .success(try await WeFlixAPI.shared.advanceShuffle(id: shuffleId, fromContentId: playedContentId))
             } catch {
                 result = .failure(error)
             }
@@ -4008,7 +4008,7 @@ class PlayerViewModel {
         shuffleTask = Task { @MainActor [weak self] in
             let result: Result<APIv2Shuffle, Error>
             do {
-                result = .success(try await SiloAPI.shared.skipShuffleItem(id: shuffleId, nextContentId: nextContentId))
+                result = .success(try await WeFlixAPI.shared.skipShuffleItem(id: shuffleId, nextContentId: nextContentId))
             } catch {
                 result = .failure(error)
             }
@@ -4044,7 +4044,7 @@ class PlayerViewModel {
         cancelNextUpCountdown()
         leaveShuffle()
         stoppedShuffling = true
-        Task { try? await SiloAPI.shared.deleteShuffle(id: shuffleId) }
+        Task { try? await WeFlixAPI.shared.deleteShuffle(id: shuffleId) }
     }
 
     private func leaveShuffle() {
@@ -4317,7 +4317,7 @@ class PlayerViewModel {
                     sessionID: prepared.session.sessionId,
                     expectedAuth: owner,
                     baseHeaders: streamRequest.headers,
-                    http: SiloAPI.shared.http
+                    http: WeFlixAPI.shared.http
                 )
                 requestHeaderResolver = resolver
                 requestAuthorization = HTTPRequestAuthorization(resolver: resolver)
@@ -4326,7 +4326,7 @@ class PlayerViewModel {
                     sessionID: prepared.session.sessionId,
                     expectedAuth: owner,
                     baseHeaders: streamRequest.headers,
-                    http: SiloAPI.shared.http
+                    http: WeFlixAPI.shared.http
                 )
             } else {
                 requestAuthorization = nil
@@ -4973,7 +4973,7 @@ class PlayerViewModel {
         Task { [weak self, libraryId] in
             let detail: ItemDetail
             do {
-                detail = try await SiloAPI.shared.itemDetail(contentId: contentId, libraryId: libraryId)
+                detail = try await WeFlixAPI.shared.itemDetail(contentId: contentId, libraryId: libraryId)
             } catch {
                 Self.logger.warning(
                     "NowPlaying artwork itemDetail fetch failed for \(contentId, privacy: .public): \(String(describing: error), privacy: .public)"
@@ -5602,7 +5602,7 @@ class PlayerViewModel {
     /// own restore paths and the plan must not replace them: a local pick
     /// (`restoreLocalProtocolV3SubtitleSelection`), a sidecar this session
     /// created (`reregisterLocallyCreatedSidecarsWithAether`), and a live AI
-    /// track, which Silo's overlay renders outside the engine.
+    /// track, which WeFlix's overlay renders outside the engine.
     static func protocolV3SubtitleSelectionIsPlanOwned(
         plan: PlaybackV3Plan,
         selectedSubtitleID: Int64?,
@@ -6756,7 +6756,7 @@ class PlayerViewModel {
 
     /// While a fresh load prepares and no transport is listening yet, keeps
     /// a Play or Pause (on-screen, timeline Select and its exit, Now Playing,
-    /// SiloControl) for the replacement, and shows it, since no engine event
+    /// WeFlixControl) for the replacement, and shows it, since no engine event
     /// will. False once the load has handed the engine a transport,
     /// which then takes the command itself.
     private func holdPlayIntentForFreshLoad(_ play: Bool) -> Bool {
@@ -6767,7 +6767,7 @@ class PlayerViewModel {
     }
 
     func switchQuality(_ qualityId: String) {
-        // One switch at a time, from any surface or SiloRemote: a second
+        // One switch at a time, from any surface or WeFlixRemote: a second
         // request would race the first one's replan and clear its state.
         guard !isQualitySwitching else { return }
         let resolvedQualityId = activePreparedProtocolV3 == nil
@@ -7584,7 +7584,7 @@ class PlayerViewModel {
         if watchPartyAdapter?.request(.seek(target)) == true { return }
         // Aether deliberately parks a programmatic seek at the exact duration
         // in a paused state. TheIntroDB uses that exact bound when credits run
-        // to EOF, so complete the item through Silo's normal end/Next Up path
+        // to EOF, so complete the item through WeFlix's normal end/Next Up path
         // instead of leaving a frozen final frame.
         if duration.isFinite,
            duration > 0,
@@ -8097,7 +8097,7 @@ class PlayerViewModel {
         guard let fileId = currentSelectedVersion?.fileId else {
             throw HTTPError.invalidURL("subtitle search requires an active media file")
         }
-        return try await SiloAI.shared.searchSubtitles(
+        return try await WeFlixAI.shared.searchSubtitles(
             SubtitleSearchBody(mediaFileId: fileId, languages: languages)
         )
     }
@@ -8127,12 +8127,12 @@ class PlayerViewModel {
         let body = SubtitleDownloadBody(from: result, mediaFileId: fileId)
         return await SubtitleDownloadOutcome.resolve(
             download: {
-                let auth = try await SiloAI.shared.captureAuthority()
-                return (auth, try await SiloAI.shared.downloadSubtitle(body, auth: auth))
+                let auth = try await WeFlixAI.shared.captureAuthority()
+                return (auth, try await WeFlixAI.shared.downloadSubtitle(body, auth: auth))
             },
-            relist: { auth in try await SiloAI.shared.downloadedSubtitles(mediaFileId: fileId, auth: auth) },
+            relist: { auth in try await WeFlixAI.shared.downloadedSubtitles(mediaFileId: fileId, auth: auth) },
             isStillCurrent: { auth in
-                guard await SiloAI.shared.matchesAuthority(auth) else { return false }
+                guard await WeFlixAI.shared.matchesAuthority(auth) else { return false }
                 return self.currentSelectedVersion?.fileId == fileId
             },
             register: { listing, position in
@@ -9251,7 +9251,7 @@ class PlayerViewModel {
     /// keeps its session for the room. Returns whether the player closed.
     private func closeForBackground() -> Bool {
         guard !isDisposed, !isWatchPartyPlayback else { return false }
-        let work = BackgroundWork(name: "SiloPlayerBackgroundClose")
+        let work = BackgroundWork(name: "WeFlixPlayerBackgroundClose")
         stopAndClose()
         Task { [cleanupCompletionTask] in
             await cleanupCompletionTask?.value
@@ -9298,8 +9298,8 @@ class PlayerViewModel {
         } else {
             // Preserve legacy transport resolution without an account snapshot;
             // refreshable V3 loads require a captured owner in loadAether.
-            serverUrl = await SiloAPI.shared.currentServerUrl()
-            token = await SiloAPI.shared.currentAccessToken()
+            serverUrl = await WeFlixAPI.shared.currentServerUrl()
+            token = await WeFlixAPI.shared.currentAccessToken()
         }
         return StreamRequest.resolve(
             rawURL: session.streamUrl,
@@ -9469,7 +9469,7 @@ class PlayerViewModel {
         adoptAetherInventory()
     }
 
-    /// Sidecar track for Aether, scoped to Silo's subtitle request headers and
+    /// Sidecar track for Aether, scoped to WeFlix's subtitle request headers and
     /// the active timeline offset.
     private func makeExternalSubtitleTrack(
         url: URL,
@@ -9501,7 +9501,7 @@ class PlayerViewModel {
     }
 
     /// Aether interprets nil subtitle headers as "inherit every media header."
-    /// Always pass an explicit dictionary so Silo's bearer is shared only with
+    /// Always pass an explicit dictionary so WeFlix's bearer is shared only with
     /// the active media/server origin and never with an absolute third-party
     /// sidecar URL.
     private func aetherSubtitleRequestHeaders(for resourceURL: URL) -> [String: String] {
@@ -9537,7 +9537,7 @@ class PlayerViewModel {
         )
         recordSubtitleTrackSelectionBreadcrumb(trackId, reason: reason, viaServerReplan: false)
         if let trackId, SubtitleTrackIdSpace.isAILive(trackId) {
-            // Synthetic live cues are rendered by Silo's overlay and must
+            // Synthetic live cues are rendered by WeFlix's overlay and must
             // never be forwarded into Aether's media-track id namespace.
             aetherPlaybackController.selectSubtitleTrack(id: nil)
         } else {
@@ -9962,7 +9962,7 @@ class PlayerViewModel {
     /// iOS 26's Automatic Subtitles turn captions on with no read API behind
     /// them, so the engine forwarding the ask is the only observable signal.
     /// Aether has already deselected its own rendition by the time this lands —
-    /// a fullscreen native caption box would draw over Silo's overlay — so the
+    /// a fullscreen native caption box would draw over WeFlix's overlay — so the
     /// host answers by selecting its own matching track. No match is a no-op:
     /// the contract is "select a matching track", not "turn something on".
     private func handleSystemCaptionRequest(
@@ -10298,7 +10298,7 @@ class PlayerViewModel {
 
 }
 
-private enum SiloControlPlayerError: LocalizedError {
+private enum WeFlixControlPlayerError: LocalizedError {
     case watchPartyControlUnavailable
     case missingSeekPosition
     case missingTrackId
@@ -10344,7 +10344,7 @@ extension PlayerViewModel {
     /// its temporary profile alive. This uses the same session transition as
     /// Next Up rather than dismissing and presenting another player view.
     @MainActor
-    func replaceSiloControlPlayback(_ request: SiloControlPlaybackRequest) {
+    func replaceWeFlixControlPlayback(_ request: WeFlixControlPlaybackRequest) {
         guard !isDisposed, !isWatchPartyPlayback else { return }
         leaveShuffle()
         title = ""
@@ -10365,15 +10365,15 @@ extension PlayerViewModel {
     }
 
     @MainActor
-    func applySiloControlCommand(_ command: SiloControlCommand) throws {
+    func applyWeFlixControlCommand(_ command: WeFlixControlCommand) throws {
         if isWatchPartyPlayback {
             switch command.name {
             case .play, .pause, .playPause:
-                guard canRequestPlayPause else { throw SiloControlPlayerError.watchPartyControlUnavailable }
+                guard canRequestPlayPause else { throw WeFlixControlPlayerError.watchPartyControlUnavailable }
             case .seek:
-                guard canRequestSeek else { throw SiloControlPlayerError.watchPartyControlUnavailable }
+                guard canRequestSeek else { throw WeFlixControlPlayerError.watchPartyControlUnavailable }
             case .setPlaybackSpeed, .playNext:
-                throw SiloControlPlayerError.watchPartyControlUnavailable
+                throw WeFlixControlPlayerError.watchPartyControlUnavailable
             default: break
             }
         }
@@ -10388,7 +10388,7 @@ extension PlayerViewModel {
             togglePlayPause()
         case .seek:
             guard let seconds = command.seconds else {
-                throw SiloControlPlayerError.missingSeekPosition
+                throw WeFlixControlPlayerError.missingSeekPosition
             }
             seekTo(seconds: seconds)
         case .stop:
@@ -10397,10 +10397,10 @@ extension PlayerViewModel {
             requestRemoteDismiss()
         case .selectAudioTrack:
             guard let trackId = command.trackId else {
-                throw SiloControlPlayerError.missingTrackId
+                throw WeFlixControlPlayerError.missingTrackId
             }
             guard let track = audioTracks.first(where: { $0.trackId == trackId }) else {
-                throw SiloControlPlayerError.trackNotFound
+                throw WeFlixControlPlayerError.trackNotFound
             }
             selectAudio(track)
         case .selectSubtitleTrack:
@@ -10409,51 +10409,51 @@ extension PlayerViewModel {
                 return
             }
             guard let track = subtitleTracks.first(where: { $0.trackId == trackId }) else {
-                throw SiloControlPlayerError.trackNotFound
+                throw WeFlixControlPlayerError.trackNotFound
             }
             selectSubtitle(track)
         case .setPlaybackSpeed:
             guard let speed = command.speed, speed.isFinite, speed > 0 else {
-                throw SiloControlPlayerError.missingSpeed
+                throw WeFlixControlPlayerError.missingSpeed
             }
             setPlaybackSpeed(speed)
         case .setQuality:
             guard let value = command.value else {
-                throw SiloControlPlayerError.missingValue
+                throw WeFlixControlPlayerError.missingValue
             }
             guard !isQualitySwitching else {
-                throw SiloControlPlayerError.qualitySwitchInProgress
+                throw WeFlixControlPlayerError.qualitySwitchInProgress
             }
             switchQuality(value)
         case .setVideoGravity:
             guard let value = command.value else {
-                throw SiloControlPlayerError.missingValue
+                throw WeFlixControlPlayerError.missingValue
             }
             guard let gravity = VideoGravity(rawValue: value) else {
-                throw SiloControlPlayerError.invalidVideoGravity
+                throw WeFlixControlPlayerError.invalidVideoGravity
             }
             setVideoGravity(gravity)
         case .setSubtitleSyncMs:
             guard let milliseconds = command.milliseconds else {
-                throw SiloControlPlayerError.missingMilliseconds
+                throw WeFlixControlPlayerError.missingMilliseconds
             }
             setSubtitleSyncMilliseconds(milliseconds)
         case .setSubtitlePosition:
             guard let value = command.value else {
-                throw SiloControlPlayerError.missingValue
+                throw WeFlixControlPlayerError.missingValue
             }
             guard let position = SubtitlePositionPreset(rawValue: value) else {
-                throw SiloControlPlayerError.invalidSubtitlePosition
+                throw WeFlixControlPlayerError.invalidSubtitlePosition
             }
             setSubtitlePosition(position)
         case .setVolume:
             guard let volume = command.volume, volume.isFinite else {
-                throw SiloControlPlayerError.missingValue
+                throw WeFlixControlPlayerError.missingValue
             }
             applyUserVolume(Float(volume))
         case .setMuted:
             guard let enabled = command.enabled else {
-                throw SiloControlPlayerError.missingEnabledValue
+                throw WeFlixControlPlayerError.missingEnabledValue
             }
             applyUserMuted(enabled)
         case .playNext:
@@ -10462,7 +10462,7 @@ extension PlayerViewModel {
     }
 
     @MainActor
-    func makeSiloControlPlaybackState(contentId: String?) -> SiloControlPlaybackState {
+    func makeWeFlixControlPlaybackState(contentId: String?) -> WeFlixControlPlaybackState {
         let liveContentId = lastLoadRequest?.contentId ?? contentId
         // Keep the outgoing timeline internally for its final progress save,
         // but don't publish it under a selection that hasn't been prepared.
@@ -10476,7 +10476,7 @@ extension PlayerViewModel {
             }
             .joined(separator: " · ")
 
-        return SiloControlPlaybackState(
+        return WeFlixControlPlaybackState(
             contentId: liveContentId,
             sessionId: hasPreparedContent ? activePlaybackSessionId : nil,
             title: titleText.isEmpty ? "Loading" : titleText,
@@ -10486,11 +10486,11 @@ extension PlayerViewModel {
             isBuffering: hasPreparedContent && isBuffering,
             currentTime: hasPreparedContent ? currentTime : 0,
             duration: hasPreparedContent ? duration : 0,
-            audioTracks: makeSiloControlTracks(audioTracks),
-            subtitleTracks: makeSiloControlTracks(subtitleTracks),
+            audioTracks: makeWeFlixControlTracks(audioTracks),
+            subtitleTracks: makeWeFlixControlTracks(subtitleTracks),
             selectedAudioTrackId: selectedAudioId,
             selectedSubtitleTrackId: selectedSubtitleId,
-            qualityOptions: hasQualityChoice ? qualityOptions.map(makeSiloControlOption) : [],
+            qualityOptions: hasQualityChoice ? qualityOptions.map(makeWeFlixControlOption) : [],
             activeQualityId: remoteActiveQualityId,
             isQualitySwitching: isQualitySwitching,
             playbackSpeed: effectivePlaybackSpeed,
@@ -10509,12 +10509,12 @@ extension PlayerViewModel {
         )
     }
 
-    private func makeSiloControlTracks(_ tracks: [PlayerTrack]) -> [SiloControlTrack] {
+    private func makeWeFlixControlTracks(_ tracks: [PlayerTrack]) -> [WeFlixControlTrack] {
         // Rows lead with the language, so the title also carries what tells
         // same-language tracks apart ("English (Commentary)"): remotes show
         // only the title.
         zip(tracks, PlayerTrack.singleLineLabels(tracks)).map { track, title in
-            SiloControlTrack(
+            WeFlixControlTrack(
                 kind: track.kind.rawValue,
                 trackId: track.trackId,
                 title: title,
@@ -10523,8 +10523,8 @@ extension PlayerViewModel {
         }
     }
 
-    private func makeSiloControlOption(_ option: ApplePlaybackQualityOption) -> SiloControlOption {
-        SiloControlOption(
+    private func makeWeFlixControlOption(_ option: ApplePlaybackQualityOption) -> WeFlixControlOption {
+        WeFlixControlOption(
             id: option.id,
             label: option.labelWithBitrate,
             detail: option.subtitle
@@ -11216,7 +11216,7 @@ extension PlayerViewModel {
 
     #if os(macOS)
     /// The Mac player's own window can or can't be seen: minimized, hidden
-    /// with the app, on another Space or covered, whatever other Silo
+    /// with the app, on another Space or covered, whatever other WeFlix
     /// windows show.
     func playerWindowVisibilityChanged(_ visible: Bool) {
         isPlayerSurfaceHidden = !visible
@@ -11710,11 +11710,11 @@ private final class LiveSubtitlePlaybackAdapter: LivePlaybackControls {
 /// `LiveSubtitleSink` over the VM's live-track primitives, selection plumbing,
 /// completion handoff, and notice surface. Owns the per-`track_key`
 /// normalized `LiveSubtitleTrack` converters and the `track_key → ordinal`
-/// mapping before publishing source-time cues to Silo's overlay.
+/// mapping before publishing source-time cues to WeFlix's overlay.
 @MainActor
 private final class LiveSubtitleSinkAdapter: LiveSubtitleSink {
     private static let logger = Logger(
-        subsystem: Bundle.main.bundleIdentifier ?? "org.siloserver.silo",
+        subsystem: Bundle.main.bundleIdentifier ?? "me.weflix",
         category: "LiveSubtitle"
     )
 
@@ -11762,7 +11762,7 @@ private final class LiveSubtitleSinkAdapter: LiveSubtitleSink {
 
     func feedCue(_ cue: PlaybackRealtimeSubtitleCue) {
         guard let owner, let key = installedTrackKey else { return }
-        // Realtime cue timestamps are already absolute Silo source time.
+        // Realtime cue timestamps are already absolute WeFlix source time.
         guard var converter = converters[key] else { return }
         let converted = converter.makeCue(start: cue.start, end: cue.end, text: cue.text)
         converters[key] = converter // persist dedupe state (value type)

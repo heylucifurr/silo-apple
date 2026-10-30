@@ -24,8 +24,8 @@ struct SubtitleSettingsView: View {
         }
         .settingsListChrome()
         .navigationTitle("Subtitles")
-        .siloNavigationTitleDisplayMode(.inline)
-        .siloToolbarColorSchemeDark()
+        .weFlixNavigationTitleDisplayMode(.inline)
+        .weFlixToolbarColorSchemeDark()
     }
 
     // MARK: - Metadata language (server-backed, AI-gated)
@@ -48,17 +48,17 @@ struct SubtitleSettingsView: View {
                     Text(option.label).tag(option.code)
                 }
             }
-            .foregroundStyle(Color.siloOnSurface)
+            .foregroundStyle(Color.weFlixOnSurface)
             .settingsPickerStyle()
         } header: {
             Text("Metadata")
-                .foregroundStyle(Color.siloSecondaryText)
+                .foregroundStyle(Color.weFlixSecondaryText)
         } footer: {
             Text("Translates descriptions and taglines into your preferred language when available. Titles are never translated.")
-                .foregroundStyle(Color.siloSecondaryText)
+                .foregroundStyle(Color.weFlixSecondaryText)
         }
         .disabled(viewModel.prefs.serverUpgradeRequired)
-        .listRowBackground(Color.siloGroupedCell)
+        .listRowBackground(Color.weFlixGroupedCell)
     }
 
     // MARK: - Profile prefs (server-backed)
@@ -81,7 +81,7 @@ struct SubtitleSettingsView: View {
                     Text(option.label).tag(option.code)
                 }
             }
-            .foregroundStyle(Color.siloOnSurface)
+            .foregroundStyle(Color.weFlixOnSurface)
             .settingsPickerStyle()
 
             Picker(
@@ -95,7 +95,7 @@ struct SubtitleSettingsView: View {
                     Text(mode.displayLabel).tag(mode.rawValue)
                 }
             }
-            .foregroundStyle(Color.siloOnSurface)
+            .foregroundStyle(Color.weFlixOnSurface)
             .settingsPickerStyle()
 
             Toggle(
@@ -105,23 +105,23 @@ struct SubtitleSettingsView: View {
                     set: { isOn in Task { await viewModel.prefs.setShowForcedSubtitles(isOn) } }
                 )
             )
-            .foregroundStyle(Color.siloOnSurface)
-            .tint(.siloSwitchOn)
+            .foregroundStyle(Color.weFlixOnSurface)
+            .tint(.weFlixSwitchOn)
         } header: {
             Text("Profile")
-                .foregroundStyle(Color.siloSecondaryText)
+                .foregroundStyle(Color.weFlixSecondaryText)
         } footer: {
             VStack(alignment: .leading, spacing: 6) {
                 if viewModel.subtitleMatchesSystemAppearance {
                     Text("Language, display behavior, forced captions, and CC/SDH preference follow this device's Accessibility settings.")
                 } else if viewModel.prefs.serverUpgradeRequired {
                     Text(ProfilePrefsEditor.serverUpgradeMessage)
-                        .foregroundStyle(Color.siloError)
+                        .foregroundStyle(Color.weFlixError)
                 } else {
                     Text("Used to pick a matching track when one is available. Forced subtitles cover foreign-language dialogue even when subtitles are off or set to auto.")
                     if let overrideMessage = viewModel.prefs.subtitleProfileOverrideMessage {
                         Text("Override active — \(overrideMessage)")
-                            .foregroundStyle(Color.siloWarning)
+                            .foregroundStyle(Color.weFlixWarning)
                     }
                 }
                 if let state = viewModel.prefs.saveState,
@@ -129,10 +129,10 @@ struct SubtitleSettingsView: View {
                     saveStateView(state)
                 }
             }
-            .foregroundStyle(Color.siloSecondaryText)
+            .foregroundStyle(Color.weFlixSecondaryText)
         }
         .disabled(viewModel.prefs.serverUpgradeRequired || viewModel.subtitleMatchesSystemAppearance)
-        .listRowBackground(Color.siloGroupedCell)
+        .listRowBackground(Color.weFlixGroupedCell)
     }
 
     // MARK: - Appearance (profile, with an optional device override)
@@ -148,14 +148,14 @@ struct SubtitleSettingsView: View {
                 .listRowInsets(EdgeInsets())
         } header: {
             Text("Appearance")
-                .foregroundStyle(Color.siloSecondaryText)
+                .foregroundStyle(Color.weFlixSecondaryText)
         } footer: {
             if !manualEditingDisabled && viewModel.subtitleAppearance.isLowLegibilityRisk {
                 Text("Low legibility — very transparent or dark text without a box or outline can be hard to read.")
-                    .foregroundStyle(Color.siloError)
+                    .foregroundStyle(Color.weFlixError)
             }
         }
-        .listRowBackground(Color.siloGroupedCell)
+        .listRowBackground(Color.weFlixGroupedCell)
 
         Section {
             Toggle(
@@ -165,8 +165,8 @@ struct SubtitleSettingsView: View {
                     set: { viewModel.setSubtitleMatchesSystemAppearance($0) }
                 )
             )
-            .foregroundStyle(Color.siloOnSurface)
-            .tint(.siloSwitchOn)
+            .foregroundStyle(Color.weFlixOnSurface)
+            .tint(.weFlixSwitchOn)
 
             Toggle(
                 "Only on This Device",
@@ -177,8 +177,8 @@ struct SubtitleSettingsView: View {
                     }
                 )
             )
-            .foregroundStyle(Color.siloOnSurface)
-            .tint(.siloSwitchOn)
+            .foregroundStyle(Color.weFlixOnSurface)
+            .tint(.weFlixSwitchOn)
             .disabled(manualEditingDisabled)
         } footer: {
             VStack(alignment: .leading, spacing: 6) {
@@ -195,9 +195,9 @@ struct SubtitleSettingsView: View {
                     Text("Subtitles with their own built-in styling keep their original appearance; image-based subtitles keep their authored fonts and colors but follow the size, position, and background settings.")
                 }
             }
-            .foregroundStyle(Color.siloSecondaryText)
+            .foregroundStyle(Color.weFlixSecondaryText)
         }
-        .listRowBackground(Color.siloGroupedCell)
+        .listRowBackground(Color.weFlixGroupedCell)
 
         Section {
             Picker("Font Size", selection: appearanceBinding(\.fontSize)) {
@@ -205,7 +205,7 @@ struct SubtitleSettingsView: View {
                     Text(option.label).tag(option)
                 }
             }
-            .foregroundStyle(Color.siloOnSurface)
+            .foregroundStyle(Color.weFlixOnSurface)
             .settingsPickerStyle()
 
             Picker("Font Family", selection: appearanceBinding(\.fontFamily)) {
@@ -213,7 +213,7 @@ struct SubtitleSettingsView: View {
                     Text(option.label).tag(option)
                 }
             }
-            .foregroundStyle(Color.siloOnSurface)
+            .foregroundStyle(Color.weFlixOnSurface)
             .settingsPickerStyle()
 
             ColorChoicePicker(
@@ -234,12 +234,12 @@ struct SubtitleSettingsView: View {
                     next.textOpacity = newValue
                     Task { await viewModel.setSubtitleAppearance(next) }
                 }
-                .foregroundStyle(Color.siloOnSurface)
+                .foregroundStyle(Color.weFlixOnSurface)
             }
 
             Toggle("Text Outline", isOn: appearanceBinding(\.textOutline))
-                .foregroundStyle(Color.siloOnSurface)
-                .tint(.siloSwitchOn)
+                .foregroundStyle(Color.weFlixOnSurface)
+                .tint(.weFlixSwitchOn)
 
             ColorChoicePicker(
                 title: "Outline Color",
@@ -250,9 +250,9 @@ struct SubtitleSettingsView: View {
             .opacity(viewModel.subtitleAppearance.textOutline ? 1 : 0.45)
         } header: {
             Text("Text")
-                .foregroundStyle(Color.siloSecondaryText)
+                .foregroundStyle(Color.weFlixSecondaryText)
         }
-        .listRowBackground(Color.siloGroupedCell)
+        .listRowBackground(Color.weFlixGroupedCell)
         .disabled(manualEditingDisabled)
         .opacity(manualEditingDisabled ? 0.45 : 1)
 
@@ -262,7 +262,7 @@ struct SubtitleSettingsView: View {
                     Text(option.label).tag(option)
                 }
             }
-            .foregroundStyle(Color.siloOnSurface)
+            .foregroundStyle(Color.weFlixOnSurface)
             .settingsPickerStyle()
 
             opacityRow
@@ -278,9 +278,9 @@ struct SubtitleSettingsView: View {
             .opacity(viewModel.subtitleAppearance.backgroundStyle == .box ? 1 : 0.45)
         } header: {
             Text("Background")
-                .foregroundStyle(Color.siloSecondaryText)
+                .foregroundStyle(Color.weFlixSecondaryText)
         }
-        .listRowBackground(Color.siloGroupedCell)
+        .listRowBackground(Color.weFlixGroupedCell)
         .disabled(manualEditingDisabled)
         .opacity(manualEditingDisabled ? 0.45 : 1)
 
@@ -290,13 +290,13 @@ struct SubtitleSettingsView: View {
                     Text(option.label).tag(option)
                 }
             }
-            .foregroundStyle(Color.siloOnSurface)
+            .foregroundStyle(Color.weFlixOnSurface)
             .settingsPickerStyle()
         } header: {
             Text("Layout")
-                .foregroundStyle(Color.siloSecondaryText)
+                .foregroundStyle(Color.weFlixSecondaryText)
         }
-        .listRowBackground(Color.siloGroupedCell)
+        .listRowBackground(Color.weFlixGroupedCell)
         .disabled(manualEditingDisabled)
         .opacity(manualEditingDisabled ? 0.45 : 1)
     }
@@ -330,7 +330,7 @@ struct SubtitleSettingsView: View {
             next.backgroundOpacity = newValue
             Task { await viewModel.setSubtitleAppearance(next) }
         }
-        .foregroundStyle(Color.siloOnSurface)
+        .foregroundStyle(Color.weFlixOnSurface)
     }
 
     private func appearanceBinding<Value: Equatable>(
@@ -356,13 +356,13 @@ struct SubtitleSettingsView: View {
             Text("Saved")
         case .failed(let message):
             Text("Couldn't save: \(message)")
-                .foregroundStyle(Color.siloError)
+                .foregroundStyle(Color.weFlixError)
         case .serverUpgradeRequired:
             Text(ProfilePrefsEditor.serverUpgradeMessage)
-                .foregroundStyle(Color.siloError)
+                .foregroundStyle(Color.weFlixError)
         case .held:
             Text("Not saved. Try again or discard the change below.")
-                .foregroundStyle(Color.siloWarning)
+                .foregroundStyle(Color.weFlixWarning)
         }
     }
 }
@@ -385,7 +385,7 @@ private struct ColorChoicePicker: View {
                         .frame(width: 22, height: 22)
                         .overlay(
                             Circle()
-                                .stroke(Color.siloSecondaryText.opacity(0.35), lineWidth: 1)
+                                .stroke(Color.weFlixSecondaryText.opacity(0.35), lineWidth: 1)
                         )
                     Text(color.label)
                 }
@@ -393,7 +393,7 @@ private struct ColorChoicePicker: View {
             }
         } label: {
             Text(title)
-                .foregroundStyle(Color.siloOnSurface)
+                .foregroundStyle(Color.weFlixOnSurface)
         }
         .settingsPickerStyle()
     }

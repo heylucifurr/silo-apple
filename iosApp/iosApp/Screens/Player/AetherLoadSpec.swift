@@ -127,13 +127,13 @@ struct AetherLoadSpec {
     let options: LoadOptions
     let audioSourceStreamIndex: Int32?
     /// App-facing ids for `options.externalSubtitles`, positionally parallel to
-    /// that array — element `i` is the Silo id of `options.externalSubtitles[i]`,
-    /// and `nil` means "this declared track has no stable Silo id".
+    /// that array — element `i` is the WeFlix id of `options.externalSubtitles[i]`,
+    /// and `nil` means "this declared track has no stable weflix id".
     ///
     /// Aether assigns its own ids sequentially from `externalSubtitleTrackIDBase`
     /// in declaration order, so the controller can only translate an alias by
     /// position. That makes the parallel-arrays invariant load-bearing: an entry
-    /// here that Aether was never asked to register binds a Silo id to the Aether
+    /// here that Aether was never asked to register binds a WeFlix id to the Aether
     /// id of some *other* sidecar (the first one registered later), which is how
     /// picking "English" ends up rendering the first sidecar in the plan. Both
     /// arrays are therefore built at a single append site.
@@ -395,7 +395,7 @@ struct AetherLoadSpec {
             throw ValidationError.invalidStreamURL(plan.stream.url)
         }
         let timeline = try PlaybackTimelineMapper(validating: plan.timeline)
-        // `StreamRequest` adds the current Silo bearer to the plan-provided
+        // `StreamRequest` adds the current WeFlix bearer to the plan-provided
         // headers. Its merged value is authoritative for both the media and
         // same-origin subtitle artifacts; falling back to the wire-plan value
         // keeps the pure mapper independently usable in tests.
@@ -412,7 +412,7 @@ struct AetherLoadSpec {
             }
         }
 
-        // Declared tracks and their Silo aliases are appended together so the
+        // Declared tracks and their WeFlix aliases are appended together so the
         // two arrays cannot drift: an alias without a declared track shifts
         // every later Aether external id by one.
         var externalSubtitles: [ExternalSubtitleTrack] = []
@@ -462,7 +462,7 @@ struct AetherLoadSpec {
                 nativeTimelineOffsetSeconds: plan.timeline.timelineOffsetSeconds
             ))
             // A declared artifact the inventory does not name has no stable
-            // Silo id; leaving the slot empty keeps the arrays parallel and
+            // WeFlix id; leaving the slot empty keeps the arrays parallel and
             // lets the controller fall back to Aether's own id for it.
             externalSubtitleAppTrackIDs.append(inventoryItem.map { item in
                 SubtitleTrackIdSpace.makeSidecarTrackId(urlIndex: item.combinedIndex)

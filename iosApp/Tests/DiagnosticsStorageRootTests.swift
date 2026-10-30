@@ -1,7 +1,7 @@
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
-// SiloTests currently runs on iOS. The tvOS branch documents its expected
+// WeFlixTests currently runs on iOS. The tvOS branch documents its expected
 // storage policy but only becomes executable coverage in a tvOS test bundle.
 final class DiagnosticsStorageRootTests: XCTestCase {
     func testBaseDirectoryMatchesPlatformStorageDirectory() {

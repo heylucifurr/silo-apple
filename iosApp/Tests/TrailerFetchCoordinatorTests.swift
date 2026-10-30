@@ -1,9 +1,9 @@
 //
 //  TrailerFetchCoordinatorTests.swift
-//  SiloTests
+//  WeFlixTests
 //
 //  State-machine tests for `TrailerFetchCoordinator` driven entirely by
-//  scripted closures (the `AIJobPollerTests` approach): no `SiloAPI`,
+//  scripted closures (the `AIJobPollerTests` approach): no `WeFlixAPI`,
 //  no network, no timers longer than a few milliseconds. Covers each of the
 //  server's three outcomes, the "found" detection, exhaustion via the
 //  settle counter, and `stop()` mid-poll.
@@ -14,7 +14,7 @@
 
 import XCTest
 import Foundation
-@testable import Silo
+@testable import WeFlix
 
 @MainActor
 final class TrailerFetchCoordinatorTests: XCTestCase {

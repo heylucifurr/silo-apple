@@ -1,6 +1,6 @@
 //
 //  PlayerLog.swift
-//  Silo (iOS + tvOS)
+//  WeFlix (iOS + tvOS)
 //
 //  Single emission point for `[CMP-…]` player traces: stdout for
 //  `devicectl --console`, plus the diagnostics ring.

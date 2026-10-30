@@ -1,6 +1,6 @@
 import Foundation
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 final class MediaRequestAuthorizationTests: XCTestCase {
     private struct Harness {

@@ -2,7 +2,7 @@ import AetherEngine
 import AVFoundation
 import Foundation
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 @MainActor
 final class MediaAuthorizationPlaybackTests: XCTestCase {

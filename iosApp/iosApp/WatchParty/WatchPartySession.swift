@@ -98,7 +98,7 @@ final class WatchPartySession {
     @ObservationIgnored private var lastCommandCompleted: Date = .distantPast
     @ObservationIgnored private var mutationSequence: UInt64 = 0
 
-    init(api: APIv2Client = SiloAPI.shared.apiV2Client, tokenStore: TokenStore = .shared,
+    init(api: APIv2Client = WeFlixAPI.shared.apiV2Client, tokenStore: TokenStore = .shared,
          recentStore: WatchPartyRecentStore = WatchPartyRecentStore()) {
         self.api = api
         self.tokenStore = tokenStore
@@ -1118,7 +1118,7 @@ final class WatchPartySession {
             do {
                 // The room draws its backdrop across the whole window, like a detail hero.
                 let detail = try await self.api.catalogItem(id: contentId, libraryId: room.selectedLibraryId,
-                                                            artwork: await SiloAPI.shared.artworkQuery(.detail, slotWidthsOnly: true), auth: auth)
+                                                            artwork: await WeFlixAPI.shared.artworkQuery(.detail, slotWidthsOnly: true), auth: auth)
                 var item = WatchPartySelectedItem(detail)
                 // Servers with `episode_parent_artwork` already put the
                 // season or series poster on the episode.
@@ -1154,14 +1154,14 @@ final class WatchPartySession {
                             auth: CapturedOrdinaryRequestAuth) async -> (url: String, thumbhash: String?)? {
         if let seasonNumber,
            let seasons = try? await api.catalogSeasons(seriesId: seriesId, libraryId: libraryId,
-                                                        artwork: await SiloAPI.shared.artworkQuery(.seasons, slotWidthsOnly: true), auth: auth),
+                                                        artwork: await WeFlixAPI.shared.artworkQuery(.seasons, slotWidthsOnly: true), auth: auth),
            let season = seasons.first(where: { $0.seasonNumber == seasonNumber }),
            let url = season.posterUrl, !url.isEmpty {
             return (url, season.posterThumbhash)
         }
         guard !Task.isCancelled,
               let series = try? await api.catalogItem(id: seriesId, libraryId: libraryId,
-                                                      artwork: await SiloAPI.shared.artworkQuery(.cards, slotWidthsOnly: true), auth: auth),
+                                                      artwork: await WeFlixAPI.shared.artworkQuery(.cards, slotWidthsOnly: true), auth: auth),
               let url = series.posterUrl, !url.isEmpty else { return nil }
         return (url, series.posterThumbhash)
     }

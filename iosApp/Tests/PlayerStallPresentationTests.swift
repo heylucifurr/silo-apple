@@ -1,6 +1,6 @@
 import AetherEngine
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 /// A dropped source connection is not a stall while the player still plays
 /// from its read-ahead buffer.

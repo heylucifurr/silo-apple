@@ -90,7 +90,7 @@ extension APIv2Client {
 
     /// `GET /api/v2/playback/connection`, answered with 200: this device's
     /// learned limit on the connection it is using now. The server keys it by
-    /// the `X-Silo-Device-Id` every request carries. Served only by a server
+    /// the `X-WeFlix-Device-Id` every request carries. Served only by a server
     /// that advertises `buffering_quality_v1`.
     func playbackConnection(auth: CapturedOrdinaryRequestAuth) async throws -> APIv2PlaybackConnection {
         let raw = try await playbackRequest(method: "GET", suffix: "/connection", auth: auth)

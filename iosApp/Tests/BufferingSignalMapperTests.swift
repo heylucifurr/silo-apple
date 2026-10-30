@@ -2,7 +2,7 @@ import AetherEngine
 import AVFoundation
 import UIKit
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 /// Which playback facts reach the buffering controller as a stall, and which
 /// as one of the spec's exclusions (seek, pause, end, reload, outage).

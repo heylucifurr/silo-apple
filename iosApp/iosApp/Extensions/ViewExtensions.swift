@@ -5,7 +5,7 @@ import SwiftUI
 /// The shared signed-in page canvas. On iOS it is a fixed, fully opaque
 /// charcoal wash with static tonal depth; it never samples page artwork.
 /// Other platforms retain their existing pure-black canvas.
-struct SiloPageBackdrop: View {
+struct WeFlixPageBackdrop: View {
     #if os(iOS)
     @Environment(\.displayScale) private var displayScale
     #endif
@@ -14,11 +14,11 @@ struct SiloPageBackdrop: View {
         #if os(iOS)
         GeometryReader { geo in
             ZStack {
-                Color.siloPageCanvas
-                if let wash = SiloPageWash.image(size: geo.size, scale: displayScale) {
+                Color.weFlixPageCanvas
+                if let wash = WeFlixPageWash.image(size: geo.size, scale: displayScale) {
                     // Drawn at its own size, which can run past the page's
-                    // bottom and right edges; see `SiloPageWash.sizeStep`.
-                    Image(decorative: wash, scale: displayScale / SiloPageWash.downsample)
+                    // bottom and right edges; see `WeFlixPageWash.sizeStep`.
+                    Image(decorative: wash, scale: displayScale / WeFlixPageWash.downsample)
                         .interpolation(.none)
                         .frame(width: geo.size.width, height: geo.size.height, alignment: .topLeading)
                         .clipped()
@@ -29,12 +29,12 @@ struct SiloPageBackdrop: View {
         .allowsHitTesting(false)
         .accessibilityHidden(true)
         #elseif os(macOS)
-        Color.siloPageCanvas
+        Color.weFlixPageCanvas
             .ignoresSafeArea()
             .allowsHitTesting(false)
             .accessibilityHidden(true)
         #else
-        Color.siloBackground
+        Color.weFlixBackground
             .ignoresSafeArea()
             .allowsHitTesting(false)
             .accessibilityHidden(true)
@@ -48,7 +48,7 @@ struct SiloPageBackdrop: View {
 /// visible rings. Here each pixel is computed in floating point and dithered
 /// before rounding, which keeps the ramp smooth without changing its tone.
 @MainActor
-enum SiloPageWash {
+enum WeFlixPageWash {
     /// Pixels per bitmap pixel. The noise is invisible at 2×2 on phone
     /// displays and this quarters the work.
     static let downsample: CGFloat = 2
@@ -93,7 +93,7 @@ enum SiloPageWash {
         pointsPerPixel: CGFloat
     ) -> CGImage? {
         var red: CGFloat = 0, green: CGFloat = 0, blue: CGFloat = 0, alpha: CGFloat = 0
-        UIColor(Color.siloPageCanvas).getRed(&red, green: &green, blue: &blue, alpha: &alpha)
+        UIColor(Color.weFlixPageCanvas).getRed(&red, green: &green, blue: &blue, alpha: &alpha)
         let base = Float(red + green + blue) / 3
 
         let centerX = Float(layout.width) * 0.46
@@ -145,35 +145,35 @@ enum SiloPageWash {
 }
 #endif
 
-enum SiloNavigationTitleDisplayMode {
+enum WeFlixNavigationTitleDisplayMode {
     case automatic
     case inline
     case large
 }
 
 extension View {
-    /// Apply the original pure-black Silo canvas.
-    func siloBackground() -> some View {
-        self.background(Color.siloBackground.ignoresSafeArea())
+    /// Apply the original pure-black WeFlix canvas.
+    func weFlixBackground() -> some View {
+        self.background(Color.weFlixBackground.ignoresSafeArea())
     }
 
     /// Apply the fixed charcoal page canvas without changing semantic black
     /// ink used by controls, artwork masks, Settings, or media surfaces.
-    func siloPageBackground() -> some View {
+    func weFlixPageBackground() -> some View {
         self.background {
-            SiloPageBackdrop()
+            WeFlixPageBackdrop()
         }
     }
 
     /// Let modern iOS sheets supply their adaptive material; retain the
     /// existing page canvas on older systems and other platforms.
     @ViewBuilder
-    func siloSheetBackground(legacyColor: Color? = nil) -> some View {
+    func weFlixSheetBackground(legacyColor: Color? = nil) -> some View {
         let legacyBackdrop = Group {
             if let legacyColor {
                 legacyColor.ignoresSafeArea()
             } else {
-                SiloPageBackdrop()
+                WeFlixPageBackdrop()
             }
         }
         #if os(iOS)
@@ -188,7 +188,7 @@ extension View {
     }
 
     @ViewBuilder
-    func siloNavigationTitleDisplayMode(_ mode: SiloNavigationTitleDisplayMode) -> some View {
+    func weFlixNavigationTitleDisplayMode(_ mode: WeFlixNavigationTitleDisplayMode) -> some View {
         #if os(tvOS) || os(macOS)
         self
         #else
@@ -204,7 +204,7 @@ extension View {
     }
 
     @ViewBuilder
-    func siloScrollContentBackgroundHidden() -> some View {
+    func weFlixScrollContentBackgroundHidden() -> some View {
         #if os(tvOS)
         self
         #else
@@ -216,7 +216,7 @@ extension View {
     /// floating bar. iOS 18 keeps its legacy edge treatment; tvOS remains a
     /// no-op because it has no floating bars in the 10-foot UI.
     @ViewBuilder
-    func siloScrollEdgeEffect() -> some View {
+    func weFlixScrollEdgeEffect() -> some View {
         #if os(tvOS)
         self
         #elseif os(iOS)
@@ -233,7 +233,7 @@ extension View {
     /// Keeps the native minimizing tab bar on iOS 26 while leaving the fixed
     /// iOS 18 tab bar unchanged.
     @ViewBuilder
-    func siloTabBarMinimizeOnScroll() -> some View {
+    func weFlixTabBarMinimizeOnScroll() -> some View {
         #if os(iOS)
         if #available(iOS 26.0, *) {
             self.tabBarMinimizeBehavior(.onScrollDown)
@@ -246,7 +246,7 @@ extension View {
     }
 
     @ViewBuilder
-    func siloStatusBarHidden() -> some View {
+    func weFlixStatusBarHidden() -> some View {
         #if os(tvOS) || os(macOS)
         self
         #else
@@ -255,7 +255,7 @@ extension View {
     }
 
     @ViewBuilder
-    func siloToolbarColorSchemeDark() -> some View {
+    func weFlixToolbarColorSchemeDark() -> some View {
         #if os(tvOS) || os(macOS)
         self
         #else
@@ -264,7 +264,7 @@ extension View {
     }
 
     @ViewBuilder
-    func siloNavigationBarSurfaceBackground() -> some View {
+    func weFlixNavigationBarSurfaceBackground() -> some View {
         #if os(tvOS) || os(macOS)
         self
         #else
@@ -272,14 +272,14 @@ extension View {
             self
         } else {
             self
-                .toolbarBackground(Color.siloSurface, for: .navigationBar)
+                .toolbarBackground(Color.weFlixSurface, for: .navigationBar)
                 .toolbarBackground(.visible, for: .navigationBar)
         }
         #endif
     }
 
     @ViewBuilder
-    func siloNavigationBarBackgroundHidden() -> some View {
+    func weFlixNavigationBarBackgroundHidden() -> some View {
         #if os(tvOS) || os(macOS)
         self
         #else
@@ -288,7 +288,7 @@ extension View {
     }
 
     @ViewBuilder
-    func siloSearchable(text: Binding<String>, prompt: String) -> some View {
+    func weFlixSearchable(text: Binding<String>, prompt: String) -> some View {
         #if os(iOS)
         // Keep the navigation bar's back button and title visible while the
         // field is focused, and drop the search bar's Cancel button so the
@@ -306,7 +306,7 @@ extension View {
     }
 
     @ViewBuilder
-    func siloGroupedListStyle() -> some View {
+    func weFlixGroupedListStyle() -> some View {
         #if os(tvOS)
         self.listStyle(.plain)
         #elseif os(macOS)
@@ -316,44 +316,44 @@ extension View {
         #endif
     }
 
-    func siloInputChrome(isFocused: Bool) -> some View {
+    func weFlixInputChrome(isFocused: Bool) -> some View {
         self
-            .background(SiloInputBackground(isFocused: isFocused))
+            .background(WeFlixInputBackground(isFocused: isFocused))
             .scaleEffect(isFocused ? 1.02 : 1.0)
             .shadow(
-                color: isFocused ? Color.siloOnSurface.opacity(0.22) : .clear,
+                color: isFocused ? Color.weFlixOnSurface.opacity(0.22) : .clear,
                 radius: isFocused ? 18 : 0,
                 y: 0
             )
             // On tvOS the system paints a bright white platter under the
             // TextField when it gains focus, which completely hides our dark
-            // fill + placeholder. Suppressing it lets SiloInputBackground
+            // fill + placeholder. Suppressing it lets WeFlixInputBackground
             // carry focus via the fill/stroke change instead.
             #if os(tvOS)
             .focusEffectDisabled()
             #endif
-            .animation(SiloTheme.springAnimation, value: isFocused)
+            .animation(WeFlixTheme.springAnimation, value: isFocused)
     }
 }
 
-private struct SiloInputBackground: View {
+private struct WeFlixInputBackground: View {
     let isFocused: Bool
 
     var body: some View {
         // At-rest stroke bumped to 22% so the field boundary reads clearly
-        // against pure black auth canvases. `siloOutline` (12%) is
+        // against pure black auth canvases. `weFlixOutline` (12%) is
         // tuned for dividers and was too faint here.
-        let strokeColor: Color = isFocused ? .siloOnSurface : Color.white.opacity(0.22)
+        let strokeColor: Color = isFocused ? .weFlixOnSurface : Color.white.opacity(0.22)
         let strokeWidth: CGFloat = isFocused ? 3 : 1.5
         // Slightly elevated fill gives the field a visible silhouette on
         // pure-black backgrounds without washing it into the focus
         // platter when tvOS lights the field up.
-        let fillColor: Color = .siloSurfaceElevated
+        let fillColor: Color = .weFlixSurfaceElevated
 
-        RoundedRectangle(cornerRadius: SiloTheme.cornerRadius)
+        RoundedRectangle(cornerRadius: WeFlixTheme.cornerRadius)
             .fill(fillColor)
             .overlay(
-                RoundedRectangle(cornerRadius: SiloTheme.cornerRadius)
+                RoundedRectangle(cornerRadius: WeFlixTheme.cornerRadius)
                     .stroke(strokeColor, lineWidth: strokeWidth)
             )
     }
@@ -364,7 +364,7 @@ extension View {
     ///
     /// `confirmationDialog` can anchor away from the user's thumb on phones,
     /// while a standard alert keeps the decision in the middle of the screen.
-    func siloResumePlaybackAlert(
+    func weFlixResumePlaybackAlert(
         isPresented: Binding<Bool>,
         stoppedAt timestamp: String,
         onResume: @escaping () -> Void,
@@ -380,7 +380,7 @@ extension View {
     }
 }
 
-// MARK: - Silo Button Styles
+// MARK: - WeFlix Button Styles
 
 // These styles serve tvOS focus appearance and the pre-Liquid-Glass iOS 18
 // fallback. iOS/macOS 26+ continue to use native glass through the routing
@@ -390,7 +390,7 @@ extension View {
 /// a dimmed white so focus can brighten it to solid white; on tvOS focus
 /// also adds a scale + glow so the button is distinguishable even when
 /// surrounded by other white-ish surfaces (e.g. focused text fields).
-struct SiloPrimaryButtonStyle: ButtonStyle {
+struct WeFlixPrimaryButtonStyle: ButtonStyle {
     var isLoading: Bool = false
 
     func makeBody(configuration: Configuration) -> some View {
@@ -408,21 +408,21 @@ private struct PrimaryButtonBody: View {
         HStack(spacing: 8) {
             if isLoading {
                 ProgressView()
-                    .tint(Color.siloBackground)
+                    .tint(Color.weFlixBackground)
                     .scaleEffect(0.8)
             }
             configuration.label
         }
-        .font(.siloSubheadline)
-        .foregroundColor(Color.siloBackground)
+        .font(.weFlixSubheadline)
+        .foregroundColor(Color.weFlixBackground)
         .frame(maxWidth: .infinity)
         .padding(.vertical, 14)
         .padding(.horizontal, 18)
         .background(
             Capsule().fill(
-                isLoading ? Color.siloOnSurface.opacity(0.6)
-                : isFocused ? Color.siloOnSurface
-                : Color.siloOnSurface.opacity(0.72)
+                isLoading ? Color.weFlixOnSurface.opacity(0.6)
+                : isFocused ? Color.weFlixOnSurface
+                : Color.weFlixOnSurface.opacity(0.72)
             )
         )
         .overlay(
@@ -443,7 +443,7 @@ private struct PrimaryButtonBody: View {
         }
         .scaleEffect(isFocused && !reduceMotion ? 1.055 : 1.0)
         .shadow(
-            color: isFocused ? Color.siloOnSurface.opacity(0.48) : .clear,
+            color: isFocused ? Color.weFlixOnSurface.opacity(0.48) : .clear,
             radius: isFocused ? 24 : 0,
             y: isFocused ? 8 : 0
         )
@@ -451,13 +451,13 @@ private struct PrimaryButtonBody: View {
         #if os(tvOS)
         .focusEffectDisabled()
         #endif
-        .animation(.easeInOut(duration: SiloTheme.fastDuration), value: configuration.isPressed)
-        .animation(SiloTheme.springAnimation, value: isFocused)
+        .animation(.easeInOut(duration: WeFlixTheme.fastDuration), value: configuration.isPressed)
+        .animation(WeFlixTheme.springAnimation, value: isFocused)
     }
 }
 
 /// Secondary action button — outlined pill.
-struct SiloSecondaryButtonStyle: ButtonStyle {
+struct WeFlixSecondaryButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         SecondaryButtonBody(configuration: configuration)
     }
@@ -470,14 +470,14 @@ private struct SecondaryButtonBody: View {
 
     var body: some View {
         configuration.label
-            .font(.siloSubheadline)
-            .foregroundColor(isFocused ? .siloBackground : .siloOnSurface)
+            .font(.weFlixSubheadline)
+            .foregroundColor(isFocused ? .weFlixBackground : .weFlixOnSurface)
             .frame(maxWidth: .infinity)
             .padding(.vertical, 14)
             .padding(.horizontal, 18)
             .background(
                 Capsule()
-                    .fill(isFocused ? Color.siloOnSurface.opacity(0.96) : Color.clear)
+                    .fill(isFocused ? Color.weFlixOnSurface.opacity(0.96) : Color.clear)
             )
             .overlay(
                 Capsule().stroke(
@@ -487,7 +487,7 @@ private struct SecondaryButtonBody: View {
             )
             .scaleEffect(isFocused && !reduceMotion ? 1.045 : 1.0)
             .shadow(
-                color: isFocused ? Color.siloOnSurface.opacity(0.36) : .clear,
+                color: isFocused ? Color.weFlixOnSurface.opacity(0.36) : .clear,
                 radius: isFocused ? 18 : 0,
                 y: isFocused ? 6 : 0
             )
@@ -495,43 +495,43 @@ private struct SecondaryButtonBody: View {
             #if os(tvOS)
             .focusEffectDisabled()
             #endif
-            .animation(.easeOut(duration: SiloTheme.fastDuration), value: configuration.isPressed)
-            .animation(SiloTheme.springAnimation, value: isFocused)
+            .animation(.easeOut(duration: WeFlixTheme.fastDuration), value: configuration.isPressed)
+            .animation(WeFlixTheme.springAnimation, value: isFocused)
     }
 }
 
-// MARK: - Silo button style routing (glass on iOS/macOS, Silo on tvOS)
+// MARK: - WeFlix button style routing (glass on iOS/macOS, WeFlix on tvOS)
 
 extension View {
     /// Primary action button: native Liquid Glass on iOS/macOS 26+, the
-    /// established Silo style on iOS 18, and focus-reactive Silo
+    /// established WeFlix style on iOS 18, and focus-reactive WeFlix
     /// chrome on tvOS.
     @ViewBuilder
-    func siloPrimaryButton(isLoading: Bool = false) -> some View {
+    func weFlixPrimaryButton(isLoading: Bool = false) -> some View {
         #if os(tvOS)
-        self.buttonStyle(SiloPrimaryButtonStyle(isLoading: isLoading))
+        self.buttonStyle(WeFlixPrimaryButtonStyle(isLoading: isLoading))
         #elseif os(iOS)
         if #available(iOS 26.0, *) {
-            modernSiloPrimaryButton(isLoading: isLoading)
+            modernWeFlixPrimaryButton(isLoading: isLoading)
         } else {
-            self.buttonStyle(SiloPrimaryButtonStyle(isLoading: isLoading))
+            self.buttonStyle(WeFlixPrimaryButtonStyle(isLoading: isLoading))
         }
         #else
-        modernSiloPrimaryButton(isLoading: isLoading)
+        modernWeFlixPrimaryButton(isLoading: isLoading)
         #endif
     }
 
-    /// Secondary action button: native glass on iOS/macOS, `SiloSecondaryButtonStyle`
+    /// Secondary action button: native glass on iOS/macOS, `WeFlixSecondaryButtonStyle`
     /// on tvOS.
     @ViewBuilder
-    func siloSecondaryButton() -> some View {
+    func weFlixSecondaryButton() -> some View {
         #if os(tvOS)
-        self.buttonStyle(SiloSecondaryButtonStyle())
+        self.buttonStyle(WeFlixSecondaryButtonStyle())
         #elseif os(iOS)
         if #available(iOS 26.0, *) {
             self.buttonStyle(.glass)
         } else {
-            self.buttonStyle(SiloSecondaryButtonStyle())
+            self.buttonStyle(WeFlixSecondaryButtonStyle())
         }
         #else
         self.buttonStyle(.glass)
@@ -539,40 +539,40 @@ extension View {
     }
 
     @available(iOS 26.0, macOS 26.0, *)
-    private func modernSiloPrimaryButton(isLoading: Bool) -> some View {
+    private func modernWeFlixPrimaryButton(isLoading: Bool) -> some View {
         // `.glassProminent` can't take the in-flight state, so surface it the
         // only way a modifier can: disable the button and overlay a spinner.
         self
             .buttonStyle(.glassProminent)
-            .tint(.siloOnSurface)
-            .foregroundStyle(Color.siloBackground)
+            .tint(.weFlixOnSurface)
+            .foregroundStyle(Color.weFlixBackground)
             .disabled(isLoading)
             .overlay {
                 if isLoading {
                     ProgressView()
                         .controlSize(.small)
-                        .tint(Color.siloBackground)
+                        .tint(Color.weFlixBackground)
                 }
             }
     }
 }
 
-// MARK: - Silo Text Field Style
+// MARK: - WeFlix Text Field Style
 
 /// Dark-themed text field with rounded surface background.
-struct SiloTextFieldStyle: TextFieldStyle {
+struct WeFlixTextFieldStyle: TextFieldStyle {
     func _body(configuration: TextField<Self._Label>) -> some View {
-        SiloTextFieldBody(configuration: configuration)
+        WeFlixTextFieldBody(configuration: configuration)
     }
 }
 
-private struct SiloTextFieldBody<Label: View>: View {
+private struct WeFlixTextFieldBody<Label: View>: View {
     let configuration: TextField<Label>
     @Environment(\.isFocused) private var isFocused
 
     var body: some View {
         configuration
-            .font(.siloBody)
+            .font(.weFlixBody)
             // tvOS renders an unavoidable bright-white focus platter under
             // any focused TextField (`.focusEffectDisabled()` doesn't
             // suppress it for text fields the way it does for Buttons).
@@ -582,15 +582,15 @@ private struct SiloTextFieldBody<Label: View>: View {
             .foregroundColor(textColor)
             .padding(.horizontal, 14)
             .padding(.vertical, 12)
-            .siloInputChrome(isFocused: isFocused)
-            .tint(isFocused ? .siloBackground : .siloOnSurface)
+            .weFlixInputChrome(isFocused: isFocused)
+            .tint(isFocused ? .weFlixBackground : .weFlixOnSurface)
     }
 
     private var textColor: Color {
         #if os(tvOS)
-        isFocused ? .siloBackground : .siloOnSurface
+        isFocused ? .weFlixBackground : .weFlixOnSurface
         #else
-        .siloOnSurface
+        .weFlixOnSurface
         #endif
     }
 }

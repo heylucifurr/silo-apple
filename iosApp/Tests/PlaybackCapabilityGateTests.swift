@@ -1,6 +1,6 @@
 import Foundation
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 /// `PlaybackV3CapabilityGate` over `GET /api/v2/playback/capabilities`: the
 /// contract it requires, what it caches, and the one refresh a start gets

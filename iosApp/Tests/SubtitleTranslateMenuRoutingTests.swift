@@ -1,13 +1,13 @@
 //
 //  SubtitleTranslateMenuRoutingTests.swift
-//  SiloTests
+//  WeFlixTests
 //
 //  The AI subtitle menu transcribes the audio track whose language decided
 //  the job kind, so a German track the viewer selected is the one sent.
 //
 
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 final class SubtitleTranslateMenuRoutingTests: XCTestCase {
     private func audio(_ ordinal: Int, lang: String, isDefault: Bool = false, isSelected: Bool = false,

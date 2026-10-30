@@ -1,5 +1,5 @@
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 /// A stream that stops short of the end lands on the end-of-playback screen,
 /// which hides the player's notice layer. The screen must still say why

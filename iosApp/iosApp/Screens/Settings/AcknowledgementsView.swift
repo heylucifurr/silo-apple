@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// One outside service: its name (or approved logo), what Silo uses it for,
+/// One outside service: its name (or approved logo), what WeFlix uses it for,
 /// and any notice its terms require. Passive text on every platform.
 struct ThirdPartyCreditRow: View {
     let credit: ThirdPartyCredits.Credit
@@ -12,7 +12,7 @@ struct ThirdPartyCreditRow: View {
         VStack(alignment: .leading, spacing: 6) {
             if let logo = credit.logoAsset {
                 // The logo replaces the name. TMDB's terms ask for it to stay
-                // less prominent than Silo's own branding.
+                // less prominent than WeFlix's own branding.
                 Image(logo)
                     .resizable()
                     .scaledToFit()
@@ -21,7 +21,7 @@ struct ThirdPartyCreditRow: View {
             } else {
                 Text(credit.name)
                     .font(nameFont)
-                    .foregroundStyle(Color.siloOnSurface)
+                    .foregroundStyle(Color.weFlixOnSurface)
             }
             Text(credit.use)
             if let notice = credit.notice {
@@ -29,7 +29,7 @@ struct ThirdPartyCreditRow: View {
             }
         }
         .font(detailFont)
-        .foregroundStyle(Color.siloSecondaryText)
+        .foregroundStyle(Color.weFlixSecondaryText)
         .fixedSize(horizontal: false, vertical: true)
         .accessibilityElement(children: .combine)
         .accessibilityLabel([credit.name, credit.use, credit.notice].compactMap { $0 }.joined(separator: ". "))
@@ -38,7 +38,7 @@ struct ThirdPartyCreditRow: View {
 
 #if !os(tvOS)
 /// Settings > About > Acknowledgements: the outside services whose data or
-/// artwork Silo shows, then the open source licenses.
+/// artwork WeFlix shows, then the open source licenses.
 struct AcknowledgementsView: View {
     var body: some View {
         List {
@@ -46,14 +46,14 @@ struct AcknowledgementsView: View {
                 ForEach(ThirdPartyCredits.credits) { credit in
                     ThirdPartyCreditRow(credit: credit)
                         .padding(.vertical, 4)
-                        .listRowBackground(Color.siloGroupedCell)
+                        .listRowBackground(Color.weFlixGroupedCell)
                 }
             } header: {
                 Text("Services")
-                    .foregroundStyle(Color.siloSecondaryText)
+                    .foregroundStyle(Color.weFlixSecondaryText)
             } footer: {
                 Text(ThirdPartyCredits.trademarkNotice)
-                    .foregroundStyle(Color.siloSecondaryText)
+                    .foregroundStyle(Color.weFlixSecondaryText)
             }
 
             Section {
@@ -61,21 +61,21 @@ struct AcknowledgementsView: View {
                     OpenSourceAcknowledgementsView()
                 } label: {
                     Text("Open Source Licenses")
-                        .foregroundStyle(Color.siloOnSurface)
+                        .foregroundStyle(Color.weFlixOnSurface)
                 }
-                .listRowBackground(Color.siloGroupedCell)
+                .listRowBackground(Color.weFlixGroupedCell)
             } header: {
                 Text("Open Source")
-                    .foregroundStyle(Color.siloSecondaryText)
+                    .foregroundStyle(Color.weFlixSecondaryText)
             } footer: {
-                Text("Silo's license, and the licenses and exact source revisions of the code built into it.")
-                    .foregroundStyle(Color.siloSecondaryText)
+                Text("weflix's license, and the licenses and exact source revisions of the code built into it.")
+                    .foregroundStyle(Color.weFlixSecondaryText)
             }
         }
         .settingsListChrome()
         .navigationTitle("Acknowledgements")
-        .siloNavigationTitleDisplayMode(.inline)
-        .siloToolbarColorSchemeDark()
+        .weFlixNavigationTitleDisplayMode(.inline)
+        .weFlixToolbarColorSchemeDark()
     }
 }
 #endif

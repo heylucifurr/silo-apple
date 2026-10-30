@@ -12,13 +12,13 @@ final class RequestSearchSectionViewModel {
     private(set) var isLoading = false
 
     private var searchTask: Task<Void, Never>?
-    private let api: SiloAPI
+    private let api: WeFlixAPI
 
     /// Cap the inline strip — it supplements library results, it doesn't
     /// replace the hub's full search.
     private let maxResults = 12
 
-    init(api: SiloAPI = .shared) {
+    init(api: WeFlixAPI = .shared) {
         self.api = api
     }
 

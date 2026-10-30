@@ -1,6 +1,6 @@
 import Foundation
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 /// Search "All" lists episodes on servers that advertise the
 /// `video_with_episodes` scope, and episode results are captioned and routed

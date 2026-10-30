@@ -17,7 +17,7 @@ struct TVCollectionPosterCard: View {
 
     /// Poster width; height tracks the 2:3 ratio. Defaults to the standard
     /// tvOS poster so the collections grid matches the library grid.
-    var cardWidth: CGFloat = SiloTheme.posterCardWidth
+    var cardWidth: CGFloat = WeFlixTheme.posterCardWidth
     /// Default-focus hook for the grid's first card on tab entry.
     var prefersDefaultFocus: Bool = false
     var defaultFocusNamespace: Namespace.ID? = nil
@@ -73,7 +73,7 @@ struct TVCollectionPosterCard: View {
             }
         }
         .frame(width: resolvedCardWidth, height: cardHeight)
-        .clipShape(RoundedRectangle(cornerRadius: SiloTheme.cornerRadius))
+        .clipShape(RoundedRectangle(cornerRadius: WeFlixTheme.cornerRadius))
     }
 
     /// Art-less fallback: a deterministic gradient + stack glyph so the tile
@@ -101,7 +101,7 @@ struct TVCollectionPosterCard: View {
     private var caption: some View {
         VStack(spacing: 4) {
             Text(collection.name)
-                .font(.siloPosterTitle)
+                .font(.weFlixPosterTitle)
                 .lineLimit(1)
                 .truncationMode(.tail)
                 .tvCardTitleFocus(isFocused: isFocused)
@@ -109,7 +109,7 @@ struct TVCollectionPosterCard: View {
 
             if let countText {
                 Text(countText)
-                    .font(.siloPosterMetadata)
+                    .font(.weFlixPosterMetadata)
                     .tvCardSubtitleFocus(isFocused: isFocused)
                     .lineLimit(1)
             }

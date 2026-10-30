@@ -4,10 +4,10 @@ require_relative "fastlane-test-helper"
 
 class FastlaneCacheTest < Minitest::Test
   ENV_KEYS = %w[
-    MARKETING_VERSION BUILD_NUMBER TEAM_ID SILO_SOURCE_PACKAGES_PATH
-    SILO_DEFER_TESTFLIGHT_DISTRIBUTION TESTFLIGHT_DISTRIBUTION
+    MARKETING_VERSION BUILD_NUMBER TEAM_ID WEFLIX_SOURCE_PACKAGES_PATH
+    WEFLIX_DEFER_TESTFLIGHT_DISTRIBUTION TESTFLIGHT_DISTRIBUTION
     TESTFLIGHT_INTERNAL_GROUPS TESTFLIGHT_EXTERNAL_GROUPS
-    TESTFLIGHT_NOTIFY_EXTERNAL_TESTERS TESTFLIGHT_CHANGELOG SILO_RELEASE_SOURCE_URL
+    TESTFLIGHT_NOTIFY_EXTERNAL_TESTERS TESTFLIGHT_CHANGELOG WEFLIX_RELEASE_SOURCE_URL
     APP_STORE_CONNECT_API_KEY_KEY_ID APP_STORE_CONNECT_API_KEY_ISSUER_ID
     APP_STORE_CONNECT_API_KEY_KEY FL_ORIG_DEFAULT_KC FL_ORIG_KC_LIST FL_CI_KEYCHAIN_MANAGED
   ].freeze
@@ -32,7 +32,7 @@ class FastlaneCacheTest < Minitest::Test
 
   def test_package_download_path_is_shared_by_resolve_and_archive
     path = File.expand_path("work/SPM cache's (test)")
-    ENV["SILO_SOURCE_PACKAGES_PATH"] = path
+    ENV["WEFLIX_SOURCE_PACKAGES_PATH"] = path
     @lane.run_lane(:beta_ios)
     resolves = @lane.actions.select { |action, args| action == :sh && args.first == "xcodebuild" }
     assert_equal 1, resolves.length
@@ -58,8 +58,8 @@ class FastlaneCacheTest < Minitest::Test
   end
 
   def test_unsigned_archive_uses_the_same_locked_package_path_and_timing
-    ENV["SILO_SOURCE_PACKAGES_PATH"] = File.expand_path("work/sideload packages")
-    { ipa_ios_unsigned: "Silo", ipa_tvos_unsigned: "SiloTV" }.each do |lane, scheme|
+    ENV["WEFLIX_SOURCE_PACKAGES_PATH"] = File.expand_path("work/sideload packages")
+    { ipa_ios_unsigned: "WeFlix", ipa_tvos_unsigned: "WeFlixTV" }.each do |lane, scheme|
       @lane = FastfileHarness.new
       @lane.define_singleton_method(:package_unsigned_ipa) { |**_options| }
       @lane.run_lane(lane)
@@ -67,15 +67,15 @@ class FastlaneCacheTest < Minitest::Test
       assert_equal 1, resolves.length
       resolve_args = resolves.first.last
       assert_equal scheme, resolve_args[resolve_args.index("-scheme") + 1]
-      assert_equal ENV.fetch("SILO_SOURCE_PACKAGES_PATH"), resolve_args[resolve_args.index("-clonedSourcePackagesDirPath") + 1]
+      assert_equal ENV.fetch("WEFLIX_SOURCE_PACKAGES_PATH"), resolve_args[resolve_args.index("-clonedSourcePackagesDirPath") + 1]
       assert_includes resolve_args, "-onlyUsePackageVersionsFromResolvedFile"
       assert_includes resolve_args, "-disableAutomaticPackageResolution"
       build_args = Shellwords.split(action_options(:xcodebuild)[:xcargs])
       assert_includes build_args, "-showBuildTimingSummary"
       assert_includes build_args, "-onlyUsePackageVersionsFromResolvedFile"
       assert_includes build_args, "-disableAutomaticPackageResolution"
-      assert_equal ENV.fetch("SILO_SOURCE_PACKAGES_PATH"), build_args[build_args.index("-clonedSourcePackagesDirPath") + 1]
-      assert_includes build_args, "SILO_BUILD_CHANNEL=sideload"
+      assert_equal ENV.fetch("WEFLIX_SOURCE_PACKAGES_PATH"), build_args[build_args.index("-clonedSourcePackagesDirPath") + 1]
+      assert_includes build_args, "WEFLIX_BUILD_CHANNEL=sideload"
       assert_includes build_args, "CURRENT_PROJECT_VERSION=7"
       assert_includes build_args, "CODE_SIGNING_ALLOWED=NO"
       assert_includes build_args, "CODE_SIGN_ENTITLEMENTS="

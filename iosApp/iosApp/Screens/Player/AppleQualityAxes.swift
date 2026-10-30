@@ -1,6 +1,6 @@
 //
 //  AppleQualityAxes.swift
-//  Silo (iOS + tvOS + macOS)
+//  WeFlix (iOS + tvOS + macOS)
 //
 //  Translation between the single quality id the Apple UI picks from and the
 //  two orthogonal values the settings contract stores.

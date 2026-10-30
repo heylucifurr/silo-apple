@@ -5,14 +5,18 @@ import Foundation
 ///
 /// Two shapes name the same invitation:
 /// - `https://<server>/rooms/join?token=…`, the shareable web link.
-/// - `silo://watch-party?server=<server>&token=…`, the app link the server's
+/// - `weflix://watch-party?server=<server>&token=…`, the app link the server's
 ///   join page offers, since a self-hosted domain can't be a universal link.
 struct WatchPartyInvitation: Equatable, Sendable {
     let serverURL: String
     let joinToken: String
 
     init?(url: URL) {
-        if url.scheme?.lowercased() == SiloURLScheme.current {
+        // Watch Party shipped after the Silo rename, so only this build's
+        // scheme and the `silo://` spelling a current server sends name an
+        // invitation. `continuum://` predates the feature and is not one.
+        let scheme = url.scheme?.lowercased()
+        if scheme == WeFlixURLScheme.current || scheme == WeFlixURLScheme.legacySilo {
             self.init(appURL: url)
         } else {
             self.init(webURL: url)

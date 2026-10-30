@@ -1,5 +1,5 @@
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 /// The conformance suite for lowering quality when playback keeps buffering.
 ///

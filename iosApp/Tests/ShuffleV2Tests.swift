@@ -1,6 +1,6 @@
 import Foundation
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 /// Shuffle on the v2 wire: each operation's path, body, and success status,
 /// the problem statuses callers act on, and the capability gate.
@@ -100,7 +100,7 @@ final class ShuffleV2Tests: XCTestCase {
         await tokens.setServerUrl("https://shuffle.example")
         await tokens.setProfileId("profile-one")
         // The profile changes after the answer arrives, before it is used.
-        let api = SiloAPI(
+        let api = WeFlixAPI(
             http: HTTPClient(session: stub.makeSession(), tokenStore: tokens), tokenStore: tokens,
             ownerRecheckBarrier: { await tokens.setProfileId("profile-two") }
         )

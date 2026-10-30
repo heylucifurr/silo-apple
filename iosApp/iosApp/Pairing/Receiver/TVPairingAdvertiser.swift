@@ -3,7 +3,7 @@ import Foundation
 import Network
 import OSLog
 
-/// Advertises `_silopair._tcp` on the LAN and hands the first inbound
+/// Advertises `_weflixpair._tcp` on the LAN and hands the first inbound
 /// connection to a `PairingSession`. One connection at a time; later peers
 /// are rejected as busy.
 ///
@@ -19,7 +19,7 @@ final class TVPairingAdvertiser {
     private var onConnection: ((PairingSession, AsyncThrowingStream<PairingMessage, Error>) -> Void)?
     private var receiverState: PairingReceiverState = .setup
     private var serverIdentity: String?
-    private nonisolated static let logger = Logger(subsystem: "org.siloserver.silo", category: "pairing.advertiser")
+    private nonisolated static let logger = Logger(subsystem: "me.weflix", category: "pairing.advertiser")
 
     /// - Parameters:
     ///   - state: `setup` on the first-run screen; `login` on the sign-in

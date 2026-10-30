@@ -89,7 +89,7 @@ private struct TVPlayerPillBody: View {
             .shadow(color: .black.opacity(isFocused ? 0.45 : 0.3), radius: isFocused ? 18 : 10, y: 6)
             .focusEffectDisabled()
             .animation(.easeInOut(duration: 0.18), value: isFocused)
-            .animation(.easeOut(duration: SiloTheme.fastDuration), value: configuration.isPressed)
+            .animation(.easeOut(duration: WeFlixTheme.fastDuration), value: configuration.isPressed)
     }
 
     private var fillColor: Color {

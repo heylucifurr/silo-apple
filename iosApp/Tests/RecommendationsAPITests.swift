@@ -1,10 +1,10 @@
 import Foundation
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
-/// Similar cards and Discover rows through the `SiloAPI` facade on `/api/v2`.
+/// Similar cards and Discover rows through the `WeFlixAPI` facade on `/api/v2`.
 final class RecommendationsAPITests: XCTestCase {
-    private func client(stub: APIv2TestStub) async throws -> (SiloAPI, TokenStore) {
+    private func client(stub: APIv2TestStub) async throws -> (WeFlixAPI, TokenStore) {
         let name = "RecommendationsAPITests.\(UUID().uuidString)"
         let suite = try XCTUnwrap(UserDefaults(suiteName: name))
         addTeardownBlock { UserDefaults().removePersistentDomain(forName: name) }
@@ -14,7 +14,7 @@ final class RecommendationsAPITests: XCTestCase {
         await tokens.setServerUrl("https://recs.example")
         await tokens.setProfileId("profile-one")
         let http = HTTPClient(session: stub.makeSession(), tokenStore: tokens)
-        return (SiloAPI(http: http, tokenStore: tokens), tokens)
+        return (WeFlixAPI(http: http, tokenStore: tokens), tokens)
     }
 
     func testSimilarReturnsRankedCardsFromOneRequest() async throws {

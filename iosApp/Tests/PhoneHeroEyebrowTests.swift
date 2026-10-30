@@ -1,6 +1,6 @@
 #if os(iOS)
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 final class PhoneHeroEyebrowTests: XCTestCase {
     func testEndedSeriesReadsShowStatusWhenStatusIsEmpty() throws {

@@ -221,7 +221,7 @@ struct TVTopMenuBar: View {
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     private static let logger = Logger(
-        subsystem: Bundle.main.bundleIdentifier ?? "org.siloserver.silo",
+        subsystem: Bundle.main.bundleIdentifier ?? "me.weflix",
         category: "TVFocus"
     )
 
@@ -232,24 +232,24 @@ struct TVTopMenuBar: View {
             HStack(spacing: 0) {
                 wordmark
 
-                Spacer(minLength: SiloTheme.Skyline.tabSpacing)
+                Spacer(minLength: WeFlixTheme.Skyline.tabSpacing)
 
                 profileButton
             }
         }
-        .frame(height: SiloTheme.Skyline.barHeight)
-        .padding(.horizontal, SiloTheme.Skyline.safeAreaX)
-        .padding(.top, SiloTheme.Skyline.barTopInset)
+        .frame(height: WeFlixTheme.Skyline.barHeight)
+        .padding(.horizontal, WeFlixTheme.Skyline.safeAreaX)
+        .padding(.top, WeFlixTheme.Skyline.barTopInset)
         .frame(maxWidth: .infinity, alignment: .top)
         .ignoresSafeArea(edges: [.top, .horizontal])
         // The bar dims only while focus is down in the content zone (§5.1).
         // An open panel keeps it fully lit — focus has merely descended into
         // the dropdown, and dimming the bar there greys out the panel's own
         // anchor tab and reads as a heavy "everything went dark" state.
-        .opacity(isMenuFocused || openPanel != nil ? 1.0 : SiloTheme.Skyline.barDimmedOpacity)
+        .opacity(isMenuFocused || openPanel != nil ? 1.0 : WeFlixTheme.Skyline.barDimmedOpacity)
         // Reduce Motion snaps the bar dim/restore as focus enters/leaves
         // the content zone (§5.1; §4.2 acceptance: no drift animations).
-        .animation(reduceMotion ? nil : .easeInOut(duration: SiloTheme.normalDuration), value: isMenuFocused)
+        .animation(reduceMotion ? nil : .easeInOut(duration: WeFlixTheme.normalDuration), value: isMenuFocused)
         // Up from the page enters the bar natively and lands on the selected
         // tab, not on whichever tab sits above the focused card. The priority
         // has to be `.userInitiated` for a directional move to honor it.
@@ -359,8 +359,8 @@ struct TVTopMenuBar: View {
     /// Brand logo (mark + wordmark asset), sized to the bar row so it sits
     /// on the same centre line as the tab capsules and trailing icons.
     private var wordmark: some View {
-        SiloWordmarkView(width: SiloTheme.Skyline.wordmarkWidth)
-            .frame(height: SiloTheme.Skyline.barHeight)
+        WeFlixWordmarkView(width: WeFlixTheme.Skyline.wordmarkWidth)
+            .frame(height: WeFlixTheme.Skyline.barHeight)
             .accessibilityHidden(true)
     }
 
@@ -370,14 +370,14 @@ struct TVTopMenuBar: View {
             scrollingTabCluster
         }
         .frame(maxWidth: .infinity, alignment: .center)
-        .frame(height: SiloTheme.Skyline.barHeight)
+        .frame(height: WeFlixTheme.Skyline.barHeight)
     }
 
     /// Keep the ordinary menu as one native focus row. Besides preserving the
     /// Skyline screen-centered composition, this gives Search and Home direct
     /// focus adjacency instead of separating them with a scroll container.
     private var centeredTabCluster: some View {
-        HStack(spacing: SiloTheme.Skyline.tabSpacing) {
+        HStack(spacing: WeFlixTheme.Skyline.tabSpacing) {
             searchButton
 
             ForEach(Array(roots.enumerated()), id: \.element) { index, root in
@@ -387,8 +387,8 @@ struct TVTopMenuBar: View {
             // Balance Search so the roots themselves remain screen-centered.
             Color.clear
                 .frame(
-                    width: SiloTheme.Skyline.barIconSize,
-                    height: SiloTheme.Skyline.barIconSize
+                    width: WeFlixTheme.Skyline.barIconSize,
+                    height: WeFlixTheme.Skyline.barIconSize
                 )
                 .accessibilityHidden(true)
         }
@@ -399,12 +399,12 @@ struct TVTopMenuBar: View {
 
     /// Long customized menus keep Search fixed and scroll only the roots.
     private var scrollingTabCluster: some View {
-        HStack(spacing: SiloTheme.Skyline.tabSpacing) {
+        HStack(spacing: WeFlixTheme.Skyline.tabSpacing) {
             searchButton
 
             ScrollViewReader { proxy in
                 ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: SiloTheme.Skyline.tabSpacing) {
+                    HStack(spacing: WeFlixTheme.Skyline.tabSpacing) {
                         ForEach(Array(roots.enumerated()), id: \.element) { index, root in
                             rootButton(root, index: index, count: roots.count)
                                 .id(TVTopMenuFocus.root(root))
@@ -415,7 +415,7 @@ struct TVTopMenuBar: View {
                 .scrollClipDisabled()
                 .onChange(of: focusedItem) { _, item in
                     guard let item, case .root = item else { return }
-                    withAnimation(reduceMotion ? nil : .easeOut(duration: SiloTheme.fastDuration)) {
+                    withAnimation(reduceMotion ? nil : .easeOut(duration: WeFlixTheme.fastDuration)) {
                         proxy.scrollTo(item, anchor: .center)
                     }
                 }
@@ -443,16 +443,16 @@ struct TVTopMenuBar: View {
             selectRootFromMenu(root)
         } label: {
             Text(root.title)
-                .font(.system(size: SiloTheme.Skyline.tabLabelSize, weight: .semibold))
+                .font(.system(size: WeFlixTheme.Skyline.tabLabelSize, weight: .semibold))
                 .foregroundStyle(tabForeground(isSelected: isSelected, isFocused: isFocused))
                 .lineLimit(1)
                 .truncationMode(.tail)
                 .frame(maxWidth: 260)
-                .padding(.horizontal, SiloTheme.Skyline.tabPaddingHorizontal)
-                .padding(.vertical, SiloTheme.Skyline.tabPaddingVertical)
+                .padding(.horizontal, WeFlixTheme.Skyline.tabPaddingHorizontal)
+                .padding(.vertical, WeFlixTheme.Skyline.tabPaddingVertical)
                 .modifier(TVTopMenuCapsuleChrome(isSelected: isSelected, isFocused: isFocused))
         }
-        .buttonStyle(.siloFlat)
+        .buttonStyle(.weFlixFlat)
         .focused($focusedItem, equals: .root(root))
         // A ScrollView is its own focus region on tvOS. At its leading edge,
         // explicitly hand Left back to the fixed Search anchor.
@@ -518,7 +518,7 @@ struct TVTopMenuBar: View {
     }
 
     private func tabForeground(isSelected: Bool, isFocused: Bool) -> Color {
-        if isFocused { return .siloBackground }
+        if isFocused { return .weFlixBackground }
         if isSelected { return .white }
         return .white.opacity(0.62)
     }
@@ -574,14 +574,14 @@ struct TVTopMenuBar: View {
         return Button(action: onSearch) {
             Image(systemName: "magnifyingglass")
                 .font(.system(size: 27, weight: .semibold))
-                .foregroundStyle(isFocused ? Color.siloBackground : .white.opacity(0.62))
+                .foregroundStyle(isFocused ? Color.weFlixBackground : .white.opacity(0.62))
                 .frame(
-                    width: SiloTheme.Skyline.barIconSize,
-                    height: SiloTheme.Skyline.barIconSize
+                    width: WeFlixTheme.Skyline.barIconSize,
+                    height: WeFlixTheme.Skyline.barIconSize
                 )
                 .modifier(TVTopMenuCapsuleChrome(isSelected: false, isFocused: isFocused))
         }
-        .buttonStyle(.siloFlat)
+        .buttonStyle(.weFlixFlat)
         .focused($focusedItem, equals: .search)
         // The inverse boundary keeps Search usable in the scrolling fallback;
         // in the centered layout the native focus graph resolves this first.
@@ -616,7 +616,7 @@ struct TVTopMenuBar: View {
                 avatar: currentProfile?.avatarEmoji,
                 imageUrl: currentProfile?.avatarImageUrl,
                 name: currentProfile?.name ?? "",
-                size: SiloTheme.Skyline.barIconSize,
+                size: WeFlixTheme.Skyline.barIconSize,
                 backgroundColor: Color.white.opacity(0.18),
                 textColor: .white
             )
@@ -627,9 +627,9 @@ struct TVTopMenuBar: View {
             // Reduce Motion drops the focus scale so the avatar snaps (§4.2).
             .scaleEffect(isFocused && !reduceMotion ? 1.05 : 1.0)
             .focusEffectDisabled()
-            .animation(reduceMotion ? nil : SiloTheme.springAnimation, value: isFocused)
+            .animation(reduceMotion ? nil : WeFlixTheme.springAnimation, value: isFocused)
         }
-        .buttonStyle(.siloFlat)
+        .buttonStyle(.weFlixFlat)
         .focused($focusedItem, equals: .profile)
         .modifier(TVTopMenuDownHandler(
             canOpenPanel: true,
@@ -707,7 +707,7 @@ struct TVTopMenuBar: View {
 
         dwellTask = Task { @MainActor in
             try? await Task.sleep(
-                nanoseconds: SiloTheme.Skyline.cascadeDwellMilliseconds * 1_000_000
+                nanoseconds: WeFlixTheme.Skyline.cascadeDwellMilliseconds * 1_000_000
             )
             guard !Task.isCancelled else { return }
             // Confirm focus is still on the same element before opening —
@@ -771,19 +771,19 @@ private struct TVTopMenuCapsuleChrome: ViewModifier {
             }
             .focusEffectDisabled()
             // Reduce Motion snaps the tab/search capsule inversion (§4.2).
-            .animation(reduceMotion ? nil : SiloTheme.springAnimation, value: isFocused)
+            .animation(reduceMotion ? nil : WeFlixTheme.springAnimation, value: isFocused)
             .animation(reduceMotion ? nil : .easeInOut(duration: 0.18), value: isSelected)
     }
 
     private var fillColor: Color {
         if isFocused { return .white }
-        if isSelected { return .siloChromeSelectedFill }
+        if isSelected { return .weFlixChromeSelectedFill }
         return .clear
     }
 
     private var borderColor: Color {
         if isFocused { return .clear }
-        if isSelected { return .siloChromeSelectedBorder }
+        if isSelected { return .weFlixChromeSelectedBorder }
         return .clear
     }
 }
@@ -796,7 +796,7 @@ private struct TVTopMenuCapsuleChrome: ViewModifier {
 /// the panel floats over the page on its own depth rather than needing a
 /// page scrim to darken everything behind it.
 struct TVSkylinePanelChrome: ViewModifier {
-    var cornerRadius: CGFloat = SiloTheme.Skyline.dropdownCornerRadius
+    var cornerRadius: CGFloat = WeFlixTheme.Skyline.dropdownCornerRadius
 
     func body(content: Content) -> some View {
         let shape = RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
@@ -835,7 +835,7 @@ struct TVSkylinePanelChrome: ViewModifier {
 /// Mono section header shared by the Skyline panels and the action popover.
 struct TVSkylinePanelHeader: View {
     let text: String
-    var size: CGFloat = SiloTheme.Skyline.dropdownHeaderSize
+    var size: CGFloat = WeFlixTheme.Skyline.dropdownHeaderSize
     var horizontalPadding: CGFloat = 16
     var topPadding: CGFloat = 8
     var bottomPadding: CGFloat = 10
@@ -1048,8 +1048,8 @@ struct TVForYouDropdown: View {
             actionButton("Recommendations", systemImage: "sparkles", id: .recommendations, action: onRecommendations)
                 .modifier(TVDropdownBoundaryMoveHandler(onMoveUp: nil, onMoveDown: onExitToContent))
         }
-        .padding(SiloTheme.Skyline.dropdownPadding)
-        .frame(width: SiloTheme.Skyline.dropdownWidth, alignment: .leading)
+        .padding(WeFlixTheme.Skyline.dropdownPadding)
+        .frame(width: WeFlixTheme.Skyline.dropdownWidth, alignment: .leading)
         .modifier(TVSkylinePanelChrome())
         .focusSection()
         .accessibilityElement(children: .contain)
@@ -1074,7 +1074,7 @@ struct TVForYouDropdown: View {
                 .frame(width: 30)
 
             Text(title)
-                .font(.system(size: SiloTheme.Skyline.dropdownRowTextSize, weight: .semibold))
+                .font(.system(size: WeFlixTheme.Skyline.dropdownRowTextSize, weight: .semibold))
                 .lineLimit(1)
 
             Spacer(minLength: 0)
@@ -1205,8 +1205,8 @@ struct TVProfileDropdown: View {
             actionButton("Switch Server", systemImage: "server.rack", id: .switchServer, action: onSwitchServer)
             actionButton("Sign Out", systemImage: "rectangle.portrait.and.arrow.right", id: .signOut, isDestructive: true, action: onSignOut)
         }
-        .padding(SiloTheme.Skyline.dropdownPadding)
-        .frame(width: SiloTheme.Skyline.dropdownWidth, alignment: .leading)
+        .padding(WeFlixTheme.Skyline.dropdownPadding)
+        .frame(width: WeFlixTheme.Skyline.dropdownWidth, alignment: .leading)
         .modifier(TVSkylinePanelChrome())
         .focusSection()
         .accessibilityElement(children: .contain)
@@ -1232,7 +1232,7 @@ struct TVProfileDropdown: View {
 
                 if let serverHost, !serverHost.isEmpty {
                     Text(serverHost.uppercased())
-                        .font(.system(size: SiloTheme.Skyline.dropdownHeaderSize, design: .monospaced))
+                        .font(.system(size: WeFlixTheme.Skyline.dropdownHeaderSize, design: .monospaced))
                         .tracking(1.4)
                         .foregroundStyle(Color.white.opacity(0.38))
                         .lineLimit(1)
@@ -1245,7 +1245,7 @@ struct TVProfileDropdown: View {
 
     private var divider: some View {
         Rectangle()
-            .fill(Color.siloDivider)
+            .fill(Color.weFlixDivider)
             .frame(height: 1)
             .padding(.horizontal, 12)
     }
@@ -1264,7 +1264,7 @@ struct TVProfileDropdown: View {
                 .frame(width: 30)
 
             Text(title)
-                .font(.system(size: SiloTheme.Skyline.dropdownRowTextSize, weight: .semibold))
+                .font(.system(size: WeFlixTheme.Skyline.dropdownRowTextSize, weight: .semibold))
                 .lineLimit(1)
 
             Spacer(minLength: 0)
@@ -1316,11 +1316,11 @@ private struct TVProfileMenuButtonBody: View {
             .focusEffectDisabled()
             // Match the cascade: focus feedback follows each press immediately.
             .animation(nil, value: isFocused)
-            .animation(reduceMotion ? nil : .easeOut(duration: SiloTheme.fastDuration), value: configuration.isPressed)
+            .animation(reduceMotion ? nil : .easeOut(duration: WeFlixTheme.fastDuration), value: configuration.isPressed)
     }
 
     private var foregroundColor: Color {
-        if isFocused { return .siloBackground }
+        if isFocused { return .weFlixBackground }
         if isDestructive { return .red.opacity(0.9) }
         return .white.opacity(0.86)
     }

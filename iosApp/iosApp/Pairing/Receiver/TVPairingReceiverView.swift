@@ -68,7 +68,7 @@ struct TVPairingReceiverView: View {
                 ? "Only allow it if you started this on your own phone or tablet."
                 : "Only allow it if you started setup on your own phone or tablet.")
                 .font(.system(size: 22))
-                .foregroundStyle(Color.siloOnSurface.opacity(0.4))
+                .foregroundStyle(Color.weFlixOnSurface.opacity(0.4))
                 .padding(.top, 30)
         case let .awaitingApproval(_, _, _, automatic):
             chip(automatic ? "Your phone is approving" : "Waiting for your phone", spinner: true)
@@ -189,7 +189,7 @@ struct TVPairingReceiverView: View {
                     .truncationMode(.middle)
             }
         case .signedIn, .completed:
-            MarqueeTVCardSymbol(systemImage: "checkmark", tint: Color.siloStatusLive, size: 140)
+            MarqueeTVCardSymbol(systemImage: "checkmark", tint: Color.weFlixStatusLive, size: 140)
             cardTitle("Signed in")
         case let .reaching(serverName):
             ProgressView().scaleEffect(1.6).frame(height: 112)
@@ -199,11 +199,11 @@ struct TVPairingReceiverView: View {
             ProgressView().scaleEffect(1.6).frame(height: 112)
             cardTitle(serverName)
         case .unreachable:
-            MarqueeTVCardSymbol(systemImage: "wifi.exclamationmark", tint: Color.siloStatusWarning)
+            MarqueeTVCardSymbol(systemImage: "wifi.exclamationmark", tint: Color.weFlixStatusWarning)
             cardTitle("No answer")
             cardNote("This Apple TV couldn’t reach the address your phone sent.")
         case let .failed(name, _, _):
-            MarqueeTVCardSymbol(systemImage: "exclamationmark.triangle", tint: Color.siloStatusWarning)
+            MarqueeTVCardSymbol(systemImage: "exclamationmark.triangle", tint: Color.weFlixStatusWarning)
             cardTitle("Not finished")
             // Earlier servers in the same session may have signed in.
             cardNote("\(name) wasn't signed in.")
@@ -221,7 +221,7 @@ struct TVPairingReceiverView: View {
         Text(text)
             .font(.system(size: MarqueeMetrics.heroFont, weight: .heavy))
             .kerning(-2)
-            .foregroundStyle(Color.siloOnSurface)
+            .foregroundStyle(Color.weFlixOnSurface)
             .lineLimit(3)
             .minimumScaleFactor(0.6)
             .fixedSize(horizontal: false, vertical: true)
@@ -237,7 +237,7 @@ struct TVPairingReceiverView: View {
     private func cardTitle(_ text: String) -> some View {
         Text(text)
             .font(.system(size: 32, weight: .semibold))
-            .foregroundStyle(Color.siloOnSurface)
+            .foregroundStyle(Color.weFlixOnSurface)
             .lineLimit(2)
             .padding(.top, 34)
     }
@@ -245,7 +245,7 @@ struct TVPairingReceiverView: View {
     private func cardNote(_ text: String) -> some View {
         Text(text)
             .font(.system(size: 22))
-            .foregroundStyle(Color.siloOnSurface.opacity(0.4))
+            .foregroundStyle(Color.weFlixOnSurface.opacity(0.4))
             .padding(.top, 10)
     }
 

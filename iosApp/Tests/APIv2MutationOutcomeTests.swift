@@ -1,6 +1,6 @@
 import Foundation
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 /// The one classifier every v2 write lane uses to decide whether a failed
 /// mutation reached the server.

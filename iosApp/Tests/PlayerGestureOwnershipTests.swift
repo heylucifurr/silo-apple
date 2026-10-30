@@ -1,6 +1,6 @@
 #if os(iOS)
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 /// Hold for 2×, edge drags, and pinch share one touch; only the first to
 /// start may act until it ends.

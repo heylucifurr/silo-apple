@@ -23,22 +23,22 @@ struct AutoDownloadBanner: View {
                 HStack(spacing: 12) {
                     Image(systemName: AutoDownloadStatusStyle.icon(for: status))
                         .font(.system(size: 17, weight: .medium))
-                        .foregroundColor(.siloOnSurface)
+                        .foregroundColor(.weFlixOnSurface)
                         .frame(width: 24)
                     VStack(alignment: .leading, spacing: 2) {
                         Text(AutoDownloadRules.headline(status))
                             .font(.system(size: 15, weight: .semibold))
-                            .foregroundColor(.siloOnSurface)
+                            .foregroundColor(.weFlixOnSurface)
                             .lineLimit(1)
                         Text(AutoDownloadRules.ruleSummary(for: subscription))
                             .font(.footnote)
-                            .foregroundColor(.siloSecondaryText)
+                            .foregroundColor(.weFlixSecondaryText)
                             .lineLimit(1)
                     }
                     Spacer(minLength: 8)
                     Image(systemName: "chevron.right")
                         .font(.footnote.weight(.semibold))
-                        .foregroundColor(.siloSecondaryText)
+                        .foregroundColor(.weFlixSecondaryText)
                 }
                 .padding(.horizontal, 14)
                 .padding(.vertical, 11)

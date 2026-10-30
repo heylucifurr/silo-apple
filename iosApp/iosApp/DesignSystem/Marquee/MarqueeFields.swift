@@ -54,21 +54,21 @@ struct MarqueeTextField<F: Hashable>: View {
         HStack(spacing: 10) {
             Image(systemName: systemImage)
                 .font(.system(size: MarqueeMetrics.fieldFont - 2))
-                .foregroundStyle(Color.siloOnSurface.opacity(0.4))
+                .foregroundStyle(Color.weFlixOnSurface.opacity(0.4))
                 .frame(width: 20)
                 .accessibilityHidden(true)
 
             ZStack(alignment: .leading) {
                 if text.isEmpty {
                     Text(placeholder)
-                        .foregroundStyle(Color.siloOnSurface.opacity(0.4))
+                        .foregroundStyle(Color.weFlixOnSurface.opacity(0.4))
                         .allowsHitTesting(false)
                         .accessibilityHidden(true)
                 }
                 field
                     .focused(focus, equals: equals)
-                    .foregroundStyle(Color.siloOnSurface)
-                    .tint(Color.siloFieldTint)
+                    .foregroundStyle(Color.weFlixOnSurface)
+                    .tint(Color.weFlixFieldTint)
                     .submitLabel(submitLabel)
                     .onSubmit(onSubmit)
                     .accessibilityLabel(Text(placeholder))
@@ -89,7 +89,7 @@ struct MarqueeTextField<F: Hashable>: View {
                     reveal.toggle()
                 } label: {
                     Image(systemName: reveal ? "eye.slash" : "eye")
-                        .foregroundStyle(Color.siloOnSurface.opacity(0.4))
+                        .foregroundStyle(Color.weFlixOnSurface.opacity(0.4))
                 }
                 .buttonStyle(.marqueePressable)
                 .accessibilityLabel(reveal ? "Hide password" : "Show password")
@@ -98,7 +98,7 @@ struct MarqueeTextField<F: Hashable>: View {
                     text = ""
                 } label: {
                     Image(systemName: "xmark.circle.fill")
-                        .foregroundStyle(Color.siloOnSurface.opacity(0.3))
+                        .foregroundStyle(Color.weFlixOnSurface.opacity(0.3))
                 }
                 .buttonStyle(.marqueePressable)
                 .accessibilityLabel("Clear")
@@ -116,7 +116,7 @@ struct MarqueeTextField<F: Hashable>: View {
                             .strokeBorder(stroke, lineWidth: 1)
                     )
             } else if isError {
-                Color.siloErrorInk.opacity(0.08)
+                Color.weFlixErrorInk.opacity(0.08)
             }
         }
         .opacity(isDisabled ? 0.5 : 1)
@@ -136,12 +136,12 @@ struct MarqueeTextField<F: Hashable>: View {
     }
 
     private var fill: Color {
-        if isError { return Color.siloErrorInk.opacity(0.08) }
+        if isError { return Color.weFlixErrorInk.opacity(0.08) }
         return Color.white.opacity(isFocused ? 0.10 : 0.07)
     }
 
     private var stroke: Color {
-        if isError { return Color.siloErrorInk.opacity(0.65) }
+        if isError { return Color.weFlixErrorInk.opacity(0.65) }
         return Color.white.opacity(isFocused ? 0.45 : 0.12)
     }
 }
@@ -174,7 +174,7 @@ struct MarqueeFieldGroup<Content: View>: View {
         )
         .overlay(
             RoundedRectangle(cornerRadius: MarqueeMetrics.fieldCorner, style: .continuous)
-                .strokeBorder(isError ? Color.siloErrorInk.opacity(0.65) : Color.white.opacity(0.12), lineWidth: 1)
+                .strokeBorder(isError ? Color.weFlixErrorInk.opacity(0.65) : Color.white.opacity(0.12), lineWidth: 1)
         )
     }
 }
@@ -202,7 +202,7 @@ struct MarqueeTVField<F: Hashable>: View {
         ZStack(alignment: .leading) {
             HStack(spacing: 18) {
                 Image(systemName: systemImage)
-                    .foregroundStyle(isFocused ? Color.black.opacity(0.45) : Color.siloOnSurface.opacity(0.4))
+                    .foregroundStyle(isFocused ? Color.black.opacity(0.45) : Color.weFlixOnSurface.opacity(0.4))
                 Text(displayString)
                     .foregroundStyle(displayColor)
                     .lineLimit(1)
@@ -228,18 +228,18 @@ struct MarqueeTVField<F: Hashable>: View {
         .frame(height: MarqueeMetrics.fieldHeight)
         .background(
             RoundedRectangle(cornerRadius: MarqueeMetrics.fieldCorner, style: .continuous)
-                .fill(isFocused ? Color.siloOnSurface : Color.white.opacity(isError ? 0.06 : 0.08))
+                .fill(isFocused ? Color.weFlixOnSurface : Color.white.opacity(isError ? 0.06 : 0.08))
         )
         .overlay(
             RoundedRectangle(cornerRadius: MarqueeMetrics.fieldCorner, style: .continuous)
                 .strokeBorder(
-                    isError ? Color.siloErrorInk.opacity(0.75) : (isFocused ? .clear : Color.white.opacity(0.12)),
+                    isError ? Color.weFlixErrorInk.opacity(0.75) : (isFocused ? .clear : Color.white.opacity(0.12)),
                     lineWidth: isError ? 3 : 1
                 )
         )
         .scaleEffect(isFocused && !reduceMotion ? 1.04 : 1)
         .shadow(color: .black.opacity(isFocused ? 0.5 : 0), radius: 24, y: 14)
-        .animation(SiloTheme.springAnimation, value: isFocused)
+        .animation(WeFlixTheme.springAnimation, value: isFocused)
     }
 
     @ViewBuilder
@@ -257,8 +257,8 @@ struct MarqueeTVField<F: Hashable>: View {
     }
 
     private var displayColor: Color {
-        if text.isEmpty { return isFocused ? Color.black.opacity(0.4) : Color.siloOnSurface.opacity(0.4) }
-        return isFocused ? .black : Color.siloOnSurface
+        if text.isEmpty { return isFocused ? Color.black.opacity(0.4) : Color.weFlixOnSurface.opacity(0.4) }
+        return isFocused ? .black : Color.weFlixOnSurface
     }
 }
 

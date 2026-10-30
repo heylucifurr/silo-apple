@@ -94,7 +94,7 @@ final class TVLibraryGridViewModel {
     }
 
     private static func sendsType(libraryType: String) -> Bool {
-        SiloMediaType.isSeries(libraryType) || SiloMediaType.isMovieLibrary(libraryType)
+        WeFlixMediaType.isSeries(libraryType) || WeFlixMediaType.isMovieLibrary(libraryType)
     }
 
     private func hydratePage1FromCache() {
@@ -201,7 +201,7 @@ final class TVLibraryGridViewModel {
             guard let url = item.posterUrl, !url.isEmpty else { return nil }
             // `TVCatalogGrid` draws audiobook covers square.
             let aspect: MediaCardAspect = item.isAudiobook ? .square : .poster
-            return CardArtwork(url: url, pointSize: TVMediaCard.artworkSize(cardWidth: SiloTheme.posterCardWidth, aspect: aspect))
+            return CardArtwork(url: url, pointSize: TVMediaCard.artworkSize(cardWidth: WeFlixTheme.posterCardWidth, aspect: aspect))
         }
         let desiredByURL = Dictionary(desired.map { ($0.url, $0) }, uniquingKeysWith: { first, _ in first })
         let stale = prefetchedPosters.values.filter { desiredByURL[$0.url]?.pointSize != $0.pointSize }
@@ -259,9 +259,9 @@ final class TVLibraryGridViewModel {
         do {
             let page: CatalogListPage
             if let nextPage {
-                page = try await SiloAPI.shared.nextCatalogPage(nextPage)
+                page = try await WeFlixAPI.shared.nextCatalogPage(nextPage)
             } else {
-                page = try await SiloAPI.shared.catalogPage(CatalogQueryBuilder.build(
+                page = try await WeFlixAPI.shared.catalogPage(CatalogQueryBuilder.build(
                     filter,
                     libraryId: libraryId,
                     mediaType: mediaType,
@@ -272,7 +272,7 @@ final class TVLibraryGridViewModel {
             }
 
             // Discard if another reload superseded us while we awaited.
-            guard await SiloAPI.shared.isCurrentOwner(page.auth) else { throw HTTPError.requestIdentityChanged }
+            guard await WeFlixAPI.shared.isCurrentOwner(page.auth) else { throw HTTPError.requestIdentityChanged }
             guard myGeneration == generation, !Task.isCancelled else { return }
 
             if startsOver || page.startsOver {
@@ -284,7 +284,7 @@ final class TVLibraryGridViewModel {
                     // type is, even if the other type has titles.
                     probe.type = mediaScope?.rawValue
                     let reason = await BrowseEmptyReason.classify(filter: filter) {
-                        try await !SiloAPI.shared.catalogPage(probe).response.items.isEmpty
+                        try await !WeFlixAPI.shared.catalogPage(probe).response.items.isEmpty
                     }
                     guard myGeneration == generation else { return }
                     emptyReason = reason

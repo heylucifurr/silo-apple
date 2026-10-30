@@ -96,7 +96,7 @@ class SearchViewModel {
 
     private var searchTask: Task<Void, Never>?
     private var peopleTask: Task<Void, Never>?
-    private let api: SiloAPI
+    private let api: WeFlixAPI
     /// Only the Search screen shows people; pickers that reuse this model
     /// never ask for them.
     private let includesPeople: Bool
@@ -111,7 +111,7 @@ class SearchViewModel {
     /// The read in flight, shared by the title and people lookups.
     private var searchFeaturesTask: Task<CatalogSearchFeatures, Error>?
     private static let logger = Logger(
-        subsystem: Bundle.main.bundleIdentifier ?? "org.siloserver.silo",
+        subsystem: Bundle.main.bundleIdentifier ?? "me.weflix",
         category: "Search"
     )
     /// Where the next page of the current results starts; `nil` after the
@@ -121,7 +121,7 @@ class SearchViewModel {
     /// cannot append to (or hand its continuation to) the new ones.
     private var generation = 0
 
-    init(api: SiloAPI = .shared, includesPeople: Bool = false, includesEpisodes: Bool = false) {
+    init(api: WeFlixAPI = .shared, includesPeople: Bool = false, includesEpisodes: Bool = false) {
         self.api = api
         self.includesPeople = includesPeople
         self.includesEpisodes = includesEpisodes

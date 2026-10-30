@@ -1,6 +1,6 @@
 import Foundation
 
-/// All navigable destinations in the Silo app.
+/// All navigable destinations in the WeFlix app.
 enum Route: Hashable {
     // Auth flow
     case serverSetup
@@ -55,6 +55,10 @@ enum Route: Hashable {
     /// points (profile menu / tvOS profile dropdown) only render when
     /// `RequestsFeatureStore.shared.isEnabled`.
     case requestsHub
+    /// Downloads, when a profile can download. A pushed page rather than a tab:
+    /// the tab bar trades it for Requests. `DownloadsView` is still reachable as
+    /// a macOS sidebar destination.
+    case downloads
 
     /// TMDB title detail with the single server-state-computed request
     /// action. Titles already in the library route to `.itemDetail` instead.

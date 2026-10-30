@@ -9,9 +9,9 @@ enum DiagnosticsDestinationChoice: String, Codable, CaseIterable, Sendable {
     var title: String {
         switch self {
         case .hosted:
-            return "Silo Diagnostics"
+            return "weflix Diagnostics"
         case .selfHosted:
-            return "My Silo Server"
+            return "My weflix Server"
         }
     }
 }
@@ -76,12 +76,12 @@ extension DiagnosticsBinding {
 
     static func hosted(serverRegistryID: String, accountUserID: String) -> DiagnosticsBinding {
         // This hash is local ownership state only. It scopes consent, pending
-        // evidence, and retries to the Silo server/account that captured them.
+        // evidence, and retries to the WeFlix server/account that captured them.
         // Hosted manifests use the collector_id from /v1/capabilities instead
         // and never serialize this value or the reversible registry server ID.
         let sourceHash = DiagnosticsSHA256.shortHex(data: Data(serverRegistryID.utf8), count: 32)
         // Account identity is needed only to keep local consent and pending
-        // evidence from crossing Silo accounts. Persist a domain-separated
+        // evidence from crossing WeFlix accounts. Persist a domain-separated
         // opaque value in binding/consent sidecars rather than the server's raw
         // account identifier.
         let accountMaterial = "silo-hosted-account-v1|\(serverRegistryID)|\(accountUserID)"

@@ -31,14 +31,14 @@ enum TVSettingsOptions {
         }
 
     /// The Resolution picker, tagged with the contract's resolution members.
-    static let resolution: [TVSettingsOption] = SiloQualityPresets.resolutionChoices.map {
-        .init(id: $0, label: SiloQualityPresets.resolutionLabel($0))
+    static let resolution: [TVSettingsOption] = WeFlixQualityPresets.resolutionChoices.map {
+        .init(id: $0, label: WeFlixQualityPresets.resolutionLabel($0))
     }
 
     /// The Maximum Bitrate picker: "No limit", then each cap.
     static func maxBitrate(_ choicesKbps: [Int]) -> [TVSettingsOption] {
-        [.init(id: SettingsViewModel.noBitrateLimitTag, label: SiloQualityPresets.noBitrateLimitLabel)]
-            + choicesKbps.map { .init(id: String($0), label: SiloQualityPresets.bitrateLabel($0)) }
+        [.init(id: SettingsViewModel.noBitrateLimitTag, label: WeFlixQualityPresets.noBitrateLimitLabel)]
+            + choicesKbps.map { .init(id: String($0), label: WeFlixQualityPresets.bitrateLabel($0)) }
     }
 
     static func audioLanguage(_ languages: [PlaybackLanguageOption]) -> [TVSettingsOption] {
@@ -202,20 +202,20 @@ private struct TVSettingsRailRowBody: View {
                 radius: 18,
                 y: 8
             )
-            .animation(.easeOut(duration: SiloTheme.fastDuration), value: isFocused)
+            .animation(.easeOut(duration: WeFlixTheme.fastDuration), value: isFocused)
     }
 
     private var foreground: Color {
         if isDestructive {
-            return isFocused ? .white : .siloError
+            return isFocused ? .white : .weFlixError
         }
-        return isFocused ? .siloBackground : .siloOnSurface
+        return isFocused ? .weFlixBackground : .weFlixOnSurface
     }
 
     private var fill: Color {
-        if isDestructive && isFocused { return .siloError }
-        if isFocused { return .siloOnSurface }
-        if isSelected { return .siloChromeSelectedFill }
+        if isDestructive && isFocused { return .weFlixError }
+        if isFocused { return .weFlixOnSurface }
+        if isSelected { return .weFlixChromeSelectedFill }
         return .clear
     }
 }
@@ -267,26 +267,26 @@ private struct TVSettingsPaneRowBody: View {
                 y: 8
             )
             .focusEffectDisabled()
-            .animation(.easeOut(duration: SiloTheme.fastDuration), value: isFocused)
+            .animation(.easeOut(duration: WeFlixTheme.fastDuration), value: isFocused)
     }
 
     private var foreground: Color {
         if isDestructive {
-            return isFocused ? Color(hex: "#D22F3F") : .siloError
+            return isFocused ? Color(hex: "#D22F3F") : .weFlixError
         }
-        return isFocused ? .siloBackground : .siloOnSurface
+        return isFocused ? .weFlixBackground : .weFlixOnSurface
     }
 
     private var backgroundFill: Color {
-        if isFocused { return .siloOnSurface }
-        if isSelected { return .siloChromeSelectedFill }
-        return .siloChromeRestingFill
+        if isFocused { return .weFlixOnSurface }
+        if isSelected { return .weFlixChromeSelectedFill }
+        return .weFlixChromeRestingFill
     }
 
     private var borderColor: Color {
         if isFocused { return .clear }
-        if isSelected { return .siloChromeSelectedBorder }
-        return .siloChromeRestingBorder
+        if isSelected { return .weFlixChromeSelectedBorder }
+        return .weFlixChromeRestingBorder
     }
 }
 
@@ -401,14 +401,14 @@ struct TVSettingsInfoRow: View {
         .padding(.horizontal, 24)
         .padding(.vertical, 17)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .foregroundColor(.siloOnSurface)
+        .foregroundColor(.weFlixOnSurface)
         .background(
             RoundedRectangle(cornerRadius: 14, style: .continuous)
-                .fill(Color.siloSurfaceElevated.opacity(0.84))
+                .fill(Color.weFlixSurfaceElevated.opacity(0.84))
         )
         .overlay(
             RoundedRectangle(cornerRadius: 14, style: .continuous)
-                .strokeBorder(Color.siloChromeRestingBorder, lineWidth: 1)
+                .strokeBorder(Color.weFlixChromeRestingBorder, lineWidth: 1)
         )
         .accessibilityElement(children: .combine)
     }
@@ -426,7 +426,7 @@ struct TVSettingsSectionHeader: View {
         Text(title)
             .font(.system(size: 19, weight: .semibold))
             .tracking(1.2)
-            .foregroundStyle(Color.siloSecondaryText)
+            .foregroundStyle(Color.weFlixSecondaryText)
             .padding(.horizontal, 24)
             .padding(.top, 26)
             .padding(.bottom, 6)
@@ -442,7 +442,7 @@ struct TVSettingsFooter: View {
     var body: some View {
         Text(text)
             .font(.system(size: 19))
-            .foregroundColor(.siloSecondaryText)
+            .foregroundColor(.weFlixSecondaryText)
             .padding(.horizontal, 24)
             .padding(.top, 4)
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -462,7 +462,7 @@ struct TVSettingsWarningFooter: View {
             Text(text)
         }
         .font(.body)
-        .foregroundColor(.siloError)
+        .foregroundColor(.weFlixError)
         .padding(.horizontal, 24)
         .padding(.top, 4)
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -496,11 +496,11 @@ struct TVSettingsConfirmationOverlay: View {
                 VStack(spacing: 12) {
                     Text(title)
                         .font(.system(size: 38, weight: .semibold))
-                        .foregroundColor(.siloOnSurface)
+                        .foregroundColor(.weFlixOnSurface)
 
                     Text(message)
                         .font(.system(size: 22))
-                        .foregroundColor(.siloSecondaryText)
+                        .foregroundColor(.weFlixSecondaryText)
                         .multilineTextAlignment(.center)
                 }
 
@@ -544,11 +544,11 @@ struct TVSettingsConfirmationOverlay: View {
             .padding(.vertical, 42)
             .background(
                 RoundedRectangle(cornerRadius: 30, style: .continuous)
-                    .fill(Color.siloSurfaceElevated)
+                    .fill(Color.weFlixSurfaceElevated)
             )
             .overlay(
                 RoundedRectangle(cornerRadius: 30, style: .continuous)
-                    .strokeBorder(Color.siloChromeRestingBorder, lineWidth: 1)
+                    .strokeBorder(Color.weFlixChromeRestingBorder, lineWidth: 1)
             )
             .focusSection()
             .defaultFocus($focusedAction, .cancel, priority: .userInitiated)
@@ -584,7 +584,7 @@ struct TVPrivacyPolicyOverlay: View {
 
             HStack(spacing: 54) {
                 QRCodeView(
-                    content: SiloLegalLinks.privacyPolicy.absoluteString,
+                    content: WeFlixLegalLinks.privacyPolicy.absoluteString,
                     size: 320
                 )
                 .padding(22)
@@ -594,23 +594,23 @@ struct TVPrivacyPolicyOverlay: View {
                 VStack(alignment: .leading, spacing: 22) {
                     Image(systemName: "hand.raised.fill")
                         .font(.system(size: 38, weight: .semibold))
-                        .foregroundStyle(Color.siloOnSurface)
+                        .foregroundStyle(Color.weFlixOnSurface)
                         .accessibilityHidden(true)
 
                     Text("Privacy Policy")
                         .font(.system(size: 42, weight: .bold))
-                        .foregroundStyle(Color.siloOnSurface)
+                        .foregroundStyle(Color.weFlixOnSurface)
 
-                    Text("Scan this code with your phone or tablet to read Silo's privacy policy.")
+                    Text("Scan this code with your phone or tablet to read weflix's privacy policy.")
                         .font(.system(size: 23))
-                        .foregroundStyle(Color.siloSecondaryText)
+                        .foregroundStyle(Color.weFlixSecondaryText)
                         .fixedSize(horizontal: false, vertical: true)
 
-                    Text(SiloLegalLinks.privacyPolicy.absoluteString)
+                    Text(WeFlixLegalLinks.privacyPolicy.absoluteString)
                         .font(.system(size: 20, weight: .medium, design: .monospaced))
-                        .foregroundStyle(Color.siloSecondaryText)
+                        .foregroundStyle(Color.weFlixSecondaryText)
                         .accessibilityLabel("Privacy policy URL")
-                        .accessibilityValue(SiloLegalLinks.privacyPolicy.absoluteString)
+                        .accessibilityValue(WeFlixLegalLinks.privacyPolicy.absoluteString)
 
                     Button(action: dismiss) {
                         Text("Done")
@@ -626,11 +626,11 @@ struct TVPrivacyPolicyOverlay: View {
             .padding(.vertical, 52)
             .background(
                 RoundedRectangle(cornerRadius: 32, style: .continuous)
-                    .fill(Color.siloSurfaceElevated)
+                    .fill(Color.weFlixSurfaceElevated)
             )
             .overlay {
                 RoundedRectangle(cornerRadius: 32, style: .continuous)
-                    .strokeBorder(Color.siloChromeRestingBorder, lineWidth: 1)
+                    .strokeBorder(Color.weFlixChromeRestingBorder, lineWidth: 1)
             }
             .focusSection()
             .defaultFocus($isDoneFocused, true, priority: .userInitiated)
@@ -665,7 +665,7 @@ struct TVSettingsPickerSheet: View {
     var body: some View {
         GeometryReader { geometry in
             ZStack {
-                Color.siloBackground.opacity(0.88)
+                Color.weFlixBackground.opacity(0.88)
                     .ignoresSafeArea()
 
                 pickerCard(
@@ -698,25 +698,25 @@ struct TVSettingsPickerSheet: View {
                 VStack(alignment: .leading, spacing: 6) {
                     Text(title)
                         .font(.system(size: 42, weight: .bold))
-                        .foregroundStyle(Color.siloOnSurface)
+                        .foregroundStyle(Color.weFlixOnSurface)
                         .accessibilityAddTraits(.isHeader)
 
                     Text("Choose an option")
                         .font(.system(size: 19))
-                        .foregroundStyle(Color.siloSecondaryText)
+                        .foregroundStyle(Color.weFlixSecondaryText)
                 }
 
                 Spacer(minLength: 12)
 
                 Label("Menu to close", systemImage: "arrow.uturn.backward")
                     .font(.system(size: 17, weight: .medium))
-                    .foregroundStyle(Color.siloSecondaryText)
+                    .foregroundStyle(Color.weFlixSecondaryText)
                     .padding(.horizontal, 15)
                     .padding(.vertical, 10)
                     .background(Color.white.opacity(0.055), in: Capsule())
                     .overlay {
                         Capsule()
-                            .strokeBorder(Color.siloChromeRestingBorder, lineWidth: 1)
+                            .strokeBorder(Color.weFlixChromeRestingBorder, lineWidth: 1)
                 }
             }
 
@@ -731,7 +731,7 @@ struct TVSettingsPickerSheet: View {
             }
 
             Rectangle()
-                .fill(Color.siloChromeRestingBorder)
+                .fill(Color.weFlixChromeRestingBorder)
                 .frame(height: 1)
 
             ScrollViewReader { proxy in
@@ -785,13 +785,13 @@ struct TVSettingsPickerSheet: View {
         }
         .padding(30)
         .frame(width: width, height: height, alignment: .top)
-        .background(cardShape.fill(Color.siloSurfaceElevated.opacity(0.98)))
+        .background(cardShape.fill(Color.weFlixSurfaceElevated.opacity(0.98)))
         // Clip child layers first, then add the border and outer card shadow.
         // This preserves the floating dialog while containing scroll content.
         .clipShape(cardShape)
         .overlay {
             cardShape.strokeBorder(
-                Color.siloChromeSelectedBorder.opacity(0.9),
+                Color.weFlixChromeSelectedBorder.opacity(0.9),
                 lineWidth: 1
             )
         }
@@ -859,7 +859,7 @@ struct TVSettingsPickerSheet: View {
         let targetID = focusedOptionID ?? options.first { $0.id == selection }?.id ?? options.first?.id
         guard let targetID else { return }
         if animated, !reduceMotion {
-            withAnimation(.easeOut(duration: SiloTheme.fastDuration)) {
+            withAnimation(.easeOut(duration: WeFlixTheme.fastDuration)) {
                 proxy.scrollTo(targetID, anchor: .center)
             }
         } else {

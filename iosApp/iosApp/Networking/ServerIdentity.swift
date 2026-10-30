@@ -29,7 +29,7 @@ struct ServerIdentityDocument: Decodable, Hashable, Sendable {
 }
 
 /// One address a deployment offers. Shared by the connections document, the
-/// SiloControl handoff offer, and the companion-pairing push, so the same
+/// WeFlixControl handoff offer, and the companion-pairing push, so the same
 /// value crosses every wire unchanged.
 struct ServerEndpoint: Codable, Hashable, Sendable {
     enum Kind: String, Codable, Sendable {
@@ -142,7 +142,7 @@ enum ServerIdentityProbeResult: Equatable, Sendable {
     /// The address answered, but it is a server that predates the identity
     /// contract. Reachable, unknown identity.
     case unsupportedServer
-    /// The address could not be reached, or did not answer like a Silo server.
+    /// The address could not be reached, or did not answer like a WeFlix server.
     case unreachable
 }
 

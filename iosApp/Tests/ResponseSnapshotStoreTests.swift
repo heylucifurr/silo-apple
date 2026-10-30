@@ -1,5 +1,5 @@
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 final class ResponseSnapshotStoreTests: XCTestCase {
     private var root: URL!

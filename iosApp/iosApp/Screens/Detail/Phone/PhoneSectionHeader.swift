@@ -34,14 +34,14 @@ struct PhoneSectionHeader: View {
 
     private var titleText: some View {
         Text(title)
-            .siloScaledFont(size: 22, weight: .semibold, relativeTo: .title2)
-            .foregroundColor(.siloOnSurface)
+            .weFlixScaledFont(size: 22, weight: .semibold, relativeTo: .title2)
+            .foregroundColor(.weFlixOnSurface)
     }
 
     private func trailing(_ text: String) -> some View {
         Text(text)
-            .siloScaledFont(size: 13, weight: .medium, relativeTo: .footnote)
-            .foregroundColor(.siloSecondaryText)
+            .weFlixScaledFont(size: 13, weight: .medium, relativeTo: .footnote)
+            .foregroundColor(.weFlixSecondaryText)
     }
 }
 #endif

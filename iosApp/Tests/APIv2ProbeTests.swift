@@ -1,6 +1,6 @@
 import Foundation
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 /// The v2 contract probe against the shared stub: only a valid info document
 /// is `.v2`, only the legacy listener's plain 404 is `.updateServer`, and
@@ -53,7 +53,7 @@ final class APIv2ProbeTests: XCTestCase {
     }
 
     func testHTML404IsNotUpdateServer() async {
-        // A proxy's 404 page proves nothing about which Silo answered.
+        // A proxy's 404 page proves nothing about which WeFlix answered.
         let result = await run(.text(404, "<html><body>Not Found</body></html>", contentType: "text/html"))
         XCTAssertEqual(result, .failure(.httpStatus(404)))
     }

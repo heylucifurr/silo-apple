@@ -51,7 +51,7 @@ final class RequestsFeatureStore {
 
     private let probe: @MainActor () async throws -> RequestsFeatureStatus
 
-    convenience init(api: SiloAPI = .shared) {
+    convenience init(api: WeFlixAPI = .shared) {
         self.init(probe: { try await api.requestsStatus() })
     }
 

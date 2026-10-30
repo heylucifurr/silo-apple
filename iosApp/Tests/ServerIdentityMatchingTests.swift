@@ -1,5 +1,5 @@
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 /// Recognising one deployment across addresses (issue #341). Registry keys
 /// stay URL-derived; the verified deployment identity only adds matches.

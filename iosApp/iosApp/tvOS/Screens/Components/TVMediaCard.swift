@@ -27,7 +27,7 @@ struct TVMediaCard: View {
     /// Width of the poster. Defaults to the theme's standard poster size.
     /// Override with a smaller value in space-constrained grids (e.g. the
     /// Library tab where the alphabet rail forces cards to shrink).
-    var cardWidth: CGFloat = SiloTheme.posterCardWidth
+    var cardWidth: CGFloat = WeFlixTheme.posterCardWidth
     var aspect: MediaCardAspect = .poster
     var prefersDefaultFocus: Bool = false
     var defaultFocusNamespace: Namespace.ID? = nil
@@ -154,7 +154,7 @@ struct TVMediaCard: View {
                 Button(action: action) {
                     posterImage.tvFocusRing(
                         isFocused: isFocused,
-                        cornerRadius: SiloTheme.cornerRadius,
+                        cornerRadius: WeFlixTheme.cornerRadius,
                         lineWidth: 4
                     )
                 }
@@ -193,12 +193,12 @@ struct TVMediaCard: View {
             )
             .episodeSpoilerBlur(hidesEpisodeStill)
             .frame(width: resolvedCardWidth, height: cardHeight)
-            .clipShape(RoundedRectangle(cornerRadius: SiloTheme.cornerRadius))
+            .clipShape(RoundedRectangle(cornerRadius: WeFlixTheme.cornerRadius))
 
             if let overlayData, overlayStore.enabled {
                 CardOverlays(data: overlayData, prefs: overlayStore.prefs, variant: .poster)
                     .frame(width: resolvedCardWidth, height: cardHeight)
-                    .clipShape(RoundedRectangle(cornerRadius: SiloTheme.cornerRadius))
+                    .clipShape(RoundedRectangle(cornerRadius: WeFlixTheme.cornerRadius))
             }
 
             if isPlayed {
@@ -215,7 +215,7 @@ struct TVMediaCard: View {
     private var caption: some View {
         VStack(spacing: 4) {
             Text(title)
-                .font(.siloPosterTitle)
+                .font(.weFlixPosterTitle)
                 .lineLimit(1)
                 .truncationMode(.tail)
                 .tvCardTitleFocus(isFocused: isFocused)
@@ -223,7 +223,7 @@ struct TVMediaCard: View {
 
             if let secondLine = subtitle ?? year.map(String.init) {
                 Text(secondLine)
-                    .font(.siloPosterMetadata)
+                    .font(.weFlixPosterMetadata)
                     .tvCardSubtitleFocus(isFocused: isFocused)
                     .lineLimit(1)
                     .truncationMode(.tail)
@@ -238,12 +238,12 @@ struct TVMediaCard: View {
     private var watchedBadge: some View {
         ZStack {
             Circle()
-                .fill(Color.siloOnSurface)
+                .fill(Color.weFlixOnSurface)
                 .frame(width: 40, height: 40)
                 .shadow(color: .black.opacity(0.3), radius: 4)
             Image(systemName: "checkmark")
                 .font(.system(size: 20, weight: .bold))
-                .foregroundColor(Color.siloBackground)
+                .foregroundColor(Color.weFlixBackground)
         }
     }
 

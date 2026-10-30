@@ -1,5 +1,5 @@
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 final class ServerIdentityResolverTests: XCTestCase {
     private var stub = ServerIdentityStub()
@@ -17,12 +17,12 @@ final class ServerIdentityResolverTests: XCTestCase {
 
     func testReadsTrimmedNameFromV2Branding() async {
         stub.configure([
-            Self.brandingPath: (200, Self.branding(name: "  Home Silo  ")),
+            Self.brandingPath: (200, Self.branding(name: "  Home weflix  ")),
         ])
 
         let name = await resolver().fetchServerName(serverURL: "https://silo.example")
 
-        XCTAssertEqual(name, "Home Silo")
+        XCTAssertEqual(name, "Home weflix")
         XCTAssertEqual(stub.requestedPaths(), [Self.brandingPath])
     }
 

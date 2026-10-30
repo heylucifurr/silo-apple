@@ -1,6 +1,6 @@
 #if os(tvOS)
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 /// The flyout's alignment padding is derived from a measurement that the
 /// padding itself moves by pixel rounding. Feeding sub-point jitter back into

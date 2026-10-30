@@ -1,6 +1,6 @@
 import Foundation
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 /// Capping pipelines and transfers, starting each transfer exactly once,
 /// retrying requests that never got an answer, and a transfer speed that
@@ -87,7 +87,7 @@ final class DownloadPipelineReliabilityTests: XCTestCase {
 
     // MARK: Transfer failures
 
-    func testClosingSiloFromTheAppSwitcherResumesWithoutUsingARetry() {
+    func testClosingWeFlixFromTheAppSwitcherResumesWithoutUsingARetry() {
         XCTAssertEqual(DownloadManager.mediaFailureAction(statusCode: nil, retryCount: 4, message: "cancelled", cause: .forceQuit),
             .retry(keepResumeData: true, refreshToken: false))
     }

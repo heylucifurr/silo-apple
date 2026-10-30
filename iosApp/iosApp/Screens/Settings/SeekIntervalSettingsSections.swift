@@ -49,12 +49,12 @@ struct SeekIntervalSettingsSections: View {
             picker("Skip Forward", media: media, direction: .forward, surface: surface)
         } header: {
             Text(title)
-                .foregroundStyle(Color.siloSecondaryText)
+                .foregroundStyle(Color.weFlixSecondaryText)
         } footer: {
             Text(footerText(footer, media: media))
-                .foregroundStyle(Color.siloSecondaryText)
+                .foregroundStyle(Color.weFlixSecondaryText)
         }
-        .listRowBackground(Color.siloGroupedCell)
+        .listRowBackground(Color.weFlixGroupedCell)
     }
 
     private func picker(
@@ -71,7 +71,7 @@ struct SeekIntervalSettingsSections: View {
                 Text(SeekIntervalLabel.choiceLabel(seconds)).tag(seconds)
             }
         }
-        .foregroundStyle(Color.siloOnSurface)
+        .foregroundStyle(Color.weFlixOnSurface)
         .disabled(!store.allowsEditing)
         .settingsPickerStyle()
     }

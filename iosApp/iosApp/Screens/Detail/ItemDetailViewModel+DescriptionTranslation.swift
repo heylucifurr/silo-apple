@@ -144,7 +144,7 @@ extension ItemDetailViewModel {
 
     private func itemTranslationFetch(_ key: DescriptionTranslationCoordinator.Key) -> @MainActor () async -> ItemDetail? {
         { [libraryId] in
-            try? await SiloAPI.shared.itemDetail(contentId: key.contentId, libraryId: libraryId)
+            try? await WeFlixAPI.shared.itemDetail(contentId: key.contentId, libraryId: libraryId)
         }
     }
 
@@ -172,7 +172,7 @@ extension ItemDetailViewModel {
     private func seasonTranslationFetch(seriesId: String, seasonNumber: Int) -> @MainActor () async -> TranslatedEpisodesRead? {
         { [weak self, libraryId] in
             guard let generation = self?.episodeReadGeneration,
-                  let response = try? await SiloAPI.shared.episodes(
+                  let response = try? await WeFlixAPI.shared.episodes(
                       seriesId: seriesId, seasonNumber: seasonNumber, libraryId: libraryId
                   ) else { return nil }
             return TranslatedEpisodesRead(response: response, generation: generation)

@@ -1,6 +1,6 @@
 import Foundation
 
-/// What Silo does when playback enters a detected intro —
+/// What WeFlix does when playback enters a detected intro —
 /// `playback.intro_skip_mode`, settings contract revision 7.
 ///
 /// The spec is the server repo's `docs/design/2026-08-16-intro-skip-mode.md`;

@@ -27,7 +27,7 @@ struct TVGeneralSettingsPane: View {
             TVSettingsSectionHeader("APPLE TV USER")
 
             TVSettingsPickerRow(
-                title: "Paired Silo Profile",
+                title: "Paired weflix Profile",
                 value: pairedProfileName,
                 action: changePairedProfile
             )
@@ -263,7 +263,7 @@ struct TVGeneralSettingsPane: View {
     private var pairingDescription: String {
         let base = appleTVUserContext.pairingDescription
         guard launchPreferences.behavior == .askEveryLaunch else { return base }
-        return "\(base) Ask Every Time is on, so Silo will still show Who's Watching at launch."
+        return "\(base) Ask Every Time is on, so weflix will still show Who's Watching at launch."
     }
 
     @ViewBuilder
@@ -428,7 +428,7 @@ private struct TVMenuCustomizationSheet: View {
                     Button("Done") { dismiss() }
                 }
             }
-            .background(Color.siloBackground.ignoresSafeArea())
+            .background(Color.weFlixBackground.ignoresSafeArea())
         }
     }
 
@@ -531,11 +531,11 @@ private struct TVMenuCustomizationSheet: View {
         .padding(.vertical, 12)
         .background(
             RoundedRectangle(cornerRadius: 14, style: .continuous)
-                .fill(Color.siloChromeRestingFill)
+                .fill(Color.weFlixChromeRestingFill)
         )
         .overlay {
             RoundedRectangle(cornerRadius: 14, style: .continuous)
-                .strokeBorder(Color.siloChromeRestingBorder, lineWidth: 1)
+                .strokeBorder(Color.weFlixChromeRestingBorder, lineWidth: 1)
         }
     }
 
@@ -605,6 +605,6 @@ private func sectionHeader(_ title: String) -> some View {
     Text(title)
         .font(.system(size: 15, weight: .semibold, design: .monospaced))
         .tracking(2)
-        .foregroundStyle(Color.siloSecondaryText)
+        .foregroundStyle(Color.weFlixSecondaryText)
 }
 #endif

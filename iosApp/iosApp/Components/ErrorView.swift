@@ -15,37 +15,37 @@ struct ErrorView: View {
     @Environment(AppRouter.self) private var router
 
     var body: some View {
-        VStack(spacing: SiloTheme.padding) {
+        VStack(spacing: WeFlixTheme.padding) {
             Image(systemName: "exclamationmark.triangle.fill")
                 .font(.system(size: 48))
-                .foregroundColor(.siloError)
+                .foregroundColor(.weFlixError)
 
             Text(headline)
-                .font(.siloHeadline)
-                .foregroundColor(.siloOnSurface)
+                .font(.weFlixHeadline)
+                .foregroundColor(.weFlixOnSurface)
                 .multilineTextAlignment(.center)
 
             Text(state.message)
-                .font(.siloBody)
-                .foregroundColor(.siloSecondaryText)
+                .font(.weFlixBody)
+                .foregroundColor(.weFlixSecondaryText)
                 .multilineTextAlignment(.center)
-                .padding(.horizontal, SiloTheme.largePadding)
+                .padding(.horizontal, WeFlixTheme.largePadding)
 
-            VStack(spacing: SiloTheme.smallPadding) {
+            VStack(spacing: WeFlixTheme.smallPadding) {
                 if let primary = primaryAction {
                     Button(primary.title, action: primary.run)
-                        .siloPrimaryButton()
+                        .weFlixPrimaryButton()
                         .frame(width: 200)
                 }
                 ForEach(Array(secondaryActions.enumerated()), id: \.offset) { _, action in
                     Button(action.title, action: action.run)
                         .buttonStyle(.plain)
-                        .foregroundColor(.siloSecondaryText)
-                        .font(.siloBody)
+                        .foregroundColor(.weFlixSecondaryText)
+                        .font(.weFlixBody)
                         .padding(.top, 4)
                 }
             }
-            .padding(.top, SiloTheme.smallPadding)
+            .padding(.top, WeFlixTheme.smallPadding)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }

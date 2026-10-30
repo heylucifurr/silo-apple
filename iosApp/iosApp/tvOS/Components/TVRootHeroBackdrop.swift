@@ -107,7 +107,7 @@ struct TVBackdropTintWash: View {
 /// top-right corner and fades out toward the leading edge and the bottom
 /// into colors sampled from the art itself, which are carried (dimmed)
 /// across the rest of the page so the metadata and rows below sit on the
-/// same tint. Calendar passes nil artwork with flat `.siloBackground` tints
+/// same tint. Calendar passes nil artwork with flat `.weFlixBackground` tints
 /// and renders flat.
 struct TVRootHeroBackdrop: View {
     let tints: HeroBackdropPalette.Tints
@@ -131,7 +131,7 @@ struct TVRootHeroBackdrop: View {
 
     var body: some View {
         ZStack(alignment: .top) {
-            Color.siloBackground
+            Color.weFlixBackground
 
             tintBackground
 
@@ -147,7 +147,7 @@ struct TVRootHeroBackdrop: View {
         }
     }
 
-    /// Sampled-color wash; when the caller passes flat `.siloBackground`
+    /// Sampled-color wash; when the caller passes flat `.weFlixBackground`
     /// tints (Calendar) every stop collapses to the app background, so the
     /// wash renders flat.
     private var tintBackground: some View {

@@ -86,7 +86,7 @@ struct PINEntryView: View {
             if !compact {
                 Text("Forgot your PIN? The account admin can reset it.")
                     .font(.system(size: 13))
-                    .foregroundStyle(Color.siloOnSurface.opacity(0.4))
+                    .foregroundStyle(Color.weFlixOnSurface.opacity(0.4))
                     .multilineTextAlignment(.center)
                     .padding(.horizontal, 24)
                     .padding(.bottom, 16)
@@ -137,7 +137,7 @@ struct PINEntryView: View {
 
             Text(profile.name)
                 .font(.system(size: nameFont, weight: .bold))
-                .foregroundStyle(Color.siloOnSurface)
+                .foregroundStyle(Color.weFlixOnSurface)
                 .lineLimit(1)
         }
         .accessibilityElement(children: .combine)
@@ -160,7 +160,7 @@ struct PINEntryView: View {
         } else {
             Text("Enter your PIN")
                 .font(.system(size: statusFont))
-                .foregroundStyle(Color.siloOnSurface.opacity(0.62))
+                .foregroundStyle(Color.weFlixOnSurface.opacity(0.62))
         }
     }
 
@@ -179,7 +179,7 @@ struct PINEntryView: View {
     }
 
     private var dotColor: Color {
-        errorMessage != nil && pin.isEmpty ? Color(hex: "#FF6961") : Color.siloOnSurface
+        errorMessage != nil && pin.isEmpty ? Color(hex: "#FF6961") : Color.weFlixOnSurface
     }
 
     private func numberPad(verticalSpacing: CGFloat) -> some View {
@@ -346,7 +346,7 @@ private struct NumberPadButtonBody: View {
 
     var body: some View {
         configuration.label
-            .foregroundColor(isFocused ? .siloBackground : .siloOnSurface)
+            .foregroundColor(isFocused ? .weFlixBackground : .weFlixOnSurface)
             .frame(width: NumberPadButton.size, height: NumberPadButton.size)
             .background(background)
             .overlay(border)
@@ -356,13 +356,13 @@ private struct NumberPadButtonBody: View {
             #if os(tvOS)
             .focusEffectDisabled()
             #endif
-            .animation(.easeOut(duration: SiloTheme.fastDuration), value: isFocused)
+            .animation(.easeOut(duration: WeFlixTheme.fastDuration), value: isFocused)
     }
 
     @ViewBuilder
     private var background: some View {
         Circle()
-            .fill(isFocused ? Color.siloOnSurface : Color.white.opacity(0.13))
+            .fill(isFocused ? Color.weFlixOnSurface : Color.white.opacity(0.13))
     }
 
     @ViewBuilder

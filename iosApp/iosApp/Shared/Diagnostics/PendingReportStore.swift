@@ -1108,7 +1108,7 @@ final class PendingReportStore {
     /// Enumerates only the compatibility path's local reports without
     /// consulting collector erasure state. A corrupt hosted ledger must fail
     /// hosted operations closed, but it has no authority over evidence stored
-    /// for a user's own Silo server.
+    /// for a user's own WeFlix server.
     private func scanSelfHostedReportsLocked() -> [PendingReport] {
         guard let urls = try? fileManager.contentsOfDirectory(
             at: pendingDirectory,

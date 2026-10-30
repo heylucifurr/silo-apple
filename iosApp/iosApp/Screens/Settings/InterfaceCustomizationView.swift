@@ -156,7 +156,7 @@ struct InterfaceCustomizationView: View {
             if let message = preferences.capabilityMessage {
                 Section {
                     Label(message, systemImage: "server.rack")
-                        .foregroundStyle(Color.siloSecondaryText)
+                        .foregroundStyle(Color.weFlixSecondaryText)
                 }
             }
 
@@ -206,7 +206,7 @@ struct InterfaceCustomizationView: View {
                             HStack(spacing: 8) {
                                 Image(systemName: "arrow.turn.down.right")
                                     .font(.caption.weight(.semibold))
-                                    .foregroundStyle(Color.siloSecondaryText)
+                                    .foregroundStyle(Color.weFlixSecondaryText)
                                     .frame(width: 18)
                                 shortcutLabel(for: item, isNestedLibrary: true)
                             }
@@ -304,7 +304,7 @@ struct InterfaceCustomizationView: View {
                 Section {
                     Label(message, systemImage: "icloud.slash")
                         .font(.footnote)
-                        .foregroundStyle(Color.siloSecondaryText)
+                        .foregroundStyle(Color.weFlixSecondaryText)
                 }
             }
             if preferences.hasHeldChanges {
@@ -317,7 +317,7 @@ struct InterfaceCustomizationView: View {
         #if os(macOS)
         .settingsListChrome()
         #else
-        .siloGroupedListStyle()
+        .weFlixGroupedListStyle()
         #endif
         .navigationTitle("Interface")
         .task {
@@ -424,7 +424,7 @@ struct InterfaceCustomizationView: View {
         isNestedLibrary: Bool = false
     ) -> some View {
         HStack(spacing: 10) {
-            Image(systemName: navigationIcon(for: item))
+            menuIcon(navigationIcon(for: item))
                 .frame(width: 22)
             // The type caption sits under the title rather than beside it so
             // narrow screens never squeeze either into per-character wraps;
@@ -440,7 +440,7 @@ struct InterfaceCustomizationView: View {
                     ).uppercased()
                 )
                     .font(.caption.weight(.medium))
-                    .foregroundStyle(Color.siloSecondaryText.opacity(0.75))
+                    .foregroundStyle(Color.weFlixSecondaryText.opacity(0.75))
                     .lineLimit(1)
             }
         }
@@ -588,12 +588,12 @@ private struct TitleArtSettingsSection: View {
                     systemImage: "info.circle"
                 )
                 .font(.footnote)
-                .foregroundStyle(Color.siloSecondaryText)
+                .foregroundStyle(Color.weFlixSecondaryText)
             }
             if let message = preferences.errorMessage ?? preferences.readErrorMessage {
                 Label(message, systemImage: "exclamationmark.triangle")
                     .font(.footnote)
-                    .foregroundStyle(Color.siloSecondaryText)
+                    .foregroundStyle(Color.weFlixSecondaryText)
             }
         } header: {
             Text("Title Pages")
@@ -649,7 +649,7 @@ private struct ThemeMusicSettingsSection: View {
             if let message = preferences.errorMessage {
                 Label(message, systemImage: "exclamationmark.triangle")
                     .font(.footnote)
-                    .foregroundStyle(Color.siloSecondaryText)
+                    .foregroundStyle(Color.weFlixSecondaryText)
             }
         } header: {
             Text("Theme Music")
@@ -682,7 +682,7 @@ private struct TitlePagesToggleRow: View {
                 Text(title)
                 Text(subtitle)
                     .font(.footnote)
-                    .foregroundStyle(Color.siloSecondaryText)
+                    .foregroundStyle(Color.weFlixSecondaryText)
             }
         }
         #endif

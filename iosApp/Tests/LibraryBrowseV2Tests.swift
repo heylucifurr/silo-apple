@@ -1,14 +1,14 @@
 import Foundation
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
-/// Library sections and the Collections tab through the `SiloAPI` facade on
+/// Library sections and the Collections tab through the `WeFlixAPI` facade on
 /// `/api/v2`. Both run on iOS and tvOS; the tvOS library landing page and
 /// collections grid render exactly these values.
 final class LibraryBrowseV2Tests: XCTestCase {
     private let sectionsJSON = #"{"sections":[{"id":"recent","section_type":"recently_added","title":"Recently Added","items":[{"content_id":"series:severance","type":"series","title":"Severance"}]}]}"#
 
-    private func client(stub: APIv2TestStub) async throws -> (SiloAPI, TokenStore) {
+    private func client(stub: APIv2TestStub) async throws -> (WeFlixAPI, TokenStore) {
         let name = "LibraryBrowseV2Tests.\(UUID().uuidString)"
         let suite = try XCTUnwrap(UserDefaults(suiteName: name))
         addTeardownBlock { UserDefaults().removePersistentDomain(forName: name) }
@@ -18,7 +18,7 @@ final class LibraryBrowseV2Tests: XCTestCase {
         await tokens.setServerUrl("https://library.example")
         await tokens.setProfileId("profile-one")
         let http = HTTPClient(session: stub.makeSession(), tokenStore: tokens)
-        return (SiloAPI(http: http, tokenStore: tokens), tokens)
+        return (WeFlixAPI(http: http, tokenStore: tokens), tokens)
     }
 
     private func card(_ id: String, title: String, poster: String = "", extra: String = "") -> String {

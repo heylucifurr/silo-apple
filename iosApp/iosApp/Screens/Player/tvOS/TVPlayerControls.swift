@@ -144,7 +144,7 @@ struct TVPlayerControls: View {
             )
             .frame(width: 1, height: 1)
         }
-        .animation(.easeOut(duration: SiloTheme.fastDuration), value: isHUDPresented)
+        .animation(.easeOut(duration: WeFlixTheme.fastDuration), value: isHUDPresented)
         .animation(.easeOut(duration: 0.2), value: viewModel.showIntroSkip)
         // Menu / exit handling intentionally lives at the `PlayerView` level
         // rather than here. That higher handler reads `viewModel.isHUDPresented`
@@ -397,12 +397,12 @@ struct TVPlayerControls: View {
             if viewModel.sleepTimer.isActive {
                 Label(PlayerTimeFormatter.formatCountdown(viewModel.sleepTimer.remainingSeconds),
                       systemImage: "moon.zzz.fill")
-                    .font(.siloSmall.weight(.medium))
+                    .font(.weFlixSmall.weight(.medium))
                     .foregroundStyle(.white.opacity(0.85))
                     .monospacedDigit()
                     .padding(.horizontal, 12)
                     .padding(.vertical, 6)
-                    .siloPlayerGlass(in: Capsule())
+                    .weFlixPlayerGlass(in: Capsule())
             }
         }
     }
@@ -537,18 +537,18 @@ struct TVPlayerControls: View {
             VStack(alignment: .leading, spacing: 2) {
                 if let series = viewModel.metadata.seriesTitle, !series.isEmpty {
                     Text(series)
-                        .font(.siloSmall.weight(.medium))
+                        .font(.weFlixSmall.weight(.medium))
                         .foregroundStyle(.white.opacity(0.65))
                         .lineLimit(1)
                 }
                 HStack(spacing: 10) {
                     Text(title)
-                        .font(.siloHeadline)
+                        .font(.weFlixHeadline)
                         .foregroundStyle(.white)
                         .lineLimit(1)
                     if let episode = viewModel.metadata.episodeTag {
                         Text(episode)
-                            .font(.siloSmall)
+                            .font(.weFlixSmall)
                             .foregroundStyle(.white.opacity(0.6))
                     }
                 }
@@ -749,7 +749,7 @@ private struct TVScrubPreviewLayer: View {
                 .monospacedDigit()
         }
         .padding(10)
-        .siloPlayerGlass(
+        .weFlixPlayerGlass(
             in: RoundedRectangle(cornerRadius: 20, style: .continuous),
             tint: Color.black.opacity(0.28)
         )

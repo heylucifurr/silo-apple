@@ -2,7 +2,7 @@ import Foundation
 
 /// App-owned, engine-neutral cue used by realtime AI subtitles.
 ///
-/// Times are absolute Silo source seconds. Rendering filters these cues
+/// Times are absolute WeFlix source seconds. Rendering filters these cues
 /// against Aether's public source clock; no renderer-specific representation
 /// leaks into the product layer.
 struct LiveSubtitleCue: Equatable, Hashable, Sendable, Identifiable {

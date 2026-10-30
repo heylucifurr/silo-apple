@@ -6,10 +6,10 @@ protocol AdvisoryAgePreferenceTransport: AnyObject, Sendable {
     func putValue(_ enabled: Bool, requestIdentity: HTTPRequestIdentity) async throws
 }
 
-final class SiloAdvisoryAgePreferenceTransport: AdvisoryAgePreferenceTransport {
-    private let api: SiloAPI
+final class WeFlixAdvisoryAgePreferenceTransport: AdvisoryAgePreferenceTransport {
+    private let api: WeFlixAPI
 
-    init(api: SiloAPI = .shared) { self.api = api }
+    init(api: WeFlixAPI = .shared) { self.api = api }
 
     func contractCapabilities(requestIdentity: HTTPRequestIdentity) async -> SettingsCapabilitiesResult {
         await api.getContractCapabilities(requestIdentity: requestIdentity)
@@ -68,7 +68,7 @@ final class AdvisoryAgePreferenceStore: ObservableObject {
     private var confirmedValue = false
 
     init(
-        transport: AdvisoryAgePreferenceTransport = SiloAdvisoryAgePreferenceTransport(),
+        transport: AdvisoryAgePreferenceTransport = WeFlixAdvisoryAgePreferenceTransport(),
         requestIdentity: @escaping @MainActor () -> HTTPRequestIdentity? =
             AdvisoryAgePreferenceStore.activeRequestIdentity
     ) {

@@ -1,6 +1,6 @@
 #if os(iOS)
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 /// The iPhone Duo's open display in portrait is 669 x 951pt; half-folded, its
 /// fold runs across the middle.

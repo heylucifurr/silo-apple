@@ -1,6 +1,6 @@
 import Foundation
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 /// Search "All" (audiobooks hidden) asks the server whether it supports the
 /// `video_with_episodes` scope before the first title search. Only an answer
@@ -43,7 +43,7 @@ final class SearchCapabilityScopeTests: XCTestCase {
         await tokens.setProfileId("profile-one")
         if saved { await tokens.saveTokens(accessToken: "access", refreshToken: "refresh") }
         let http = HTTPClient(session: stub.makeSession(), tokenStore: tokens)
-        let model = SearchViewModel(api: SiloAPI(http: http, tokenStore: tokens),
+        let model = SearchViewModel(api: WeFlixAPI(http: http, tokenStore: tokens),
                                     includesPeople: true, includesEpisodes: true)
         model.audiobooksEnabled = false
         model.query = "Grilled"

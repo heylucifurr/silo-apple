@@ -17,7 +17,7 @@ protocol TVApprovalAPI: Sendable {
 }
 
 /// What "Not you?" on the approval card offers. In every case it signs out of
-/// the server in Silo only; the difference is what the next sign-in lets the
+/// the server in WeFlix only; the difference is what the next sign-in lets the
 /// person do.
 enum TVApprovalAccountSwitch: Equatable, Sendable {
     /// The server lists a browser provider and advertises `select_account`:
@@ -71,7 +71,7 @@ struct LiveTVApprovalAPI: TVApprovalAPI {
     }
 
     func accountSwitch(serverURL: String) async -> TVApprovalAccountSwitch {
-        TVApprovalAccountSwitch(await SiloAPI.shared.apiV2Client.signInOptions(serverURL: serverURL))
+        TVApprovalAccountSwitch(await WeFlixAPI.shared.apiV2Client.signInOptions(serverURL: serverURL))
     }
 }
 

@@ -7,14 +7,14 @@ struct NowPlayingShelf: View {
     var style: NowPlayingBarStyle = .card
 
     #if os(iOS)
-    @Environment(SiloControlClient.self) private var siloControl
+    @Environment(WeFlixControlClient.self) private var weFlixControl
     #endif
     @Environment(AudioPlaybackStore.self) private var audioStore
 
     #if os(iOS)
     /// Whether a now-playing bar is showing. A TV control session takes
     /// priority over audio.
-    static func hasActiveAccessory(control: SiloControlClient, audio: AudioPlaybackStore) -> Bool {
+    static func hasActiveAccessory(control: WeFlixControlClient, audio: AudioPlaybackStore) -> Bool {
         control.remotePlaybackEngaged || audio.player.hasActiveSession
     }
     #endif
@@ -23,10 +23,10 @@ struct NowPlayingShelf: View {
         #if os(iOS)
         // Stays mounted under the full remote sheet so dismissing the sheet
         // doesn't re-insert the accessory.
-        if siloControl.remotePlaybackEngaged {
-            SiloControlMiniBar(controller: siloControl, style: style)
-                .animation(.snappy, value: siloControl.hasActiveSession)
-                .animation(.snappy, value: siloControl.isReconnecting)
+        if weFlixControl.remotePlaybackEngaged {
+            WeFlixControlMiniBar(controller: weFlixControl, style: style)
+                .animation(.snappy, value: weFlixControl.hasActiveSession)
+                .animation(.snappy, value: weFlixControl.isReconnecting)
         } else if audioStore.player.hasActiveSession {
             AudioMiniPlayerView(style: style)
                 .animation(.snappy, value: audioStore.player.hasActiveSession)
@@ -49,11 +49,11 @@ struct NowPlayingShelfAttachment: ViewModifier {
     /// accessory, for layouts that hide the system tab bar.
     var showsCard = false
 
-    @Environment(SiloControlClient.self) private var siloControl
+    @Environment(WeFlixControlClient.self) private var weFlixControl
     @Environment(AudioPlaybackStore.self) private var audioStore
 
     private var isActive: Bool {
-        NowPlayingShelf.hasActiveAccessory(control: siloControl, audio: audioStore)
+        NowPlayingShelf.hasActiveAccessory(control: weFlixControl, audio: audioStore)
     }
 
     func body(content: Content) -> some View {

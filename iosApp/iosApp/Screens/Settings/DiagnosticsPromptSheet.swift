@@ -45,7 +45,7 @@ struct DiagnosticsPromptSheet: View {
                     ProgressView("Sending diagnostics…")
                 }
             }
-            .siloGroupedListStyle()
+            .weFlixGroupedListStyle()
             .navigationTitle(prompt.title)
         }
     }

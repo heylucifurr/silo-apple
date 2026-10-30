@@ -21,7 +21,7 @@ struct SearchMediaTypeMenu: View {
         } label: {
             HStack(spacing: 6) {
                 Text(selectedMediaType.title)
-                    .font(.siloBody)
+                    .font(.weFlixBody)
                     .lineLimit(1)
 
                 Image(systemName: "chevron.down")
@@ -29,14 +29,14 @@ struct SearchMediaTypeMenu: View {
                     .bold()
                     .imageScale(.small)
             }
-            .foregroundStyle(Color.siloOnSurface)
+            .foregroundStyle(Color.weFlixOnSurface)
             .padding(.horizontal, 14)
             .frame(minHeight: 44)
             .background(
-                Capsule().fill(Color.siloChromeRestingFill)
+                Capsule().fill(Color.weFlixChromeRestingFill)
             )
             .overlay(
-                Capsule().strokeBorder(Color.siloChromeRestingBorder, lineWidth: 1)
+                Capsule().strokeBorder(Color.weFlixChromeRestingBorder, lineWidth: 1)
             )
             .contentShape(Capsule())
         }

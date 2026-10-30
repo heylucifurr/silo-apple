@@ -73,8 +73,8 @@ struct SettingsView: View {
         }
         .settingsListChrome()
         .navigationTitle("Settings")
-        .siloNavigationTitleDisplayMode(.large)
-        .siloToolbarColorSchemeDark()
+        .weFlixNavigationTitleDisplayMode(.large)
+        .weFlixToolbarColorSchemeDark()
         .task {
             await viewModel.loadSettings()
         }
@@ -116,12 +116,12 @@ struct SettingsView: View {
                     VStack(alignment: .leading, spacing: 3) {
                         Text(viewModel.displayName)
                             .font(.title3.weight(.semibold))
-                            .foregroundStyle(Color.siloOnSurface)
+                            .foregroundStyle(Color.weFlixOnSurface)
                             .lineLimit(1)
 
                         Text(viewModel.accountSubtitleLine)
                             .font(.footnote)
-                            .foregroundStyle(Color.siloSecondaryText)
+                            .foregroundStyle(Color.weFlixSecondaryText)
                             .lineLimit(1)
                     }
 
@@ -137,7 +137,7 @@ struct SettingsView: View {
         } footer: {
             if viewModel.userInfo?.isAdmin == true {
                 Text("Signed in as an administrator.")
-                    .foregroundStyle(Color.siloSecondaryText)
+                    .foregroundStyle(Color.weFlixSecondaryText)
             }
         }
     }
@@ -241,23 +241,25 @@ struct SettingsView: View {
                 value: SettingsViewModel.versionString
             )
 
-            externalLink("Privacy Policy", systemImage: "hand.raised.fill", SiloLegalLinks.privacyPolicy)
+            if AppVisibility.showsLegalRows {
+                externalLink("Privacy Policy", systemImage: "hand.raised.fill", WeFlixLegalLinks.privacyPolicy)
 
-            NavigationLink {
-                AcknowledgementsView()
-            } label: {
-                SettingsRowLabel(
-                    title: "Acknowledgements",
-                    systemImage: "curlybraces",
-                    color: .indigo
+                NavigationLink {
+                    AcknowledgementsView()
+                } label: {
+                    SettingsRowLabel(
+                        title: "Acknowledgements",
+                        systemImage: "curlybraces",
+                        color: .indigo
+                    )
+                }
+
+                externalLink(
+                    "Source Code",
+                    systemImage: "chevron.left.forwardslash.chevron.right",
+                    WeFlixLegalLinks.sourceCode
                 )
             }
-
-            externalLink(
-                "Source Code",
-                systemImage: "chevron.left.forwardslash.chevron.right",
-                SiloLegalLinks.sourceCode
-            )
         }
     }
 
@@ -274,7 +276,7 @@ struct SettingsView: View {
                 SettingsRowLabel(title: title, systemImage: systemImage, color: .gray)
                 Image(systemName: "arrow.up.right")
                     .font(.footnote.weight(.semibold))
-                    .foregroundStyle(Color.siloSecondaryText.opacity(0.6))
+                    .foregroundStyle(Color.weFlixSecondaryText.opacity(0.6))
             }
             .contentShape(Rectangle())
         }
@@ -288,13 +290,13 @@ struct SettingsView: View {
                 showSignOutConfirm = true
             } label: {
                 Text("Sign Out")
-                    .font(.siloBody.weight(.semibold))
-                    .foregroundStyle(Color.siloErrorInk)
+                    .font(.weFlixBody.weight(.semibold))
+                    .foregroundStyle(Color.weFlixErrorInk)
                     .frame(maxWidth: .infinity)
-                    .padding(.vertical, SiloTheme.smallPadding)
+                    .padding(.vertical, WeFlixTheme.smallPadding)
                     .background(
-                        RoundedRectangle(cornerRadius: SiloTheme.cornerRadius, style: .continuous)
-                            .fill(Color.siloErrorInk.opacity(0.12))
+                        RoundedRectangle(cornerRadius: WeFlixTheme.cornerRadius, style: .continuous)
+                            .fill(Color.weFlixErrorInk.opacity(0.12))
                     )
                     .contentShape(Rectangle())
             }
@@ -318,7 +320,7 @@ struct SettingsRowLabel: View {
 
     /// The Mac keeps its chrome monochrome, so every tile is the same grey
     /// whatever `color` a row passes.
-    private var tileFill: Color { .siloIconTile }
+    private var tileFill: Color { .weFlixIconTile }
 
     var body: some View {
         HStack(spacing: 12) {
@@ -332,13 +334,13 @@ struct SettingsRowLabel: View {
                 }
 
             Text(title)
-                .foregroundStyle(Color.siloOnSurface)
+                .foregroundStyle(Color.weFlixOnSurface)
 
             Spacer(minLength: 8)
 
             if let value {
                 Text(value)
-                    .foregroundStyle(Color.siloSecondaryText)
+                    .foregroundStyle(Color.weFlixSecondaryText)
                     .lineLimit(1)
             }
         }
@@ -354,7 +356,7 @@ struct SettingsRowChevron: View {
     var body: some View {
         Image(systemName: "chevron.right")
             .font(.footnote.weight(.semibold))
-            .foregroundStyle(Color.siloSecondaryText.opacity(0.6))
+            .foregroundStyle(Color.weFlixSecondaryText.opacity(0.6))
             .accessibilityHidden(true)
     }
 }

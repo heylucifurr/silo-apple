@@ -1,5 +1,5 @@
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 /// Cross-cutting diagnostics behavior: report state, consent refresh, recent sessions,
 /// capture gates, exit sentinels, crash evidence, log filtering and multipart uploads.

@@ -1,6 +1,6 @@
 import Foundation
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 /// Decodes every vendored API v2 fixture with the production decoder and
 /// checks the members the app consumes, the deliberate null/absence
@@ -440,7 +440,7 @@ final class APIv2ContractTests: XCTestCase {
         let tokens = TokenStore(keychain: SharedKeychain(service: name, accessGroup: nil),
             defaults: SharedDefaults(suite: suite, standard: suite))
         await tokens.switchActiveServer(serverId: "server")
-        await tokens.setServerUrl("http://192.168.1.20:8096/silo")
+        await tokens.setServerUrl("http://192.168.1.20:8096/weFlix")
         await tokens.setProfileId("profile-one")
         let stub = APIv2TestStub()
         let api = APIv2Client(http: HTTPClient(session: stub.makeSession(), tokenStore: tokens),
@@ -456,8 +456,8 @@ final class APIv2ContractTests: XCTestCase {
         ])
         let handshake = try await api.playbackControlHandshake(sessionID: session, installationID: installation, auth: auth)
         XCTAssertEqual(stub.methods, ["GET", "POST"])
-        XCTAssertEqual(stub.requestedPaths, ["/silo/api/v2/playback/sessions/control/capabilities",
-                                             "/silo/api/v2/playback/sessions/\(session)/control/ws-ticket"])
+        XCTAssertEqual(stub.requestedPaths, ["/weFlix/api/v2/playback/sessions/control/capabilities",
+                                             "/weFlix/api/v2/playback/sessions/\(session)/control/ws-ticket"])
         let mint = try XCTUnwrap(stub.requests.last)
         XCTAssertEqual(mint.header("X-Profile-Id"), "profile-one")
         let body = try XCTUnwrap(mint.body)
@@ -465,7 +465,7 @@ final class APIv2ContractTests: XCTestCase {
 
         XCTAssertEqual(handshake.maxConnectionSeconds, 14400)
         XCTAssertEqual(handshake.request.url?.absoluteString,
-                       "ws://192.168.1.20:8096/silo/api/v2/playback/sessions/\(session)/control/ws")
+                       "ws://192.168.1.20:8096/weFlix/api/v2/playback/sessions/\(session)/control/ws")
         XCTAssertEqual(handshake.request.value(forHTTPHeaderField: "Sec-WebSocket-Protocol"),
                        "silo.playback-control.v2, silo.ticket.abc-123")
         XCTAssertNil(handshake.request.value(forHTTPHeaderField: "Authorization"),

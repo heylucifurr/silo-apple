@@ -93,7 +93,7 @@ final class RemotePlaybackIdentityManager {
             case .invalidOffer:
                 return "The phone sent an invalid server or profile."
             case .unsupportedServer:
-                return "Update the phone's Silo server to use profile handoff."
+                return "Update the phone's weflix server to use profile handoff."
             case .denied:
                 return "Profile handoff was denied."
             case .expired:
@@ -104,7 +104,7 @@ final class RemotePlaybackIdentityManager {
                 if let help { return help }
                 return "This Apple TV can't reach \(serverName ?? "the phone's server")."
             case .identityMismatch:
-                return "The address the phone offered belongs to a different Silo server."
+                return "The address the phone offered belongs to a different weflix server."
             }
         }
     }
@@ -141,7 +141,7 @@ final class RemotePlaybackIdentityManager {
         )
     }
 
-    func matches(_ offer: SiloControlHandoffOffer, controllerDeviceId: String) -> Bool {
+    func matches(_ offer: WeFlixControlHandoffOffer, controllerDeviceId: String) -> Bool {
         guard let activeIdentity else { return false }
         return ServerRegistry.serversMatch(
             serverId: activeIdentity.serverId, verifiedServerId: activeIdentity.serverIdentity,
@@ -158,15 +158,15 @@ final class RemotePlaybackIdentityManager {
     /// identity it started with. An offer that fails or is denied leaves the
     /// current identity and playback alone. `allowReuse` gates answering a
     /// matching offer from the active identity without a new approval; the
-    /// receiver decides it (`SiloControlReceiverPolicy.mayReuseIdentity`).
+    /// receiver decides it (`WeFlixControlReceiverPolicy.mayReuseIdentity`).
     func prepare(
-        offer: SiloControlHandoffOffer,
+        offer: WeFlixControlHandoffOffer,
         controllerDeviceId: String,
         controllerDeviceName: String?,
         allowReuse: Bool,
         beforeActivation: () async throws -> Void = {},
-        onChallenge: @escaping (SiloControlHandoffChallenge) async throws -> Void
-    ) async throws -> SiloControlHandoffReady {
+        onChallenge: @escaping (WeFlixControlHandoffChallenge) async throws -> Void
+    ) async throws -> WeFlixControlHandoffReady {
         let offeredURL = ServerRegistry.normalize(url: offer.serverURL)
         guard offer.serverIdMatchesURL,
               !offer.profileId.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
@@ -176,7 +176,7 @@ final class RemotePlaybackIdentityManager {
         if allowReuse,
            matches(offer, controllerDeviceId: controllerDeviceId),
            let activeIdentity {
-            return SiloControlHandoffReady(
+            return WeFlixControlHandoffReady(
                 requestId: offer.requestId,
                 serverId: activeIdentity.serverId,
                 profileId: activeIdentity.profileId,
@@ -192,7 +192,7 @@ final class RemotePlaybackIdentityManager {
         let normalizedURL = try await resolveReachableURL(offer: offer, offeredURL: offeredURL)
 
         let capability = try await api.capability(serverURL: normalizedURL)
-        guard capability.offersRemotePlaybackHandoff(protocolVersion: SiloControlProtocol.version) else {
+        guard capability.offersRemotePlaybackHandoff(protocolVersion: WeFlixControlProtocol.version) else {
             throw HandoffError.unsupportedServer
         }
 
@@ -206,7 +206,7 @@ final class RemotePlaybackIdentityManager {
             throw HandoffError.unsupportedServer
         }
 
-        try await onChallenge(SiloControlHandoffChallenge(
+        try await onChallenge(WeFlixControlHandoffChallenge(
             requestId: offer.requestId,
             userCode: started.userCode,
             matchCode: started.matchCode,
@@ -244,7 +244,7 @@ final class RemotePlaybackIdentityManager {
         ) else {
             throw CancellationError()
         }
-        return SiloControlHandoffReady(
+        return WeFlixControlHandoffReady(
             requestId: offer.requestId,
             serverId: offer.serverId,
             profileId: offer.profileId,
@@ -284,7 +284,7 @@ final class RemotePlaybackIdentityManager {
     /// phone believes it belongs to this server. Reachability is decided
     /// here, never by the server.
     private func resolveReachableURL(
-        offer: SiloControlHandoffOffer,
+        offer: WeFlixControlHandoffOffer,
         offeredURL: String
     ) async throws -> String {
         guard let expectedIdentity = ServerIdentity.usable(offer.serverIdentity) else {
@@ -333,7 +333,7 @@ final class RemotePlaybackIdentityManager {
         if let scope, notifyServer {
             // Best effort: the temporary session expires server-side when the
             // revoke is refused, fails, or is skipped for a v1-only server.
-            try? await SiloAPI.shared.apiV2Client.logout(
+            try? await WeFlixAPI.shared.apiV2Client.logout(
                 expectedAccount: RefreshAccountIdentity(
                     serverId: scope.serverId,
                     serverURL: scope.serverURL,

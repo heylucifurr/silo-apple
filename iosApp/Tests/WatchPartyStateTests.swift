@@ -1,6 +1,6 @@
 import Foundation
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 final class WatchPartyStateTests: XCTestCase {
     private let now = Date(timeIntervalSince1970: 1_790_024_000)
@@ -296,7 +296,7 @@ final class WatchPartyStateTests: XCTestCase {
     }
 
     func testInvitationAuthorityIncludesDeploymentPathAndRejectsCredentials() throws {
-        XCTAssertTrue(WatchPartyLobbyPolicy.sameServer("https://SILO.example/base/", "https://silo.example:443/base"))
+        XCTAssertTrue(WatchPartyLobbyPolicy.sameServer("https://silo.Example/base/", "https://silo.example:443/base"))
         XCTAssertFalse(WatchPartyLobbyPolicy.sameServer("https://silo.example/base", "https://silo.example/other"))
         XCTAssertFalse(WatchPartyLobbyPolicy.sameServer("http://silo.example/base", "https://silo.example/base"))
         XCTAssertFalse(WatchPartyLobbyPolicy.sameServer("https://user@silo.example/base", "https://silo.example/base"))

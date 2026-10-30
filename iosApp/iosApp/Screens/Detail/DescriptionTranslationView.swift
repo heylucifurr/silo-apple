@@ -44,6 +44,6 @@ struct DescriptionTranslationView: View {
             Text("Translate")
         }
         .font(.subheadline.weight(.semibold))
-        .foregroundStyle(Color.siloPrimary)
+        .foregroundStyle(Color.weFlixPrimary)
     }
 }

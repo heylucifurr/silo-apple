@@ -17,7 +17,7 @@ struct AudioPlayerBackground: View {
 
     var body: some View {
         ZStack {
-            Color.siloBackground
+            Color.weFlixBackground
                 .ignoresSafeArea()
 
             if reduceMotion {

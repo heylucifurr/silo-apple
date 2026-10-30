@@ -176,7 +176,7 @@ enum DiagnosticsPathTemplate {
     /// `OPAQUE_ID_SEGMENT` and not hex, so the collector would accept them, but
     /// they are still raw identifiers and a route templated inconsistently
     /// cannot be correlated. Requires both a digit and a letter, which no real
-    /// Silo route segment has (`v1` is handled by `SAFE_VERSION_SEGMENT`).
+    /// WeFlix route segment has (`v1` is handled by `SAFE_VERSION_SEGMENT`).
     private static let alphanumericIDSegmentRegex = try! NSRegularExpression(
         pattern: #"^(?=[A-Za-z0-9_-]*[0-9])(?=[A-Za-z0-9_-]*[A-Za-z])[A-Za-z0-9_-]{8,}$"#
     )

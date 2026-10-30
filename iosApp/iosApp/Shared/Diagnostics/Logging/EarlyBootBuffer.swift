@@ -10,7 +10,7 @@ import os
 /// needs a resolved binding *and* an available status — both of which land
 /// after authentication. Without it, everything before that (launch crashes,
 /// restored-session failures, an unreachable server at boot) is lost,
-/// including the `app launched` breadcrumb from `SiloApp.init`.
+/// including the `app launched` breadcrumb from `WeFlixApp.init`.
 ///
 /// Staging is not only about keeping those lines. A refused journal write
 /// *purges the journal directory*, so routing a pre-consent line through it

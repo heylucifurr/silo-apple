@@ -5,7 +5,7 @@
 // Inputs come from the vendored manifest, not a copied table of defaults.
 
 import Foundation
-@testable import Silo
+@testable import WeFlix
 
 // MARK: - Manifest
 

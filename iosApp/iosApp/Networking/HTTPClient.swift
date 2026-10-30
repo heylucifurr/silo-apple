@@ -72,7 +72,7 @@ struct HTTPIdentityTransitionLease: Hashable, Sendable {
     fileprivate let id: UUID
 }
 
-/// URLSession-backed HTTP client for the Silo server.
+/// URLSession-backed HTTP client for the WeFlix server.
 ///
 /// Responsibilities:
 /// - Resolve relative paths against the configured server URL from ``TokenStore``.
@@ -94,7 +94,7 @@ actor HTTPClient {
     static let shared = HTTPClient()
 
     private static let logger = Logger(
-        subsystem: Bundle.main.bundleIdentifier ?? "org.siloserver.silo",
+        subsystem: Bundle.main.bundleIdentifier ?? "me.weflix",
         category: "HTTPClient"
     )
 
@@ -133,7 +133,7 @@ actor HTTPClient {
     /// same refresh token joins the renewal in flight instead of sending that
     /// token a second time.
     private var inactiveServerRenewals: [String: (refreshToken: String, task: Task<ApproverBearer, Never>)] = [:]
-    /// The profile proof the last `.siloProfileVerificationRequired` was
+    /// The profile proof the last `.weFlixProfileVerificationRequired` was
     /// posted for (access token dropped), with the `TokenStore` selection
     /// generation it was installed under. A burst of rejected requests posts
     /// once; a new proof, profile, or selection of the same profile posts
@@ -272,7 +272,7 @@ actor HTTPClient {
         return URLSession(configuration: config, delegate: LocalRouteTrustDelegate.shared, delegateQueue: nil)
     }
 
-    /// Parser for the fractional-second ISO-8601 timestamps the Silo
+    /// Parser for the fractional-second ISO-8601 timestamps the WeFlix
     /// server emits (e.g. `2026-04-13T04:46:42.211273Z`). The default
     /// `.iso8601` decoder strategy rejects fractional seconds outright.
     private static let isoFractional: ISO8601DateFormatter = {
@@ -1174,7 +1174,7 @@ actor HTTPClient {
             profileSelection: selection
         )
         await MainActor.run {
-            NotificationCenter.default.post(name: .siloProfileVerificationRequired, object: event)
+            NotificationCenter.default.post(name: .weFlixProfileVerificationRequired, object: event)
         }
     }
 
@@ -1210,7 +1210,7 @@ actor HTTPClient {
 
     // MARK: - Request building
 
-    /// Whether `path` is a Silo server route this client may request: a
+    /// Whether `path` is a WeFlix server route this client may request: a
     /// `/api/v2` operation, or the retained unauthenticated health probe
     /// (``ConnectionMonitor/healthPath``). `path` is the route relative to the
     /// server URL, so a server mounted under a base path still passes.
@@ -1218,14 +1218,14 @@ actor HTTPClient {
     /// The DEBUG assertion in ``buildRequest(serverUrl:method:path:query:)``
     /// covers only requests built here. Code that joins routes onto the server
     /// URL itself is guarded by `scripts/ci/check-no-api-v1.sh`.
-    static func isSiloServerPath(_ path: String) -> Bool {
+    static func isWeFlixServerPath(_ path: String) -> Bool {
         let normalizedPath = path.hasPrefix("/") ? path : "/" + path
         return normalizedPath == "/api/v2" || normalizedPath.hasPrefix("/api/v2/")
             || normalizedPath == ConnectionMonitor.healthPath
     }
 
     /// Builds every request this client sends to the active or a candidate
-    /// Silo server, except token refresh.
+    /// WeFlix server, except token refresh.
     private func buildRequest(
         serverUrl: String,
         method: String,
@@ -1233,7 +1233,7 @@ actor HTTPClient {
         query: [String: String]
     ) throws -> URLRequest {
         #if DEBUG
-        if !Self.isSiloServerPath(path) {
+        if !Self.isWeFlixServerPath(path) {
             assertionFailure("HTTPClient request outside /api/v2: \(method) \(path)")
         }
         #endif
@@ -2054,7 +2054,7 @@ actor HTTPClient {
                     NotificationCenter.default.post(
                         name: disposition == .temporarySessionExpired
                             ? .temporaryRemoteAuthExpired
-                            : .siloSessionExpired,
+                            : .weFlixSessionExpired,
                         object: event
                     )
                 }
@@ -2290,7 +2290,7 @@ actor HTTPClient {
                     NotificationCenter.default.post(
                         name: disposition == .temporarySessionExpired
                             ? .temporaryRemoteAuthExpired
-                            : .siloSessionExpired,
+                            : .weFlixSessionExpired,
                         object: event
                     )
                 }
@@ -2661,7 +2661,7 @@ enum HTTPError: LocalizedError, CustomStringConvertible {
 /// ``DiagnosticsPathTemplate/templatedPath(forRawPath:)``, not a replacement
 /// for it, because that helper answers "does this segment look like an
 /// identifier?" while the hosted collector asks a broader question of an
-/// `attrs.path` value. Two categories of real Silo route pass the first check
+/// `attrs.path` value. Two categories of real WeFlix route pass the first check
 /// and are still rejected:
 ///
 /// * **Dotted segments.** `/api/v2/settings/values/downloads.default_quality`
@@ -2682,7 +2682,7 @@ enum HTTPError: LocalizedError, CustomStringConvertible {
 /// silently discarding the user's entire report.
 ///
 /// Verified against `silo-diagnostics/src/privacy.ts` over ~700k generated
-/// paths (random text, and route-shaped inputs assembled from real Silo
+/// paths (random text, and route-shaped inputs assembled from real WeFlix
 /// prefixes with adversarial tail segments), plus every route literal scraped
 /// from `iosApp/iosApp/Networking/` with realistic runtime substitutions:
 /// zero rejections. Re-run that check before relaxing the allowlist.
@@ -2876,8 +2876,8 @@ enum HTTPDecodingDiagnostics {
     /// A dot-free, text-safe rendering of the decoded Swift type.
     ///
     /// Only letter-initial alphanumeric runs are kept, joined with `_`. That
-    /// drops module qualification punctuation (`Silo.MediaItem` →
-    /// `Silo_MediaItem`), generic brackets (`Array<MediaItem>` →
+    /// drops module qualification punctuation (`WeFlix.MediaItem` →
+    /// `WeFlix_MediaItem`), generic brackets (`Array<MediaItem>` →
     /// `Array_MediaItem`), and anything non-ASCII, while preserving enough of
     /// the name to identify the model. Dots specifically must go: a dotted
     /// token in text is scanned as a hostname-or-path candidate and rejected.

@@ -1,6 +1,6 @@
 //
 //  PlayerSettingsFlusher.swift
-//  Silo (iOS + tvOS + macOS)
+//  WeFlix (iOS + tvOS + macOS)
 //
 //  Debounced, retried writer for the player's synced settings (PUT/DELETE
 //  `/api/v2/settings/values/{key}`). Most writes target `profile_device`; the
@@ -54,7 +54,7 @@ enum PlayerSettingWriteScope: String, Codable, Sendable {
 
 /// The subset of the canonical settings API the player's settings need.
 ///
-/// A protocol rather than a direct ``SiloAPI`` reference so the queueing,
+/// A protocol rather than a direct ``WeFlixAPI`` reference so the queueing,
 /// debounce and retry behaviour can be exercised without a network.
 protocol PlayerSettingsTransport: AnyObject, Sendable {
     func effectiveValues(keys: [SettingKey]) async throws -> EffectiveSettingValuesResponse
@@ -67,11 +67,11 @@ protocol PlayerSettingsTransport: AnyObject, Sendable {
     func deleteValue(key: SettingKey, scope: PlayerSettingWriteScope, profileId: String?) async throws
 }
 
-/// The production transport: the canonical endpoints on ``SiloAPI``.
-final class SiloPlayerSettingsTransport: PlayerSettingsTransport {
-    private let api: SiloAPI
+/// The production transport: the canonical endpoints on ``WeFlixAPI``.
+final class WeFlixPlayerSettingsTransport: PlayerSettingsTransport {
+    private let api: WeFlixAPI
 
-    init(api: SiloAPI = .shared) {
+    init(api: WeFlixAPI = .shared) {
         self.api = api
     }
 
@@ -313,7 +313,7 @@ extension PlayerSettingsWriteJournal {
 /// whose scope no longer matches is not loaded.
 final class UserDefaultsSettingsWriteJournal: PlayerSettingsWriteJournal, @unchecked Sendable {
     private static let logger = Logger(
-        subsystem: Bundle.main.bundleIdentifier ?? "org.siloserver.silo",
+        subsystem: Bundle.main.bundleIdentifier ?? "me.weflix",
         category: "PlayerSettingsFlusher"
     )
 
@@ -489,7 +489,7 @@ final class PlayerSettingsFlusher: @unchecked Sendable {
     }
 
     private static let logger = Logger(
-        subsystem: Bundle.main.bundleIdentifier ?? "org.siloserver.silo",
+        subsystem: Bundle.main.bundleIdentifier ?? "me.weflix",
         category: "PlayerSettingsFlusher"
     )
 
@@ -575,7 +575,7 @@ final class PlayerSettingsFlusher: @unchecked Sendable {
         // lifecycle notification cannot fire an unexpected flush mid-assertion
         // and nothing is written to the shared preferences domain.
         self.init(
-            transport: SiloPlayerSettingsTransport(),
+            transport: WeFlixPlayerSettingsTransport(),
             journal: UserDefaultsSettingsWriteJournal(),
             flushesOnBackground: true
         )
@@ -633,7 +633,7 @@ final class PlayerSettingsFlusher: @unchecked Sendable {
     private func flushHoldingTheProcessOpen() async {
         #if canImport(UIKit)
         let identifier = await MainActor.run {
-            UIApplication.shared.beginBackgroundTask(withName: "SiloSettingsFlush")
+            UIApplication.shared.beginBackgroundTask(withName: "WeFlixSettingsFlush")
         }
         await flushNow()
         if identifier != .invalid {

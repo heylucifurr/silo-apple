@@ -20,7 +20,7 @@ struct AudioChaptersSheet: View {
                 .listStyle(.plain)
                 #if !os(tvOS)
                 .scrollContentBackground(.hidden)
-                .siloSheetBackground(legacyColor: .siloSurface)
+                .weFlixSheetBackground(legacyColor: .weFlixSurface)
                 #endif
                 .onAppear {
                     if let currentID {
@@ -68,7 +68,7 @@ struct AudioChaptersSheet: View {
 
                 Text(chapter.title ?? "Chapter \(chapter.index + 1)")
                     .font(.body.weight(isCurrent ? .semibold : .regular))
-                    .foregroundStyle(isCurrent ? player.palette.accent : Color.siloOnSurface)
+                    .foregroundStyle(isCurrent ? player.palette.accent : Color.weFlixOnSurface)
                     .lineLimit(1)
 
                 Spacer()

@@ -1,7 +1,7 @@
 import SwiftUI
 import Observation
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 private actor ContinueWatchingResponseGate {
     private var isOpen = false

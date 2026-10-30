@@ -1,6 +1,6 @@
 //
 //  EpisodeSpoilerCache.swift
-//  Silo (iOS + tvOS + macOS + Top Shelf)
+//  WeFlix (iOS + tvOS + macOS + Top Shelf)
 //
 //  Where the app keeps the spoiler switches the server last confirmed for
 //  each server and profile. The cache lives in the App Group, so the Top

@@ -31,11 +31,11 @@ struct TVLibraryCollectionsView: View {
         ScrollView(.vertical, showsIndicators: false) {
             LazyVStack(spacing: 44, pinnedViews: []) {
                 Color.clear
-                    .frame(height: SiloTheme.Skyline.libraryContentTopInset)
+                    .frame(height: WeFlixTheme.Skyline.libraryContentTopInset)
 
                 gridContent
             }
-            .padding(.bottom, SiloTheme.largePadding)
+            .padding(.bottom, WeFlixTheme.largePadding)
         }
         .modifier(TVMenuEntryScroll(request: focusRequest, isTopMenuFocused: isTopMenuFocused, onReady: noteShellFocusRequest))
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -81,25 +81,25 @@ struct TVLibraryCollectionsView: View {
                             // cascade/dropdown section headers, at grid scale.
                             Text(section.name.uppercased())
                                 .font(.system(
-                                    size: SiloTheme.Skyline.collectionGridGroupHeaderSize,
+                                    size: WeFlixTheme.Skyline.collectionGridGroupHeaderSize,
                                     design: .monospaced
                                 ))
-                                .tracking(SiloTheme.Skyline.collectionGridGroupHeaderSize * 0.26)
-                                .foregroundColor(.siloOnSurface.opacity(0.38))
+                                .tracking(WeFlixTheme.Skyline.collectionGridGroupHeaderSize * 0.26)
+                                .foregroundColor(.weFlixOnSurface.opacity(0.38))
                                 .lineLimit(1)
-                                .padding(.leading, SiloTheme.safePadding)
+                                .padding(.leading, WeFlixTheme.safePadding)
                         }
                         LazyVGrid(
                             columns: Array(
                                 repeating: GridItem(
                                     .flexible(),
-                                    spacing: SiloTheme.Skyline.collectionGridColumnSpacing,
+                                    spacing: WeFlixTheme.Skyline.collectionGridColumnSpacing,
                                     alignment: .top
                                 ),
                                 count: resolvedColumnCount
                             ),
                             alignment: .leading,
-                            spacing: SiloTheme.Skyline.collectionGridRowSpacing
+                            spacing: WeFlixTheme.Skyline.collectionGridRowSpacing
                         ) {
                             ForEach(section.collections) { collection in
                                 let isFirstOverall =
@@ -126,7 +126,7 @@ struct TVLibraryCollectionsView: View {
                                 .frame(maxWidth: .infinity)
                             }
                         }
-                        .padding(.horizontal, SiloTheme.safePadding)
+                        .padding(.horizontal, WeFlixTheme.safePadding)
                     }
                 }
             }
@@ -182,7 +182,7 @@ struct TVLibraryCollectionsView: View {
     private func loadCollections() async {
         isLoadingCollections = true
         do {
-            let response = try await SiloAPI.shared.libraryCollections(libraryId: library.id)
+            let response = try await WeFlixAPI.shared.libraryCollections(libraryId: library.id)
             collectionSections = response.resolvedSections
         } catch {
             collectionSections = []
@@ -191,7 +191,7 @@ struct TVLibraryCollectionsView: View {
     }
 
     private var resolvedColumnCount: Int {
-        let standard = SiloTheme.Skyline.collectionGridColumnCount
+        let standard = WeFlixTheme.Skyline.collectionGridColumnCount
         switch uiCustomization.cardPresentation.posterSize {
         case .compact: return standard + 1
         case .standard: return standard

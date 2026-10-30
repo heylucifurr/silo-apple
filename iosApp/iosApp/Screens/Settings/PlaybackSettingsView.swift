@@ -42,8 +42,8 @@ struct PlaybackSettingsView: View {
         .task(id: BandwidthProbeScheduler.shared.connectionRevision) { await viewModel.loadPlaybackConnection() }
         .settingsListChrome()
         .navigationTitle("Playback")
-        .siloNavigationTitleDisplayMode(.inline)
-        .siloToolbarColorSchemeDark()
+        .weFlixNavigationTitleDisplayMode(.inline)
+        .weFlixToolbarColorSchemeDark()
         .alert(
             SettingsViewModel.useProfileSettingsTitle,
             isPresented: $showUseProfileSettingsConfirmation
@@ -82,19 +82,19 @@ struct PlaybackSettingsView: View {
             // sitting under it inside the same cell.
             if let limit = viewModel.learnedConnectionLimitText {
                 Text(limit)
-                    .foregroundStyle(Color.siloOnSurface)
+                    .foregroundStyle(Color.weFlixOnSurface)
                 Button("Reset") {
                     Task { await viewModel.resetLearnedConnectionLimit() }
                 }
             }
         } header: {
             Text("Quality")
-                .foregroundStyle(Color.siloSecondaryText)
+                .foregroundStyle(Color.weFlixSecondaryText)
         } footer: {
             Text(qualityFooterText)
-                .foregroundStyle(Color.siloSecondaryText)
+                .foregroundStyle(Color.weFlixSecondaryText)
         }
-        .listRowBackground(Color.siloGroupedCell)
+        .listRowBackground(Color.weFlixGroupedCell)
     }
 
     /// The quality note, the buffering description, then a failed Reset, one
@@ -118,12 +118,12 @@ struct PlaybackSettingsView: View {
         Section {
             VStack(alignment: .leading, spacing: 2) {
                 Text(SettingsViewModel.connectionSpeedTitle)
-                    .foregroundStyle(Color.siloOnSurface)
+                    .foregroundStyle(Color.weFlixOnSurface)
                 // "measured 3 minutes ago" moves on while the page is open.
                 TimelineView(.everyMinute) { context in
                     Text(viewModel.connectionSpeedLine(at: context.date))
                         .font(.footnote)
-                        .foregroundStyle(Color.siloSecondaryText)
+                        .foregroundStyle(Color.weFlixSecondaryText)
                 }
             }
             if viewModel.connectionSpeedSkippedText == nil {
@@ -138,14 +138,14 @@ struct PlaybackSettingsView: View {
             }
         } header: {
             Text(SettingsViewModel.connectionSectionTitle)
-                .foregroundStyle(Color.siloSecondaryText)
+                .foregroundStyle(Color.weFlixSecondaryText)
         } footer: {
             if let footer = connectionFooterText {
                 Text(footer)
-                    .foregroundStyle(Color.siloSecondaryText)
+                    .foregroundStyle(Color.weFlixSecondaryText)
             }
         }
-        .listRowBackground(Color.siloGroupedCell)
+        .listRowBackground(Color.weFlixGroupedCell)
     }
 
     /// The budget, then the last test's answer, one line each.
@@ -167,9 +167,9 @@ struct PlaybackSettingsView: View {
             )
         } footer: {
             Text(SettingsViewModel.cellularQualityFooterText)
-                .foregroundStyle(Color.siloSecondaryText)
+                .foregroundStyle(Color.weFlixSecondaryText)
         }
-        .listRowBackground(Color.siloGroupedCell)
+        .listRowBackground(Color.weFlixGroupedCell)
     }
     #endif
 
@@ -180,40 +180,40 @@ struct PlaybackSettingsView: View {
             choiceRow("Audio Language", .audioLanguage, value: audioLanguageLabel, options: audioLanguageChoices)
 
             Toggle("HDR", isOn: $viewModel.hdrEnabled)
-                .foregroundStyle(Color.siloOnSurface)
-                .tint(.siloSwitchOn)
+                .foregroundStyle(Color.weFlixOnSurface)
+                .tint(.weFlixSwitchOn)
 
             Toggle("Dolby Vision", isOn: $viewModel.dolbyVisionEnabled)
-                .foregroundStyle(Color.siloOnSurface)
-                .tint(.siloSwitchOn)
+                .foregroundStyle(Color.weFlixOnSurface)
+                .tint(.weFlixSwitchOn)
                 .disabled(!viewModel.hdrEnabled)
 
             Toggle("Seek Cache", isOn: $viewModel.seekCacheEnabled)
-                .foregroundStyle(Color.siloOnSurface)
-                .tint(.siloSwitchOn)
+                .foregroundStyle(Color.weFlixOnSurface)
+                .tint(.weFlixSwitchOn)
 
             Picker("Buffer Ahead", selection: $viewModel.bufferAhead) {
                 ForEach(BufferAheadMode.allCases, id: \.self) { mode in
                     Text(mode.label).tag(mode)
                 }
             }
-            .foregroundStyle(Color.siloOnSurface)
+            .foregroundStyle(Color.weFlixOnSurface)
             .settingsPickerStyle()
 
             Toggle("Lossless Multichannel Audio", isOn: $viewModel.losslessAudioEnabled)
-                .foregroundStyle(Color.siloOnSurface)
-                .tint(.siloSwitchOn)
+                .foregroundStyle(Color.weFlixOnSurface)
+                .tint(.weFlixSwitchOn)
 
             Toggle("TrueHD Atmos and DTS:X", isOn: $viewModel.trueHDAtmosEnabled)
-                .foregroundStyle(Color.siloOnSurface)
-                .tint(.siloSwitchOn)
+                .foregroundStyle(Color.weFlixOnSurface)
+                .tint(.weFlixSwitchOn)
 
             Picker("Deinterlacing", selection: $viewModel.deinterlaceMode) {
                 ForEach(DeinterlacePreference.allCases, id: \.self) { mode in
                     Text(mode.label).tag(mode)
                 }
             }
-            .foregroundStyle(Color.siloOnSurface)
+            .foregroundStyle(Color.weFlixOnSurface)
             .settingsPickerStyle()
 
             Picker("Deinterlacing Field Rate", selection: $viewModel.deinterlaceFieldRate) {
@@ -221,7 +221,7 @@ struct PlaybackSettingsView: View {
                     Text(rate.label).tag(rate)
                 }
             }
-            .foregroundStyle(Color.siloOnSurface)
+            .foregroundStyle(Color.weFlixOnSurface)
             .settingsPickerStyle()
 
             // iOS only: the engine's background policy is driven by the app
@@ -229,17 +229,17 @@ struct PlaybackSettingsView: View {
             // there would control nothing.
             #if os(iOS)
             Toggle("Background Playback", isOn: $viewModel.backgroundPlaybackEnabled)
-                .foregroundStyle(Color.siloOnSurface)
-                .tint(.siloSwitchOn)
+                .foregroundStyle(Color.weFlixOnSurface)
+                .tint(.weFlixSwitchOn)
             #endif
         } header: {
             Text("Streaming")
-                .foregroundStyle(Color.siloSecondaryText)
+                .foregroundStyle(Color.weFlixSecondaryText)
         } footer: {
             Text(streamingFooterText)
-                .foregroundStyle(Color.siloSecondaryText)
+                .foregroundStyle(Color.weFlixSecondaryText)
         }
-        .listRowBackground(Color.siloGroupedCell)
+        .listRowBackground(Color.weFlixGroupedCell)
     }
 
     private var streamingFooterText: String {
@@ -286,9 +286,9 @@ struct PlaybackSettingsView: View {
             )
         } header: {
             Text("Episodes")
-                .foregroundStyle(Color.siloSecondaryText)
+                .foregroundStyle(Color.weFlixSecondaryText)
         }
-        .listRowBackground(Color.siloGroupedCell)
+        .listRowBackground(Color.weFlixGroupedCell)
     }
 
     // MARK: - Refused change
@@ -300,12 +300,12 @@ struct PlaybackSettingsView: View {
             }
         } header: {
             Text("Not Saved")
-                .foregroundStyle(Color.siloSecondaryText)
+                .foregroundStyle(Color.weFlixSecondaryText)
         } footer: {
             Text(SettingsViewModel.rejectedPlaybackChangeMessage)
-                .foregroundStyle(Color.siloSecondaryText)
+                .foregroundStyle(Color.weFlixSecondaryText)
         }
-        .listRowBackground(Color.siloGroupedCell)
+        .listRowBackground(Color.weFlixGroupedCell)
     }
 
     // MARK: - Use Profile Settings
@@ -317,9 +317,9 @@ struct PlaybackSettingsView: View {
             }
         } footer: {
             Text("Removes the settings changed on this device, so it uses your profile's settings again.")
-                .foregroundStyle(Color.siloSecondaryText)
+                .foregroundStyle(Color.weFlixSecondaryText)
         }
-        .listRowBackground(Color.siloGroupedCell)
+        .listRowBackground(Color.weFlixGroupedCell)
     }
 
     // MARK: - Options
@@ -349,15 +349,15 @@ struct PlaybackSettingsView: View {
     }
 
     private var resolutionChoices: [SettingsChoice] {
-        SiloQualityPresets.resolutionChoices.map {
-            SettingsChoice(id: $0, label: SiloQualityPresets.resolutionLabel($0))
+        WeFlixQualityPresets.resolutionChoices.map {
+            SettingsChoice(id: $0, label: WeFlixQualityPresets.resolutionLabel($0))
         }
     }
 
     private var maxBitrateChoices: [SettingsChoice] {
-        [SettingsChoice(id: SettingsViewModel.noBitrateLimitTag, label: SiloQualityPresets.noBitrateLimitLabel)]
+        [SettingsChoice(id: SettingsViewModel.noBitrateLimitTag, label: WeFlixQualityPresets.noBitrateLimitLabel)]
             + viewModel.maxBitrateChoicesKbps.map {
-                SettingsChoice(id: String($0), label: SiloQualityPresets.bitrateLabel($0))
+                SettingsChoice(id: String($0), label: WeFlixQualityPresets.bitrateLabel($0))
             }
     }
 
@@ -374,7 +374,7 @@ struct PlaybackSettingsView: View {
                 label: viewModel.cellularQualityLabel
             ))
         }
-        return choices + SiloQualityPresets.all.map { SettingsChoice(id: $0.id, label: $0.label) }
+        return choices + WeFlixQualityPresets.all.map { SettingsChoice(id: $0.id, label: $0.label) }
     }
     #endif
 
@@ -442,14 +442,14 @@ struct SettingsChoiceRow: View {
             }
             .fixedSize()
         }
-        .foregroundStyle(Color.siloOnSurface)
+        .foregroundStyle(Color.weFlixOnSurface)
         #else
         NavigationLink {
             SettingsChoiceList(title: title, options: options, selection: $selection)
         } label: {
             LabeledContent(title, value: value)
         }
-        .foregroundStyle(Color.siloOnSurface)
+        .foregroundStyle(Color.weFlixOnSurface)
         #endif
     }
 }
@@ -473,7 +473,7 @@ struct SettingsChoiceList: View {
                     } label: {
                         HStack {
                             Text(option.label)
-                                .foregroundStyle(Color.siloOnSurface)
+                                .foregroundStyle(Color.weFlixOnSurface)
                             Spacer(minLength: 16)
                             if option.id == selection {
                                 Image(systemName: "checkmark")
@@ -486,12 +486,12 @@ struct SettingsChoiceList: View {
                     .accessibilityAddTraits(option.id == selection ? .isSelected : [])
                 }
             }
-            .listRowBackground(Color.siloGroupedCell)
+            .listRowBackground(Color.weFlixGroupedCell)
         }
         .settingsListChrome()
         .navigationTitle(title)
-        .siloNavigationTitleDisplayMode(.inline)
-        .siloToolbarColorSchemeDark()
+        .weFlixNavigationTitleDisplayMode(.inline)
+        .weFlixToolbarColorSchemeDark()
     }
 }
 #endif

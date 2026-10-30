@@ -99,7 +99,7 @@ struct SectionRow: View {
 
     #if os(tvOS)
     private static func isTVItem(_ type: String) -> Bool {
-        SiloMediaType.isEpisode(type) || SiloMediaType.isSeries(type) || SiloMediaType.isSeason(type)
+        WeFlixMediaType.isEpisode(type) || WeFlixMediaType.isSeries(type) || WeFlixMediaType.isSeason(type)
     }
     #endif
 

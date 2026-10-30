@@ -47,13 +47,13 @@ struct ItemDetailView: View {
 }
 
 #if os(iOS)
-/// Identifiable box so a one-shot `SiloControlPlaybackRequest` can drive a
+/// Identifiable box so a one-shot `WeFlixControlPlaybackRequest` can drive a
 /// `.sheet(item:)`. `id` keys off `contentId` so re-presenting for the
 /// same item is idempotent.
 private struct ControlRequestBox: Identifiable {
-    let request: SiloControlPlaybackRequest
+    let request: WeFlixControlPlaybackRequest
     var id: String { request.contentId }
-    init(_ request: SiloControlPlaybackRequest) { self.request = request }
+    init(_ request: WeFlixControlPlaybackRequest) { self.request = request }
 }
 
 /// Scroll offsets (as folded by `phoneDetailScrollTracking`) over which the
@@ -223,8 +223,8 @@ struct PhoneDetailTopChrome: View {
                 .foregroundStyle(.white)
         }
         .frame(
-            width: SiloTheme.topBarIconHitSize,
-            height: SiloTheme.topBarIconHitSize
+            width: WeFlixTheme.topBarIconHitSize,
+            height: WeFlixTheme.topBarIconHitSize
         )
         .contentShape(Circle())
     }
@@ -259,12 +259,12 @@ private struct PhoneDetailStaticGlassStrip: View, Equatable {
                 Color(white: 0.16).opacity(0.98)
             } else {
                 Color.clear
-                    .siloGlass(in: Rectangle(), tint: Color.black.opacity(0.10))
+                    .weFlixGlass(in: Rectangle(), tint: Color.black.opacity(0.10))
                     .overlay(Color.white.opacity(0.025))
             }
         }
         .frame(maxWidth: .infinity)
-        .frame(height: SiloTheme.topBarIconHitSize + 18)
+        .frame(height: WeFlixTheme.topBarIconHitSize + 18)
     }
 }
 
@@ -285,7 +285,7 @@ private struct PhoneDetailScrollTitle: View {
                 .padding(.horizontal, 96)
                 .frame(
                     maxWidth: .infinity,
-                    minHeight: SiloTheme.topBarIconHitSize,
+                    minHeight: WeFlixTheme.topBarIconHitSize,
                     alignment: .center
                 )
                 .padding(.top, 9)
@@ -314,10 +314,10 @@ private struct PhoneDetailStaticControlGlass: View, Equatable {
     var body: some View {
         Color.clear
             .frame(
-                width: SiloTheme.topBarIconHitSize,
-                height: SiloTheme.topBarIconHitSize
+                width: WeFlixTheme.topBarIconHitSize,
+                height: WeFlixTheme.topBarIconHitSize
             )
-            .siloGlass(in: Circle(), interactive: true)
+            .weFlixGlass(in: Circle(), interactive: true)
     }
 }
 
@@ -396,7 +396,7 @@ private struct ItemDetailPhoneContent: View {
     @State private var viewModel: ItemDetailViewModel
     /// Season and episode routes resolve to their series, so this is the
     /// page theme music looks up the selected season's own set on.
-    private var isSeriesPage: Bool { viewModel.detail.map { SiloMediaType.isSeries($0.type) } ?? false }
+    private var isSeriesPage: Bool { viewModel.detail.map { WeFlixMediaType.isSeries($0.type) } ?? false }
     @State private var preferredVersionFileId: Int?
     @State private var preferredAudioTrackIndex: Int?
     @State private var preferredSubtitleTrackIndex: Int?
@@ -439,7 +439,7 @@ private struct ItemDetailPhoneContent: View {
     /// Beside the iPhone Duo's status column, where the TV remote covers the
     /// window.
     @State private var isBesideStatusColumn = false
-    @Environment(SiloControlClient.self) private var siloControl
+    @Environment(WeFlixControlClient.self) private var weFlixControl
     @State private var controlRequestBox: ControlRequestBox?
     /// The cast button's in-flight watch-state read. A second tap replaces it.
     @State private var controlResumeLookupTask: Task<Void, Never>?
@@ -475,18 +475,18 @@ private struct ItemDetailPhoneContent: View {
         // The Mac's pages share one charcoal canvas, so a loading detail
         // page must not flash black. The page shows its own title, and the
         // toolbar would otherwise fall back to the window's name.
-        .siloPageBackground()
+        .weFlixPageBackground()
         .toolbar(removing: .title)
         #else
-        .siloBackground()
+        .weFlixBackground()
         #endif
         #if os(iOS)
         // Detail chrome and selector checks stay monochrome over per-title
         // artwork; the app accent blue looked unrelated to this visual system.
         .tint(.white)
         #endif
-        .siloNavigationTitleDisplayMode(.inline)
-        .siloNavigationBarBackgroundHidden()
+        .weFlixNavigationTitleDisplayMode(.inline)
+        .weFlixNavigationBarBackgroundHidden()
         .descriptionTranslation(viewModel)
         .themeMusic(
             viewModel.detail?.themes,
@@ -668,15 +668,15 @@ private struct ItemDetailPhoneContent: View {
             isBesideStatusColumn = besideColumn
         }
         .sheet(item: $controlRequestBox, onDismiss: { router.refitItemDetail() }) { box in
-            SiloControlTargetPickerView(request: box.request, controller: siloControl)
+            WeFlixControlTargetPickerView(request: box.request, controller: weFlixControl)
         }
         .sheet(isPresented: $isShowingControlPicker, onDismiss: { router.refitItemDetail() }) {
-            SiloControlTargetPickerView(request: nil, controller: siloControl)
+            WeFlixControlTargetPickerView(request: nil, controller: weFlixControl)
         }
-        .siloRemoteControl(
+        .weFlixRemoteControl(
             isPresented: $isShowingRemoteControl,
             coversWindow: router.presentsItemDetailFullWindow || isBesideStatusColumn,
-            controller: siloControl,
+            controller: weFlixControl,
             onDismiss: { router.refitItemDetail() }
         )
         // Refitting the detail would discard these, so it waits for them.
@@ -707,7 +707,7 @@ private struct ItemDetailPhoneContent: View {
                     router.itemDetailPath.removeLast()
                 }
             },
-            trailingSystemName: siloControl.remotePlaybackEngaged
+            trailingSystemName: weFlixControl.remotePlaybackEngaged
                 ? "appletvremote.gen4.fill"
                 : "appletvremote.gen4",
             onTrailingTap: handleRemoteControlTap,
@@ -729,7 +729,7 @@ private struct ItemDetailPhoneContent: View {
     /// the buttons, and the hero pane beside it never scrolls away.
     private var supportsScrollGlassChrome: Bool {
         guard let detail = viewModel.detail else { return false }
-        if SiloMediaType.isMovieLibrary(detail.type) || SiloMediaType.isSeries(detail.type) {
+        if WeFlixMediaType.isMovieLibrary(detail.type) || WeFlixMediaType.isSeries(detail.type) {
             return !isSplitPage
         }
         return detail.isAudiobook
@@ -751,7 +751,7 @@ private struct ItemDetailPhoneContent: View {
                 let state = await refreshedResumeState(contentId: contentId)
                 guard !Task.isCancelled else { return }
                 controlResumeLookupTask = nil
-                playOnTV(SiloControlPlaybackRequest(
+                playOnTV(WeFlixControlPlaybackRequest(
                     contentId: contentId,
                     fileId: fileId,
                     audioTrackIndex: audioTrackIndex,
@@ -761,7 +761,7 @@ private struct ItemDetailPhoneContent: View {
                     pinsVersion: pinsVersion
                 ))
             }
-        } else if siloControl.remotePlaybackEngaged {
+        } else if weFlixControl.remotePlaybackEngaged {
             isShowingRemoteControl = true
         } else {
             isShowingControlPicker = true
@@ -775,10 +775,10 @@ private struct ItemDetailPhoneContent: View {
         !detail.isAudiobook && detail.type != "season" && detail.type != "series"
     }
 
-    private func playOnTV(_ request: SiloControlPlaybackRequest) {
-        if siloControl.remotePlaybackEngaged {
+    private func playOnTV(_ request: WeFlixControlPlaybackRequest) {
+        if weFlixControl.remotePlaybackEngaged {
             // Already engaged (or reconnecting) ⇒ cast this item now.
-            Task { await siloControl.launchOnEngagedTV(request) }
+            Task { await weFlixControl.launchOnEngagedTV(request) }
         } else {
             // No session ⇒ pick a TV, then cast-and-play in one step.
             controlRequestBox = ControlRequestBox(request)
@@ -1051,7 +1051,7 @@ private struct ItemDetailPhoneContent: View {
         guard ConnectionMonitor.shared.isServerReachable else { return .unavailable }
         let libraryId = libraryId
         return await DetailResumeState.load {
-            try await SiloAPI.shared.watchDetail(contentId: contentId, libraryId: libraryId).userData
+            try await WeFlixAPI.shared.watchDetail(contentId: contentId, libraryId: libraryId).userData
         }
     }
 
@@ -1356,7 +1356,7 @@ private struct ItemDetailPhoneContent: View {
         // (see `AppRouter.presentPlayer`). Skipping the local-copy choice and
         // the reachability alert is deliberate: a TV can't read the phone's
         // download, and the TV reaches the server on its own link.
-        if siloControl.remotePlaybackEngaged {
+        if weFlixControl.remotePlaybackEngaged {
             presentStreamingPlayer(
                 contentId: contentId,
                 fileId: fileId,

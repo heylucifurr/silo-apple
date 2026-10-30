@@ -311,7 +311,7 @@ struct WatchPartyMediaPicker: View {
     }
 
     private func isPlayable(_ item: BrowseItem) -> Bool {
-        SiloMediaType.isMovieLibrary(item.type) || SiloMediaType.isSeries(item.type) || item.type == "episode"
+        WeFlixMediaType.isMovieLibrary(item.type) || WeFlixMediaType.isSeries(item.type) || item.type == "episode"
     }
 
     private func browseItem(for contentId: String) -> BrowseItem? {
@@ -344,7 +344,7 @@ struct WatchPartyMediaPicker: View {
     private var tvBody: some View {
         let shelves = sections
         return ZStack(alignment: .top) {
-            Color.siloBackground.ignoresSafeArea()
+            Color.weFlixBackground.ignoresSafeArea()
             if shelves.isEmpty {
                 tvEmptyState
             } else {
@@ -383,17 +383,17 @@ struct WatchPartyMediaPicker: View {
     /// The strip mirrors the app's top bar: same inset, same height, same
     /// capsule icons. Left is the page name; right is Search and Close.
     private var tvChrome: some View {
-        HStack(spacing: SiloTheme.Skyline.tabSpacing) {
+        HStack(spacing: WeFlixTheme.Skyline.tabSpacing) {
             Text(title)
-                .font(.system(size: SiloTheme.Skyline.tabLabelSize, weight: .semibold))
+                .font(.system(size: WeFlixTheme.Skyline.tabLabelSize, weight: .semibold))
                 .foregroundStyle(Color.white)
             Spacer()
             chromeIcon("magnifyingglass", label: "Search", id: .search) { destination = .search }
             chromeIcon("xmark", label: "Close", id: .close) { dismiss() }
         }
-        .frame(height: SiloTheme.Skyline.barHeight)
-        .padding(.horizontal, SiloTheme.Skyline.safeAreaX)
-        .padding(.top, SiloTheme.Skyline.barTopInset)
+        .frame(height: WeFlixTheme.Skyline.barHeight)
+        .padding(.horizontal, WeFlixTheme.Skyline.safeAreaX)
+        .padding(.top, WeFlixTheme.Skyline.barTopInset)
         .focusSection()
     }
 
@@ -402,13 +402,13 @@ struct WatchPartyMediaPicker: View {
         return Button(action: action) {
             Image(systemName: systemName)
                 .font(.system(size: Self.chromeIconSize, weight: .semibold))
-                .foregroundStyle(isFocused ? Color.siloBackground : .white.opacity(0.62))
-                .frame(width: SiloTheme.Skyline.barIconSize, height: SiloTheme.Skyline.barIconSize)
+                .foregroundStyle(isFocused ? Color.weFlixBackground : .white.opacity(0.62))
+                .frame(width: WeFlixTheme.Skyline.barIconSize, height: WeFlixTheme.Skyline.barIconSize)
                 .background(Capsule().fill(isFocused ? Color.white : .clear))
                 .focusEffectDisabled()
-                .animation(SiloTheme.springAnimation, value: isFocused)
+                .animation(WeFlixTheme.springAnimation, value: isFocused)
         }
-        .buttonStyle(.siloFlat)
+        .buttonStyle(.weFlixFlat)
         .focused($chromeFocus, equals: id)
         .accessibilityLabel(label)
     }
@@ -416,7 +416,7 @@ struct WatchPartyMediaPicker: View {
     private var tvEmptyState: some View {
         VStack(alignment: .leading, spacing: 12) {
             if loading {
-                ProgressView().tint(Color.siloSecondaryText)
+                ProgressView().tint(Color.weFlixSecondaryText)
             } else {
                 EmptyStateView(icon: "film.stack", title: "Nothing to pick from yet",
                                subtitle: "Search for a title, or add something to a watchlist.")
@@ -458,10 +458,10 @@ struct WatchPartyMediaPicker: View {
             .padding(.bottom, 32)
         }
         .scrollDismissesKeyboard(.immediately)
-        .siloPageBackground()
+        .weFlixPageBackground()
         .navigationTitle(title)
         .navigationBarTitleDisplayMode(.large)
-        .siloSearchable(text: $search.query, prompt: "Search movies and series")
+        .weFlixSearchable(text: $search.query, prompt: "Search movies and series")
         .onChange(of: search.query) { _, _ in search.onQueryChanged() }
         .onAppear { search.audiobooksEnabled = false }
         .toolbar {
@@ -513,7 +513,7 @@ struct WatchPartyMediaPicker: View {
     @ViewBuilder
     private var phoneEmptyState: some View {
         if loading {
-            ProgressView().tint(Color.siloSecondaryText)
+            ProgressView().tint(Color.weFlixSecondaryText)
                 .frame(maxWidth: .infinity)
                 .padding(.top, 120)
         } else {
@@ -551,7 +551,7 @@ struct WatchPartyMediaPicker: View {
             ErrorView(state: error, onRetry: { Task { await search.performSearch() } })
         } else if results.isEmpty {
             if search.isSearching || !search.hasSearched {
-                ProgressView().tint(Color.siloSecondaryText)
+                ProgressView().tint(Color.weFlixSecondaryText)
                     .frame(maxWidth: .infinity)
                     .padding(.top, 120)
             } else {
@@ -580,7 +580,7 @@ struct WatchPartyMediaPicker: View {
     /// Select on a "continue together" series goes straight to the group's
     /// next episode; other series open the season browser.
     private func open(_ item: BrowseItem) {
-        if SiloMediaType.isSeries(item.type) {
+        if WeFlixMediaType.isSeries(item.type) {
             if let nextUp = entry(for: item.contentId)?.nextUp {
                 destination = .choice(WatchPartyMediaChoice(series: item, nextUp: nextUp))
             } else {
@@ -625,9 +625,9 @@ struct WatchPartyMediaPicker: View {
             let auth = try await session.catalogAuth()
             let result: APIv2CatalogResult
             if !reset, let continuation {
-                result = try await SiloAPI.shared.apiV2Client.nextCatalogPage(continuation)
+                result = try await WeFlixAPI.shared.apiV2Client.nextCatalogPage(continuation)
             } else {
-                result = try await SiloAPI.shared.apiV2Client.catalogPage(query: await Self.recentQuery(type: "movie"), auth: auth)
+                result = try await WeFlixAPI.shared.apiV2Client.catalogPage(query: await Self.recentQuery(type: "movie"), auth: auth)
             }
             guard !Task.isCancelled, roomId == session.room?.roomId, loadID == requestID else { return }
             if reset { items = result.value.items }
@@ -649,14 +649,14 @@ struct WatchPartyMediaPicker: View {
         query.limit = 24
         query.sort = CatalogSortKey.addedAt.field
         query.order = "desc"
-        query.artwork = await SiloAPI.shared.artworkQuery(.shelves, slotWidthsOnly: true)
+        query.artwork = await WeFlixAPI.shared.artworkQuery(.shelves, slotWidthsOnly: true)
         return query
     }
 
     private func loadRecentSeries(roomId: String?) async {
         do {
             let auth = try await session.catalogAuth()
-            let result = try await SiloAPI.shared.apiV2Client.catalogPage(query: await Self.recentQuery(type: "series"), auth: auth)
+            let result = try await WeFlixAPI.shared.apiV2Client.catalogPage(query: await Self.recentQuery(type: "series"), auth: auth)
             guard !Task.isCancelled, roomId == session.room?.roomId else { return }
             recentSeries = result.value.items
         } catch {
@@ -677,12 +677,12 @@ struct WatchPartyMediaPicker: View {
         #if !os(tvOS)
         resumeItems = response.sections
             .first(where: HomeFeed.isResume)?
-            .items.filter { SiloMediaType.isMovieLibrary($0.type) || $0.type == "episode" } ?? []
+            .items.filter { WeFlixMediaType.isMovieLibrary($0.type) || $0.type == "episode" } ?? []
         #endif
         homeSections = response.sections
             .filter { !Self.skippedHomeSectionTypes.contains($0.sectionType.lowercased()) }
             .compactMap { section in
-                let items = section.items.filter { SiloMediaType.isMovieLibrary($0.type) || SiloMediaType.isSeries($0.type) }
+                let items = section.items.filter { WeFlixMediaType.isMovieLibrary($0.type) || WeFlixMediaType.isSeries($0.type) }
                 guard !items.isEmpty else { return nil }
                 return ResolvedSection(id: "watchParty.home." + section.id, sectionType: section.sectionType, title: section.title,
                                        featured: false, itemLimit: nil, totalCount: items.count, isCustom: section.isCustom,
@@ -699,8 +699,8 @@ struct WatchPartyMediaPicker: View {
             catalogQuery.type = "video"
             catalogQuery.limit = 40
             catalogQuery.source = "watchlist"
-            catalogQuery.artwork = await SiloAPI.shared.artworkQuery(.shelves, slotWidthsOnly: true)
-            let result = try await SiloAPI.shared.apiV2Client.catalogPage(query: catalogQuery, auth: auth)
+            catalogQuery.artwork = await WeFlixAPI.shared.artworkQuery(.shelves, slotWidthsOnly: true)
+            let result = try await WeFlixAPI.shared.apiV2Client.catalogPage(query: catalogQuery, auth: auth)
             guard !Task.isCancelled, roomId == session.room?.roomId else { return }
             watchlistItems = result.value.items
         } catch {
@@ -720,7 +720,7 @@ private struct WatchPartySearchPage: View {
 
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: SiloTheme.padding) {
+            VStack(alignment: .leading, spacing: WeFlixTheme.padding) {
                 if viewModel.isSearching && viewModel.results.isEmpty {
                     Color.clear
                 } else if let error = viewModel.error {
@@ -735,8 +735,8 @@ private struct WatchPartySearchPage: View {
                         .padding(.top, 80)
                 } else {
                     Text("\(viewModel.total) result\(viewModel.total == 1 ? "" : "s")")
-                        .font(.siloCaption)
-                        .foregroundColor(.siloSecondaryText)
+                        .font(.weFlixCaption)
+                        .foregroundColor(.weFlixSecondaryText)
                     TVCatalogGrid(
                         items: viewModel.results,
                         isLoading: viewModel.isSearching,
@@ -749,15 +749,15 @@ private struct WatchPartySearchPage: View {
                     )
                 }
             }
-            .padding(.horizontal, SiloTheme.padding)
-            .padding(.top, SiloTheme.padding)
-            .siloFormWidth(1600)
+            .padding(.horizontal, WeFlixTheme.padding)
+            .padding(.top, WeFlixTheme.padding)
+            .weFlixFormWidth(1600)
         }
-        .siloPageBackground()
+        .weFlixPageBackground()
         .safeAreaPadding(.horizontal, 110)
         .navigationTitle("Search")
-        .siloNavigationTitleDisplayMode(.inline)
-        .siloSearchable(text: $viewModel.query, prompt: "Search movies and series...")
+        .weFlixNavigationTitleDisplayMode(.inline)
+        .weFlixSearchable(text: $viewModel.query, prompt: "Search movies and series...")
         .onAppear { viewModel.audiobooksEnabled = false }
         .onChange(of: viewModel.query) { _, _ in viewModel.onQueryChanged() }
     }
@@ -837,20 +837,20 @@ private struct WatchPartyEpisodePicker: View {
                     Text(series.title)
                         .font(.system(size: 64, weight: .bold))
                         .tracking(-1)
-                        .foregroundStyle(Color.siloOnSurface)
+                        .foregroundStyle(Color.weFlixOnSurface)
                         .lineLimit(1)
                         .minimumScaleFactor(0.6)
                     Text(focusedEpisode.map(episodeLine) ?? (series.year.map(String.init) ?? ""))
                         .font(.system(size: WatchPartyMetrics.body, weight: .medium))
-                        .foregroundStyle(Color.siloSecondaryText)
+                        .foregroundStyle(Color.weFlixSecondaryText)
                     Text(focusedOverview)
                         .font(.system(size: WatchPartyMetrics.body))
-                        .foregroundStyle(Color.siloSecondaryText)
+                        .foregroundStyle(Color.weFlixSecondaryText)
                         .lineLimit(3)
                         .frame(height: WatchPartyMetrics.body * 1.3 * 3, alignment: .top)
                 }
                 .frame(maxWidth: 1000, alignment: .leading)
-                .animation(.easeOut(duration: SiloTheme.fastDuration), value: focusedEpisodeId)
+                .animation(.easeOut(duration: WeFlixTheme.fastDuration), value: focusedEpisodeId)
                 .padding(.bottom, 36)
                 if !seasons.isEmpty {
                     ScrollView(.horizontal) {
@@ -878,14 +878,14 @@ private struct WatchPartyEpisodePicker: View {
                     if isLoading && episodes.isEmpty && seasons.isEmpty {
                         // Nothing else on the page can hold focus until the
                         // seasons arrive; without an owner Menu cannot leave.
-                        ProgressView().tint(Color.siloSecondaryText).frame(maxWidth: .infinity)
+                        ProgressView().tint(Color.weFlixSecondaryText).frame(maxWidth: .infinity)
                             .tvPageFocusOwner(focusRequest: 0, isTopMenuFocused: false,
                                               accessibilityLabel: "Loading episodes", onMoveUp: nil)
                     } else if isLoading && episodes.isEmpty {
-                        ProgressView().tint(Color.siloSecondaryText).frame(maxWidth: .infinity)
+                        ProgressView().tint(Color.weFlixSecondaryText).frame(maxWidth: .infinity)
                     } else if episodes.isEmpty {
                         VStack(alignment: .leading, spacing: 8) {
-                            Text("No episodes in this season").font(.system(size: 28, weight: .semibold)).foregroundStyle(Color.siloOnSurface)
+                            Text("No episodes in this season").font(.system(size: 28, weight: .semibold)).foregroundStyle(Color.weFlixOnSurface)
                             if let errorMessage { WatchPartyBanner(message: errorMessage, tone: .warning) }
                             Button { Task { await loadSeasons() } } label: { Text("Reload episodes") }
                                 .buttonStyle(WatchPartyButtonStyle(kind: .secondary))
@@ -948,7 +948,7 @@ private struct WatchPartyEpisodePicker: View {
                 }
                 Group {
                     if isLoading && episodes.isEmpty {
-                        ProgressView().tint(Color.siloSecondaryText)
+                        ProgressView().tint(Color.weFlixSecondaryText)
                             .frame(maxWidth: .infinity)
                             .padding(.top, 80)
                     } else if episodes.isEmpty {
@@ -974,12 +974,12 @@ private struct WatchPartyEpisodePicker: View {
                         }
                     }
                 }
-                .padding(.horizontal, SiloTheme.safePadding)
+                .padding(.horizontal, WeFlixTheme.safePadding)
             }
             .padding(.top, 8)
             .padding(.bottom, 32)
         }
-        .siloPageBackground()
+        .weFlixPageBackground()
         .navigationTitle(series.title)
         .navigationBarTitleDisplayMode(.large)
     }
@@ -993,8 +993,8 @@ private struct WatchPartyEpisodePicker: View {
                     AsyncImageView(url: still, thumbhash: episode.stillThumbhash,
                                    targetSize: CGSize(width: Self.stillWidth, height: Self.stillWidth * 9 / 16))
                 } else {
-                    Rectangle().fill(Color.siloSurfaceElevated)
-                        .overlay { Image(systemName: "tv").foregroundStyle(Color.siloSecondaryText) }
+                    Rectangle().fill(Color.weFlixSurfaceElevated)
+                        .overlay { Image(systemName: "tv").foregroundStyle(Color.weFlixSecondaryText) }
                 }
             }
             .episodeSpoilerBlur(spoilers.hidesImage(for: EpisodeWatchState(episode.userData), isEpisodeStill: episode.stillIsEpisodeStill))
@@ -1003,18 +1003,18 @@ private struct WatchPartyEpisodePicker: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text("\(episode.episodeNumber). \(episode.title ?? "Episode \(episode.episodeNumber)")")
                     .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(Color.siloOnSurface)
+                    .foregroundStyle(Color.weFlixOnSurface)
                     .lineLimit(2)
                 if let runtime = MediaTextFormatting.runtime(minutes: episode.runtime) {
                     Text(runtime)
                         .font(.caption)
-                        .foregroundStyle(Color.siloSecondaryText)
+                        .foregroundStyle(Color.weFlixSecondaryText)
                 }
                 if !spoilers.hidesOverview(for: EpisodeWatchState(episode.userData)),
                    let overview = episode.overview, !overview.isEmpty {
                     Text(overview)
                         .font(.caption)
-                        .foregroundStyle(Color.siloSecondaryText)
+                        .foregroundStyle(Color.weFlixSecondaryText)
                         .lineLimit(2)
                 }
             }
@@ -1031,8 +1031,8 @@ private struct WatchPartyEpisodePicker: View {
         errorMessage = nil
         do {
             let auth = try await session.catalogAuth()
-            let values = try await SiloAPI.shared.apiV2Client.catalogSeasons(
-                seriesId: series.contentId, artwork: await SiloAPI.shared.artworkQuery(.seasons, slotWidthsOnly: true), auth: auth)
+            let values = try await WeFlixAPI.shared.apiV2Client.catalogSeasons(
+                seriesId: series.contentId, artwork: await WeFlixAPI.shared.artworkQuery(.seasons, slotWidthsOnly: true), auth: auth)
             guard !Task.isCancelled, roomId == session.room?.roomId else { return }
             seasons = try values.map { try Season(catalog: $0) }.sortedForDisplay()
             // A retry keeps the season being viewed; the first load opens on
@@ -1059,8 +1059,8 @@ private struct WatchPartyEpisodePicker: View {
         episodes = []
         do {
             let auth = try await session.catalogAuth()
-            let values = try await SiloAPI.shared.apiV2Client.catalogEpisodes(seriesId: series.contentId,
-                seasonNumber: seasonNumber, artwork: await SiloAPI.shared.artworkQuery(.episodes, slotWidthsOnly: true), auth: auth)
+            let values = try await WeFlixAPI.shared.apiV2Client.catalogEpisodes(seriesId: series.contentId,
+                seasonNumber: seasonNumber, artwork: await WeFlixAPI.shared.artworkQuery(.episodes, slotWidthsOnly: true), auth: auth)
             guard !Task.isCancelled, roomId == session.room?.roomId, self.seasonNumber == seasonNumber else { return }
             // In episode order, as on the series page, so the resume episode is
             // the earliest unwatched one.
@@ -1122,21 +1122,21 @@ private struct WatchPartyMediaChoiceView: View {
                             Text(choice.title)
                                 .font(.system(size: WatchPartyMetrics.heroTitle * 0.9, weight: .bold))
                                 .tracking(-1)
-                                .foregroundStyle(Color.siloOnSurface)
+                                .foregroundStyle(Color.weFlixOnSurface)
                                 .lineLimit(3)
                                 .minimumScaleFactor(0.7)
                             let facts = (choice.subtitle.map { [$0] } ?? []) + choice.facts
                             if !facts.isEmpty {
                                 Text(facts.joined(separator: " · "))
                                     .font(.system(size: WatchPartyMetrics.body))
-                                    .foregroundStyle(Color.siloSecondaryText)
+                                    .foregroundStyle(Color.weFlixSecondaryText)
                             }
                         }
                     }
                     if let overview = visibleOverview, !overview.isEmpty {
                         Text(overview)
                             .font(.system(size: WatchPartyMetrics.body))
-                            .foregroundStyle(Color.siloSecondaryText)
+                            .foregroundStyle(Color.weFlixSecondaryText)
                             .lineLimit(6)
                     }
                     Button { Task { await submit() } } label: {
@@ -1161,14 +1161,14 @@ private struct WatchPartyMediaChoiceView: View {
                             if session.isLoadingMemberState {
                                 Text("Checking viewing history…")
                                     .font(.system(size: WatchPartyMetrics.caption))
-                                    .foregroundStyle(Color.siloSecondaryText)
+                                    .foregroundStyle(Color.weFlixSecondaryText)
                             } else if let item = session.memberState?.items.first(where: { $0.contentId == choice.contentId }) {
                                 ForEach(session.room?.members ?? []) { member in
                                     let state = item.members.first { $0.userId == member.userId && $0.profileId == member.profileId }
                                     HStack {
-                                        Text(member.displayName).foregroundStyle(Color.siloOnSurface)
+                                        Text(member.displayName).foregroundStyle(Color.weFlixOnSurface)
                                         Spacer()
-                                        Text(historyLabel(state)).foregroundStyle(Color.siloSecondaryText)
+                                        Text(historyLabel(state)).foregroundStyle(Color.weFlixSecondaryText)
                                     }
                                     .font(.system(size: WatchPartyMetrics.body))
                                 }

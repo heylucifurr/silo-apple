@@ -1,5 +1,5 @@
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 /// The stage track is drawn from one mapper on cards, rows, the detail
 /// page, and the tvOS marquee; these pin where each server state lands.

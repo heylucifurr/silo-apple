@@ -1,14 +1,14 @@
 import Foundation
 import Network
 
-/// TLS-PSK parameter builder shared by every Silo LAN protocol. The keys are
+/// TLS-PSK parameter builder shared by every WeFlix LAN protocol. The keys are
 /// FIXED, non-secret strings compiled into the app: opportunistic
 /// confidentiality only, NOT an authentication boundary. Each protocol layers
 /// its own trust anchor on top (pairing: the server-issued match code;
-/// SiloControl: same-account discovery). A PSK lets both an `NWListener` and
+/// WeFlixControl: same-account discovery). A PSK lets both an `NWListener` and
 /// an outbound `NWConnection` negotiate TLS without certificate/identity
 /// management.
-enum SiloLANTLS {
+enum WeFlixLANTLS {
     static func parameters(psk: String, identity: String) -> NWParameters {
         let tls = NWProtocolTLS.Options()
         let pskData = Data(psk.utf8)
@@ -32,10 +32,10 @@ enum SiloLANTLS {
 }
 
 /// A layer under the framing that seals each frame body once both peers
-/// have exchanged one plain opening frame. SiloControl uses it for a Roku at
-/// level `sealed` (`SiloControlSealedChannel`), where TLS is unavailable.
+/// have exchanged one plain opening frame. WeFlixControl uses it for a Roku at
+/// level `sealed` (`WeFlixControlSealedChannel`), where TLS is unavailable.
 /// The session owns its value and calls it only from the actor.
-protocol SiloFrameSealing: Sendable {
+protocol WeFlixFrameSealing: Sendable {
     /// The plain frame body this side sends before anything else.
     var openingFrame: Data { get }
     /// Whether the peer's opening frame has arrived and frames are sealed.
@@ -49,7 +49,7 @@ protocol SiloFrameSealing: Sendable {
 
 /// One `NWConnection` carrying length-prefixed JSON frames of a single
 /// message type. The shared transport under companion pairing and
-/// SiloControl — both sides of each protocol use it (inbound via
+/// WeFlixControl — both sides of each protocol use it (inbound via
 /// `init(connection:)` from an `NWListener`, outbound via `init(endpoint:)`).
 ///
 /// Behaviors:
@@ -65,14 +65,14 @@ actor FramedJSONSession<Message: Codable & Sendable> {
     }
 
     private let connection: NWConnection
-    private var frameBuffer = SiloFrameBuffer()
+    private var frameBuffer = WeFlixFrameBuffer()
     private var continuation: AsyncThrowingStream<Message, Error>.Continuation?
     private let encoder = JSONEncoder()
     private let decoder = JSONDecoder()
     private var isOpen = false
     /// With sealing, nothing but the opening frame is written until the
     /// peer's opening frame keys the session.
-    private var sealing: (any SiloFrameSealing)?
+    private var sealing: (any WeFlixFrameSealing)?
     private var keyedWaiter: CheckedContinuation<Void, Error>?
     /// The sealing layer's error that ended the session, handed to the sends
     /// it fails so a caller can say why (e.g. the TV refused the pairing).
@@ -97,7 +97,7 @@ actor FramedJSONSession<Message: Codable & Sendable> {
 
     /// Outbound side: connect to a discovered endpoint using the protocol's
     /// parameters, sealing frames when `sealing` is given.
-    init(endpoint: NWEndpoint, parameters: NWParameters, sealing: (any SiloFrameSealing)? = nil) {
+    init(endpoint: NWEndpoint, parameters: NWParameters, sealing: (any WeFlixFrameSealing)? = nil) {
         connection = NWConnection(to: endpoint, using: parameters)
         self.sealing = sealing
         (outbound, outboundContinuation) = AsyncStream.makeStream()
@@ -203,7 +203,7 @@ actor FramedJSONSession<Message: Codable & Sendable> {
     }
 
     private func writeFrame(_ payload: Data) async throws {
-        let framed = try SiloFrame.encode(payload)
+        let framed = try WeFlixFrame.encode(payload)
         try await withCheckedThrowingContinuation { (cont: CheckedContinuation<Void, Error>) in
             connection.send(content: framed, completion: .contentProcessed { error in
                 if let error {

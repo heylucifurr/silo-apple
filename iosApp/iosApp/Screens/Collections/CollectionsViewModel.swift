@@ -37,11 +37,11 @@ class CollectionsViewModel {
     var isRefreshing = false
     var error: ErrorState?
     private(set) var groupSupport: CollectionGroupSupport = .checking
-    private let api: SiloAPI
+    private let api: WeFlixAPI
 
-    private static let logger = Logger(subsystem: "org.siloserver.silo", category: "collections")
+    private static let logger = Logger(subsystem: "me.weflix", category: "collections")
 
-    init(api: SiloAPI = .shared) {
+    init(api: WeFlixAPI = .shared) {
         self.api = api
         if let cached: CollectionsResponse = ResponseCache.shared.get(CacheKey.collections) {
             collections = cached.collections ?? []
@@ -406,7 +406,7 @@ class CollectionsViewModel {
             if Self.outcomeIsUncertain(err) {
                 Self.logger.warning("Collection edit outcome unknown: \(String(describing: err), privacy: .public)")
                 editorNeedsReload = true
-                groupError = "Silo couldn't confirm this change. Reload to check whether it was saved before trying again."
+                groupError = "weflix couldn't confirm this change. Reload to check whether it was saved before trying again."
             } else {
                 groupError = groupErrorMessage(err, fallback: fallback)
             }
@@ -427,7 +427,7 @@ class CollectionsViewModel {
     private func createFailureMessage(_ err: Error, fallback: String) -> String {
         if Self.outcomeIsUncertain(err) {
             Self.logger.warning("Collection create outcome unknown: \(String(describing: err), privacy: .public)")
-            return "Silo couldn't confirm this was created. Check the list before trying again."
+            return "weflix couldn't confirm this was created. Check the list before trying again."
         }
         return groupErrorMessage(err, fallback: fallback)
     }

@@ -6,9 +6,9 @@ enum ShuffleAvailability {
     /// plays; audiobook and other libraries do not.
     static func isShuffleLibraryType(_ type: String?) -> Bool {
         guard let type else { return false }
-        return SiloMediaType.isMovieLibrary(type)
-            || SiloMediaType.isSeries(type)
-            || SiloMediaType.isMixedLibrary(type)
+        return WeFlixMediaType.isMovieLibrary(type)
+            || WeFlixMediaType.isSeries(type)
+            || WeFlixMediaType.isMixedLibrary(type)
     }
 
     /// A shuffle of one item would only replay it.
@@ -26,9 +26,9 @@ final class ShuffleLauncher {
     private(set) var isStarting = false
     var failureMessage: String?
 
-    private let api: SiloAPI
+    private let api: WeFlixAPI
 
-    init(api: SiloAPI = .shared) {
+    init(api: WeFlixAPI = .shared) {
         self.api = api
     }
 
@@ -107,7 +107,7 @@ struct ShuffleButton: View {
         // the launcher ignores repeat presses.
         .opacity(isStarting ? 0.6 : 1)
         #else
-        .siloSecondaryButton()
+        .weFlixSecondaryButton()
         .disabled(isStarting)
         #endif
         .accessibilityIdentifier("collection-shuffle")

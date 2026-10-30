@@ -1,6 +1,6 @@
 //
 //  SubtitleAIController.swift
-//  Silo (iOS + tvOS)
+//  WeFlix (iOS + tvOS)
 //
 //  Per-session orchestrator for the in-player AI subtitle suite — translate
 //  an existing text track, transcribe audio (Whisper), or transcribe-and-
@@ -14,7 +14,7 @@
 //    and register it as a normal downloaded sidecar track (then auto-select it).
 //
 //  The POST is `non_retryable` and sent once. When its outcome is unknown the
-//  request is held (see ``SiloAI/translateSubtitle(_:auth:)``): the menu shows
+//  request is held (see ``WeFlixAI/translateSubtitle(_:auth:)``): the menu shows
 //  the failure with a "Discard held request" action, and an identical request
 //  is not sent again until the user discards it.
 //
@@ -30,7 +30,7 @@
 //  controller only polls, with no live cues.
 //
 //  Isolation: `@MainActor @Observable` so the UI binds its state directly and
-//  all mutations stay on main. The networking lives behind the ``SiloAI``
+//  all mutations stay on main. The networking lives behind the ``WeFlixAI``
 //  actor and the ``AIJobPoller`` actor, which hop back to main when delivering
 //  snapshots.
 //
@@ -45,7 +45,7 @@ import OSLog
 final class SubtitleAIController {
 
     private static let logger = Logger(
-        subsystem: Bundle.main.bundleIdentifier ?? "org.siloserver.silo",
+        subsystem: Bundle.main.bundleIdentifier ?? "me.weflix",
         category: "SubtitleAI"
     )
 
@@ -94,7 +94,7 @@ final class SubtitleAIController {
     }
 
     /// A job request whose outcome is unknown: it may have started a job, so
-    /// ``SiloAI`` will not send it again. Set with `phase == .failed`.
+    /// ``WeFlixAI`` will not send it again. Set with `phase == .failed`.
     private struct HeldRequest {
         let body: TranslateSubtitleBody
         let auth: CapturedOrdinaryRequestAuth
@@ -107,7 +107,7 @@ final class SubtitleAIController {
     // MARK: - Injected collaborators
 
     /// AI endpoints facade.
-    private let api: SiloAI
+    private let api: WeFlixAI
 
     /// Job poller (authority for `result_subtitle_id`).
     private let poller: AIJobPoller
@@ -239,7 +239,7 @@ final class SubtitleAIController {
 
     /// Main-actor isolated.
     init(
-        api: SiloAI = .shared,
+        api: WeFlixAI = .shared,
         poller: AIJobPoller = AIJobPoller(),
         // `nil` default rather than `.shared`: the shared capabilities holder is
         // `@MainActor`-isolated, and default arguments evaluate in a nonisolated
@@ -356,7 +356,7 @@ final class SubtitleAIController {
         Task { [api, poller] in
             await poller.cancel()
             // A cancel while the POST is still in flight has no job to name;
-            // that request may still start one and is held by `SiloAI`.
+            // that request may still start one and is held by `WeFlixAI`.
             if let jobId, let jobAuth {
                 try? await api.cancelSubtitleJob(id: jobId, auth: jobAuth)
             }
@@ -467,7 +467,7 @@ final class SubtitleAIController {
                 self.onJobAccepted(result.job)
                 await self.drainPoll(jobId: result.job.id, isASR: kind != .translate, auth: auth, generation: gen)
             } catch {
-                // `SiloAI` keeps the hold even when this submission was
+                // `WeFlixAI` keeps the hold even when this submission was
                 // superseded; the controller only needs it to offer the discard.
                 let held = (error as? SubtitleCreationError) == .unresolved || SubtitleCreationError.isUncertain(error)
                 guard !Task.isCancelled, gen == self.generation else { return }
@@ -1007,5 +1007,5 @@ final class SubtitleAIController {
     private static let genericSubmitFailure = "Couldn't start subtitle translation."
 
     static let lostTrackMessage =
-        "Silo lost track of this subtitle job. If it finishes, the subtitles will appear in the subtitle list."
+        "weflix lost track of this subtitle job. If it finishes, the subtitles will appear in the subtitle list."
 }

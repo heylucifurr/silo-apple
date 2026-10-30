@@ -63,7 +63,7 @@ struct DescriptionTranslationStatusLabel: View {
         if compact {
             Image(systemName: MachineTranslation.symbol)
                 .font(font)
-                .foregroundStyle(Color.siloSecondaryText.opacity(0.8))
+                .foregroundStyle(Color.weFlixSecondaryText.opacity(0.8))
                 .accessibilityLabel(status.text)
                 #if !os(tvOS)
                 .help(status.text)
@@ -76,7 +76,7 @@ struct DescriptionTranslationStatusLabel: View {
                 Text(status.text)
             }
             .font(font)
-            .foregroundStyle(Color.siloSecondaryText)
+            .foregroundStyle(Color.weFlixSecondaryText)
             .accessibilityElement(children: .combine)
         }
     }

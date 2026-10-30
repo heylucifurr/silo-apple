@@ -61,8 +61,8 @@ enum DiagnosticsUploadError: Error, Equatable {
     case archiveMismatch
     case invalidBundle
     /// An intermediary (reverse proxy/CDN) rejected the request body as too
-    /// large before it reached Silo: a 413 without a problem document.
-    /// Distinct from `.tooLarge` (Silo's own bundle-size verdict): the server
+    /// large before it reached WeFlix: a 413 without a problem document.
+    /// Distinct from `.tooLarge` (WeFlix's own bundle-size verdict): the server
     /// may still accept the same bundle through the chunked upload fallback,
     /// whose requests stay under typical proxy body caps.
     case requestBlockedByProxy
@@ -95,7 +95,7 @@ struct DiagnosticsAPI: Sendable {
 
     private let client: APIv2Client
 
-    init(client: APIv2Client = SiloAPI.shared.apiV2Client) {
+    init(client: APIv2Client = WeFlixAPI.shared.apiV2Client) {
         self.client = client
     }
 
@@ -302,9 +302,9 @@ struct DiagnosticsAPI: Sendable {
     private static func mapStatus(_ status: Int, isProblem: Bool) -> DiagnosticsUploadError {
         switch status {
         case 413:
-            // Silo always answers with a problem document. A 413 without one
+            // WeFlix always answers with a problem document. A 413 without one
             // came from a proxy in front of the server that refused the body
-            // before Silo saw it; the chunked upload may still fit.
+            // before WeFlix saw it; the chunked upload may still fit.
             return isProblem ? .tooLarge : .requestBlockedByProxy
         case 429:
             return .quotaExceeded

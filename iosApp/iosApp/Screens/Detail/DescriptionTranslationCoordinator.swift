@@ -39,7 +39,7 @@ final class DescriptionTranslationCoordinator {
     /// after which the run gives up and reports `.failed`, as web does.
     nonisolated static let defaultSchedule: [Duration] = [1, 2, 2, 3, 3, 4, 5, 5, 5, 5, 5, 5].map { .seconds($0) }
 
-    private let api: SiloAI
+    private let api: WeFlixAI
     private let schedule: [Duration]
     private let sleep: @Sendable (Duration) async throws -> Void
     @ObservationIgnored private var task: Task<Void, Never>?
@@ -49,7 +49,7 @@ final class DescriptionTranslationCoordinator {
     @ObservationIgnored private var automaticKeys: Set<Key> = []
 
     init(
-        api: SiloAI = .shared,
+        api: WeFlixAI = .shared,
         schedule: [Duration] = DescriptionTranslationCoordinator.defaultSchedule,
         sleep: @escaping @Sendable (Duration) async throws -> Void = { try await Task.sleep(for: $0) }
     ) {

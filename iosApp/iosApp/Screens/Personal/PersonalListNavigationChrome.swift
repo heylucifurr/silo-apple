@@ -8,7 +8,7 @@ struct PersonalListNavigationChrome: ViewModifier {
         if let title {
             content
                 .navigationTitle(title)
-                .siloNavigationTitleDisplayMode(.large)
+                .weFlixNavigationTitleDisplayMode(.large)
         } else {
             content
         }

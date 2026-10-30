@@ -1,10 +1,10 @@
 import Foundation
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 final class ThumbHashDecoderTests: XCTestCase {
     // Canonical vectors from go.n16f.net/thumbhash v1.1.0, the encoder used
-    // by Silo Server's imageutil. The Firefox vector carries alpha.
+    // by WeFlix Server's imageutil. The Firefox vector carries alpha.
     private let opaqueHash = "1QcSHQRnh493V4dIh4eXh1h4kJUI"
     private let alphaHash = "X5qGNQw7oElslqhGWfSE+Q6oJ1h2iHB2Rw=="
 

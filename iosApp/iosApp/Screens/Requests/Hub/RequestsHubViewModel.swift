@@ -51,9 +51,9 @@ final class RequestsHubViewModel {
     private(set) var hasSearched = false
 
     private var searchTask: Task<Void, Never>?
-    private let api: SiloAPI
+    private let api: WeFlixAPI
 
-    init(api: SiloAPI = .shared) {
+    init(api: WeFlixAPI = .shared) {
         self.api = api
     }
 

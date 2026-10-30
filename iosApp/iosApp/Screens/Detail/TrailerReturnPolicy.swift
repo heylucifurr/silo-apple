@@ -4,8 +4,8 @@ import Foundation
 /// so a cold launch can put the user back on the detail page they left from.
 ///
 /// tvOS has no way to programmatically return from the YouTube app, so the
-/// warm path relies on the system keeping Silo suspended. This record exists
-/// solely to survive the one case that breaks: Silo is jetsammed while the
+/// warm path relies on the system keeping WeFlix suspended. This record exists
+/// solely to survive the one case that breaks: WeFlix is jetsammed while the
 /// trailer plays, and the user relaunches into Home with the detail page gone.
 struct TrailerReturnRecord: Codable, Equatable {
     let contentId: String

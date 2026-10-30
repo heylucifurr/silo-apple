@@ -87,7 +87,7 @@ struct MediaRow: View {
     /// rows (§5.6) pass a compact width. Episode thumbs are unaffected.
     var cardWidth: CGFloat? = nil
     /// Optional unscaled width for episode thumbs; nil keeps
-    /// `SiloTheme.thumbnailCardWidth`.
+    /// `WeFlixTheme.thumbnailCardWidth`.
     var thumbnailCardWidth: CGFloat? = nil
     /// Optional tvOS-only vertical padding override for the card strip.
     /// Standard rows keep the default breathing room for focus lift.
@@ -115,7 +115,7 @@ struct MediaRow: View {
     @State private var focusRestorationGeneration = 0
     @State private var lastAppliedDetailReturnFocusRequest = 0
     private static let focusLogger = Logger(
-        subsystem: Bundle.main.bundleIdentifier ?? "org.siloserver.silo",
+        subsystem: Bundle.main.bundleIdentifier ?? "me.weflix",
         category: "TVFocus"
     )
     #endif
@@ -370,7 +370,7 @@ struct MediaRow: View {
                         headerTitle
                         Image(systemName: "chevron.right")
                             .font(.system(size: headerIconSize * 0.8, weight: .semibold))
-                            .foregroundColor(.siloOnSurface.opacity(0.6))
+                            .foregroundColor(.weFlixOnSurface.opacity(0.6))
                     }
                 }
                 .buttonStyle(.plain)
@@ -382,7 +382,7 @@ struct MediaRow: View {
 
             Spacer()
         }
-        .padding(.horizontal, SiloTheme.safePadding)
+        .padding(.horizontal, WeFlixTheme.safePadding)
     }
 
     @ViewBuilder
@@ -390,14 +390,14 @@ struct MediaRow: View {
         if let icon {
             Image(systemName: icon)
                 .font(.system(size: headerIconSize, weight: .semibold))
-                .foregroundColor(.siloOnSurface)
+                .foregroundColor(.weFlixOnSurface)
         }
 
         // Server headings can be long ("Because You Watched {title}"); a
         // second line would push the cards down out of the row band.
         Text(title)
-            .font(.siloHeadline)
-            .foregroundColor(.siloOnSurface)
+            .font(.weFlixHeadline)
+            .foregroundColor(.weFlixOnSurface)
             .lineLimit(1)
     }
 
@@ -441,7 +441,7 @@ struct MediaRow: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         #if !os(tvOS)
         // A content margin, not padding, so settled cards keep the gutter.
-        .contentMargins(.horizontal, SiloTheme.safePadding, for: .scrollContent)
+        .contentMargins(.horizontal, WeFlixTheme.safePadding, for: .scrollContent)
         .mediaRailScrolling()
         #endif
         #if os(tvOS)
@@ -449,7 +449,7 @@ struct MediaRow: View {
         // tvOS adds the gutter to the resting offset again when focus leaves
         // the row, shifting every card sideways. An inset viewport gives
         // native focus scrolling and programmatic entry the same origin.
-        .padding(.horizontal, SiloTheme.safePadding)
+        .padding(.horizontal, WeFlixTheme.safePadding)
         // tvOS focus lift expands cards on focus — give them breathing room
         // so they don't clip against the row above/below.
         .scrollClipDisabled()
@@ -586,7 +586,7 @@ struct MediaRow: View {
 
     private func playAction(for item: SectionItem) -> (() -> Void)? {
         #if os(tvOS)
-        guard SiloMediaType.isDirectlyPlayable(item.type), let onItemPlay else { return nil }
+        guard WeFlixMediaType.isDirectlyPlayable(item.type), let onItemPlay else { return nil }
         return { onItemPlay(item) }
         #else
         return nil
@@ -605,7 +605,7 @@ struct MediaRow: View {
 
     private func contextPlayTitle(for item: SectionItem) -> String? {
         guard showsPlayInContextMenu,
-              SiloMediaType.isDirectlyPlayable(item.type),
+              WeFlixMediaType.isDirectlyPlayable(item.type),
               onItemPlay != nil else { return nil }
         return (item.positionSeconds ?? 0) > 0 ? "Resume" : "Play"
     }
@@ -618,10 +618,10 @@ struct MediaRow: View {
     private func contextDetailTitle(for item: SectionItem) -> String? {
         guard onOpenContextDetail != nil else { return nil }
         let type = item.type.lowercased()
-        if SiloMediaType.isSeries(type) || type == "episode" || type == "season" {
+        if WeFlixMediaType.isSeries(type) || type == "episode" || type == "season" {
             return "Go to Series Page"
         }
-        if SiloMediaType.isMovieLibrary(type) {
+        if WeFlixMediaType.isMovieLibrary(type) {
             return "Go to Movie Page"
         }
         return "Go to Details"
@@ -706,7 +706,7 @@ struct MediaRow: View {
         #if os(tvOS)
         return 20
         #else
-        return SiloTheme.smallPadding
+        return WeFlixTheme.smallPadding
         #endif
     }
 
@@ -730,7 +730,7 @@ struct MediaRow: View {
         #if os(tvOS)
         return 40
         #else
-        return SiloTheme.spacing
+        return WeFlixTheme.spacing
         #endif
     }
 

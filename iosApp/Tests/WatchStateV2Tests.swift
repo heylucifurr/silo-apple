@@ -1,6 +1,6 @@
 import Foundation
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 /// Offline watch state from `GET /api/v2/progress`: a bounded full paged read
 /// under one owner that never returns a prefix, a merge by `updated_at`, and

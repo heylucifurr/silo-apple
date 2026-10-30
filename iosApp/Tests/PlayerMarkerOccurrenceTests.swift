@@ -1,5 +1,5 @@
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 /// The player follows the playhead from one marker occurrence to the next, so
 /// a second credits range gets its own Skip Credits and the scene between the

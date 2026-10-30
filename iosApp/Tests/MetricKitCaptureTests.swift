@@ -1,5 +1,5 @@
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 final class MetricKitCaptureTests: XCTestCase {
     func testFixtureFingerprintDedupeUsesCanonicalDiagnosticJSON() throws {
@@ -42,29 +42,29 @@ final class MetricKitCaptureTests: XCTestCase {
         XCTAssertEqual(first.manifest.crash?.occurredAtEnd, DiagnosticsTimestamp.string(from: periodEnd))
         XCTAssertNil(first.manifest.crash?.thread)
         XCTAssertNil(first.manifest.crash?.foreground)
-        XCTAssertTrue(first.manifest.crash?.summary.contains("Silo") == true)
+        XCTAssertTrue(first.manifest.crash?.summary.contains("WeFlix") == true)
     }
 
     func testCrashExcerptUsesThreadAttributedStack() {
         let crash = crashInfo(Self.backgroundThreadCrash, type: .crash)
 
-        XCTAssertEqual(crash.stackExcerpt, "Silo 100\nSilo 200\nUIKitCore 300")
-        XCTAssertEqual(crash.summary, "Crash reported by MetricKit: Silo 100")
+        XCTAssertEqual(crash.stackExcerpt, "WeFlix 100\nWeFlix 200\nUIKitCore 300")
+        XCTAssertEqual(crash.summary, "Crash reported by MetricKit: WeFlix 100")
     }
 
     func testExcerptFallsBackToFirstStackWhenNoThreadIsAttributed() {
         let crash = crashInfo(Self.unattributedHang, type: .hang)
 
-        XCTAssertEqual(crash.stackExcerpt, "Silo 10\nSilo 20")
+        XCTAssertEqual(crash.stackExcerpt, "WeFlix 10\nWeFlix 20")
         XCTAssertFalse(crash.stackExcerpt?.contains("CoreFoundation") ?? false)
-        XCTAssertEqual(crash.summary, "Main thread hang reported by MetricKit: Silo 10")
+        XCTAssertEqual(crash.summary, "Main thread hang reported by MetricKit: WeFlix 10")
     }
 
     func testExcerptCapsAttributedStackAtTwelveFramesInOrder() throws {
-        // Build a 15-deep subFrames chain, Silo 1 (top) through Silo 15.
-        var frame: [String: Any] = ["binaryName": "Silo", "offsetIntoBinaryTextSegment": 15]
+        // Build a 15-deep subFrames chain, WeFlix 1 (top) through WeFlix 15.
+        var frame: [String: Any] = ["binaryName": "WeFlix", "offsetIntoBinaryTextSegment": 15]
         for offset in stride(from: 14, through: 1, by: -1) {
-            frame = ["binaryName": "Silo", "offsetIntoBinaryTextSegment": offset, "subFrames": [frame]]
+            frame = ["binaryName": "WeFlix", "offsetIntoBinaryTextSegment": offset, "subFrames": [frame]]
         }
         let idleFrame: [String: Any] = ["binaryName": "libsystem_kernel.dylib", "offsetIntoBinaryTextSegment": 1000]
         let payload: [String: Any] = [
@@ -86,7 +86,7 @@ final class MetricKitCaptureTests: XCTestCase {
         )
 
         let lines = try XCTUnwrap(crash.stackExcerpt).split(separator: "\n").map(String.init)
-        XCTAssertEqual(lines, (1...12).map { "Silo \($0)" })
+        XCTAssertEqual(lines, (1...12).map { "WeFlix \($0)" })
     }
 
     func testAttributedStackWithoutFramesDoesNotBorrowAnotherThread() {
@@ -155,7 +155,7 @@ final class MetricKitCaptureTests: XCTestCase {
       "callStackTree": {
         "callStackRootFrames": [
           {
-            "binaryName": "Silo",
+            "binaryName": "WeFlix",
             "offsetIntoBinaryTextSegment": 4096,
             "subFrames": [
               { "binaryName": "MediaModule", "offsetIntoBinaryTextSegment": 8192 }
@@ -181,7 +181,7 @@ final class MetricKitCaptureTests: XCTestCase {
               { "offsetIntoBinaryTextSegment": 8192, "binaryName": "MediaModule" }
             ],
             "offsetIntoBinaryTextSegment": 4096,
-            "binaryName": "Silo"
+            "binaryName": "WeFlix"
           }
         ]
       }
@@ -211,11 +211,11 @@ final class MetricKitCaptureTests: XCTestCase {
             "threadAttributed": true,
             "callStackRootFrames": [
               {
-                "binaryName": "Silo",
+                "binaryName": "WeFlix",
                 "offsetIntoBinaryTextSegment": 100,
                 "subFrames": [
                   {
-                    "binaryName": "Silo",
+                    "binaryName": "WeFlix",
                     "offsetIntoBinaryTextSegment": 200,
                     "subFrames": [
                       { "binaryName": "UIKitCore", "offsetIntoBinaryTextSegment": 300 }
@@ -243,10 +243,10 @@ final class MetricKitCaptureTests: XCTestCase {
             "threadAttributed": false,
             "callStackRootFrames": [
               {
-                "binaryName": "Silo",
+                "binaryName": "WeFlix",
                 "offsetIntoBinaryTextSegment": 10,
                 "subFrames": [
-                  { "binaryName": "Silo", "offsetIntoBinaryTextSegment": 20 }
+                  { "binaryName": "WeFlix", "offsetIntoBinaryTextSegment": 20 }
                 ]
               }
             ]

@@ -16,8 +16,8 @@ struct GeneralSettingsView: View {
         }
         .settingsListChrome()
         .navigationTitle("General")
-        .siloNavigationTitleDisplayMode(.inline)
-        .siloToolbarColorSchemeDark()
+        .weFlixNavigationTitleDisplayMode(.inline)
+        .weFlixToolbarColorSchemeDark()
         .task { await advisoryAgePreference.refresh() }
     }
 
@@ -30,18 +30,18 @@ struct GeneralSettingsView: View {
                         .tag(behavior)
                 }
             }
-            .foregroundStyle(Color.siloOnSurface)
+            .foregroundStyle(Color.weFlixOnSurface)
             .settingsPickerStyle()
             .accessibilityValue(launchPreferences.behavior.title)
             .accessibilityHint(launchPreferences.behavior.standardDescription)
         } header: {
             Text("Profiles")
-                .foregroundStyle(Color.siloSecondaryText)
+                .foregroundStyle(Color.weFlixSecondaryText)
         } footer: {
             Text(launchPreferences.behavior.standardDescription)
-                .foregroundStyle(Color.siloSecondaryText)
+                .foregroundStyle(Color.weFlixSecondaryText)
         }
-        .listRowBackground(Color.siloGroupedCell)
+        .listRowBackground(Color.weFlixGroupedCell)
     }
 
     private var advisoryAgeSection: some View {
@@ -55,12 +55,12 @@ struct GeneralSettingsView: View {
                     }
                 )
             )
-            .foregroundStyle(Color.siloOnSurface)
-            .tint(.siloSwitchOn)
+            .foregroundStyle(Color.weFlixOnSurface)
+            .tint(.weFlixSwitchOn)
             .disabled(advisoryAgePreference.isSaving)
         } header: {
             Text("Ratings")
-                .foregroundStyle(Color.siloSecondaryText)
+                .foregroundStyle(Color.weFlixSecondaryText)
         } footer: {
             VStack(alignment: .leading, spacing: 4) {
                 Text("Show a suggested minimum viewer age, such as Common Sense Media’s, on movie and show details. This does not change what the profile may watch.")
@@ -68,9 +68,9 @@ struct GeneralSettingsView: View {
                     Text(writeError)
                 }
             }
-            .foregroundStyle(Color.siloSecondaryText)
+            .foregroundStyle(Color.weFlixSecondaryText)
         }
-        .listRowBackground(Color.siloGroupedCell)
+        .listRowBackground(Color.weFlixGroupedCell)
     }
 }
 #endif

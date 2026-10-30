@@ -7,7 +7,7 @@ final class ApplePushNotificationSyncCoordinator {
     static let shared = ApplePushNotificationSyncCoordinator()
 
     private static let logger = Logger(
-        subsystem: Bundle.main.bundleIdentifier ?? "org.siloserver.silo",
+        subsystem: Bundle.main.bundleIdentifier ?? "me.weflix",
         category: "ApplePushSync"
     )
 
@@ -36,7 +36,7 @@ final class ApplePushNotificationSyncCoordinator {
     private let checkpoints: UserDefaults
     private var inFlight = false
 
-    init(api: APIv2Client = SiloAPI.shared.apiV2Client, tokenStore: TokenStore = .shared,
+    init(api: APIv2Client = WeFlixAPI.shared.apiV2Client, tokenStore: TokenStore = .shared,
          checkpoints: UserDefaults = .standard) {
         self.api = api
         self.tokenStore = tokenStore
@@ -120,7 +120,7 @@ final class ApplePushNotificationSyncCoordinator {
             storeCursor(page.syncCursor, for: owner)
         }
         let caughtUp = !page.page.hasMore
-        Self.logger.info("Synced Silo notifications count=\(page.items.count, privacy: .public) unread=\(page.unreadCount, privacy: .public) caught_up=\(caughtUp, privacy: .public)")
+        Self.logger.info("Synced weflix notifications count=\(page.items.count, privacy: .public) unread=\(page.unreadCount, privacy: .public) caught_up=\(caughtUp, privacy: .public)")
         let fetchedDeliveries = !page.items.isEmpty
         if fetchedDeliveries {
             NotificationCenter.default.post(name: .homeSectionsShouldRefresh, object: nil)

@@ -6,7 +6,7 @@ import Foundation
 /// inside, one rule per value); the top-level `match` controls AND/OR across
 /// facets. Rule values carry their JSON type: the server compares booleans
 /// (`watched`, `hdr`, …) and year ranges as JSON booleans and numbers, not
-/// strings. `SiloAPI.catalogPage` sends the groups as the `groups` JSON
+/// strings. `WeFlixAPI.catalogPage` sends the groups as the `groups` JSON
 /// parameter, or in a `POST /catalog/query` body when they are too long.
 enum CatalogQueryBuilder {
     static func build(

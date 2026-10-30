@@ -1,6 +1,6 @@
 import AetherEngine
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 final class LTRAuthoredSubtitlesTests: XCTestCase {
     private let lrm = LTRAuthoredSubtitles.leftToRightMark

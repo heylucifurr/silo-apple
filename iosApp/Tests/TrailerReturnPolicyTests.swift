@@ -1,6 +1,6 @@
 import XCTest
 import Foundation
-@testable import Silo
+@testable import WeFlix
 
 final class TrailerReturnPolicyTests: XCTestCase {
 

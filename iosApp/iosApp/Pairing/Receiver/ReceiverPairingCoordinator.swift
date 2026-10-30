@@ -171,7 +171,7 @@ final class ReceiverPairingCoordinator {
     /// explicit TV-side teardown is waiting for the current attempt to reach
     /// its cancellation-safe boundary.
     private var isCancelling = false
-    private static let logger = Logger(subsystem: "org.siloserver.silo", category: "pairing.receiver")
+    private static let logger = Logger(subsystem: "me.weflix", category: "pairing.receiver")
 
     init(
         api: any PairingDeviceAuthorizing = PairingDeviceAPI(),
@@ -556,7 +556,7 @@ final class ReceiverPairingCoordinator {
             switch self {
             case .unreachable: return push.unreachableHelp()
             case .updateRequired(let requirement): return requirement.message
-            case .phoneUpdateRequired: return "Update Silo on your phone or tablet to sign in this Apple TV."
+            case .phoneUpdateRequired: return "Update weflix on your phone or tablet to sign in this Apple TV."
             case .identityMismatch, .denied, .expired, .saveFailed, .reported: return nil
             }
         }

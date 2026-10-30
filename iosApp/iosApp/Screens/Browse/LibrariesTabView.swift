@@ -196,7 +196,7 @@ func storedLibrarySelectionId(
 
 /// Mixed libraries inherit a category root's type; direct library roots expose a selector.
 func mixedLibraryVideoScope(libraryType: String, category: PrimaryMenuBuiltin?, selection: LibraryVideoScope) -> LibraryVideoScope? {
-    guard SiloMediaType.isMixedLibrary(libraryType) else { return nil }
+    guard WeFlixMediaType.isMixedLibrary(libraryType) else { return nil }
     switch category {
     case .movies: return .movie
     case .series: return .series
@@ -213,8 +213,8 @@ struct LibraryVideoScopePicker: View {
             Text("Series").tag(LibraryVideoScope.series)
         }
         .pickerStyle(.segmented)
-        .padding(.horizontal, SiloTheme.padding)
-        .padding(.bottom, SiloTheme.smallPadding)
+        .padding(.horizontal, WeFlixTheme.padding)
+        .padding(.bottom, WeFlixTheme.smallPadding)
     }
 }
 
@@ -293,7 +293,7 @@ struct LibrariesTabView: View {
                 )
             }
         }
-        .siloPageBackground()
+        .weFlixPageBackground()
         #if !os(macOS)
         .toolbar(.hidden, for: .navigationBar)
         #endif
@@ -395,22 +395,22 @@ struct LibrariesTabView: View {
                 onLibraryTap: { showPicker = true },
                 onSearch: { router.navigate(to: .search) },
                 onOpenSettings: { router.navigate(to: .settings) },
-                onOpenRequests: { router.navigate(to: .requestsHub) },
+                onOpenDownloads: { router.navigate(to: .downloads) },
                 onSwitchProfile: {
                     router.switchProfile()
                 },
                 onSwitchServer: { router.navigate(to: .serverList) },
                 onSignOut: { router.signOutAndReset() }
             )
-            .padding(.horizontal, SiloTheme.padding)
-            .padding(.top, centersHeader ? SiloTheme.padding : SiloTheme.smallPadding)
-            .padding(.bottom, SiloTheme.smallPadding)
+            .padding(.horizontal, WeFlixTheme.padding)
+            .padding(.top, centersHeader ? WeFlixTheme.padding : WeFlixTheme.smallPadding)
+            .padding(.bottom, WeFlixTheme.smallPadding)
 
             if activeLibrary.isMixedLibrary && category != .movies && category != .series {
                 LibraryVideoScopePicker(selection: $selectedVideoScope)
             }
             LibraryPageTabSelector(selectedTab: $selectedTab, scrolls: scrollsTabs)
-                .padding(.bottom, SiloTheme.padding)
+                .padding(.bottom, WeFlixTheme.padding)
         }
     }
 
@@ -565,7 +565,7 @@ private struct LibrariesTopBar: View {
     let onLibraryTap: () -> Void
     let onSearch: () -> Void
     let onOpenSettings: () -> Void
-    let onOpenRequests: () -> Void
+    let onOpenDownloads: () -> Void
     let onSwitchProfile: () -> Void
     let onSwitchServer: () -> Void
     let onSignOut: () -> Void
@@ -585,7 +585,7 @@ private struct LibrariesTopBar: View {
             TabTopBarActions(
                 onSearch: onSearch,
                 onOpenSettings: onOpenSettings,
-                onOpenRequests: onOpenRequests,
+                onOpenDownloads: onOpenDownloads,
                 onSwitchProfile: onSwitchProfile,
                 onSwitchServer: onSwitchServer,
                 onSignOut: onSignOut
@@ -607,18 +607,18 @@ private struct LibrarySelectorButton: View {
             VStack(alignment: .leading, spacing: 1) {
                 HStack(spacing: 6) {
                     Text(library.name)
-                        .font(.siloTitle)
-                    .foregroundStyle(Color.siloOnSurface)
+                        .font(.weFlixTitle)
+                    .foregroundStyle(Color.weFlixOnSurface)
                         .lineLimit(1)
                     if canSwitch {
                         Image(systemName: "chevron.down")
                             .font(.system(size: 12, weight: .semibold))
-                            .foregroundColor(.siloOnSurface)
+                            .foregroundColor(.weFlixOnSurface)
                     }
                 }
                 Text(typeLabel)
-                    .font(.siloCaption)
-                    .foregroundStyle(Color.siloSecondaryText)
+                    .font(.weFlixCaption)
+                    .foregroundStyle(Color.weFlixSecondaryText)
                     .lineLimit(1)
             }
         }
@@ -687,10 +687,10 @@ private struct LibraryPickerSheet: View {
                     )
                 }
             }
-            .padding(.horizontal, SiloTheme.padding)
-            .padding(.vertical, SiloTheme.padding)
+            .padding(.horizontal, WeFlixTheme.padding)
+            .padding(.vertical, WeFlixTheme.padding)
         }
-        .siloSheetBackground()
+        .weFlixSheetBackground()
         .navigationTitle("Libraries")
     }
 }
@@ -706,21 +706,21 @@ private struct LibraryPickerRow: View {
             HStack(spacing: 12) {
                 ZStack {
                     Circle()
-                        .fill(Color.siloOnSurface.opacity(0.12))
+                        .fill(Color.weFlixOnSurface.opacity(0.12))
                     Image(systemName: iconName)
                         .font(.system(size: 18, weight: .semibold))
-                        .foregroundColor(.siloOnSurface)
+                        .foregroundColor(.weFlixOnSurface)
                 }
                 .frame(width: 40, height: 40)
 
                 VStack(alignment: .leading, spacing: 2) {
                     Text(library.name)
-                        .font(.siloHeadline)
-                        .foregroundColor(.siloOnSurface)
+                        .font(.weFlixHeadline)
+                        .foregroundColor(.weFlixOnSurface)
                     if let typeLabel {
                         Text(typeLabel)
-                            .font(.siloCaption)
-                            .foregroundColor(.siloSecondaryText)
+                            .font(.weFlixCaption)
+                            .foregroundColor(.weFlixSecondaryText)
                     }
                 }
 
@@ -729,17 +729,17 @@ private struct LibraryPickerRow: View {
                 if isSelected {
                     Image(systemName: "checkmark")
                         .font(.system(size: 14, weight: .semibold))
-                        .foregroundColor(.siloOnSurface)
+                        .foregroundColor(.weFlixOnSurface)
                 }
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 14)
             .background(
-                RoundedRectangle(cornerRadius: SiloTheme.cornerRadius)
-                    .fill(isSelected ? Color.siloOnSurface.opacity(0.10) : Color.siloSurfaceElevated)
+                RoundedRectangle(cornerRadius: WeFlixTheme.cornerRadius)
+                    .fill(isSelected ? Color.weFlixOnSurface.opacity(0.10) : Color.weFlixSurfaceElevated)
                     .overlay(
-                        RoundedRectangle(cornerRadius: SiloTheme.cornerRadius)
-                            .stroke(Color.siloOutline, lineWidth: 1)
+                        RoundedRectangle(cornerRadius: WeFlixTheme.cornerRadius)
+                            .stroke(Color.weFlixOutline, lineWidth: 1)
                     )
             )
         }

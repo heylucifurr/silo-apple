@@ -29,7 +29,7 @@ struct AetherSubtitleOverlay: View {
     @State private var secondaryTrack = LTRAuthoredSubtitles.Track()
 
     /// Positive delay means captions appear later, so the cue clock is moved
-    /// backwards. This preserves Silo's existing subtitle-sync sign contract.
+    /// backwards. This preserves WeFlix's existing subtitle-sync sign contract.
     private var subtitleDelaySeconds: Double {
         Double(subtitleSyncMs) / 1_000
     }
@@ -436,7 +436,7 @@ struct AetherSubtitleOverlay: View {
 
     /// Aether's rich runs are authored content. Each authored color/font/size
     /// wins unless MediaAccessibility marked that field as a required system
-    /// override. Missing authored values still inherit Silo's effective style.
+    /// override. Missing authored values still inherit WeFlix's effective style.
     private func styledText(_ run: SubtitleTextRun, style: AetherSubtitleRenderStyle, videoRect: CGRect) -> Text {
         var text = Text(run.text)
 

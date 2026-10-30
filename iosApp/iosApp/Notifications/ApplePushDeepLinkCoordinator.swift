@@ -10,7 +10,7 @@ enum ApplePushDeepLinkCoordinator {
     @MainActor
     static func postDeepLink(from userInfo: [AnyHashable: Any]) {
         guard let url = deepLinkURL(from: userInfo) else { return }
-        SiloDeepLinkCoordinator.shared.receive(url)
+        WeFlixDeepLinkCoordinator.shared.receive(url)
     }
 
     /// A push that names its server and profile carries them in the link,
@@ -96,7 +96,7 @@ enum ApplePushDeepLinkCoordinator {
         let trimmed = rawValue.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else { return nil }
 
-        if let url = URL(string: trimmed), SiloURLScheme.isAppURL(url) {
+        if let url = URL(string: trimmed), WeFlixURLScheme.isAppURL(url) {
             return url
         }
 
@@ -115,7 +115,7 @@ enum ApplePushDeepLinkCoordinator {
         guard !contentID.isEmpty else { return nil }
 
         var deepLink = URLComponents()
-        deepLink.scheme = SiloURLScheme.current
+        deepLink.scheme = WeFlixURLScheme.current
         deepLink.host = route
         deepLink.path = "/" + contentID
         return deepLink.url

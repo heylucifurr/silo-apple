@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
-	<string>Silo</string>
+	<string>WeFlix</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -20,8 +20,8 @@
 	<string>$(MARKETING_VERSION)</string>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
-	<key>SiloKeychainAccessGroup</key>
-	<string>$(AppIdentifierPrefix)org.siloserver.silo.shared</string>
+	<key>WeFlixKeychainAccessGroup</key>
+	<string>$(AppIdentifierPrefix)me.weflix.shared</string>
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSAllowsLocalNetworking</key>
@@ -34,8 +34,8 @@
 		<key>NSExtensionPrincipalClass</key>
 		<string>$(PRODUCT_MODULE_NAME).NotificationService</string>
 	</dict>
-	<key>SiloBuildChannel</key>
-	<string>$(SILO_BUILD_CHANNEL)</string>
+	<key>WeFlixBuildChannel</key>
+	<string>$(WEFLIX_BUILD_CHANNEL)</string>
 	<key>UIRequiredDeviceCapabilities</key>
 	<array>
 		<string>arm64</string>

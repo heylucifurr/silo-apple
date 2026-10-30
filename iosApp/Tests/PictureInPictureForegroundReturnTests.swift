@@ -1,6 +1,6 @@
 #if os(iOS)
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 /// Returning to the app with the full-screen player still presented must end
 /// automatic Picture in Picture; otherwise AVKit leaves an empty window over

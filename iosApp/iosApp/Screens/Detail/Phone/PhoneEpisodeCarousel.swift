@@ -30,7 +30,7 @@ struct PhoneEpisodeCarousel: View {
                 Text("No episodes available")
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
-                    .padding(.horizontal, SiloTheme.safePadding)
+                    .padding(.horizontal, WeFlixTheme.safePadding)
                     .padding(.vertical, 12)
             } else {
                 PhoneEpisodeRail(

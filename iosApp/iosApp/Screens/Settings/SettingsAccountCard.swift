@@ -21,12 +21,12 @@ struct SettingsAccountCard: View {
                 VStack(alignment: .leading, spacing: 2) {
                     Text(name)
                         .font(.title3.weight(.semibold))
-                        .foregroundStyle(Color.siloOnSurface)
+                        .foregroundStyle(Color.weFlixOnSurface)
                         .lineLimit(1)
 
                     Text(subtitle)
                         .font(.subheadline)
-                        .foregroundStyle(Color.siloSecondaryText)
+                        .foregroundStyle(Color.weFlixSecondaryText)
                         .lineLimit(1)
                 }
 
@@ -35,10 +35,10 @@ struct SettingsAccountCard: View {
                 if isAdministrator {
                     Text("Admin")
                         .font(.caption.weight(.semibold))
-                        .foregroundStyle(Color.siloSecondaryText)
+                        .foregroundStyle(Color.weFlixSecondaryText)
                         .padding(.horizontal, 9)
                         .padding(.vertical, 4)
-                        .background(Color.siloChromeSelectedFill, in: Capsule())
+                        .background(Color.weFlixChromeSelectedFill, in: Capsule())
                 }
 
                 SettingsRowChevron()

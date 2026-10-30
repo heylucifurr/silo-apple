@@ -66,11 +66,11 @@ struct DownloadActiveRow: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text(displayTitle)
                     .font(.system(size: 15, weight: .semibold))
-                    .foregroundColor(.siloOnSurface)
+                    .foregroundColor(.weFlixOnSurface)
                     .lineLimit(1)
                 Text(statusLine)
                     .font(.system(size: 12.5))
-                    .foregroundColor(.siloSecondaryText)
+                    .foregroundColor(.weFlixSecondaryText)
                     .lineLimit(1)
             }
 
@@ -81,7 +81,7 @@ struct DownloadActiveRow: View {
         .padding(.vertical, 12)
         .contentShape(Rectangle())
         // Opaque so the swipe-revealed Cancel action stays hidden underneath.
-        .background(Color.siloGroupedCell)
+        .background(Color.weFlixGroupedCell)
     }
 
     @ViewBuilder private var menuItems: some View {
@@ -173,17 +173,17 @@ struct DownloadActiveRow: View {
             let paused = record.localStatus == .paused
             Button(action: onPauseResume) {
                 ZStack {
-                    Circle().stroke(Color.siloOnSurface.opacity(0.15), lineWidth: 3)
+                    Circle().stroke(Color.weFlixOnSurface.opacity(0.15), lineWidth: 3)
                     Circle()
                         .trim(from: 0, to: max(0.02, record.progressFraction))
                         .stroke(
-                            Color.siloOnSurface.opacity(paused ? 0.55 : 1),
+                            Color.weFlixOnSurface.opacity(paused ? 0.55 : 1),
                             style: StrokeStyle(lineWidth: 3, lineCap: .round)
                         )
                         .rotationEffect(.degrees(-90))
                     Image(systemName: paused ? "play.fill" : "pause.fill")
                         .font(.system(size: 10, weight: .bold))
-                        .foregroundColor(.siloOnSurface)
+                        .foregroundColor(.weFlixOnSurface)
                 }
                 .frame(width: 36, height: 36)
             }
@@ -192,16 +192,16 @@ struct DownloadActiveRow: View {
         case .preparing where record.preparation?.progress != nil:
             // The server's encode, not a transfer: nothing to pause.
             ZStack {
-                Circle().stroke(Color.siloOnSurface.opacity(0.15), lineWidth: 3)
+                Circle().stroke(Color.weFlixOnSurface.opacity(0.15), lineWidth: 3)
                 Circle()
                     .trim(from: 0, to: max(0.02, record.preparation?.progress ?? 0))
-                    .stroke(Color.siloOnSurface.opacity(0.55), style: StrokeStyle(lineWidth: 3, lineCap: .round))
+                    .stroke(Color.weFlixOnSurface.opacity(0.55), style: StrokeStyle(lineWidth: 3, lineCap: .round))
                     .rotationEffect(.degrees(-90))
             }
             .frame(width: 36, height: 36)
             .accessibilityHidden(true)
         default:
-            ProgressView().controlSize(.small).tint(.siloOnSurface)
+            ProgressView().controlSize(.small).tint(.weFlixOnSurface)
         }
     }
 }
@@ -248,7 +248,7 @@ struct DownloadSwipeRevealContainer<Content: View>: View {
             .foregroundColor(.white)
             .frame(width: revealWidth)
             .frame(maxHeight: .infinity)
-            .background(Color.siloError)
+            .background(Color.weFlixError)
         }
         .buttonStyle(.plain)
         .opacity(offset < -8 ? 1 : 0)
@@ -300,25 +300,25 @@ struct DownloadAttentionRow: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text(record.title ?? record.contentId)
                     .font(.system(size: 15, weight: .semibold))
-                    .foregroundColor(.siloOnSurface)
+                    .foregroundColor(.weFlixOnSurface)
                     .lineLimit(1)
                 Text(record.failureReason)
                     .font(.system(size: 12.5))
-                    .foregroundColor(.siloError)
+                    .foregroundColor(.weFlixError)
                     .lineLimit(2)
             }
             Spacer(minLength: 8)
             Button(action: onRetry) {
                 Image(systemName: "arrow.clockwise")
                     .font(.system(size: 16, weight: .semibold))
-                    .foregroundColor(.siloOnSurface)
+                    .foregroundColor(.weFlixOnSurface)
                     .frame(width: 32, height: 32)
             }
             .buttonStyle(.plain)
             Button(action: onDelete) {
                 Image(systemName: "trash")
                     .font(.system(size: 15))
-                    .foregroundColor(.siloSecondaryText)
+                    .foregroundColor(.weFlixSecondaryText)
                     .frame(width: 32, height: 32)
             }
             .buttonStyle(.plain)
@@ -349,11 +349,11 @@ struct DownloadMovieRow: View {
                 VStack(alignment: .leading, spacing: 3) {
                     Text(record.title ?? record.contentId)
                         .font(.system(size: 16, weight: .semibold))
-                        .foregroundColor(.siloOnSurface)
+                        .foregroundColor(.weFlixOnSurface)
                         .lineLimit(1)
                     Text(meta)
                         .font(.subheadline)
-                        .foregroundColor(.siloSecondaryText)
+                        .foregroundColor(.weFlixSecondaryText)
                         .lineLimit(1)
                 }
                 Spacer(minLength: 8)
@@ -394,7 +394,7 @@ struct DownloadSeriesRow: View {
             header
             if expanded && !selecting {
                 ForEach(group.seasons) { season in
-                    Divider().overlay(Color.siloDivider)
+                    Divider().overlay(Color.weFlixDivider)
                     seasonHeader(season)
                     ForEach(season.records) { record in
                         DownloadEpisodeRow(record: record, watched: isWatched(record)) {
@@ -419,14 +419,14 @@ struct DownloadSeriesRow: View {
                 HStack(spacing: 7) {
                     Text(group.title)
                         .font(.system(size: 16, weight: .semibold))
-                        .foregroundColor(.siloOnSurface)
+                        .foregroundColor(.weFlixOnSurface)
                         .lineLimit(1)
                         .layoutPriority(1)
                     if group.isMonitored { monitorBadge }
                 }
                 Text(subtitleLine)
                     .font(.subheadline)
-                    .foregroundColor(.siloSecondaryText)
+                    .foregroundColor(.weFlixSecondaryText)
                     .lineLimit(1)
             }
             Spacer(minLength: 6)
@@ -436,7 +436,7 @@ struct DownloadSeriesRow: View {
                 } label: {
                     Image(systemName: expanded ? "chevron.up" : "chevron.down")
                         .font(.system(size: 13, weight: .semibold))
-                        .foregroundColor(.siloSecondaryText)
+                        .foregroundColor(.weFlixSecondaryText)
                         .frame(width: 26, height: 36)
                         .contentShape(Rectangle())
                 }
@@ -485,7 +485,7 @@ struct DownloadSeriesRow: View {
     private var monitorBadge: some View {
         Image(systemName: "antenna.radiowaves.left.and.right")
             .font(.footnote.weight(.semibold))
-            .foregroundColor(.siloSecondaryText)
+            .foregroundColor(.weFlixSecondaryText)
             .accessibilityLabel("Monitored")
     }
 
@@ -509,11 +509,11 @@ struct DownloadSeriesRow: View {
         HStack {
             Text(season.isSpecials ? "Specials" : "Season \(season.seasonNumber)")
                 .font(.system(size: 12.5, weight: .semibold))
-                .foregroundColor(.siloOnSurface)
+                .foregroundColor(.weFlixOnSurface)
             Spacer()
             Text("\(season.episodeCount) ep\(season.episodeCount == 1 ? "" : "s") · \(DownloadFormatting.bytes(season.totalBytes))")
                 .font(.system(size: 11.5))
-                .foregroundColor(.siloSecondaryText)
+                .foregroundColor(.weFlixSecondaryText)
         }
         .padding(.horizontal, 16)
         .padding(.top, 9)
@@ -556,12 +556,12 @@ struct DownloadEpisodeRow: View {
                 VStack(alignment: .leading, spacing: 2) {
                     Text(title)
                         .font(.system(size: 13.5, weight: .medium))
-                        .foregroundColor(.siloOnSurface)
+                        .foregroundColor(.weFlixOnSurface)
                         .lineLimit(1)
                         .opacity(watched ? 0.55 : 1)
                     Text(meta)
                         .font(.system(size: 11.5))
-                        .foregroundColor(.siloSecondaryText)
+                        .foregroundColor(.weFlixSecondaryText)
                         .lineLimit(1)
                 }
 
@@ -569,7 +569,7 @@ struct DownloadEpisodeRow: View {
 
                 Image(systemName: watched ? "checkmark" : "play.circle")
                     .font(.system(size: watched ? 13 : 18, weight: watched ? .semibold : .regular))
-                    .foregroundColor(watched ? .siloOnSurface.opacity(0.5) : .siloOnSurface)
+                    .foregroundColor(watched ? .weFlixOnSurface.opacity(0.5) : .weFlixOnSurface)
             }
             .padding(.horizontal, 14)
             .padding(.vertical, 8)

@@ -5,7 +5,7 @@ import CoreVideo
 import Foundation
 import SwiftLibass
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 final class ASSSubtitleRendererTests: XCTestCase {
     private let header = """

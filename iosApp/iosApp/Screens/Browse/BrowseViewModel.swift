@@ -94,7 +94,7 @@ class BrowseViewModel {
             let page: CatalogListPage
             var startsOver = continuation == nil
             if let continuation {
-                page = try await SiloAPI.shared.nextCatalogPage(continuation)
+                page = try await WeFlixAPI.shared.nextCatalogPage(continuation)
             } else {
                 page = try await StartupContentPrefetcher.fetchBrowseFirstPage(
                     libraryId: libraryId,
@@ -117,7 +117,7 @@ class BrowseViewModel {
                     // type is, even if the other type has titles.
                     probe.type = mediaScope?.rawValue
                     let reason = await BrowseEmptyReason.classify(filter: filterState) {
-                        try await !SiloAPI.shared.catalogPage(probe).response.items.isEmpty
+                        try await !WeFlixAPI.shared.catalogPage(probe).response.items.isEmpty
                     }
                     guard myGeneration == generation else { return }
                     emptyReason = reason

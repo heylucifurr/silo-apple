@@ -17,13 +17,13 @@ struct SettingsOverviewRow: View {
             SettingsIconTile(systemImage: systemImage)
 
             Text(title)
-                .foregroundStyle(Color.siloOnSurface)
+                .foregroundStyle(Color.weFlixOnSurface)
 
             Spacer(minLength: 8)
 
             if let value {
                 Text(value)
-                    .foregroundStyle(Color.siloSecondaryText)
+                    .foregroundStyle(Color.weFlixSecondaryText)
                     .lineLimit(1)
                     .minimumScaleFactor(0.8)
             }
@@ -51,7 +51,7 @@ struct SettingsIconTile: View {
             .foregroundStyle(.white)
             .frame(width: size, height: size)
             .background(
-                Color.siloIconTile,
+                Color.weFlixIconTile,
                 in: RoundedRectangle(cornerRadius: size * 0.24, style: .continuous)
             )
             .accessibilityHidden(true)

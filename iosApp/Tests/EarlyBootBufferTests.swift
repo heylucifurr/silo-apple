@@ -1,5 +1,5 @@
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 /// Coverage for the early-boot staging buffer: startup breadcrumbs emitted
 /// before the diagnostics consent context resolves are held in memory, and
@@ -426,7 +426,7 @@ final class EarlyBootBufferTests: XCTestCase {
 
         simulateColdLaunch()
 
-        // `SiloApp.init` → `LaunchTimeline.recordProcessStart()`. Refused,
+        // `WeFlixApp.init` → `LaunchTimeline.recordProcessStart()`. Refused,
         // because no account is established yet — which is staging, not denial.
         XCTAssertFalse(DiagnosticsCoordinator.recordBreadcrumb(
             category: .lifecycle,
@@ -482,7 +482,7 @@ final class EarlyBootBufferTests: XCTestCase {
         let binding = installTestBinding()
         simulateColdLaunch()
 
-        // `SiloApp.init` onward: staged, because no account is established yet.
+        // `WeFlixApp.init` onward: staged, because no account is established yet.
         for tag in ["ProcessStart", "RootView", "InitialState"] {
             XCTAssertFalse(DiagnosticsCoordinator.recordBreadcrumb(
                 category: .lifecycle,
@@ -760,7 +760,7 @@ final class EarlyBootBufferTests: XCTestCase {
     }
 
     /// Return the process-wide breadcrumb state to what it looks like at
-    /// `SiloApp.init`: no live consent context, profile eligibility unresolved,
+    /// `WeFlixApp.init`: no live consent context, profile eligibility unresolved,
     /// no decision yet, nothing staged — while leaving the journal on disk,
     /// which is the previous run's evidence.
     ///

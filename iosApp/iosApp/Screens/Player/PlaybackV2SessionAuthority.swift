@@ -13,7 +13,7 @@ struct PlaybackV2SessionAuthority: Sendable {
     /// `playback_attempt_id` and body, so an ambiguous first response cannot
     /// allocate a second logical attempt.
     func start(_ request: PlaybackV3StartRequest,
-               api: APIv2Client = SiloAPI.shared.apiV2Client) async throws -> PlaybackV3DecisionResponse {
+               api: APIv2Client = WeFlixAPI.shared.apiV2Client) async throws -> PlaybackV3DecisionResponse {
         do {
             return try await api.startPlayback(request, installationID: installationID, auth: owner)
         } catch let error as HTTPError {
@@ -27,7 +27,7 @@ struct PlaybackV2SessionAuthority: Sendable {
     /// failure; the server records one stop per session and replays it.
     @discardableResult
     func stop(_ sessionID: String, finalSample: PlaybackSequencedSample?,
-              api: APIv2Client = SiloAPI.shared.apiV2Client) async throws -> APIv2PlaybackMutation {
+              api: APIv2Client = WeFlixAPI.shared.apiV2Client) async throws -> APIv2PlaybackMutation {
         let stopID = UUID().uuidString.lowercased()
         do {
             return try await api.stopPlayback(sessionID: sessionID, stopID: stopID, finalSample: finalSample,
@@ -43,7 +43,7 @@ struct PlaybackV2SessionAuthority: Sendable {
     /// resent, and a 429 simply drops the event.
     func reportRouteEvent(_ event: PlaybackV3RouteEvent,
                           eventID: String = UUID().uuidString.lowercased(),
-                          api: APIv2Client = SiloAPI.shared.apiV2Client) async throws {
+                          api: APIv2Client = WeFlixAPI.shared.apiV2Client) async throws {
         try await api.reportPlaybackRouteEvent(event, installationID: installationID, eventID: eventID, auth: owner)
     }
 }

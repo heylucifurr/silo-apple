@@ -14,17 +14,17 @@ struct TVDiagnosticsDestinationScreen: View {
             VStack(alignment: .leading, spacing: 24) {
                 Text("Send Reports To")
                     .font(.largeTitle.bold())
-                Text("Silo Diagnostics is the default and does not require diagnostics storage on your own server.")
+                Text("weflix Diagnostics is the default and does not require diagnostics storage on your own server.")
                     .font(.title2)
-                    .foregroundStyle(Color.siloSecondaryText)
+                    .foregroundStyle(Color.weFlixSecondaryText)
 
-                Button("Silo Diagnostics") {
+                Button("weflix Diagnostics") {
                     select(.hosted)
                 }
                 .buttonStyle(TVSettingsPaneRowStyle())
                 .focused($focusedDestination, equals: .hosted)
 
-                Button("My Silo Server") {
+                Button("My weflix Server") {
                     select(.selfHosted)
                 }
                 .buttonStyle(TVSettingsPaneRowStyle())

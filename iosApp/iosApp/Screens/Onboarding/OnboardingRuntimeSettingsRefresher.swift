@@ -29,7 +29,7 @@ final class OnboardingRuntimeSettingsRefresher: OnboardingRuntimeSettingsRefresh
     private func applyImmediateValue(key: String, value: String) {
         switch key {
         case "quality_preference":
-            if let preset = SiloQualityPresets.preset(id: value) {
+            if let preset = WeFlixQualityPresets.preset(id: value) {
                 PlayerSettings.shared.adoptProfileQuality(
                     resolution: preset.resolution,
                     bitrateKbps: preset.bitrateKbps

@@ -13,9 +13,9 @@ enum DownloadBackgroundRefresh {
     /// Must stay listed in `BGTaskSchedulerPermittedIdentifiers`
     /// (iosApp/Info.plist); the scheduler rejects submissions for
     /// identifiers outside that allowlist.
-    static let taskIdentifier = "org.siloserver.silo.downloads-refresh"
+    static let taskIdentifier = "me.weflix.downloads-refresh"
 
-    /// The identifier builds before the continuum → silo rename submitted.
+    /// The identifier builds before the continuum → weFlix rename submitted.
     /// A request they left pending survives the update, so it stays
     /// permitted and handled until the first launch cancels it.
     static let legacyTaskIdentifier = "com.continuum.play.downloads-refresh"

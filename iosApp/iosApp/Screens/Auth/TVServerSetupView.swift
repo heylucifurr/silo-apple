@@ -95,13 +95,13 @@ struct TVServerSetupView: View {
             Text("Set up with\nyour phone")
                 .font(.system(size: MarqueeMetrics.heroFont, weight: .heavy))
                 .kerning(-2)
-                .foregroundStyle(Color.siloOnSurface)
+                .foregroundStyle(Color.weFlixOnSurface)
                 .accessibilityAddTraits(.isHeader)
             MarqueeTVBody("It's the easiest way. There's nothing to type with the remote.", size: 32)
                 .padding(.top, 28)
             Text("No phone nearby?")
                 .font(.system(size: 26))
-                .foregroundStyle(Color.siloOnSurface.opacity(0.4))
+                .foregroundStyle(Color.weFlixOnSurface.opacity(0.4))
                 .padding(.top, 64)
             // Servers found on this network or the tailnet connect with one
             // press, above the way to type an address.
@@ -150,9 +150,9 @@ struct TVServerSetupView: View {
             Text("Enter your\nserver address")
                 .font(.system(size: MarqueeMetrics.heroFont, weight: .heavy))
                 .kerning(-2)
-                .foregroundStyle(Color.siloOnSurface)
+                .foregroundStyle(Color.weFlixOnSurface)
                 .accessibilityAddTraits(.isHeader)
-            MarqueeTVBody("Type the address you use for Silo.")
+            MarqueeTVBody("Type the address you use for weflix.")
                 .padding(.top, 22)
 
             MarqueeTVField(
@@ -258,7 +258,7 @@ struct TVServerSetupView: View {
             viewModel.clearError()
             isEnteringAddress = false
         }
-        .animation(SiloTheme.springAnimation, value: viewModel.showsAdvancedOptions)
+        .animation(WeFlixTheme.springAnimation, value: viewModel.showsAdvancedOptions)
         .animation(.easeInOut(duration: 0.2), value: viewModel.error)
         .keepsSubmittedServerInputs(viewModel)
     }

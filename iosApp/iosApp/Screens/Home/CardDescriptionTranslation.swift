@@ -49,7 +49,7 @@ final class CardDescriptionTranslation {
     init(
         makeCoordinator: @escaping @MainActor () -> DescriptionTranslationCoordinator = { DescriptionTranslationCoordinator() },
         fetchDetail: @escaping @MainActor (String, Int?) async -> ItemDetail? = { contentId, libraryId in
-            try? await SiloAPI.shared.itemDetail(contentId: contentId, libraryId: libraryId)
+            try? await WeFlixAPI.shared.itemDetail(contentId: contentId, libraryId: libraryId)
         },
         onViewMode: @escaping @MainActor () -> MetadataAIStatus.OnViewMode = { AICapabilities.shared.metadataOnView }
     ) {

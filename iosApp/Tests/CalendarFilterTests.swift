@@ -1,5 +1,5 @@
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 /// An empty calendar week links to the other two views, never the one on
 /// screen (issue #513, matching the Web empty state).

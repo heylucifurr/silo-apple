@@ -38,12 +38,12 @@ class ServerSetupViewModel {
 
     /// Host port that the stock silo-server compose file publishes for the native
     /// API (`${PORT:-8090}:8080`). Setup suggests it and probes it as the Auto
-    /// fallback. 8096 is the Jellyfin-compat listener, not the Silo API.
+    /// fallback. 8096 is the Jellyfin-compat listener, not the WeFlix API.
     static let nativeServerPort = "8090"
 
     /// Probes one candidate URL and commits it on success.
     typealias ServerCheck = @Sendable (String) async throws -> APIv2SetupStatus
-    /// Resolves a bare overlay machine name (`silo`) to its HTTPS origin.
+    /// Resolves a bare overlay machine name (`weFlix`) to its HTTPS origin.
     typealias BareNameResolver = @Sendable (String) async -> String?
 
     private let checkServer: ServerCheck
@@ -52,7 +52,7 @@ class ServerSetupViewModel {
     /// a saved server is picked from Recent.
     private let hasSession: @Sendable () -> Bool
     private static let logger = Logger(
-        subsystem: Bundle.main.bundleIdentifier ?? "org.siloserver.silo",
+        subsystem: Bundle.main.bundleIdentifier ?? "me.weflix",
         category: "ServerSetup"
     )
 
@@ -68,6 +68,14 @@ class ServerSetupViewModel {
         self.checkServer = checkServer
         self.hasSession = hasSession
         self.resolveBareName = resolveBareName
+
+        // A build that ships an address starts its field on it. This screen is
+        // the fallback for when that server cannot be reached, and the way in
+        // should not be typing its host back. Adding a server from the server
+        // list leaves the field empty, because something is already saved.
+        if ServerRegistry.shared.entries.isEmpty {
+            host = DefaultServer.host
+        }
     }
 
     /// Where a connect started: the address field, or a found server.
@@ -172,7 +180,7 @@ class ServerSetupViewModel {
         let source = (prompt ?? insecurePrompt)?.source
         insecurePrompt = nil
         if case .typed = source {
-            error = FormError("Could not reach a Silo server at that address over HTTPS.")
+            error = FormError("Could not reach a weflix server at that address over HTTPS.")
         }
     }
 
@@ -264,7 +272,7 @@ class ServerSetupViewModel {
         Self.logger.error(
             "Server autodiscovery failed candidates=\(attempted.joined(separator: ", "), privacy: .public) lastError=\(String(describing: lastError), privacy: .public)"
         )
-        fail(FormError(updateRequirement?.message ?? "Could not reach a Silo server at that address."), source: source)
+        fail(FormError(updateRequirement?.message ?? "Could not reach a weflix server at that address."), source: source)
     }
 
     private func fail(_ failure: FormError, source: Source) {

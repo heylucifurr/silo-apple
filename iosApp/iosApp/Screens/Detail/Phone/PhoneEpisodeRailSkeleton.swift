@@ -20,7 +20,7 @@ struct PhoneEpisodeRailSkeleton: View {
                     episodeCard(index: index)
                 }
             }
-            .padding(.horizontal, SiloTheme.safePadding)
+            .padding(.horizontal, WeFlixTheme.safePadding)
             .padding(.vertical, 4)
         }
         .scrollDisabled(true)

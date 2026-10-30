@@ -1,11 +1,11 @@
 import Foundation
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
-/// Calendar weeks, catalog facets and trailer refreshes through the `SiloAPI`
+/// Calendar weeks, catalog facets and trailer refreshes through the `WeFlixAPI`
 /// facade on `/api/v2`.
 final class CatalogActionsAPITests: XCTestCase {
-    private func client(stub: APIv2TestStub) async throws -> (SiloAPI, TokenStore) {
+    private func client(stub: APIv2TestStub) async throws -> (WeFlixAPI, TokenStore) {
         let name = "CatalogActionsAPITests.\(UUID().uuidString)"
         let suite = try XCTUnwrap(UserDefaults(suiteName: name))
         addTeardownBlock { UserDefaults().removePersistentDomain(forName: name) }
@@ -15,7 +15,7 @@ final class CatalogActionsAPITests: XCTestCase {
         await tokens.setServerUrl("https://catalog.example")
         await tokens.setProfileId("profile-one")
         let http = HTTPClient(session: stub.makeSession(), tokenStore: tokens)
-        return (SiloAPI(http: http, tokenStore: tokens), tokens)
+        return (WeFlixAPI(http: http, tokenStore: tokens), tokens)
     }
 
     // MARK: - Calendar

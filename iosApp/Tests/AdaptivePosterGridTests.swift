@@ -1,6 +1,6 @@
 import SwiftUI
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 final class AdaptivePosterGridTests: XCTestCase {
     private let minimum = AdaptiveColumns.tabletMinimumPosterWidth
@@ -83,7 +83,7 @@ final class AdaptivePosterGridTests: XCTestCase {
         XCTAssertEqual(landscape.columnCount, 6)
         for fit in [portrait, landscape] {
             XCTAssertGreaterThanOrEqual(fit.cardWidth, AdaptiveColumns.widePhoneMinimumPosterWidth)
-            XCTAssertLessThan(fit.cardWidth, SiloTheme.posterCardWidth + 10)
+            XCTAssertLessThan(fit.cardWidth, WeFlixTheme.posterCardWidth + 10)
         }
     }
 

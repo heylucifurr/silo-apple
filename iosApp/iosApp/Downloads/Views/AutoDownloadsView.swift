@@ -30,7 +30,7 @@ struct AutoDownloadsView: View {
                 list
             }
         }
-        .background(Color.siloBackground.ignoresSafeArea())
+        .background(Color.weFlixBackground.ignoresSafeArea())
         .navigationTitle("Monitored")
         #if os(iOS)
         .navigationBarTitleDisplayMode(.large)
@@ -39,7 +39,7 @@ struct AutoDownloadsView: View {
         .sheet(item: $editing) { subscription in
             SeriesDownloadSheet(seriesId: subscription.seriesId, seriesTitle: title(for: subscription), startsOnMonitor: true)
         }
-        .siloToolbarColorSchemeDark()
+        .weFlixToolbarColorSchemeDark()
     }
 
     private var list: some View {
@@ -77,7 +77,7 @@ struct AutoDownloadsView: View {
 
                 Text("New episodes download after they air\(DownloadSettings.shared.wifiOnly ? ", over Wi-Fi" : ""). To add a series, tap Download on it and choose Monitor.")
                     .font(.footnote)
-                    .foregroundColor(.siloSecondaryText)
+                    .foregroundColor(.weFlixSecondaryText)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.horizontal, 32)
                     .padding(.top, 8)
@@ -110,11 +110,11 @@ struct AutoDownloadRow: View {
             VStack(alignment: .leading, spacing: 2) {
                 Text(title)
                     .font(.system(size: 17, weight: .semibold))
-                    .foregroundColor(.siloOnSurface)
+                    .foregroundColor(.weFlixOnSurface)
                     .lineLimit(1)
                 Text(rule)
                     .font(.subheadline)
-                    .foregroundColor(.siloSecondaryText)
+                    .foregroundColor(.weFlixSecondaryText)
                     .lineLimit(1)
                 Label {
                     Text(AutoDownloadRules.statusLine(status))
@@ -129,7 +129,7 @@ struct AutoDownloadRow: View {
             Spacer(minLength: 8)
             Image(systemName: "chevron.right")
                 .font(.footnote.weight(.semibold))
-                .foregroundColor(.siloSecondaryText.opacity(0.7))
+                .foregroundColor(.weFlixSecondaryText.opacity(0.7))
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 12)
@@ -150,7 +150,7 @@ struct AutoDownloadRow: View {
                 )
             } else {
                 Image(systemName: "antenna.radiowaves.left.and.right")
-                    .foregroundColor(.siloSecondaryText)
+                    .foregroundColor(.weFlixSecondaryText)
             }
         }
         .frame(width: 48, height: 72)
@@ -176,22 +176,22 @@ struct AutoDownloadsEntryRow: View {
             HStack(spacing: 13) {
                 Image(systemName: "antenna.radiowaves.left.and.right")
                     .font(.system(size: 17, weight: .medium))
-                    .foregroundColor(.siloOnSurface)
+                    .foregroundColor(.weFlixOnSurface)
                     .frame(width: 38, height: 38)
-                    .background(RoundedRectangle(cornerRadius: 10, style: .continuous).fill(Color.siloIconTile))
+                    .background(RoundedRectangle(cornerRadius: 10, style: .continuous).fill(Color.weFlixIconTile))
                 VStack(alignment: .leading, spacing: 2) {
                     Text("Monitored")
                         .font(.system(size: 17, weight: .semibold))
-                        .foregroundColor(.siloOnSurface)
+                        .foregroundColor(.weFlixOnSurface)
                     Text(subtitle)
                         .font(.subheadline)
-                        .foregroundColor(.siloSecondaryText)
+                        .foregroundColor(.weFlixSecondaryText)
                         .lineLimit(1)
                 }
                 Spacer(minLength: 8)
                 Image(systemName: "chevron.right")
                     .font(.footnote.weight(.semibold))
-                    .foregroundColor(.siloSecondaryText.opacity(0.7))
+                    .foregroundColor(.weFlixSecondaryText.opacity(0.7))
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 12)
@@ -222,10 +222,10 @@ enum AutoDownloadStatusStyle {
 
     static func color(for status: AutoDownloadStatus) -> Color {
         switch status {
-        case .storageLimit: return .siloWarning
-        case .downloading: return .siloBrandOrange
-        case .next: return .siloOnSurface
-        default: return .siloSecondaryText
+        case .storageLimit: return .weFlixWarning
+        case .downloading: return .weFlixBrandOrange
+        case .next: return .weFlixOnSurface
+        default: return .weFlixSecondaryText
         }
     }
 }

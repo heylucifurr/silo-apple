@@ -47,7 +47,7 @@ struct WatchPartySelectedItem: Equatable, Sendable {
         backdropUrl = item.backdropUrl
         backdropThumbhash = item.backdropThumbhash
         backdropIsEpisodeStill = item.backdropIsEpisodeStill
-        episodeWatchState = SiloMediaType.isEpisode(item.type) ? EpisodeWatchState(
+        episodeWatchState = WeFlixMediaType.isEpisode(item.type) ? EpisodeWatchState(
             played: item.userData?.played ?? item.userState?.played ?? false,
             isInProgress: item.userData?.isInProgress,
             positionSeconds: item.userData?.positionSeconds
@@ -83,7 +83,7 @@ struct WatchPartySelectedItem: Equatable, Sendable {
         self.backdropUrl = backdropUrl
         self.backdropThumbhash = backdropThumbhash
         self.backdropIsEpisodeStill = backdropIsEpisodeStill
-        self.episodeWatchState = SiloMediaType.isEpisode(type) ? (episodeWatchState ?? EpisodeWatchState(played: false)) : nil
+        self.episodeWatchState = WeFlixMediaType.isEpisode(type) ? (episodeWatchState ?? EpisodeWatchState(played: false)) : nil
         self.year = year
         self.runtimeMinutes = runtimeMinutes
         contentRating = nil
@@ -178,7 +178,7 @@ enum WatchPartyPrimaryAction: Equatable, Sendable {
 }
 
 enum WatchPartyLobbyPolicy {
-    /// Include the deployment path: two Silo servers may share a public origin.
+    /// Include the deployment path: two WeFlix servers may share a public origin.
     static func sameServer(_ lhs: String, _ rhs: String) -> Bool {
         guard let left = authority(lhs), let right = authority(rhs) else { return false }
         return left == right
@@ -300,6 +300,6 @@ extension WatchPartySuggestion {
     /// Suggestions carry no watch state or artwork provenance, so an
     /// episode's poster is treated as an untouched episode's still.
     func hidesPoster(with spoilers: EpisodeSpoilerSettings) -> Bool {
-        SiloMediaType.isEpisode(contentType) && spoilers.hidesImage(for: EpisodeWatchState(played: false))
+        WeFlixMediaType.isEpisode(contentType) && spoilers.hidesImage(for: EpisodeWatchState(played: false))
     }
 }

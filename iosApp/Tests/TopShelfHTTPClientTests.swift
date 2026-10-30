@@ -1,6 +1,6 @@
 import Foundation
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 final class TopShelfHTTPClientTests: XCTestCase {
     private static let sectionsPath = "/api/v2/home/sections"

@@ -46,7 +46,7 @@ final class PersonDetailViewModel {
     /// settled — the server refresh ran and this is all the metadata it has.
     private static let metadataRefreshSettledPollCount = 5
     private static let logger = Logger(
-        subsystem: Bundle.main.bundleIdentifier ?? "org.siloserver.silo",
+        subsystem: Bundle.main.bundleIdentifier ?? "me.weflix",
         category: "PersonDetail"
     )
     private let pageSize = 60
@@ -104,7 +104,7 @@ final class PersonDetailViewModel {
         async let availability: Void = refreshAvailableFilters(generation: currentGeneration)
         do {
             if person == nil {
-                person = try await SiloAPI.shared.person(id: personId)
+                person = try await WeFlixAPI.shared.person(id: personId)
             }
             scheduleMetadataRefreshIfNeeded(for: person)
         } catch {
@@ -203,7 +203,7 @@ final class PersonDetailViewModel {
         // the same way.
         if shouldQueueRefresh {
             do {
-                try await SiloAPI.shared.refreshPerson(id: personId)
+                try await WeFlixAPI.shared.refreshPerson(id: personId)
             } catch is CancellationError {
                 return
             } catch let error as APIv2Error {
@@ -230,7 +230,7 @@ final class PersonDetailViewModel {
             guard !Task.isCancelled else { return }
 
             do {
-                let updatedPerson = try await SiloAPI.shared.person(id: personId)
+                let updatedPerson = try await WeFlixAPI.shared.person(id: personId)
                 guard personId == self.personId else { return }
                 if updatedPerson == person {
                     unchangedPolls += 1
@@ -263,9 +263,9 @@ final class PersonDetailViewModel {
             let startsOver = nextPage == nil
             let page: CatalogListPage
             if let nextPage {
-                page = try await SiloAPI.shared.nextCatalogPage(nextPage)
+                page = try await WeFlixAPI.shared.nextCatalogPage(nextPage)
             } else {
-                page = try await SiloAPI.shared.catalogPage(.personCredits(
+                page = try await WeFlixAPI.shared.catalogPage(.personCredits(
                     personId: personId, type: selectedFilter.catalogType, limit: pageSize
                 ))
             }
@@ -301,7 +301,7 @@ final class PersonDetailViewModel {
     /// remains visible rather than hiding content based on a network error.
     private func catalogHasItems(type: String) async -> Bool? {
         do {
-            let response = try await SiloAPI.shared.catalogPage(
+            let response = try await WeFlixAPI.shared.catalogPage(
                 .personCredits(personId: personId, type: type, limit: 1)
             ).response
             return !response.items.isEmpty || (response.total ?? 0) > 0
@@ -360,7 +360,7 @@ struct PersonDetailView: View {
             Color.clear
         } else {
             EmptyStateView(icon: "person", title: "Person not found")
-                .siloPageBackground()
+                .weFlixPageBackground()
         }
     }
 
@@ -400,7 +400,7 @@ private struct TVPersonDetailContent: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 48) {
                 header
-                    .padding(.horizontal, SiloTheme.safePadding)
+                    .padding(.horizontal, WeFlixTheme.safePadding)
                     .padding(.top, 48)
 
                 VStack(alignment: .leading, spacing: 28) {
@@ -435,11 +435,11 @@ private struct TVPersonDetailContent: View {
                         )
                     }
                 }
-                .padding(.horizontal, SiloTheme.safePadding)
+                .padding(.horizontal, WeFlixTheme.safePadding)
             }
             .padding(.bottom, 72)
         }
-        .siloPageBackground()
+        .weFlixPageBackground()
     }
 
     private var header: some View {
@@ -449,15 +449,15 @@ private struct TVPersonDetailContent: View {
             VStack(alignment: .leading, spacing: 22) {
                 Text(person.name)
                     .font(.system(size: 72, weight: .bold))
-                    .foregroundColor(.siloOnSurface)
+                    .foregroundColor(.weFlixOnSurface)
                     .lineLimit(2)
 
                 metadataRow
 
                 if let bio = clean(person.bio) {
                     Text(bio)
-                        .font(.siloBody)
-                        .foregroundColor(.siloSecondaryText)
+                        .font(.weFlixBody)
+                        .foregroundColor(.weFlixSecondaryText)
                         .lineLimit(7)
                         .fixedSize(horizontal: false, vertical: true)
                         .frame(maxWidth: 920, alignment: .leading)
@@ -471,13 +471,13 @@ private struct TVPersonDetailContent: View {
         HStack(spacing: 12) {
             ForEach(person.personMetadataBadges, id: \.self) { badge in
                 Text(badge)
-                    .font(.siloSmall)
-                    .foregroundColor(.siloOnSurface)
+                    .font(.weFlixSmall)
+                    .foregroundColor(.weFlixOnSurface)
                     .padding(.horizontal, 16)
                     .padding(.vertical, 8)
                     .background(
                         Capsule()
-                            .fill(Color.siloSurfaceVariant)
+                            .fill(Color.weFlixSurfaceVariant)
                     )
             }
 
@@ -491,13 +491,13 @@ private struct TVPersonDetailContent: View {
         VStack(alignment: .leading, spacing: 20) {
             HStack(alignment: .firstTextBaseline) {
                 Text("Filmography")
-                    .font(.siloHeadline)
-                    .foregroundColor(.siloOnSurface)
+                    .font(.weFlixHeadline)
+                    .foregroundColor(.weFlixOnSurface)
 
                 if let label = totalLabel {
                     Text(label)
-                        .font(.siloCaption)
-                        .foregroundColor(.siloSecondaryText)
+                        .font(.weFlixCaption)
+                        .foregroundColor(.weFlixSecondaryText)
                 }
 
                 Spacer()
@@ -524,7 +524,7 @@ private struct PhonePersonDetailContent: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 24) {
                 header
-                    .padding(.horizontal, SiloTheme.padding)
+                    .padding(.horizontal, WeFlixTheme.padding)
                     .padding(.top, 12)
 
                 VStack(alignment: .leading, spacing: 16) {
@@ -532,7 +532,7 @@ private struct PhonePersonDetailContent: View {
 
                     if viewModel.items.isEmpty && viewModel.isLoadingItems {
                         ProgressView()
-                            .tint(.siloOnSurface)
+                            .tint(.weFlixOnSurface)
                             .frame(maxWidth: .infinity, minHeight: 180)
                     } else if let error = viewModel.error, viewModel.items.isEmpty {
                         ErrorView(state: error, onRetry: { Task { await viewModel.reload() } })
@@ -556,14 +556,14 @@ private struct PhonePersonDetailContent: View {
                                 Task { await viewModel.loadMoreIfNeeded() }
                             }
                         )
-                        .padding(.horizontal, SiloTheme.padding)
+                        .padding(.horizontal, WeFlixTheme.padding)
                     }
                 }
             }
-            .padding(.bottom, SiloTheme.largePadding)
+            .padding(.bottom, WeFlixTheme.largePadding)
         }
         .detailScrollDismissal()
-        .siloPageBackground()
+        .weFlixPageBackground()
     }
 
     private var header: some View {
@@ -573,7 +573,7 @@ private struct PhonePersonDetailContent: View {
             VStack(alignment: .leading, spacing: 10) {
                 Text(person.name)
                     .font(.system(size: 30, weight: .bold))
-                    .foregroundColor(.siloOnSurface)
+                    .foregroundColor(.weFlixOnSurface)
                     .lineLimit(3)
 
                 metadataWrap
@@ -589,13 +589,13 @@ private struct PhonePersonDetailContent: View {
         FlowLayout(spacing: 6) {
             ForEach(person.personMetadataBadges, id: \.self) { badge in
                 Text(badge)
-                    .font(.siloSmall)
-                    .foregroundColor(.siloOnSurface)
+                    .font(.weFlixSmall)
+                    .foregroundColor(.weFlixOnSurface)
                     .padding(.horizontal, 9)
                     .padding(.vertical, 5)
                     .background(
                         Capsule()
-                            .fill(Color.siloSurfaceVariant)
+                            .fill(Color.weFlixSurfaceVariant)
                     )
             }
 
@@ -609,8 +609,8 @@ private struct PhonePersonDetailContent: View {
         VStack(alignment: .leading, spacing: 12) {
             HStack(alignment: .firstTextBaseline) {
                 Text("Filmography")
-                    .font(.siloHeadline)
-                    .foregroundColor(.siloOnSurface)
+                    .font(.weFlixHeadline)
+                    .foregroundColor(.weFlixOnSurface)
 
                 if let label = personFilmographyCountLabel(
                     total: viewModel.totalItems,
@@ -618,18 +618,18 @@ private struct PhonePersonDetailContent: View {
                     hasMore: viewModel.hasMore
                 ) {
                     Text(label)
-                        .font(.siloCaption)
-                        .foregroundColor(.siloSecondaryText)
+                        .font(.weFlixCaption)
+                        .foregroundColor(.weFlixSecondaryText)
                 }
 
                 Spacer()
             }
-            .padding(.horizontal, SiloTheme.padding)
+            .padding(.horizontal, WeFlixTheme.padding)
 
             PersonFilterBar(filters: viewModel.availableFilters, selected: viewModel.selectedFilter) { filter in
                 Task { await viewModel.applyFilter(filter) }
             }
-            .padding(.horizontal, SiloTheme.padding)
+            .padding(.horizontal, WeFlixTheme.padding)
         }
     }
 }
@@ -651,8 +651,8 @@ private struct PersonBiography: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
             Text(text)
-                .font(.siloBody)
-                .foregroundColor(.siloSecondaryText)
+                .font(.weFlixBody)
+                .foregroundColor(.weFlixSecondaryText)
                 .lineLimit(isExpanded ? nil : 8)
                 .fixedSize(horizontal: false, vertical: true)
                 .onGeometryChange(for: CGFloat.self, of: \.size.height) { height in
@@ -662,7 +662,7 @@ private struct PersonBiography: View {
                 // learn whether eight lines cut anything off.
                 .background(alignment: .top) {
                     Text(text)
-                        .font(.siloBody)
+                        .font(.weFlixBody)
                         .fixedSize(horizontal: false, vertical: true)
                         .hidden()
                         .onGeometryChange(for: CGFloat.self, of: \.size.height) { fullHeight = $0 }
@@ -673,14 +673,14 @@ private struct PersonBiography: View {
             if isClipped {
                 Button(isExpanded ? "Less" : "More", action: toggle)
                     .buttonStyle(.plain)
-                    .font(.siloBody.weight(.semibold))
-                    .foregroundColor(.siloOnSurface)
+                    .font(.weFlixBody.weight(.semibold))
+                    .foregroundColor(.weFlixOnSurface)
             }
         }
     }
 
     private func toggle() {
-        withAnimation(.easeInOut(duration: SiloTheme.normalDuration)) { isExpanded.toggle() }
+        withAnimation(.easeInOut(duration: WeFlixTheme.normalDuration)) { isExpanded.toggle() }
     }
 }
 #endif
@@ -693,7 +693,7 @@ private struct PersonPortrait: View {
 
     var body: some View {
         ZStack {
-            Color.siloSurfaceElevated
+            Color.weFlixSurfaceElevated
 
             if let photoUrl = clean(person.photoUrl) {
                 AsyncImageView(
@@ -705,13 +705,13 @@ private struct PersonPortrait: View {
             } else {
                 Text(person.initials)
                     .font(.system(size: width * 0.28, weight: .semibold))
-                    .foregroundColor(.siloSecondaryText)
+                    .foregroundColor(.weFlixSecondaryText)
             }
         }
         .frame(width: width, height: height)
-        .clipShape(RoundedRectangle(cornerRadius: SiloTheme.cornerRadius))
+        .clipShape(RoundedRectangle(cornerRadius: WeFlixTheme.cornerRadius))
         .overlay(
-            RoundedRectangle(cornerRadius: SiloTheme.cornerRadius)
+            RoundedRectangle(cornerRadius: WeFlixTheme.cornerRadius)
                 .stroke(Color.white.opacity(0.10), lineWidth: 1)
         )
     }
@@ -722,17 +722,17 @@ private struct PersonMetadataRefreshIndicator: View {
         HStack(spacing: 8) {
             ProgressView()
                 .controlSize(controlSize)
-                .tint(.siloOnSurface)
+                .tint(.weFlixOnSurface)
 
             Text("Loading metadata")
-                .font(.siloSmall)
-                .foregroundColor(.siloSecondaryText)
+                .font(.weFlixSmall)
+                .foregroundColor(.weFlixSecondaryText)
         }
         .padding(.horizontal, horizontalPadding)
         .padding(.vertical, verticalPadding)
         .background(
             Capsule()
-                .fill(Color.siloSurfaceVariant.opacity(0.72))
+                .fill(Color.weFlixSurfaceVariant.opacity(0.72))
         )
         .accessibilityElement(children: .combine)
     }
@@ -796,7 +796,7 @@ private struct PersonFilterButton: View {
     var body: some View {
         Button(action: action) {
             Text(title)
-                .font(.siloCaption)
+                .font(.weFlixCaption)
                 .foregroundColor(foregroundColor)
                 .padding(.horizontal, horizontalPadding)
                 .padding(.vertical, verticalPadding)
@@ -809,25 +809,25 @@ private struct PersonFilterButton: View {
                         .stroke(strokeColor, lineWidth: isFocused ? 2 : 1)
                 )
         }
-        .buttonStyle(.siloFlat)
+        .buttonStyle(.weFlixFlat)
         .focused($isFocused)
         .scaleEffect(isFocused ? 1.06 : 1.0)
-        .animation(.easeOut(duration: SiloTheme.fastDuration), value: isFocused)
-        .animation(.easeOut(duration: SiloTheme.fastDuration), value: isSelected)
+        .animation(.easeOut(duration: WeFlixTheme.fastDuration), value: isFocused)
+        .animation(.easeOut(duration: WeFlixTheme.fastDuration), value: isSelected)
     }
 
     private var foregroundColor: Color {
-        isSelected || isFocused ? .siloOnSurface : .siloSecondaryText
+        isSelected || isFocused ? .weFlixOnSurface : .weFlixSecondaryText
     }
 
     private var backgroundColor: Color {
-        if isSelected { return .siloSurfaceVariant }
-        if isFocused { return Color.siloSurfaceVariant.opacity(0.8) }
-        return Color.siloSurfaceElevated.opacity(0.55)
+        if isSelected { return .weFlixSurfaceVariant }
+        if isFocused { return Color.weFlixSurfaceVariant.opacity(0.8) }
+        return Color.weFlixSurfaceElevated.opacity(0.55)
     }
 
     private var strokeColor: Color {
-        isFocused ? .siloOnSurface.opacity(0.85) : Color.white.opacity(isSelected ? 0.16 : 0.08)
+        isFocused ? .weFlixOnSurface.opacity(0.85) : Color.white.opacity(isSelected ? 0.16 : 0.08)
     }
 
     private var horizontalPadding: CGFloat {

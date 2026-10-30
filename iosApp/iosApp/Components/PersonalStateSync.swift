@@ -10,7 +10,7 @@ enum PersonalStateTarget: String, Sendable {
 }
 
 /// A mutation that was sent but never answered. Every v2 favorite, watchlist
-/// and watched write is `non_retryable`, so Silo cannot tell whether the
+/// and watched write is `non_retryable`, so WeFlix cannot tell whether the
 /// server applied it and must not send it again on its own. The change stays
 /// held for its owner, item and flag until the viewer discards it.
 struct PersonalStateHeldChange: Identifiable, Equatable, Sendable {
@@ -102,7 +102,7 @@ final class PersonalStateHolds {
 /// owner has been checked again, so callers can apply the result locally.
 @MainActor
 enum PersonalStateSync {
-    private static let logger = Logger(subsystem: "org.siloserver.silo", category: "personal-state")
+    private static let logger = Logger(subsystem: "me.weflix", category: "personal-state")
 
     /// Throws `PersonalStateMutationError.held` for an unanswered or already
     /// held change, `HTTPError.requestIdentityChanged`/`.authorityChanged`
@@ -113,7 +113,7 @@ enum PersonalStateSync {
         contentId: String,
         to included: Bool,
         owner suppliedOwner: CapturedOrdinaryRequestAuth? = nil,
-        api: APIv2Client = SiloAPI.shared.apiV2Client,
+        api: APIv2Client = WeFlixAPI.shared.apiV2Client,
         tokens: TokenStore = .shared,
         holds suppliedHolds: PersonalStateHolds? = nil
     ) async throws {

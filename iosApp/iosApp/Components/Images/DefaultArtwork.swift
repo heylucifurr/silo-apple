@@ -1,7 +1,7 @@
 import SwiftUI
 
 /// What a poster, cover or still shows when the title has no artwork: a faint
-/// glow in the Silo brand colours with a small mark for the item's type
+/// glow in the WeFlix brand colours with a small mark for the item's type
 /// (`ArtworkPlaceholderSymbol`), or no mark when `symbol` is nil. The web and
 /// Android clients draw the same thing, so keep these values in step with them.
 struct DefaultArtwork: View {
@@ -22,9 +22,9 @@ struct DefaultArtwork: View {
             let side = max(geometry.size.width, geometry.size.height)
             ZStack {
                 Self.base
-                glow(.siloBrandBlue, opacity: 0.176, at: .topLeading, radius: side * 0.75)
-                glow(.siloBrandOrange, opacity: 0.144, at: .bottomTrailing, radius: side * 0.6)
-                glow(.siloBrandRed, opacity: 0.112, at: UnitPoint(x: 0.7, y: 0.3), radius: side * 0.5)
+                glow(.weFlixBrandBlue, opacity: 0.176, at: .topLeading, radius: side * 0.75)
+                glow(.weFlixBrandOrange, opacity: 0.144, at: .bottomTrailing, radius: side * 0.6)
+                glow(.weFlixBrandRed, opacity: 0.112, at: UnitPoint(x: 0.7, y: 0.3), radius: side * 0.5)
                 if let symbol {
                     mark(symbol, width: markWidth(for: geometry.size.width))
                 }

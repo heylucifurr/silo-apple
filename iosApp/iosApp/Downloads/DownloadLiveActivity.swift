@@ -65,7 +65,7 @@ final class DownloadLiveActivityController {
         }
         let state = makeState(activeRecords: activeRecords, totalBytesPerSecond: totalBytesPerSecond)
         // A paused queue makes no progress, and iOS expires a continued
-        // task that looks stalled; end it on Silo's terms instead.
+        // task that looks stalled; end it on WeFlix's terms instead.
         if state.phase == .paused { continued.finish(.paused) }
         if continued.ownsProgress {
             // iOS shows the task's own Live Activity; don't add a second one.
@@ -156,7 +156,7 @@ final class DownloadLiveActivityController {
         }
     }
 
-    /// Ends Silo's own activity at once while the system shows the continued
+    /// Ends WeFlix's own activity at once while the system shows the continued
     /// processing task's.
     private func yieldToContinuedProcessing() {
         lastState = nil

@@ -1,7 +1,7 @@
 import AetherEngine
 import Foundation
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 final class AetherPlaybackStatsProjectionTests: XCTestCase {
     func testProjectsPublicAetherStateAndRedactsSignedSourceURL() throws {

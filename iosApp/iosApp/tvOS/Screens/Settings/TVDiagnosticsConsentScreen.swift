@@ -15,9 +15,9 @@ struct TVDiagnosticsConsentScreen: View {
             VStack(alignment: .leading, spacing: 24) {
                 Text("Crash Reports")
                     .font(.system(size: 48, weight: .bold))
-                Text("Choose what Silo should do when a crash, hang, or unclean shutdown report is available.")
+                Text("Choose what weflix should do when a crash, hang, or unclean shutdown report is available.")
                     .font(.system(size: 24))
-                    .foregroundStyle(Color.siloSecondaryText)
+                    .foregroundStyle(Color.weFlixSecondaryText)
 
                 Button("Cancel", action: dismiss.callAsFunction)
                     .buttonStyle(TVSettingsPaneRowStyle())
@@ -53,7 +53,7 @@ struct TVDiagnosticsConsentScreen: View {
                 TVSettingsConfirmationOverlay(
                     title: "Turn Off Crash Reports?",
                     message: model.selectedDestination == .hosted
-                        ? "Pending local reports will be deleted. Reports already received by Silo Diagnostics will also be queued for deletion."
+                        ? "Pending local reports will be deleted. Reports already received by weflix Diagnostics will also be queued for deletion."
                         : "Pending reports for this server account will be deleted.",
                     confirmTitle: "Turn Off and Delete",
                     cancel: cancelConfirmation,

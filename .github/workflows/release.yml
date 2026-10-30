@@ -48,7 +48,7 @@ permissions:
 env:
   TESTFLIGHT_DISTRIBUTION: external
   TESTFLIGHT_NOTIFY_EXTERNAL_TESTERS: "true"
-  SILO_CACHE_NAMESPACE: production
+  WEFLIX_CACHE_NAMESPACE: production
 
 jobs:
   # A trusted complete main run can gate this exact commit. Toolchain or source
@@ -274,11 +274,11 @@ jobs:
             echo
             cat "$RUNNER_TEMP/notes.md"
             echo
-            echo "Source and rebuild instructions are in the Silo-source archive."
+            echo "Source and rebuild instructions are in the WeFlix-source archive."
           } > notes.md
           # A prerelease never becomes Latest; that stays the App Store release.
           gh release create "$TAG" --target "$GITHUB_SHA" --prerelease \
-            --title "Silo $VERSION ($BUILD)" --notes-file notes.md
+            --title "WeFlix $VERSION ($BUILD)" --notes-file notes.md
 
   source:
     needs: [regression-gate, prepare, release]
@@ -298,7 +298,7 @@ jobs:
       inputs.platform != 'tvos'
     runs-on: xcode-27
     env:
-      SILO_SOURCE_PACKAGES_PATH: ${{ github.workspace }}/.ci-cache/packages
+      WEFLIX_SOURCE_PACKAGES_PATH: ${{ github.workspace }}/.ci-cache/packages
     steps:
       - uses: actions/checkout@v4
         with:
@@ -310,7 +310,7 @@ jobs:
 
       - name: Record archive cache inputs
         id: metadata
-        run: python3 scripts/ci/apple-build-metadata.py --root . --device-scheme Silo-device --outputs
+        run: python3 scripts/ci/apple-build-metadata.py --root . --device-scheme WeFlix-device --outputs
 
       - name: Install XcodeGen (pinned, checksum-verified)
         uses: ./.github/actions/install-xcodegen
@@ -327,12 +327,12 @@ jobs:
           operation: restore
           root: '.'
           mode: dependencies
-          namespace: ${{ env.SILO_CACHE_NAMESPACE }}
+          namespace: ${{ env.WEFLIX_CACHE_NAMESPACE }}
           toolchain-key: ${{ steps.metadata.outputs.toolchain_key }}
           lock-key: ${{ steps.metadata.outputs.lock_sha256 }}
           project-key: ${{ steps.metadata.outputs.build_config_sha256 }}-xcodegen2.43.0
           source-sha: ${{ steps.metadata.outputs.source_sha }}
-          scheme: Silo-device
+          scheme: WeFlix-device
 
       - name: Build and upload iOS to TestFlight
         run: bundle exec fastlane ios beta_ios
@@ -340,7 +340,7 @@ jobs:
           MARKETING_VERSION: ${{ needs.prepare.outputs.version }}
           BUILD_NUMBER: ${{ needs.prepare.outputs.build }}
           TESTFLIGHT_CHANGELOG: ${{ needs.release.outputs.changelog }}
-          SILO_DEFER_TESTFLIGHT_DISTRIBUTION: 'true'
+          WEFLIX_DEFER_TESTFLIGHT_DISTRIBUTION: 'true'
           TEAM_ID: ${{ secrets.TEAM_ID }}
           MATCH_GIT_URL: ${{ secrets.MATCH_GIT_URL }}
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
@@ -349,13 +349,13 @@ jobs:
           APP_STORE_CONNECT_API_KEY_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ISSUER_ID }}
           APP_STORE_CONNECT_API_KEY_KEY: ${{ secrets.APP_STORE_CONNECT_API_KEY_KEY }}
           TESTFLIGHT_EXTERNAL_GROUPS: ${{ secrets.TESTFLIGHT_EXTERNAL_GROUPS }}
-          SILO_RELEASE_SOURCE_URL: ${{ needs.source.outputs.source_url }}
+          WEFLIX_RELEASE_SOURCE_URL: ${{ needs.source.outputs.source_url }}
 
       - name: Report archive package cache size
         continue-on-error: true
         run: |
-          if [ -d "$SILO_SOURCE_PACKAGES_PATH" ]; then
-            size_kib=$(du -sk "$SILO_SOURCE_PACKAGES_PATH" | cut -f1)
+          if [ -d "$WEFLIX_SOURCE_PACKAGES_PATH" ]; then
+            size_kib=$(du -sk "$WEFLIX_SOURCE_PACKAGES_PATH" | cut -f1)
             echo "Package cache: $size_kib KiB" | tee -a "$GITHUB_STEP_SUMMARY"
           else
             echo "No package cache directory was produced" | tee -a "$GITHUB_STEP_SUMMARY"
@@ -368,12 +368,12 @@ jobs:
           operation: save
           root: '.'
           mode: dependencies
-          namespace: ${{ env.SILO_CACHE_NAMESPACE }}
+          namespace: ${{ env.WEFLIX_CACHE_NAMESPACE }}
           toolchain-key: ${{ steps.metadata.outputs.toolchain_key }}
           lock-key: ${{ steps.metadata.outputs.lock_sha256 }}
           project-key: ${{ steps.metadata.outputs.build_config_sha256 }}-xcodegen2.43.0
           source-sha: ${{ steps.metadata.outputs.source_sha }}
-          scheme: Silo-device
+          scheme: WeFlix-device
           save-cache: 'true'
           save-dependencies: 'true'
           spm-cache-hit: ${{ steps.cache.outputs.spm-cache-hit }}
@@ -386,7 +386,7 @@ jobs:
       inputs.platform != 'ios'
     runs-on: xcode-27
     env:
-      SILO_SOURCE_PACKAGES_PATH: ${{ github.workspace }}/.ci-cache/packages
+      WEFLIX_SOURCE_PACKAGES_PATH: ${{ github.workspace }}/.ci-cache/packages
     steps:
       - uses: actions/checkout@v4
         with:
@@ -398,7 +398,7 @@ jobs:
 
       - name: Record archive cache inputs
         id: metadata
-        run: python3 scripts/ci/apple-build-metadata.py --root . --device-scheme SiloTV-device --outputs
+        run: python3 scripts/ci/apple-build-metadata.py --root . --device-scheme WeFlixTV-device --outputs
 
       - name: Install XcodeGen (pinned, checksum-verified)
         uses: ./.github/actions/install-xcodegen
@@ -415,12 +415,12 @@ jobs:
           operation: restore
           root: '.'
           mode: dependencies
-          namespace: ${{ env.SILO_CACHE_NAMESPACE }}
+          namespace: ${{ env.WEFLIX_CACHE_NAMESPACE }}
           toolchain-key: ${{ steps.metadata.outputs.toolchain_key }}
           lock-key: ${{ steps.metadata.outputs.lock_sha256 }}
           project-key: ${{ steps.metadata.outputs.build_config_sha256 }}-xcodegen2.43.0
           source-sha: ${{ steps.metadata.outputs.source_sha }}
-          scheme: SiloTV-device
+          scheme: WeFlixTV-device
 
       - name: Build and upload tvOS to TestFlight
         run: bundle exec fastlane ios beta_tvos
@@ -428,7 +428,7 @@ jobs:
           MARKETING_VERSION: ${{ needs.prepare.outputs.version }}
           BUILD_NUMBER: ${{ needs.prepare.outputs.build }}
           TESTFLIGHT_CHANGELOG: ${{ needs.release.outputs.changelog }}
-          SILO_DEFER_TESTFLIGHT_DISTRIBUTION: 'true'
+          WEFLIX_DEFER_TESTFLIGHT_DISTRIBUTION: 'true'
           TEAM_ID: ${{ secrets.TEAM_ID }}
           MATCH_GIT_URL: ${{ secrets.MATCH_GIT_URL }}
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
@@ -437,13 +437,13 @@ jobs:
           APP_STORE_CONNECT_API_KEY_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ISSUER_ID }}
           APP_STORE_CONNECT_API_KEY_KEY: ${{ secrets.APP_STORE_CONNECT_API_KEY_KEY }}
           TESTFLIGHT_EXTERNAL_GROUPS: ${{ secrets.TESTFLIGHT_EXTERNAL_GROUPS }}
-          SILO_RELEASE_SOURCE_URL: ${{ needs.source.outputs.source_url }}
+          WEFLIX_RELEASE_SOURCE_URL: ${{ needs.source.outputs.source_url }}
 
       - name: Report archive package cache size
         continue-on-error: true
         run: |
-          if [ -d "$SILO_SOURCE_PACKAGES_PATH" ]; then
-            size_kib=$(du -sk "$SILO_SOURCE_PACKAGES_PATH" | cut -f1)
+          if [ -d "$WEFLIX_SOURCE_PACKAGES_PATH" ]; then
+            size_kib=$(du -sk "$WEFLIX_SOURCE_PACKAGES_PATH" | cut -f1)
             echo "Package cache: $size_kib KiB" | tee -a "$GITHUB_STEP_SUMMARY"
           else
             echo "No package cache directory was produced" | tee -a "$GITHUB_STEP_SUMMARY"
@@ -456,12 +456,12 @@ jobs:
           operation: save
           root: '.'
           mode: dependencies
-          namespace: ${{ env.SILO_CACHE_NAMESPACE }}
+          namespace: ${{ env.WEFLIX_CACHE_NAMESPACE }}
           toolchain-key: ${{ steps.metadata.outputs.toolchain_key }}
           lock-key: ${{ steps.metadata.outputs.lock_sha256 }}
           project-key: ${{ steps.metadata.outputs.build_config_sha256 }}-xcodegen2.43.0
           source-sha: ${{ steps.metadata.outputs.source_sha }}
-          scheme: SiloTV-device
+          scheme: WeFlixTV-device
           save-cache: 'true'
           save-dependencies: 'true'
           spm-cache-hit: ${{ steps.cache.outputs.spm-cache-hit }}
@@ -491,7 +491,7 @@ jobs:
           APP_STORE_CONNECT_API_KEY_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ISSUER_ID }}
           APP_STORE_CONNECT_API_KEY_KEY: ${{ secrets.APP_STORE_CONNECT_API_KEY_KEY }}
           TESTFLIGHT_EXTERNAL_GROUPS: ${{ secrets.TESTFLIGHT_EXTERNAL_GROUPS }}
-          SILO_RELEASE_SOURCE_URL: ${{ needs.source.outputs.source_url }}
+          WEFLIX_RELEASE_SOURCE_URL: ${{ needs.source.outputs.source_url }}
 
   tvos-distribution:
     needs: [tvos, prepare, release, source, regression-gate]
@@ -518,7 +518,7 @@ jobs:
           APP_STORE_CONNECT_API_KEY_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ISSUER_ID }}
           APP_STORE_CONNECT_API_KEY_KEY: ${{ secrets.APP_STORE_CONNECT_API_KEY_KEY }}
           TESTFLIGHT_EXTERNAL_GROUPS: ${{ secrets.TESTFLIGHT_EXTERNAL_GROUPS }}
-          SILO_RELEASE_SOURCE_URL: ${{ needs.source.outputs.source_url }}
+          WEFLIX_RELEASE_SOURCE_URL: ${{ needs.source.outputs.source_url }}
 
   # Note on the prerelease which platforms reached testers. Promotion and the
   # next run's notes rely on it.

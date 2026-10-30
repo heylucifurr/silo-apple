@@ -11,9 +11,9 @@ enum PersonalMediaSection: String, CaseIterable, Identifiable {
     func includes(_ item: BrowseItem) -> Bool {
         switch self {
         case .movies:
-            return SiloMediaType.isMovieLibrary(item.type)
+            return WeFlixMediaType.isMovieLibrary(item.type)
         case .tvShows:
-            return SiloMediaType.isSeries(item.type)
+            return WeFlixMediaType.isSeries(item.type)
                 || item.type.trimmingCharacters(in: .whitespacesAndNewlines)
                     .localizedCaseInsensitiveCompare("episode") == .orderedSame
         }
@@ -239,7 +239,7 @@ struct FavoritesView: View {
                     }
                 }
             }
-            .padding(SiloTheme.padding)
+            .padding(WeFlixTheme.padding)
         }
         .reportsPageChromeScroll()
     }
@@ -295,7 +295,7 @@ struct FavoritesView: View {
                 #endif
             }
         }
-        .siloPageBackground()
+        .weFlixPageBackground()
         .modifier(PersonalListNavigationChrome(title: showsNavigationTitle ? "Favorites" : nil))
         .task {
             await loadFavorites()
@@ -341,7 +341,7 @@ struct FavoritesView: View {
                     .frame(maxWidth: .infinity)
                 }
             }
-            .padding(SiloTheme.padding)
+            .padding(WeFlixTheme.padding)
         }
         .reportsPageChromeScroll()
         #endif
@@ -359,7 +359,7 @@ struct FavoritesView: View {
                 if usesTVTopMenu {
                     Text("Favorites")
                         .font(.system(size: 64, weight: .bold))
-                        .foregroundStyle(Color.siloOnSurface)
+                        .foregroundStyle(Color.weFlixOnSurface)
                 }
 
                 sectionSelector
@@ -380,9 +380,9 @@ struct FavoritesView: View {
                     .focusSection()
                 }
             }
-            .padding(.horizontal, SiloTheme.safePadding)
+            .padding(.horizontal, WeFlixTheme.safePadding)
             .padding(.top, usesTVTopMenu ? TVTopMenuLayout.contentTopInset : 20)
-            .padding(.bottom, SiloTheme.safePadding)
+            .padding(.bottom, WeFlixTheme.safePadding)
         }
         .modifier(TVMenuEntryScroll(request: focusRequest, isTopMenuFocused: isTopMenuFocused, onReady: applyFocusRequest))
     }
@@ -391,7 +391,7 @@ struct FavoritesView: View {
         HStack(spacing: 14) {
             ForEach(PersonalMediaSection.allCases) { section in
                 Button {
-                    withAnimation(.easeInOut(duration: SiloTheme.normalDuration)) {
+                    withAnimation(.easeInOut(duration: WeFlixTheme.normalDuration)) {
                         selectedSection = section
                     }
                 } label: {
@@ -418,15 +418,15 @@ struct FavoritesView: View {
         VStack(spacing: 16) {
             Image(systemName: selectedSection == .movies ? "film" : "tv")
                 .font(.system(size: 54, weight: .light))
-                .foregroundStyle(Color.siloOnSurface.opacity(0.34))
+                .foregroundStyle(Color.weFlixOnSurface.opacity(0.34))
 
             Text("No favorite \(selectedSection.rawValue.lowercased())")
                 .font(.system(size: 30, weight: .semibold))
-                .foregroundStyle(Color.siloOnSurface)
+                .foregroundStyle(Color.weFlixOnSurface)
 
             Text("Add favorites from any detail page and they will appear here.")
                 .font(.system(size: 22))
-                .foregroundStyle(Color.siloSecondaryText)
+                .foregroundStyle(Color.weFlixSecondaryText)
         }
         .frame(maxWidth: .infinity, minHeight: 430)
     }
@@ -450,7 +450,7 @@ struct FavoritesView: View {
             cardWidthOverride: tvCardWidthOverride,
             onUserStateChanged: { state in
                 guard !state.isFavorite else { return }
-                withAnimation(.easeInOut(duration: SiloTheme.normalDuration)) {
+                withAnimation(.easeInOut(duration: WeFlixTheme.normalDuration)) {
                     items.removeAll { $0.contentId == item.contentId }
                 }
             }
@@ -460,7 +460,7 @@ struct FavoritesView: View {
     /// `MediaCard` applies the global size preference after this override;
     /// divide it out so the final eight-across grid stays at 176 points.
     private var tvCardWidthOverride: CGFloat {
-        SiloTheme.Skyline.densePosterCardWidth
+        WeFlixTheme.Skyline.densePosterCardWidth
             / uiCustomization.cardPresentation.posterSize.scale
     }
 
@@ -477,7 +477,7 @@ struct FavoritesView: View {
 
     private func playAction(for item: BrowseItem) -> (() -> Void)? {
         #if os(tvOS)
-        guard SiloMediaType.isDirectlyPlayable(item.type) else { return nil }
+        guard WeFlixMediaType.isDirectlyPlayable(item.type) else { return nil }
         return {
             router.presentPlayer(
                 contentId: item.contentId,
@@ -500,7 +500,7 @@ struct FavoritesView: View {
         }
         error = nil
         do {
-            let response = try await SiloAPI.shared.favorites()
+            let response = try await WeFlixAPI.shared.favorites()
             ResponseCache.shared.set(response, for: CacheKey.favorites)
             items = response.items
         } catch let err {
@@ -533,14 +533,14 @@ private struct FavoriteSectionPillBody: View {
         configuration.label
             .padding(.horizontal, 28)
             .padding(.vertical, 12)
-            .foregroundStyle(isFocused ? Color.siloBackground : Color.siloOnSurface)
+            .foregroundStyle(isFocused ? Color.weFlixBackground : Color.weFlixOnSurface)
             .background(
                 Capsule().fill(
                     isFocused
-                        ? Color.siloOnSurface
+                        ? Color.weFlixOnSurface
                         : (isSelected
-                            ? Color.siloChromeSelectedFill
-                            : Color.siloChromeRestingFill)
+                            ? Color.weFlixChromeSelectedFill
+                            : Color.weFlixChromeRestingFill)
                 )
             )
             .overlay(
@@ -548,15 +548,15 @@ private struct FavoriteSectionPillBody: View {
                     isFocused
                         ? Color.clear
                         : (isSelected
-                            ? Color.siloChromeSelectedBorder
-                            : Color.siloChromeRestingBorder),
+                            ? Color.weFlixChromeSelectedBorder
+                            : Color.weFlixChromeRestingBorder),
                     lineWidth: 1
                 )
             )
             .scaleEffect(isFocused ? 1.04 : 1)
             .opacity(configuration.isPressed ? 0.82 : 1)
             .focusEffectDisabled()
-            .animation(.easeOut(duration: SiloTheme.fastDuration), value: isFocused)
+            .animation(.easeOut(duration: WeFlixTheme.fastDuration), value: isFocused)
     }
 }
 #endif

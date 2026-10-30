@@ -22,12 +22,12 @@ struct EpisodeSpoilerSettingsSection: View {
             )
         } header: {
             Text("Spoilers")
-                .foregroundStyle(Color.siloSecondaryText)
+                .foregroundStyle(Color.weFlixSecondaryText)
         } footer: {
             Text(footerText)
-                .foregroundStyle(Color.siloSecondaryText)
+                .foregroundStyle(Color.weFlixSecondaryText)
         }
-        .listRowBackground(Color.siloGroupedCell)
+        .listRowBackground(Color.weFlixGroupedCell)
     }
 
     private func toggle(
@@ -40,11 +40,11 @@ struct EpisodeSpoilerSettingsSection: View {
             set: { store.set(setting, to: $0) }
         )) {
             Text(title)
-                .foregroundStyle(Color.siloOnSurface)
+                .foregroundStyle(Color.weFlixOnSurface)
             Text(description)
-                .foregroundStyle(Color.siloSecondaryText)
+                .foregroundStyle(Color.weFlixSecondaryText)
         }
-        .tint(.siloSwitchOn)
+        .tint(.weFlixSwitchOn)
         .disabled(!store.allowsEditing)
     }
 

@@ -1,12 +1,12 @@
 import Foundation
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 final class LibraryDetailScopeTests: XCTestCase {
     private let detailJSON = #"{"content_id":"movie","type":"movie","title":"Movie","status":"available","genres":[],"keywords":[],"cast":[],"crew":[],"versions":[],"subtitles":[]}"#
     private let watchJSON = #"{"content_id":"movie","type":"movie","title":"Movie","versions":[],"subtitles":[]}"#
 
-    private func client(stub: APIv2TestStub) async throws -> (SiloAPI, TokenStore) {
+    private func client(stub: APIv2TestStub) async throws -> (WeFlixAPI, TokenStore) {
         let name = "LibraryDetailScopeTests.\(UUID().uuidString)"
         let suite = try XCTUnwrap(UserDefaults(suiteName: name))
         addTeardownBlock { UserDefaults().removePersistentDomain(forName: name) }
@@ -16,7 +16,7 @@ final class LibraryDetailScopeTests: XCTestCase {
         await tokens.setServerUrl("https://catalog.example")
         await tokens.setProfileId("profile-one")
         let http = HTTPClient(session: stub.makeSession(), tokenStore: tokens)
-        return (SiloAPI(http: http, tokenStore: tokens), tokens)
+        return (WeFlixAPI(http: http, tokenStore: tokens), tokens)
     }
 
     func testFacadeSendsLibraryOnEveryDetailReadAndOmitsItForGlobalReads() async throws {

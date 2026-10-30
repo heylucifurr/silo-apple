@@ -12,7 +12,7 @@ struct AuroraErrorLabel: View {
             Text(text)
                 .fixedSize(horizontal: false, vertical: true)
         }
-        .font(.siloCaption)
+        .font(.weFlixCaption)
         .foregroundStyle(Color.requestRose)
         .frame(maxWidth: .infinity, alignment: .leading)
         .transition(.opacity)
@@ -23,7 +23,7 @@ struct AuroraErrorLabel: View {
 
 // MARK: - Screen scaffold
 
-/// Silo backdrop + a vertically scrollable, keyboard-friendly column capped
+/// WeFlix backdrop + a vertically scrollable, keyboard-friendly column capped
 /// to a comfortable reading width. Callers supply the wordmark + content.
 struct AuroraScreen<Content: View>: View {
     var variant: AuroraVariant

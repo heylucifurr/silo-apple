@@ -1,0 +1,218 @@
+#if os(iOS)
+import UIKit
+import UserNotifications
+
+extension WeFlixAppDelegate: UNUserNotificationCenterDelegate {
+    /// Background wakes get ~30 s. 20 s fits the inbox sync and the download
+    /// monitoring sync, whose last request enqueues new episodes, inside that
+    /// budget. HTTPClient's own 60 s request timeout would not.
+    private static let backgroundSyncDeadlineSeconds: TimeInterval = 20
+
+    func application(
+        _ application: UIApplication,
+        didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
+    ) -> Bool {
+        UNUserNotificationCenter.current().delegate = self
+        // BGTaskScheduler requires every identifier to be registered before
+        // launch finishes — the system traps when it launches the app for a
+        // task with no handler.
+        DownloadBackgroundRefresh.register()
+        ApplePushRegistrationCoordinator.migrateLegacyDisplayToken()
+        Self.recordApplePushDisplayOutcomes()
+        // A removed or signed-out server keeps pushing until its retirement
+        // lands. It needs no session, so it is retried before any sign-in.
+        Task { @MainActor in
+            await ApplePushRegistrationCoordinator.shared.retryPendingRetirements()
+        }
+        NotificationCenter.default.addObserver(
+            forName: UIApplication.willEnterForegroundNotification,
+            object: nil,
+            queue: .main
+        ) { _ in
+            Self.recordApplePushDisplayOutcomes()
+            Task { @MainActor in
+                await ApplePushRegistrationCoordinator.shared.retryPendingRetirements()
+            }
+        }
+        return true
+    }
+
+    /// The Notification Service extension has no diagnostics pipeline, so it
+    /// leaves one outcome per push in the App Group. Moving them into the
+    /// breadcrumb journal lets a report say why a notification kept the
+    /// generic "New notification available" text.
+    nonisolated static func recordApplePushDisplayOutcomes() {
+        for outcome in ApplePushDisplayOutcomeLog.drain() {
+            let enriched = outcome.kind == .enriched
+            var attrs: [String: DiagLogAttributeValue] = [
+                "outcome": .string(outcome.kind.rawValue),
+                "duration_ms": .int(outcome.durationMs),
+            ]
+            if let reason = outcome.reason {
+                attrs["reason"] = .string(reason)
+            }
+            // Successes stay essential: a few lines a day, and the ratio of
+            // fetched to generic notifications is what a report needs.
+            DiagTrace.breadcrumb(
+                .essential,
+                level: enriched ? .info : .warning,
+                category: .lifecycle,
+                tag: "PushDisplay",
+                message: "notification service \(outcome.kind.rawValue) after \(outcome.attempts) attempts with \(outcome.credential ?? "no") credential",
+                attrs: attrs,
+                timestamp: outcome.recordedAt
+            )
+        }
+    }
+
+    func application(
+        _ application: UIApplication,
+        handleEventsForBackgroundURLSession identifier: String,
+        completionHandler: @escaping () -> Void
+    ) {
+        if identifier == DownloadSessionDelegate.legacySessionIdentifier {
+            // Transfers an earlier build started finished in the pre-rename
+            // session. Scope activation drains it and moves their resume data
+            // onto the records before the system suspends the app again.
+            Task { @MainActor in
+                if let serverId = ServerRegistry.shared.activeServerId, !serverId.isEmpty {
+                    await TokenStore.shared.retargetActiveServer(serverId: serverId)
+                }
+                await DownloadManager.shared.activateScopeIfNeeded()
+                completionHandler()
+            }
+            return
+        }
+        guard identifier == DownloadSessionDelegate.sessionIdentifier else {
+            completionHandler()
+            return
+        }
+        Task { @MainActor in
+            // Touching `shared` recreates the background session so its
+            // buffered events replay; the handler fires once the manager
+            // drains `allEventsDelivered`. Scope activation runs right
+            // after so finished media can resolve its on-disk destination
+            // even on a cold background relaunch.
+            DownloadManager.shared.setBackgroundCompletionHandler(completionHandler)
+            // A cold background relaunch lands here before
+            // ContentView.checkInitialState() has pointed TokenStore at the
+            // active registry server; activating against an unresolved
+            // profile would release the held session events into an empty
+            // scope and discard the staged completions.
+            if let serverId = ServerRegistry.shared.activeServerId, !serverId.isEmpty {
+                await TokenStore.shared.retargetActiveServer(serverId: serverId)
+            }
+            await DownloadManager.shared.activateScopeIfNeeded()
+        }
+    }
+
+    func application(
+        _ application: UIApplication,
+        didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data
+    ) {
+        Task { @MainActor in
+            await ApplePushRegistrationCoordinator.shared.didRegisterForRemoteNotifications(deviceToken: deviceToken)
+        }
+    }
+
+    func application(
+        _ application: UIApplication,
+        didFailToRegisterForRemoteNotificationsWithError error: Error
+    ) {
+        ApplePushRegistrationCoordinator.shared.didFailToRegisterForRemoteNotifications(error: error)
+    }
+
+    func application(
+        _ application: UIApplication,
+        didReceiveRemoteNotification userInfo: [AnyHashable: Any],
+        fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void
+    ) {
+        Task { @MainActor in
+            let deadline = Self.backgroundSyncDeadlineSeconds
+            // The push may come from a server this device retired; retrying
+            // now runs beside the sync, inside the same budget.
+            let retirements = Task {
+                await ApplePushRegistrationCoordinator.waitAtMost(.seconds(deadline)) {
+                    await ApplePushRegistrationCoordinator.shared.retryPendingRetirements(afterPush: true)
+                }
+            }
+            let fetchedDeliveries = await Self.syncWithDeadline(deadline)
+            await retirements.value
+            completionHandler(fetchedDeliveries ? .newData : .noData)
+        }
+    }
+
+    func userNotificationCenter(
+        _ center: UNUserNotificationCenter,
+        willPresent notification: UNNotification
+    ) async -> UNNotificationPresentationOptions {
+        // Present immediately: the inbox sync must never delay the banner,
+        // and the system only waits a few seconds for this return value.
+        // Local download notifications carry no inbox payload, so only a
+        // remote push kicks the sync.
+        if notification.request.trigger is UNPushNotificationTrigger {
+            Task { @MainActor in
+                await ApplePushNotificationSyncCoordinator.shared.refreshFromRemoteNotification()
+            }
+        }
+        return [.banner, .list, .sound]
+    }
+
+    func userNotificationCenter(
+        _ center: UNUserNotificationCenter,
+        didReceive response: UNNotificationResponse
+    ) async {
+        // Navigation depends only on the payload already in hand — post the
+        // deep link before any network work so the tap routes instantly.
+        let userInfo = response.notification.request.content.userInfo
+        ApplePushDeepLinkCoordinator.postDeepLink(from: userInfo)
+        if response.notification.request.trigger is UNPushNotificationTrigger {
+            Task { @MainActor in
+                await ApplePushNotificationSyncCoordinator.shared.refreshFromRemoteNotification()
+            }
+        }
+    }
+
+    /// Runs the notification-inbox sync and the download monitoring sync and
+    /// returns whether the inbox page carried deliveries. A backlog page
+    /// counts even though the inbox is not caught up yet. Returns `false`
+    /// once the deadline passes, cancelling the underlying requests. The
+    /// completion handler for a background wake must be called inside the
+    /// system budget even when the server is unreachable.
+    @MainActor
+    private static func syncWithDeadline(_ seconds: TimeInterval) async -> Bool {
+        await withTaskGroup(of: Bool.self) { group in
+            group.addTask { @MainActor in
+                // A cold background launch lands here before
+                // ContentView.checkInitialState() has pointed TokenStore at
+                // the active registry server, and both syncs authenticate
+                // through it. Idempotent on every later call.
+                if let serverId = ServerRegistry.shared.activeServerId, !serverId.isEmpty {
+                    await TokenStore.shared.retargetActiveServer(serverId: serverId)
+                }
+                async let inboxSynced = ApplePushNotificationSyncCoordinator.shared.sync()
+                // Same path as DownloadBackgroundRefresh: a new-episode push
+                // for a monitored series registers the episode and enqueues
+                // it into the background URLSession here, so the transfer
+                // runs out-of-process without the user opening the app.
+                //
+                // Deadline check between the phases: `withTaskGroup` only
+                // returns once this child unwinds, so when the timer has
+                // already won (cancelAll ran) don't start the download sync
+                // — it would hold the completion handler past the budget.
+                if !Task.isCancelled {
+                    await DownloadManager.shared.onAppActive()
+                }
+                return await inboxSynced.fetchedDeliveries
+            }
+            group.addTask {
+                try? await Task.sleep(for: .seconds(seconds))
+                return false
+            }
+            let first = await group.next() ?? false
+            group.cancelAll()
+            return first
+        }
+    }
+}
+#endif

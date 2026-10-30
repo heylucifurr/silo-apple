@@ -4,7 +4,7 @@
 //  translation/transcription (translate an existing track, transcribe
 //  audio via Whisper, or transcribe-and-translate).
 //
-//  Every AI call goes through ``APIv2Client`` (see ``SiloAI``). The wire
+//  Every AI call goes through ``APIv2Client`` (see ``WeFlixAI``). The wire
 //  shapes live in `APIv2/APIv2MetadataAIModels.swift`,
 //  `APIv2/APIv2SubtitleModels.swift` and `APIv2/APIv2SubtitleAIModels.swift`;
 //  the types here are the domain values the player and settings read, built

@@ -1,5 +1,5 @@
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 /// The shared two-tier verbosity predicate every instrumented subsystem
 /// (playback, focus, network, lifecycle) routes through.

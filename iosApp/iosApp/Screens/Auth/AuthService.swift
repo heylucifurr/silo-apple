@@ -3,7 +3,7 @@ import Foundation
 /// Thin service layer for auth / profile operations backed by the native
 /// Swift `HTTPClient`.
 ///
-/// Shares the same token/profile storage as `SiloAPI` via
+/// Shares the same token/profile storage as `WeFlixAPI` via
 /// ``TokenStore/shared``. Server metadata lives in `ServerRegistry`; active
 /// profile identity is a separate current-user request scope coordinated with
 /// `ProfileLaunchPreferences`.
@@ -51,7 +51,7 @@ final class AuthService: @unchecked Sendable {
         launchPreferences: ProfileLaunchPreferences = .shared,
         restoredSessionValidator: RestoredSessionValidator = .live,
         contractProbe: APIv2Probe = APIv2Probe(),
-        apiV2Client: APIv2Client = SiloAPI.shared.apiV2Client,
+        apiV2Client: APIv2Client = WeFlixAPI.shared.apiV2Client,
         httpClient: HTTPClient = .shared,
         tokenStore: TokenStore = .shared,
         defaults: SharedDefaults = .shared,
@@ -237,7 +237,7 @@ final class AuthService: @unchecked Sendable {
     }
 
     /// Learns (or re-learns) the deployment identity behind a saved server so
-    /// SiloRemote and companion pairing can recognise it at other addresses.
+    /// WeFlixRemote and companion pairing can recognise it at other addresses.
     /// Servers added before the identity contract pick it up here on their
     /// next activation or foreground refresh.
     func refreshVerifiedServerId(for server: ServerEntry) async {
@@ -374,7 +374,7 @@ final class AuthService: @unchecked Sendable {
     // MARK: - Profiles
 
     func getProfiles() async throws -> [UserProfile] {
-        try await SiloAPI.shared.listProfiles()
+        try await WeFlixAPI.shared.listProfiles()
     }
 
     func selectProfile(
@@ -390,7 +390,7 @@ final class AuthService: @unchecked Sendable {
             throw ProfileTransitionError.temporaryIdentityActive
         }
 
-        let profileToken = try await SiloAPI.shared.verifyProfileSelection(
+        let profileToken = try await WeFlixAPI.shared.verifyProfileSelection(
             profileId: profileId,
             pin: pin
         )
@@ -665,7 +665,7 @@ final class AuthService: @unchecked Sendable {
         await recoverFromInvalidProfile(expectedProfileID: activeProfileID)
     }
 
-    /// Recovery for `HTTPClient`'s `.siloProfileVerificationRequired`: the
+    /// Recovery for `HTTPClient`'s `.weFlixProfileVerificationRequired`: the
     /// server stopped accepting the active profile's proof (for example after
     /// an admin changed the account's access), but the account session is
     /// still valid. Delivery is asynchronous, so the event is applied only
@@ -730,7 +730,7 @@ final class AuthService: @unchecked Sendable {
         guard committed else { return }
         await MainActor.run {
             NotificationCenter.default.post(
-                name: .siloProfileSelectionRequired,
+                name: .weFlixProfileSelectionRequired,
                 object: expectedProfileID
             )
         }
@@ -800,7 +800,7 @@ final class AuthService: @unchecked Sendable {
         allowedLibraryIds: [Int] = [],
         requestsAllowed: Bool? = nil
     ) async throws -> UserProfile {
-        try await SiloAPI.shared.createProfile(
+        try await WeFlixAPI.shared.createProfile(
             name: name,
             avatarEmoji: avatarEmoji,
             pin: pin,

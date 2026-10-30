@@ -20,9 +20,9 @@ enum BrowseMediaType: String, Codable, Hashable {
     case mixed
 
     static func from(libraryType: String) -> BrowseMediaType {
-        if SiloMediaType.isMixedLibrary(libraryType) { return .mixed }
-        if SiloMediaType.isAudiobook(libraryType) { return .audiobook }
-        if SiloMediaType.isSeries(libraryType) { return .series }
+        if WeFlixMediaType.isMixedLibrary(libraryType) { return .mixed }
+        if WeFlixMediaType.isAudiobook(libraryType) { return .audiobook }
+        if WeFlixMediaType.isSeries(libraryType) { return .series }
         return .movie
     }
 

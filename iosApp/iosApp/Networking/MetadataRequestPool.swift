@@ -4,7 +4,7 @@ import Foundation
 ///
 /// This is intentionally not a response cache. A completed flight is removed,
 /// failures are retryable, and mutation/polling code can keep using
-/// `SiloAPI` directly when it requires a new server read.
+/// `WeFlixAPI` directly when it requires a new server read.
 actor MetadataSingleFlight<Key: Hashable & Sendable, Value> {
     private struct Flight {
         let task: Task<Value, Error>
@@ -81,7 +81,7 @@ actor MetadataSingleFlight<Key: Hashable & Sendable, Value> {
 /// profile/server transition cannot join a request dispatched for the prior
 /// identity. Callers whose freshness depends on an external revision can add
 /// that revision to `itemDetail`; mutation pollers should bypass this type and
-/// call `SiloAPI` directly.
+/// call `WeFlixAPI` directly.
 final class MetadataRequestPool: Sendable {
     static let shared = MetadataRequestPool()
 
@@ -118,10 +118,10 @@ final class MetadataRequestPool: Sendable {
     private let episodesFlights = MetadataSingleFlight<EpisodesKey, EpisodesResponse>()
     private let watchDetailFlights = MetadataSingleFlight<WatchDetailKey, WatchDetail>()
 
-    private let api: SiloAPI
+    private let api: WeFlixAPI
     private let tokenStore: TokenStore
 
-    init(api: SiloAPI = .shared, tokenStore: TokenStore = .shared) {
+    init(api: WeFlixAPI = .shared, tokenStore: TokenStore = .shared) {
         self.api = api
         self.tokenStore = tokenStore
     }

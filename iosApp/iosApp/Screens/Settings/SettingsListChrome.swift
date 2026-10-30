@@ -37,20 +37,20 @@ private struct MacSettingsSwitch: View {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
-        let size = SiloTheme.macSettingsSwitchSize
+        let size = WeFlixTheme.macSettingsSwitchSize
         let knob = size.height - 4
         Capsule()
-            .fill(isOn ? Color.siloPrimary : Color.white.opacity(0.16))
+            .fill(isOn ? Color.weFlixPrimary : Color.white.opacity(0.16))
             .frame(width: size.width, height: size.height)
             .overlay(alignment: isOn ? .trailing : .leading) {
                 Circle()
-                    .fill(isOn ? Color.siloPageCanvas : Color.white.opacity(0.85))
+                    .fill(isOn ? Color.weFlixPageCanvas : Color.white.opacity(0.85))
                     .frame(width: knob, height: knob)
                     .padding(2)
             }
             .opacity(isEnabled ? 1 : 0.4)
             .contentShape(Capsule())
-            .animation(reduceMotion ? nil : .easeOut(duration: SiloTheme.fastDuration), value: isOn)
+            .animation(reduceMotion ? nil : .easeOut(duration: WeFlixTheme.fastDuration), value: isOn)
     }
 }
 #endif
@@ -64,16 +64,16 @@ extension View {
         // grouped style so their rows lay out as labelled cards.
         // The list itself is narrowed: a Mac list ignores content margins,
         // so insetting only its content is not an option.
-        siloGroupedListStyle()
+        weFlixGroupedListStyle()
             .formStyle(.grouped)
             .toggleStyle(MacSettingsToggleStyle())
-            .siloScrollContentBackgroundHidden()
-            .frame(maxWidth: SiloTheme.macSettingsColumnWidth)
+            .weFlixScrollContentBackgroundHidden()
+            .frame(maxWidth: WeFlixTheme.macSettingsColumnWidth)
             .frame(maxWidth: .infinity)
             .background(SettingsBackdrop())
         #else
-        siloGroupedListStyle()
-            .siloScrollContentBackgroundHidden()
+        weFlixGroupedListStyle()
+            .weFlixScrollContentBackgroundHidden()
             .background(SettingsBackdrop())
         #endif
     }

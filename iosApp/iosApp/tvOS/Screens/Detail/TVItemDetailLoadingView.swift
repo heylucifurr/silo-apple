@@ -29,7 +29,7 @@ struct TVItemDetailLoadingView: View {
     // MARK: - Movie / series / episode
 
     private var heroLift: CGFloat {
-        let isSeries = isSeriesRoute || seed.map { SiloMediaType.isSeries($0.mediaType) } == true
+        let isSeries = isSeriesRoute || seed.map { WeFlixMediaType.isSeries($0.mediaType) } == true
         return isSeries ? TVDetailLayout.seriesHeroLift(for: uiCustomization.cardPresentation.posterSize) : 0
     }
 
@@ -212,7 +212,7 @@ struct TVItemDetailLoadingView: View {
                     placeholder(
                         width: railCardSize.width,
                         height: railCardSize.height,
-                        cornerRadius: SiloTheme.cornerRadius
+                        cornerRadius: WeFlixTheme.cornerRadius
                     )
                 }
             }
@@ -234,7 +234,7 @@ struct TVItemDetailLoadingView: View {
                 audiobookIdentity
                     .frame(maxWidth: .infinity, alignment: .leading)
             }
-            .padding(.horizontal, SiloTheme.safePadding)
+            .padding(.horizontal, WeFlixTheme.safePadding)
             .padding(.leading, 12)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
@@ -261,20 +261,20 @@ struct TVItemDetailLoadingView: View {
                 placeholder(
                     width: 460,
                     height: 460,
-                    cornerRadius: SiloTheme.cornerRadius
+                    cornerRadius: WeFlixTheme.cornerRadius
                 )
             }
         }
         .frame(width: 460, height: 460)
         .clipShape(
             RoundedRectangle(
-                cornerRadius: SiloTheme.cornerRadius,
+                cornerRadius: WeFlixTheme.cornerRadius,
                 style: .continuous
             )
         )
         .overlay {
             RoundedRectangle(
-                cornerRadius: SiloTheme.cornerRadius,
+                cornerRadius: WeFlixTheme.cornerRadius,
                 style: .continuous
             )
             .stroke(Color.white.opacity(0.14), lineWidth: 1)
@@ -334,7 +334,7 @@ struct TVItemDetailLoadingView: View {
     // MARK: - Derived presentation
 
     private var isAudiobook: Bool {
-        seed.map { SiloMediaType.isAudiobook($0.mediaType) } ?? false
+        seed.map { WeFlixMediaType.isAudiobook($0.mediaType) } ?? false
     }
 
     private var metadataTokens: [String] {
@@ -360,7 +360,7 @@ struct TVItemDetailLoadingView: View {
         let type = mediaType
             .trimmingCharacters(in: .whitespacesAndNewlines)
             .lowercased()
-        return SiloMediaType.isSeries(type) || type == "season" || type == "episode"
+        return WeFlixMediaType.isSeries(type) || type == "season" || type == "episode"
     }
 
     private var railCardSize: CGSize {

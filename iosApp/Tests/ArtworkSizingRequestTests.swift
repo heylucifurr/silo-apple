@@ -1,8 +1,8 @@
 import Foundation
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
-/// Each image-bearing read through `SiloAPI` asks for the widths of the
+/// Each image-bearing read through `WeFlixAPI` asks for the widths of the
 /// screen that draws it, against the vendored capability fixture (a server
 /// that takes per-slot widths) at 2×.
 final class ArtworkSizingRequestTests: XCTestCase {
@@ -22,7 +22,7 @@ final class ArtworkSizingRequestTests: XCTestCase {
         return capability
     }
 
-    private func client(stub: APIv2TestStub, capability: ImageSizeCapability) async throws -> SiloAPI {
+    private func client(stub: APIv2TestStub, capability: ImageSizeCapability) async throws -> WeFlixAPI {
         let name = "ArtworkSizingRequestTests.\(UUID().uuidString)"
         let suite = try XCTUnwrap(UserDefaults(suiteName: name))
         addTeardownBlock { UserDefaults().removePersistentDomain(forName: name) }
@@ -32,7 +32,7 @@ final class ArtworkSizingRequestTests: XCTestCase {
         await tokens.setServerUrl("https://artwork.example")
         await tokens.setProfileId("profile-one")
         let http = HTTPClient(session: stub.makeSession(), tokenStore: tokens)
-        return SiloAPI(http: http, tokenStore: tokens, imageSizeCapability: capability)
+        return WeFlixAPI(http: http, tokenStore: tokens, imageSizeCapability: capability)
     }
 
     private func sent(_ stub: APIv2TestStub, path: String) throws -> [String: String] {

@@ -1,5 +1,5 @@
 import XCTest
-@testable import Silo
+@testable import WeFlix
 import zlib
 
 final class HostedDiagnosticsAPITests: XCTestCase {
@@ -68,7 +68,7 @@ final class HostedDiagnosticsAPITests: XCTestCase {
         )
 
         XCTAssertEqual(response.reportID, reportID.uuidString.lowercased())
-        XCTAssertEqual(response.shortID, "SILO-APPLE1234")
+        XCTAssertEqual(response.shortID, "WEFLIX-APPLE1234")
         XCTAssertEqual(response.state, .processing)
         XCTAssertEqual(credentialStore.saveCount, 0, "an existing installation must be reused")
 
@@ -82,7 +82,7 @@ final class HostedDiagnosticsAPITests: XCTestCase {
             XCTAssertEqual(request.host, "collector.example")
             XCTAssertNil(request.profileHeader)
             XCTAssertNil(request.profileTokenHeader)
-            XCTAssertNil(request.siloDeviceIDHeader)
+            XCTAssertNil(request.weFlixDeviceIDHeader)
             XCTAssertNil(request.cookieHeader)
             XCTAssertEqual(request.authorization, "Bearer hosted-installation-token")
             XCTAssertNotEqual(request.authorization, "Bearer silo-account-token")
@@ -129,7 +129,7 @@ final class HostedDiagnosticsAPITests: XCTestCase {
         XCTAssertEqual(request.authorization, "Bearer hosted-delete-token")
         XCTAssertNil(request.profileHeader)
         XCTAssertNil(request.profileTokenHeader)
-        XCTAssertNil(request.siloDeviceIDHeader)
+        XCTAssertNil(request.weFlixDeviceIDHeader)
 
         hostedStub.configureDelete(reportID: reportID, statusCode: 404)
         do {
@@ -168,7 +168,7 @@ final class HostedDiagnosticsAPITests: XCTestCase {
         )
 
         XCTAssertEqual(response.reportID, reportID.uuidString.lowercased())
-        XCTAssertEqual(response.shortID, "SILO-APPLE1234")
+        XCTAssertEqual(response.shortID, "WEFLIX-APPLE1234")
         XCTAssertEqual(response.state, .processing)
         XCTAssertEqual(
             hostedStub.requests().last?.path,
@@ -183,7 +183,7 @@ final class HostedDiagnosticsAPITests: XCTestCase {
         hostedStub.configurePutAcceptance(
             reportID: reportID,
             bundle: bundle,
-            body: #"{"report_id":"\#(reportID.uuidString.lowercased())","short_id":"SILO-WRONG9999","state":"processing"}"#
+            body: #"{"report_id":"\#(reportID.uuidString.lowercased())","short_id":"WEFLIX-WRONG9999","state":"processing"}"#
         )
 
         let error = await captureHostedUploadError(reportID: reportID, bundle: bundle)
@@ -201,7 +201,7 @@ final class HostedDiagnosticsAPITests: XCTestCase {
             hostedStub.configurePutAcceptance(
                 reportID: reportID,
                 bundle: bundle,
-                body: #"{"report_id":"\#(reportID.uuidString.lowercased())","short_id":"SILO-APPLE1234","state":"\#(state)"}"#
+                body: #"{"report_id":"\#(reportID.uuidString.lowercased())","short_id":"WEFLIX-APPLE1234","state":"\#(state)"}"#
             )
 
             let error = await captureHostedUploadError(reportID: reportID, bundle: bundle)
@@ -242,7 +242,7 @@ final class HostedDiagnosticsAPITests: XCTestCase {
         hostedStub.configurePutAcceptance(
             reportID: reportID,
             bundle: bundle,
-            body: #"{"report_id":"\#(reportID.uuidString.lowercased())","short_id":"SILO-APPLE1234","state":"ready"}"#
+            body: #"{"report_id":"\#(reportID.uuidString.lowercased())","short_id":"WEFLIX-APPLE1234","state":"ready"}"#
         )
 
         let response = try await makeHostedUploadAPI().upload(
@@ -251,7 +251,7 @@ final class HostedDiagnosticsAPITests: XCTestCase {
             bundleData: bundle
         )
 
-        XCTAssertEqual(response.shortID, "SILO-APPLE1234")
+        XCTAssertEqual(response.shortID, "WEFLIX-APPLE1234")
         XCTAssertEqual(response.state, .processing, "the subsequent GET may return the latest state")
     }
 
@@ -340,7 +340,7 @@ final class HostedDiagnosticsAPITests: XCTestCase {
         XCTAssertNil(installation.cookieHeader)
         XCTAssertNil(installation.profileHeader)
         XCTAssertNil(installation.profileTokenHeader)
-        XCTAssertNil(installation.siloDeviceIDHeader)
+        XCTAssertNil(installation.weFlixDeviceIDHeader)
         let installationJSON = try XCTUnwrap(
             JSONSerialization.jsonObject(with: installation.body) as? [String: Any]
         )
@@ -602,7 +602,7 @@ final class HostedDiagnosticsAPITests: XCTestCase {
             type: .abnormalExit,
             capturedAt: capturedAt,
             crash: DiagnosticsCrashInfo(
-                summary: "Silo did not shut down cleanly last time",
+                summary: "weflix did not shut down cleanly last time",
                 stackExcerpt: nil,
                 thread: nil,
                 foreground: true,
@@ -816,7 +816,7 @@ final class HostedDiagnosticsAPITests: XCTestCase {
         let privateDeviceSummaryID = "device_abcdefgh"
         let privateCompactUUIDKey = "5e884898da28047151d0e56f8dc62927"
         let metricKitBinaryUUID = "aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeeeee"
-        let privatePath = "/private/var/mobile/Containers/Data/Application/\(privateContainerID)/Silo.app/Silo"
+        let privatePath = "/private/var/mobile/Containers/Data/Application/\(privateContainerID)/WeFlix.app/WeFlix"
         let rawStack = Data(
             "frame \(privateBareUUID) \(privateBareItemID) \(privateBarePlanID)\n".utf8
         )
@@ -1393,11 +1393,11 @@ final class HostedDiagnosticsAPITests: XCTestCase {
     func testHostedProcessingAndRejectionStateRetainLocalEvidence() throws {
         let fixture = try makePendingHostedReport(label: "processing-state")
 
-        fixture.store.markHostedProcessing(fixture.report, shortID: "SILO-PROCESSING")
+        fixture.store.markHostedProcessing(fixture.report, shortID: "WEFLIX-PROCESSING")
         var persisted = try XCTUnwrap(
             fixture.store.listReports(for: fixture.report.binding.binding, now: Date()).first
         )
-        XCTAssertEqual(persisted.state.hostedRemoteShortID, "SILO-PROCESSING")
+        XCTAssertEqual(persisted.state.hostedRemoteShortID, "WEFLIX-PROCESSING")
         XCTAssertFalse(persisted.state.isPermanentFailure)
 
         fixture.store.markHostedRejected(persisted, code: "privacy_artifact_rejected")
@@ -2046,7 +2046,7 @@ final class HostedDiagnosticsAPITests: XCTestCase {
                     uploadDecision,
                     .uploaded(DiagnosticsUploadResponse(
                         reportId: fixture.reports[0].id.uuidString.lowercased(),
-                        shortId: "SILO-SELFHOSTED"
+                        shortId: "WEFLIX-SELFHOSTED"
                     ))
                 )
                 XCTAssertFalse(FileManager.default.fileExists(
@@ -2134,7 +2134,7 @@ final class HostedDiagnosticsAPITests: XCTestCase {
 
     func testHostedCapacityEvictionStagesRemoteDeletionBeforeRemovingEvidence() throws {
         let fixture = try makePendingHostedReport(label: "capacity-erasure")
-        fixture.store.markHostedProcessing(fixture.report, shortID: "SILO-CAPACITY")
+        fixture.store.markHostedProcessing(fixture.report, shortID: "WEFLIX-CAPACITY")
         let capturedAt = fixture.report.binding.capturedAtDate
 
         for index in 1...3 {
@@ -2152,7 +2152,7 @@ final class HostedDiagnosticsAPITests: XCTestCase {
 
     func testHostedExpiryStagesRemoteDeletionBeforeRemovingEvidence() throws {
         let fixture = try makePendingHostedReport(label: "expiry-erasure")
-        fixture.store.markHostedProcessing(fixture.report, shortID: "SILO-EXPIRY")
+        fixture.store.markHostedProcessing(fixture.report, shortID: "WEFLIX-EXPIRY")
         let afterExpiry = fixture.report.binding.capturedAtDate
             .addingTimeInterval(PendingReportStore.expiryInterval + 1)
 
@@ -2168,7 +2168,7 @@ final class HostedDiagnosticsAPITests: XCTestCase {
 
     func testBackgroundReadyPollRecordsSentHistory() async throws {
         let fixture = try makePendingHostedReport(label: "ready-history")
-        let shortID = "SILO-HISTORY"
+        let shortID = "WEFLIX-HISTORY"
         fixture.store.markHostedProcessing(fixture.report, shortID: shortID)
         hostedStub.configureReportStatus(
             reportID: fixture.report.id,
@@ -2217,7 +2217,7 @@ final class HostedDiagnosticsAPITests: XCTestCase {
                 throw DiagnosticsStoreError.invalidHostedEnvelope
             }
         )
-        let shortID = "SILO-READY-LOCAL-FAILURE"
+        let shortID = "WEFLIX-READY-LOCAL-FAILURE"
         fixture.store.markHostedProcessing(fixture.report, shortID: shortID)
         hostedStub.configureReportStatus(
             reportID: fixture.report.id,
@@ -2263,7 +2263,7 @@ final class HostedDiagnosticsAPITests: XCTestCase {
 
     func testHostedProcessingStateIsAwaitingStatusInsteadOfAnotherPrompt() throws {
         let fixture = try makePendingHostedReport(label: "processing-prompt")
-        fixture.store.markHostedProcessing(fixture.report, shortID: "SILO-PROCESSING")
+        fixture.store.markHostedProcessing(fixture.report, shortID: "WEFLIX-PROCESSING")
 
         let report = try XCTUnwrap(fixture.store.report(id: fixture.report.id))
 
@@ -2274,7 +2274,7 @@ final class HostedDiagnosticsAPITests: XCTestCase {
     func testHostedRemoteLifecycleKeepsEvidenceUntilReportIsReady() async throws {
         for state in [DiagnosticsRemoteReportState.processing, .rejected, .ready] {
             let fixture = try makePendingHostedReport(label: "remote-\(state.rawValue)")
-            let shortID = "SILO-\(state.rawValue.uppercased())"
+            let shortID = "WEFLIX-\(state.rawValue.uppercased())"
             fixture.store.markHostedProcessing(fixture.report, shortID: shortID)
             hostedStub.configureReportStatus(
                 reportID: fixture.report.id,
@@ -2397,7 +2397,7 @@ final class HostedDiagnosticsAPITests: XCTestCase {
         XCTAssertNil(request.cookieHeader)
         XCTAssertNil(request.profileHeader)
         XCTAssertNil(request.profileTokenHeader)
-        XCTAssertNil(request.siloDeviceIDHeader)
+        XCTAssertNil(request.weFlixDeviceIDHeader)
     }
 
     func testCapabilitiesRejectUnexpectedCollectorIdentityBeforeSend() async throws {
@@ -2695,7 +2695,7 @@ final class HostedDiagnosticsAPITests: XCTestCase {
         _ kind: HostedErasureLedgerKind
     ) async throws {
         let fixture = try makePendingHostedReport(label: "corrupt-\(kind.fileName)")
-        fixture.store.markHostedProcessing(fixture.report, shortID: "SILO-QUARANTINED")
+        fixture.store.markHostedProcessing(fixture.report, shortID: "WEFLIX-QUARANTINED")
         let processingReport = try XCTUnwrap(
             fixture.store.listReports(now: Date()).first(where: { $0.id == fixture.report.id })
         )
@@ -2722,7 +2722,7 @@ final class HostedDiagnosticsAPITests: XCTestCase {
 
         hostedStub.configureReportStatus(
             reportID: fixture.report.id,
-            shortID: "SILO-QUARANTINED",
+            shortID: "WEFLIX-QUARANTINED",
             state: .ready,
             errorCode: nil
         )
@@ -2985,11 +2985,11 @@ final class HostedDiagnosticsAPITests: XCTestCase {
         )
         let destinationStore = DiagnosticsDestinationStore(defaults: defaults)
         destinationStore.select(.selfHosted)
-        let siloAPI = SiloAPI(http: http, tokenStore: tokenStore)
+        let weFlixAPI = WeFlixAPI(http: http, tokenStore: tokenStore)
         return DiagnosticsCoordinator(
-            api: DiagnosticsAPI(client: siloAPI.apiV2Client),
+            api: DiagnosticsAPI(client: weFlixAPI.apiV2Client),
             hostedAPI: try makeHostedUploadAPI(),
-            siloAPI: siloAPI,
+            weFlixAPI: weFlixAPI,
             consentStore: DiagnosticsConsentStore(defaults: defaults),
             destinationStore: destinationStore,
             pendingStore: pendingStore
@@ -3340,7 +3340,7 @@ private final class HostedDiagnosticsStub: @unchecked Sendable {
         let authorization: String?
         let profileHeader: String?
         let profileTokenHeader: String?
-        let siloDeviceIDHeader: String?
+        let weFlixDeviceIDHeader: String?
         let cookieHeader: String?
         let uploadToken: String?
         let contentType: String?
@@ -3355,7 +3355,7 @@ private final class HostedDiagnosticsStub: @unchecked Sendable {
             authorization = request.header("Authorization")
             profileHeader = request.header("X-Profile-Id")
             profileTokenHeader = request.header("X-Profile-Token")
-            siloDeviceIDHeader = request.header("X-Silo-Device-Id")
+            weFlixDeviceIDHeader = request.header("X-WeFlix-Device-Id")
             cookieHeader = request.header("Cookie")
             uploadToken = request.header("X-Upload-Token")
             contentType = request.header("Content-Type")
@@ -3539,7 +3539,7 @@ private final class HostedDiagnosticsStub: @unchecked Sendable {
         case ("POST", "/v1/installations"):
             return (201, #"{"installation_id":"install_apple_generated","installation_token":"generated-installation-token"}"#)
         case ("POST", "/v1/reports"):
-            return (201, #"{"report_id":"\#(id)","short_id":"SILO-APPLE1234","upload_token":"one-time-upload-token","expires_at":"2026-08-12T12:00:00Z"}"#)
+            return (201, #"{"report_id":"\#(id)","short_id":"WEFLIX-APPLE1234","upload_token":"one-time-upload-token","expires_at":"2026-08-12T12:00:00Z"}"#)
         case ("PUT", "/v1/reports/\(id)/bundle"):
             guard body == expectedBundle else {
                 return (400, #"{"error":"archive_mismatch"}"#)
@@ -3547,17 +3547,17 @@ private final class HostedDiagnosticsStub: @unchecked Sendable {
             return (
                 202,
                 putResponseBody
-                    ?? #"{"report_id":"\#(id)","short_id":"SILO-APPLE1234","state":"processing"}"#
+                    ?? #"{"report_id":"\#(id)","short_id":"WEFLIX-APPLE1234","state":"processing"}"#
             )
         case ("GET", "/v1/reports/\(id)"):
-            return (200, #"{"report_id":"\#(id)","short_id":"SILO-APPLE1234","state":"processing"}"#)
+            return (200, #"{"report_id":"\#(id)","short_id":"WEFLIX-APPLE1234","state":"processing"}"#)
         default:
             return (404, #"{"error":"not_found"}"#)
         }
     }
 }
 
-/// A self-hosted Silo's diagnostics routes on the shared stub.
+/// A self-hosted WeFlix's diagnostics routes on the shared stub.
 private final class SelfHostedDiagnosticsStub: @unchecked Sendable {
     enum UploadReply {
         case created
@@ -3601,7 +3601,7 @@ private final class SelfHostedDiagnosticsStub: @unchecked Sendable {
             let (reportID, upload) = lock.withLock { (self.reportID, self.upload) }
             switch upload {
             case .created:
-                return .json(#"{"report_id":"\#(reportID.uuidString.lowercased())","short_id":"SILO-SELFHOSTED"}"#, status: 201)
+                return .json(#"{"report_id":"\#(reportID.uuidString.lowercased())","short_id":"WEFLIX-SELFHOSTED"}"#, status: 201)
             case .problem(let status, let type):
                 return .json(#"{"type":"https://siloserver.org/docs/api/v2/problems/\#(type)","title":"t","status":\#(status),"detail":"d"}"#,
                              status: status, headers: ["Content-Type": "application/problem+json"])

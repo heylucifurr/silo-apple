@@ -34,7 +34,7 @@ struct PhoneSimilarRail: View {
     private func section(@ViewBuilder content: () -> some View) -> some View {
         VStack(alignment: .leading, spacing: 14) {
             PhoneSectionHeader(title: "More Like This")
-                .padding(.horizontal, SiloTheme.safePadding)
+                .padding(.horizontal, WeFlixTheme.safePadding)
             content()
         }
     }
@@ -51,17 +51,17 @@ struct PhoneSimilarRail: View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 12) {
                 ForEach(0..<4, id: \.self) { _ in
-                    RoundedRectangle(cornerRadius: SiloTheme.cornerRadius)
-                        .fill(Color.siloSurfaceElevated)
+                    RoundedRectangle(cornerRadius: WeFlixTheme.cornerRadius)
+                        .fill(Color.weFlixSurfaceElevated)
                         .frame(
-                            width: SiloTheme.posterCardWidth
+                            width: WeFlixTheme.posterCardWidth
                                 * uiCustomization.cardPresentation.posterSize.scale,
-                            height: SiloTheme.posterCardHeight
+                            height: WeFlixTheme.posterCardHeight
                                 * uiCustomization.cardPresentation.posterSize.scale
                         )
                 }
             }
-            .padding(.horizontal, SiloTheme.safePadding)
+            .padding(.horizontal, WeFlixTheme.safePadding)
             .padding(.vertical, 4)
         }
         .allowsHitTesting(false)
@@ -76,7 +76,7 @@ struct PhoneSimilarRail: View {
         items = []
 
         do {
-            let cards = try await SiloAPI.shared.recommendationsSimilar(
+            let cards = try await WeFlixAPI.shared.recommendationsSimilar(
                 contentId: contentId,
                 limit: 12
             )
@@ -101,7 +101,7 @@ struct PhoneSimilarRail: View {
 struct PhonePosterRail: View {
     let title: String
     let items: [SimilarPosterItem]
-    var aspectRatio: CGFloat = SiloTheme.posterCardWidth / SiloTheme.posterCardHeight
+    var aspectRatio: CGFloat = WeFlixTheme.posterCardWidth / WeFlixTheme.posterCardHeight
     var placeholderSymbol: String = ArtworkPlaceholderSymbol.fallback
     let onSelect: (String) -> Void
 
@@ -109,7 +109,7 @@ struct PhonePosterRail: View {
         if !items.isEmpty {
             VStack(alignment: .leading, spacing: 14) {
                 PhoneSectionHeader(title: title)
-                    .padding(.horizontal, SiloTheme.safePadding)
+                    .padding(.horizontal, WeFlixTheme.safePadding)
                 PhonePosterRailCards(
                     items: items,
                     aspectRatio: aspectRatio,
@@ -124,7 +124,7 @@ struct PhonePosterRail: View {
 /// The untitled card strip inside `PhonePosterRail`.
 struct PhonePosterRailCards: View {
     let items: [SimilarPosterItem]
-    var aspectRatio: CGFloat = SiloTheme.posterCardWidth / SiloTheme.posterCardHeight
+    var aspectRatio: CGFloat = WeFlixTheme.posterCardWidth / WeFlixTheme.posterCardHeight
     var placeholderSymbol: String = ArtworkPlaceholderSymbol.fallback
     let onSelect: (String) -> Void
 
@@ -150,7 +150,7 @@ struct PhonePosterRailCards: View {
             .padding(.vertical, 4)
             .phoneMediaRailBounds()
         }
-        .contentMargins(.horizontal, SiloTheme.safePadding, for: .scrollContent)
+        .contentMargins(.horizontal, WeFlixTheme.safePadding, for: .scrollContent)
         .mediaRailScrolling()
     }
 }
@@ -208,7 +208,7 @@ private struct PhonePosterCard: View {
     private var uiCustomization: UICustomizationPreferences { .shared }
 
     private var cardWidth: CGFloat {
-        SiloTheme.posterCardWidth * uiCustomization.cardPresentation.posterSize.scale
+        WeFlixTheme.posterCardWidth * uiCustomization.cardPresentation.posterSize.scale
     }
     private var cardHeight: CGFloat {
         cardWidth / aspectRatio
@@ -218,14 +218,14 @@ private struct PhonePosterCard: View {
         VStack(alignment: .leading, spacing: 6) {
             poster
             Text(item.title)
-                .font(.siloSubheadline)
-                .foregroundStyle(Color.siloOnSurface)
+                .font(.weFlixSubheadline)
+                .foregroundStyle(Color.weFlixOnSurface)
                 .lineLimit(2, reservesSpace: true)
                 .multilineTextAlignment(.leading)
             if let caption = item.subtitle ?? item.year.map(String.init) {
                 Text(caption)
-                    .font(.siloCaption)
-                    .foregroundColor(.siloSecondaryText)
+                    .font(.weFlixCaption)
+                    .foregroundColor(.weFlixSecondaryText)
             }
         }
         .frame(width: cardWidth, alignment: .leading)
@@ -243,7 +243,7 @@ private struct PhonePosterCard: View {
         )
             .frame(width: cardWidth, height: cardHeight)
             .clipped()
-            .clipShape(RoundedRectangle(cornerRadius: SiloTheme.cornerRadius))
+            .clipShape(RoundedRectangle(cornerRadius: WeFlixTheme.cornerRadius))
     }
 }
 #endif

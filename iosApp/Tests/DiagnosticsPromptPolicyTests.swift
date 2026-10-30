@@ -1,5 +1,5 @@
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 final class DiagnosticsPromptPolicyTests: XCTestCase {
     private let current = DiagnosticsBinding(serverInstanceID: "server-a", accountUserID: "account-a")

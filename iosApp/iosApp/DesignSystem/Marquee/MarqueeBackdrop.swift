@@ -157,9 +157,9 @@ struct BrandLightLayer: View, Animatable {
         }
     }
 
-    private static let blue = Color.siloBrandBlue
-    private static let red = Color.siloBrandRed
-    private static let orange = Color.siloBrandOrange
+    private static let blue = Color.weFlixBrandBlue
+    private static let red = Color.weFlixBrandRed
+    private static let orange = Color.weFlixBrandOrange
 
     /// Row-major 3×3 mesh colors for each stage.
     private static let palettes: [[Color]] = [

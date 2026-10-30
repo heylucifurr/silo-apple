@@ -2,13 +2,13 @@ import Foundation
 import Nuke
 import SwiftUI
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 final class ArtworkURLTests: XCTestCase {
     private let signedPath = "/api/v2/artwork/posters/a%2Fb%20c%252F.jpg?exp=123&sig=a%2Bb%2Fc%3D&key=1&key=2"
 
     func testSignedPathUsesOriginAndPreservesEncodedBytes() throws {
-        let server = URL(string: "https://media.example:8443/silo/base?ignored=1#fragment")!
+        let server = URL(string: "https://media.example:8443/weFlix/base?ignored=1#fragment")!
         let resolved = ArtworkURLResolver.resolve(signedPath, serverURL: server)
         XCTAssertEqual(resolved, "https://media.example:8443" + signedPath)
         XCTAssertEqual(URL(string: resolved)?.absoluteString, resolved)
@@ -185,8 +185,11 @@ final class ArtworkURLTests: XCTestCase {
         let tokens = TokenStore(keychain: SharedKeychain(service: name, accessGroup: nil),
             defaults: SharedDefaults(suite: suite, standard: suite))
         await tokens.setServerUrl("https://a.example")
-        let api = SiloAPI(http: HTTPClient(session: stub.makeSession(), tokenStore: tokens), tokenStore: tokens)
-        let probe = ImageSizeCapability(api: api, platformPrefersLargeImages: false)
+        let api = WeFlixAPI(http: HTTPClient(session: stub.makeSession(), tokenStore: tokens), tokenStore: tokens)
+        // `memory: nil` keeps the per-server remembered-capability path out of
+        // this test: what is under test is `reset()` clearing the probe, not a
+        // value an earlier test in this process saved for the active server.
+        let probe = ImageSizeCapability(api: api, platformPrefersLargeImages: false, memory: nil)
         stub.reply(200, #"{"state":"available","revision":"r1","param":"image_size","sizes":["large"],"widths":{},"original_max_width_px":1920,"storage_backend":"local","delivery":"server"}"#)
         await probe.refresh()
         XCTAssertEqual(stub.requests.last?.path, "/api/v2/images/capabilities")

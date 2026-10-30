@@ -190,12 +190,12 @@ struct AudiobookDetailContent<BelowOverview: View>: View {
         return VStack(alignment: .leading, spacing: 36) {
             if !chapters.isEmpty {
                 chaptersSection(chapters)
-                    .padding(.horizontal, SiloTheme.safePadding)
+                    .padding(.horizontal, WeFlixTheme.safePadding)
             }
 
             if audioParts.count > 1 {
                 partsSection(audioParts)
-                    .padding(.horizontal, SiloTheme.safePadding)
+                    .padding(.horizontal, WeFlixTheme.safePadding)
             }
 
             if !credits.isEmpty {
@@ -208,7 +208,7 @@ struct AudiobookDetailContent<BelowOverview: View>: View {
 
             if !otherNarrations.isEmpty {
                 narrationsSection
-                    .padding(.horizontal, SiloTheme.safePadding)
+                    .padding(.horizontal, WeFlixTheme.safePadding)
             }
 
             if let alsoByAuthor = detail.audiobook?.related?.alsoByAuthor, !alsoByAuthor.isEmpty {
@@ -216,7 +216,7 @@ struct AudiobookDetailContent<BelowOverview: View>: View {
             }
 
             detailsSection
-                .padding(.horizontal, SiloTheme.safePadding)
+                .padding(.horizontal, WeFlixTheme.safePadding)
 
             if let similar = detail.audiobook?.related?.similar, !similar.isEmpty {
                 coverRail(title: "More Like This", items: similar)
@@ -262,7 +262,7 @@ struct AudiobookDetailContent<BelowOverview: View>: View {
 
                 if chapters.count > chapterCollapseLimit {
                     Button {
-                        withAnimation(.easeInOut(duration: SiloTheme.normalDuration)) {
+                        withAnimation(.easeInOut(duration: WeFlixTheme.normalDuration)) {
                             showAllChapters.toggle()
                         }
                     } label: {
@@ -274,7 +274,7 @@ struct AudiobookDetailContent<BelowOverview: View>: View {
                                 .font(.system(size: 12, weight: .semibold))
                         }
                         .font(.system(size: 14, weight: .semibold))
-                        .foregroundStyle(Color.siloOnSurface.opacity(0.6))
+                        .foregroundStyle(Color.weFlixOnSurface.opacity(0.6))
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(.top, 12)
                         .contentShape(Rectangle())
@@ -317,18 +317,18 @@ struct AudiobookDetailContent<BelowOverview: View>: View {
             HStack(spacing: 13) {
                 Image(systemName: icon)
                     .font(.system(size: 11, weight: .bold))
-                    .foregroundStyle(Color.siloOnSurface)
+                    .foregroundStyle(Color.weFlixOnSurface)
                     .frame(width: 26, height: 26)
                     .background(Circle().fill(Color.white.opacity(0.10)))
                 Text(title)
                     .font(.system(size: 15))
-                    .foregroundStyle(Color.siloOnSurface)
+                    .foregroundStyle(Color.weFlixOnSurface)
                     .lineLimit(1)
                 Spacer()
                 Text(trailing)
                     .font(.system(size: 13))
                     .monospacedDigit()
-                    .foregroundStyle(Color.siloOnSurface.opacity(0.6))
+                    .foregroundStyle(Color.weFlixOnSurface.opacity(0.6))
             }
             .padding(.vertical, 11)
             .contentShape(Rectangle())
@@ -348,7 +348,7 @@ struct AudiobookDetailContent<BelowOverview: View>: View {
     private func creditsSection(_ credits: [CastMember]) -> some View {
         VStack(alignment: .leading, spacing: 14) {
             PhoneSectionHeader(title: creditsTitle)
-                .padding(.horizontal, SiloTheme.safePadding)
+                .padding(.horizontal, WeFlixTheme.safePadding)
             PhoneCastRail(cast: credits, onTap: onPersonTap)
         }
     }
@@ -409,24 +409,24 @@ struct AudiobookDetailContent<BelowOverview: View>: View {
                         HStack(spacing: 13) {
                             Image(systemName: "person.wave.2")
                                 .font(.system(size: 12, weight: .semibold))
-                                .foregroundStyle(Color.siloOnSurface)
+                                .foregroundStyle(Color.weFlixOnSurface)
                                 .frame(width: 26, height: 26)
                                 .background(Circle().fill(Color.white.opacity(0.10)))
                             VStack(alignment: .leading, spacing: 2) {
                                 Text(narrationLabel(narration))
                                     .font(.system(size: 15))
-                                    .foregroundStyle(Color.siloOnSurface)
+                                    .foregroundStyle(Color.weFlixOnSurface)
                                     .lineLimit(1)
                                 if let year = narration.year {
                                     Text(String(year))
                                         .font(.system(size: 13))
-                                        .foregroundStyle(Color.siloOnSurface.opacity(0.6))
+                                        .foregroundStyle(Color.weFlixOnSurface.opacity(0.6))
                                 }
                             }
                             Spacer()
                             Image(systemName: "chevron.right")
                                 .font(.system(size: 13, weight: .semibold))
-                                .foregroundStyle(Color.siloOnSurface.opacity(0.4))
+                                .foregroundStyle(Color.weFlixOnSurface.opacity(0.4))
                         }
                         .padding(.vertical, 11)
                         .contentShape(Rectangle())

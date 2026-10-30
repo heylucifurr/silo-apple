@@ -1,6 +1,6 @@
 //
 //  SeekIntervalPreferences.swift
-//  Silo (iOS + tvOS + macOS)
+//  WeFlix (iOS + tvOS + macOS)
 //
 //  The active profile's skip intervals, read from and written to the server at
 //  `scope=profile`. Every relative-seek surface asks this store for the
@@ -35,7 +35,7 @@ enum SeekIntervalSyncState: Equatable, Sendable {
         case .supported:
             return nil
         case .serverUpgradeRequired:
-            return "Update this Silo server to choose skip intervals. Playback uses the built-in intervals."
+            return "Update this weflix server to choose skip intervals. Playback uses the built-in intervals."
         case .unavailable:
             return "Skip intervals can be changed once this server is reachable."
         }
@@ -100,7 +100,7 @@ final class SeekIntervalPreferences {
 
     init(
         defaults: SharedDefaults = .shared,
-        transport: ProfileScopedSettingTransport = SiloProfileScopedSettingTransport(),
+        transport: ProfileScopedSettingTransport = WeFlixProfileScopedSettingTransport(),
         requestIdentity: @escaping @MainActor () -> HTTPRequestIdentity? =
             SeekIntervalPreferences.activeRequestIdentity
     ) {

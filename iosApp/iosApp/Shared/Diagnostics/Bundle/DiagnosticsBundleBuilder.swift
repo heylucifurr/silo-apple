@@ -765,7 +765,7 @@ struct DiagnosticsBundleBuilder {
 
     private static let hostedPrivateIdentifierAssignmentRegex: NSRegularExpression = {
         // CMP messages predate typed diagnostic attributes and include private
-        // Silo correlation IDs as key=value text. Remove the full assignment
+        // WeFlix correlation IDs as key=value text. Remove the full assignment
         // so neither a private value nor a rejected identity-like key reaches
         // the collector. The matcher accepts camelCase and snake_case and
         // covers current playback/file/item/media/plan identifiers.

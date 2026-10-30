@@ -68,8 +68,8 @@ enum HomeSectionsMutation {
     /// The show the server drops for this card's dismissal: an episode's
     /// series, or the series itself. Movies and books go one card at a time.
     private static func droppedSeriesId(for item: SectionItem) -> String? {
-        if SiloMediaType.isSeries(item.type) { return item.contentId }
-        guard SiloMediaType.isEpisode(item.type),
+        if WeFlixMediaType.isSeries(item.type) { return item.contentId }
+        guard WeFlixMediaType.isEpisode(item.type),
               let seriesId = item.seriesId, !seriesId.isEmpty else { return nil }
         return seriesId
     }

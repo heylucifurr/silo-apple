@@ -1,6 +1,6 @@
 //
 //  ImageSizeCapabilityTests.swift
-//  SiloTests
+//  WeFlixTests
 //
 //  Decoding + query-injection tests for image-size selection. The payload
 //  is the vendored server fixture for `GET /api/v2/images/capabilities`,
@@ -15,7 +15,7 @@
 
 import XCTest
 import Foundation
-@testable import Silo
+@testable import WeFlix
 
 final class ImageSizeCapabilityTests: XCTestCase {
 
@@ -258,7 +258,10 @@ final class ImageSizeCapabilityTests: XCTestCase {
     /// `reset()` drops the probe so a later profile/server never inherits
     /// the previous one's capability.
     func testResetClearsCapability() {
-        let capability = ImageSizeCapability()
+        // Isolated from `UserDefaults`, which a test earlier in this process may
+        // have written for the active server. What is under test is `reset()`
+        // dropping the probe, not what another server remembered.
+        let capability = ImageSizeCapability(memory: nil)
         XCTAssertNil(capability.capability)
         capability.reset()
         XCTAssertNil(capability.capability)

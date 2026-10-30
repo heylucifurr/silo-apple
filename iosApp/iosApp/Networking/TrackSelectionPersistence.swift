@@ -16,7 +16,7 @@
 //  never playback. These explicit writes are the only way a pick
 //  persists; automatic selections never call them. The server folds
 //  saved prefs into `WatchDetail.effective_*` /
-//  `FileVersion.effectiveAudioTrackIndex`; `SiloAPI.watchDetail` passes
+//  `FileVersion.effectiveAudioTrackIndex`; `WeFlixAPI.watchDetail` passes
 //  `settlePendingWrites` first so a read right after a pick (Next Up,
 //  the detail page) neither races the write nor loses it.
 //
@@ -28,7 +28,7 @@ import Synchronization
 enum TrackSelectionPersistence {
 
     private static let logger = Logger(
-        subsystem: Bundle.main.bundleIdentifier ?? "org.siloserver.silo",
+        subsystem: Bundle.main.bundleIdentifier ?? "me.weflix",
         category: "TrackPrefs"
     )
 
@@ -168,7 +168,7 @@ enum TrackSelectionPersistence {
 
     @discardableResult
     static func saveAudio(prefKey: String, request: AudioPrefRequest,
-                          client: APIv2Client = SiloAPI.shared.apiV2Client,
+                          client: APIv2Client = WeFlixAPI.shared.apiV2Client,
                           tokenStore: TokenStore = .shared) -> Task<Void, Never> {
         dispatch("audio pref save", kind: .audio, prefKey: prefKey, intent: .audio(request),
                  tokenStore: tokenStore) { auth in
@@ -178,7 +178,7 @@ enum TrackSelectionPersistence {
 
     @discardableResult
     static func saveSubtitle(prefKey: String, request: SubtitlePrefRequest,
-                             client: APIv2Client = SiloAPI.shared.apiV2Client,
+                             client: APIv2Client = WeFlixAPI.shared.apiV2Client,
                              tokenStore: TokenStore = .shared) -> Task<Void, Never> {
         dispatch("subtitle pref save", kind: .subtitle, prefKey: prefKey, intent: .subtitle(request),
                  tokenStore: tokenStore) { auth in
@@ -191,7 +191,7 @@ enum TrackSelectionPersistence {
     /// 204 whether or not an override existed.
     @discardableResult
     static func clearAudio(prefKey: String,
-                           client: APIv2Client = SiloAPI.shared.apiV2Client,
+                           client: APIv2Client = WeFlixAPI.shared.apiV2Client,
                            tokenStore: TokenStore = .shared) -> Task<Void, Never> {
         dispatch("audio pref clear", kind: .audio, prefKey: prefKey, intent: .cleared,
                  tokenStore: tokenStore) { auth in
@@ -201,7 +201,7 @@ enum TrackSelectionPersistence {
 
     @discardableResult
     static func clearSubtitle(prefKey: String,
-                              client: APIv2Client = SiloAPI.shared.apiV2Client,
+                              client: APIv2Client = WeFlixAPI.shared.apiV2Client,
                               tokenStore: TokenStore = .shared) -> Task<Void, Never> {
         dispatch("subtitle pref clear", kind: .subtitle, prefKey: prefKey, intent: .cleared,
                  tokenStore: tokenStore) { auth in

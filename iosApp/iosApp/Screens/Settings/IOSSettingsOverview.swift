@@ -32,16 +32,19 @@ struct IOSSettingsOverview: View {
                 )
             }
 
-            SettingsSearchField(text: $searchText)
-                .listRowInsets(EdgeInsets(top: 4, leading: 0, bottom: 0, trailing: 0))
-                .listRowBackground(Color.clear)
-                .listRowSeparator(.hidden)
+            if AppVisibility.showsSettingsSearch {
+                SettingsSearchField(text: $searchText)
+                    .listRowInsets(EdgeInsets(top: 4, leading: 0, bottom: 0, trailing: 0))
+                    .listRowBackground(Color.clear)
+                    .listRowSeparator(.hidden)
+            }
 
             if hasSearchResults {
                 preferencesSection
                 playbackSection
 
-                if diagnosticsModel.shouldShowSettings && matchesDiagnostics {
+                if AppVisibility.showsDiagnostics,
+                   diagnosticsModel.shouldShowSettings, matchesDiagnostics {
                     diagnosticsSection
                 }
 
@@ -71,15 +74,15 @@ struct IOSSettingsOverview: View {
                     .listRowBackground(Color.clear)
             }
         }
-        .siloGroupedListStyle()
-        .siloScrollContentBackgroundHidden()
+        .weFlixGroupedListStyle()
+        .weFlixScrollContentBackgroundHidden()
         .scrollDismissesKeyboard(.interactively)
         .frame(maxWidth: 760)
         .frame(maxWidth: .infinity)
-        .background(Color.siloBackground.ignoresSafeArea())
+        .background(Color.weFlixBackground.ignoresSafeArea())
         .navigationTitle("Settings")
-        .siloNavigationTitleDisplayMode(.large)
-        .siloToolbarColorSchemeDark()
+        .weFlixNavigationTitleDisplayMode(.large)
+        .weFlixToolbarColorSchemeDark()
         .onAppear(perform: navPrefs.refresh)
         .task { await accountSignIn.load() }
         .sheet(isPresented: $showsSignInTV) {
@@ -210,16 +213,18 @@ struct IOSSettingsOverview: View {
 
     private var connectionSection: some View {
         Section("Connection") {
-            Button {
-                router.navigate(to: .serverList)
-            } label: {
-                SettingsOverviewRow(
-                    title: "Server",
-                    subtitle: "Manage this device's Silo connection",
-                    systemImage: "server.rack",
-                    value: viewModel.serverDisplayName,
-                    showsChevron: true
-                )
+            if AppVisibility.showsServerSettings {
+                Button {
+                    router.navigate(to: .serverList)
+                } label: {
+                    SettingsOverviewRow(
+                        title: "Server",
+                        subtitle: "Manage this device's weflix connection",
+                        systemImage: "server.rack",
+                        value: viewModel.serverDisplayName,
+                        showsChevron: true
+                    )
+                }
             }
             if matchesSignInTV {
                 Button {
@@ -244,37 +249,39 @@ struct IOSSettingsOverview: View {
         Section("About") {
             SettingsOverviewRow(
                 title: "Version",
-                subtitle: "Installed Silo app version",
+                subtitle: "Installed weflix app version",
                 systemImage: "info.circle.fill",
                 value: SettingsViewModel.versionString
             )
 
-            Link(destination: SiloLegalLinks.privacyPolicy) {
-                SettingsOverviewRow(
-                    title: "Privacy Policy",
-                    subtitle: "Learn how Silo handles your information",
-                    systemImage: "hand.raised.fill",
-                    showsChevron: true
-                )
-            }
+            if AppVisibility.showsLegalRows {
+                Link(destination: WeFlixLegalLinks.privacyPolicy) {
+                    SettingsOverviewRow(
+                        title: "Privacy Policy",
+                        subtitle: "Learn how weflix handles your information",
+                        systemImage: "hand.raised.fill",
+                        showsChevron: true
+                    )
+                }
 
-            NavigationLink {
-                AcknowledgementsView()
-            } label: {
-                SettingsOverviewRow(
-                    title: "Acknowledgements",
-                    subtitle: "Services Silo uses, and open source licenses",
-                    systemImage: "curlybraces"
-                )
-            }
+                NavigationLink {
+                    AcknowledgementsView()
+                } label: {
+                    SettingsOverviewRow(
+                        title: "Acknowledgements",
+                        subtitle: "Services weflix uses, and open source licenses",
+                        systemImage: "curlybraces"
+                    )
+                }
 
-            Link(destination: SiloLegalLinks.sourceCode) {
-                SettingsOverviewRow(
-                    title: "Source Code",
-                    subtitle: "Get Silo's source code under the AGPL",
-                    systemImage: "chevron.left.forwardslash.chevron.right",
-                    showsChevron: true
-                )
+                Link(destination: WeFlixLegalLinks.sourceCode) {
+                    SettingsOverviewRow(
+                        title: "Source Code",
+                        subtitle: "Get weflix's source code under the AGPL",
+                        systemImage: "chevron.left.forwardslash.chevron.right",
+                        showsChevron: true
+                    )
+                }
             }
         }
     }
@@ -283,7 +290,8 @@ struct IOSSettingsOverview: View {
         // A query naming the section shows every row; otherwise each row
         // appears only for its own terms.
         Section("Extra Features") {
-            if matchesExperimentalName || matchesAudiobooks {
+            if AppVisibility.showsAudiobooksToggle,
+               matchesExperimentalName || matchesAudiobooks {
                 SettingsOverviewToggleRow(
                     title: "Show Audiobooks",
                     subtitle: "Add Audiobooks to the main navigation",
@@ -355,7 +363,11 @@ struct IOSSettingsOverview: View {
     }
 
     private var matchesConnectionSection: Bool {
-        matches("server", "connection", viewModel.serverDisplayName) || matchesSignInTV
+        // The Server row is the whole point of the section, so with it off only
+        // a matching "Sign in a TV" keeps the section — and its header — alive.
+        (AppVisibility.showsServerSettings
+            && matches("server", "connection", viewModel.serverDisplayName))
+            || matchesSignInTV
     }
 
     private var matchesAboutSection: Bool {
@@ -383,7 +395,7 @@ struct IOSSettingsOverview: View {
 
     private var matchesExperimentalSection: Bool {
         matchesExperimentalName
-            || matchesAudiobooks
+            || (AppVisibility.showsAudiobooksToggle && matchesAudiobooks)
             || ExperimentalFeature.allCases.contains { matches($0.title, $0.subtitle) }
     }
 
@@ -399,7 +411,8 @@ struct IOSSettingsOverview: View {
         matchesGeneral
             || matchesInterface
             || matchesPlaybackSection
-            || (diagnosticsModel.shouldShowSettings && matchesDiagnostics)
+            || (AppVisibility.showsDiagnostics
+                && diagnosticsModel.shouldShowSettings && matchesDiagnostics)
             || matchesAccountSignIn
             || matchesConnectionSection
             || matchesExperimentalSection

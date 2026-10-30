@@ -1,6 +1,6 @@
 import XCTest
 import Foundation
-@testable import Silo
+@testable import WeFlix
 
 final class DetailVersionSelectionTests: XCTestCase {
 
@@ -901,7 +901,7 @@ final class DetailVersionSelectionTests: XCTestCase {
           "audiobook": {
             "authors": [{ "name": "Ada Writer" }],
             "narrators": [{ "name": "Nia Voice" }],
-            "publisher": "Silo Press",
+            "publisher": "weflix Press",
             "total_duration_seconds": 1800
           },
           "versions": [
@@ -927,7 +927,7 @@ final class DetailVersionSelectionTests: XCTestCase {
         XCTAssertTrue(detail.type == "audiobook")
         XCTAssertTrue(detail.audiobook?.authors.first?.name == "Ada Writer")
         XCTAssertTrue(detail.audiobook?.narrators.first?.name == "Nia Voice")
-        XCTAssertTrue(detail.audiobook?.publisher == "Silo Press")
+        XCTAssertTrue(detail.audiobook?.publisher == "weflix Press")
         XCTAssertTrue(detail.audiobook?.totalDurationSeconds == 1800)
         XCTAssertTrue(detail.versions?.first?.presentationKind == "audiobook_part")
         XCTAssertTrue(detail.versions?.first?.presentationGroupKey == "book-1")
@@ -936,11 +936,11 @@ final class DetailVersionSelectionTests: XCTestCase {
     }
 
     func testAudiobookMediaTypeNormalization() {
-        XCTAssertTrue(SiloMediaType.isAudiobook("audiobook"))
-        XCTAssertTrue(SiloMediaType.isAudiobook("audiobooks"))
-        XCTAssertTrue(SiloMediaType.isAudiobook("book"))
-        XCTAssertTrue(SiloMediaType.isAudiobook("books"))
-        XCTAssertFalse(SiloMediaType.isAudiobook("movies"))
+        XCTAssertTrue(WeFlixMediaType.isAudiobook("audiobook"))
+        XCTAssertTrue(WeFlixMediaType.isAudiobook("audiobooks"))
+        XCTAssertTrue(WeFlixMediaType.isAudiobook("book"))
+        XCTAssertTrue(WeFlixMediaType.isAudiobook("books"))
+        XCTAssertFalse(WeFlixMediaType.isAudiobook("movies"))
 
         let library = Library(
             id: 10,

@@ -1,6 +1,6 @@
 import Foundation
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 /// Personal collections on the v2 wire: the editor's observed ETag rides on
 /// the mutation as `If-Match` under the same owner, every write asserts its

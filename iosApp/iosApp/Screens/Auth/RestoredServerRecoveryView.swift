@@ -42,7 +42,7 @@ final class RestoredServerRecoveryCoordinator {
                 let destination = await resolveDestination()
                 router.resetAfterServerResolution(to: destination)
             } else {
-                error = "Silo couldn't forget this server. Try again."
+                error = "weflix couldn't forget this server. Try again."
             }
             isForgetting = false
             forgetTask = nil
@@ -92,7 +92,7 @@ struct RestoredServerRecoveryView: View {
                 Text(title)
                     .font(.system(size: MarqueeMetrics.heroFont, weight: .heavy))
                     .kerning(-2)
-                    .foregroundStyle(Color.siloOnSurface)
+                    .foregroundStyle(Color.weFlixOnSurface)
                     .lineLimit(2)
                     .minimumScaleFactor(0.6)
                     .padding(.top, 52)
@@ -148,7 +148,7 @@ struct RestoredServerRecoveryView: View {
         .defaultFocus($focusedAction, .retry, priority: .userInitiated)
         .marqueeTVSeedFocus($focusedAction, .retry)
         .animation(.easeInOut(duration: 0.2), value: error)
-        .animation(.easeOut(duration: SiloTheme.fastDuration), value: showForgetConfirmation)
+        .animation(.easeOut(duration: WeFlixTheme.fastDuration), value: showForgetConfirmation)
         .onDisappear(perform: cancelWork)
     }
     #endif
@@ -157,7 +157,7 @@ struct RestoredServerRecoveryView: View {
     private var standardBody: some View {
         MarqueeStage(scrim: .bottom, frostStart: 0.45) {
             MarqueeTopBar {
-                SiloWordmarkView(width: 92)
+                WeFlixWordmarkView(width: 92)
             } trailing: { EmptyView() }
         } content: {
             serverCard
@@ -225,7 +225,7 @@ struct RestoredServerRecoveryView: View {
         case .needsSetup: return "This server isn't ready"
         case .serverNotRecognized: return "Can't open this server"
         case .serverUpdateRequired: return "Server update required"
-        case .appUpdateRequired: return "Update Silo"
+        case .appUpdateRequired: return "Update weflix"
         }
     }
 
@@ -235,7 +235,7 @@ struct RestoredServerRecoveryView: View {
         case .needsSetup:
             return "Ask the server administrator to finish setup, then try again. \(keptSignIn)"
         case .serverNotRecognized:
-            return "The server may have moved, been reset, or this address may no longer point to Silo. \(keptSignIn)"
+            return "The server may have moved, been reset, or this address may no longer point to weflix. \(keptSignIn)"
         case .serverUpdateRequired:
             return "\(UpdateRequirement.serverMessage) \(keptSignIn)"
         case .appUpdateRequired:
@@ -293,11 +293,11 @@ struct RestoredServerRecoveryView: View {
         case .serverRecovery(.needsSetup):
             return "This server still needs administrator setup."
         case .serverRecovery(.serverNotRecognized):
-            return "This address still doesn't look like a Silo server."
+            return "This address still doesn't look like a weflix server."
         case .serverRecovery(.serverUpdateRequired):
             return "This server still needs to be updated."
         case .serverRecovery(.appUpdateRequired):
-            return "This server still requires a newer version of Silo."
+            return "This server still requires a newer version of weflix."
         case .indeterminate:
             return "We still can't reach this server. Your saved sign-in information is unchanged."
         case .valid, .needsLogin, .identityChanged:

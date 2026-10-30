@@ -1,0 +1,801 @@
+#if os(iOS)
+import Foundation
+import SwiftUI
+
+extension View {
+    /// Shows the TV remote as a sheet, or over the whole window where an
+    /// iPhone sheet can't fill it. On the iPhone Duo's open display iOS 27.1
+    /// caps a sheet at about 650pt wide, and on its folded screen the sheet
+    /// is an inset card with the page showing at its edges, so on both the
+    /// remote covers the window. Its Minimize button closes it.
+    ///
+    /// When `coversWindow` changes while the remote is up, it moves between
+    /// the two, and the one it leaves must not close it.
+    func weFlixRemoteControl(
+        isPresented: Binding<Bool>,
+        coversWindow: Bool,
+        controller: WeFlixControlClient,
+        onDismiss: (() -> Void)? = nil
+    ) -> some View {
+        let covers = coversWindow && UIDevice.current.userInterfaceIdiom == .phone
+        return sheet(isPresented: Binding(
+            get: { isPresented.wrappedValue && !covers },
+            set: { if $0 || !covers { isPresented.wrappedValue = $0 } }
+        ), onDismiss: onDismiss) {
+            WeFlixControlRemoteView(controller: controller)
+                .presentationDetents([.large])
+        }
+        .fullScreenCover(isPresented: Binding(
+            get: { isPresented.wrappedValue && covers },
+            set: { if $0 || covers { isPresented.wrappedValue = $0 } }
+        ), onDismiss: onDismiss) {
+            WeFlixControlRemoteView(controller: controller)
+        }
+    }
+}
+
+/// Full-screen TV remote: connection states, toolbar, and hardware-volume
+/// interception around `RemoteNowPlayingContent`.
+struct WeFlixControlRemoteView: View {
+    let controller: WeFlixControlClient
+    @Environment(\.dismiss) private var dismiss
+    @Environment(\.scenePhase) private var scenePhase
+    @State private var artwork = WeFlixControlArtworkResolver()
+    @State private var isShowingPicker = false
+    @State private var volumeButtons = RemoteHardwareVolumeInterceptor()
+
+    var body: some View {
+        NavigationStack {
+            ZStack {
+                HiddenVolumeHost(interceptor: volumeButtons)
+                    .frame(width: 1, height: 1)
+                    .opacity(0.0001)
+                    .allowsHitTesting(false)
+                    .accessibilityHidden(true)
+                WeFlixControlArtworkBackground(urlString: artwork.backdropURL ?? artwork.posterURL)
+                content
+            }
+            .navigationTitle("")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    Button {
+                        controller.hideRemoteControl()
+                        dismiss()
+                    } label: {
+                        Image(systemName: "chevron.down")
+                            .font(.system(size: 16, weight: .semibold))
+                    }
+                    .accessibilityLabel("Minimize")
+                }
+                ToolbarItem(placement: .topBarTrailing) {
+                    RemoteMoreOptionsMenu(
+                        supportsVideoGravity: controller.state?.supportsVideoGravity == true,
+                        videoGravity: controller.state?.videoGravity,
+                        onChooseTV: { isShowingPicker = true },
+                        onStop: { controller.send(.stop) },
+                        onSetVideoGravity: { controller.send(.setVideoGravity($0)) },
+                        onDisconnect: {
+                            controller.disconnect()
+                            dismiss()
+                        }
+                    )
+                    .equatable()
+                }
+            }
+            .sheet(isPresented: $isShowingPicker) {
+                WeFlixControlTargetPickerView(request: nil, controller: controller)
+            }
+            .alert(
+                "Replace What's Playing?",
+                isPresented: Binding(
+                    get: { controller.pendingReplace != nil },
+                    // Buttons run before the alert dismisses, so Replace has
+                    // already taken the pending launch by the time this fires.
+                    set: { if !$0 { controller.cancelReplace() } }
+                ),
+                presenting: controller.pendingReplace
+            ) { _ in
+                Button("Replace") { controller.confirmReplace() }
+                Button("Cancel", role: .cancel) { controller.cancelReplace() }
+            } message: { pending in
+                Text(pending.message)
+            }
+        }
+        .preferredColorScheme(.dark)
+        .onAppear {
+            volumeButtons.onVolumeStep = { step in
+                controller.stepVolumeOptimistic(step)
+            }
+            updateVolumeInterception()
+        }
+        .onDisappear { volumeButtons.stop() }
+        .onChange(of: scenePhase) { updateVolumeInterception() }
+        .onChange(of: hasActivePlayback) { updateVolumeInterception() }
+        .onChange(of: controller.volumeIsMuteOnly) { updateVolumeInterception() }
+        .task(id: controller.state?.contentId) {
+            await artwork.resolve(contentId: controller.state?.contentId)
+        }
+    }
+
+    /// A connected-but-idle TV still publishes state, with no content id. It has
+    /// no player to route volume at, so commands come back `player_not_ready`;
+    /// interception there would only cost the phone its own volume buttons.
+    private var hasActivePlayback: Bool {
+        !(controller.state?.contentId ?? "").isEmpty
+    }
+
+    /// Hardware-volume interception is live only while the scene is active and
+    /// the TV is actually playing something: an inactive scene must return the
+    /// buttons to the phone, and without playback a press reaches nothing. A
+    /// TV that can only mute has no level for the buttons to step.
+    private func updateVolumeInterception() {
+        if scenePhase == .active, hasActivePlayback, !controller.volumeIsMuteOnly {
+            volumeButtons.start()
+        } else {
+            volumeButtons.stop()
+        }
+    }
+
+    @ViewBuilder
+    private var content: some View {
+        if controller.isReconnecting {
+            reconnectingView
+        } else if controller.state != nil, !hasActivePlayback {
+            idleConnectedView
+        } else if let state = controller.state {
+            RemoteNowPlayingContent(
+                state: state,
+                clock: controller.clock,
+                targetName: controller.activeTarget?.name,
+                posterURL: artwork.posterURL ?? artwork.backdropURL,
+                onCommand: { controller.send($0) },
+                onTogglePlayPause: { controller.togglePlayPauseOptimistic() },
+                skipIntervals: controller.skipIntervals,
+                onSeek: { controller.seekOptimistic(to: $0) },
+                onPlayNext: { controller.playNext() },
+                volumeIsMuteOnly: controller.volumeIsMuteOnly,
+                supportsPlaybackSpeed: controller.supportsPlaybackSpeed,
+                onSetVolume: { controller.setVolume($0) },
+                onSetMuted: { controller.setMuted($0) }
+            )
+        } else {
+            connectingView
+        }
+    }
+
+    private var idleConnectedView: some View {
+        VStack(spacing: 18) {
+            Image(systemName: "appletvremote.gen4")
+                .font(.system(size: 44, weight: .medium))
+                .foregroundStyle(Color.weFlixOnSurface)
+            Text("Connected to \(controller.activeTarget?.name ?? "WeFlix TV")")
+                .font(.title3.weight(.semibold))
+                .foregroundStyle(Color.weFlixOnSurface)
+            Text("Pick something from your library to start playing.")
+                .font(.subheadline)
+                .multilineTextAlignment(.center)
+                .foregroundStyle(Color.weFlixSecondaryText)
+        }
+        .padding(32)
+    }
+
+    private var reconnectingView: some View {
+        VStack(spacing: 18) {
+            ProgressView()
+            Text("Reconnecting to \(controller.lastTarget?.name ?? "WeFlix TV")…")
+                .font(.headline)
+                .foregroundStyle(Color.weFlixSecondaryText)
+            Text(controller.lastTarget?.transport.isRoku == true
+                 ? "Make sure weflix is open on the Roku and it's on the same network."
+                 : "Make sure the TV is on and on the same network.")
+                .font(.subheadline)
+                .multilineTextAlignment(.center)
+                .foregroundStyle(Color.weFlixSecondaryText)
+            Button {
+                controller.cancelReconnect()
+                dismiss()
+            } label: {
+                Text("Stop Reconnecting")
+                    .font(.subheadline.weight(.semibold))
+            }
+            .buttonStyle(.bordered)
+            .tint(Color.weFlixOnSurface)
+        }
+        .padding(32)
+    }
+
+    private var connectingView: some View {
+        VStack(spacing: 18) {
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .fill(Color.weFlixSurfaceElevated)
+                .frame(width: 150, height: 216)
+            if let error = controller.errorMessage, !error.isEmpty {
+                Text(error)
+                    .font(.subheadline)
+                    .foregroundStyle(Color.weFlixOnSurface)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, 14)
+                    .padding(.vertical, 10)
+                    .background(RoundedRectangle(cornerRadius: 12, style: .continuous).fill(Color.weFlixError.opacity(0.9)))
+                Button {
+                    isShowingPicker = true
+                } label: {
+                    Label("Choose a TV", systemImage: "tv")
+                        .font(.subheadline.weight(.semibold))
+                }
+                .buttonStyle(.bordered)
+                .tint(Color.weFlixOnSurface)
+            } else {
+                ProgressView()
+                Text("Connecting to \(controller.activeTarget?.name ?? "WeFlix TV")…")
+                    .font(.headline)
+                    .foregroundStyle(Color.weFlixSecondaryText)
+            }
+        }
+        .padding(24)
+    }
+}
+
+/// Pure presentational now-playing layout — no controller dependency, so it
+/// previews with mock `WeFlixControlPlaybackState`.
+private struct RemoteNowPlayingContent: View {
+    let state: WeFlixControlPlaybackState
+    let clock: RemotePlaybackClock
+    let targetName: String?
+    let posterURL: String?
+    let onCommand: (WeFlixControlCommand) -> Void
+    let onTogglePlayPause: () -> Void
+    /// The profile's video intervals, or 10/30 on servers without them.
+    let skipIntervals: SeekIntervalPair
+    let onSeek: (Double) -> Void
+    let onPlayNext: () -> Void
+    /// The TV can mute but not set a level: a mute toggle replaces the slider.
+    var volumeIsMuteOnly = false
+    /// False for a TV that can't change speed: the speed menu is hidden.
+    var supportsPlaybackSpeed = true
+    let onSetVolume: (Double) -> Void
+    let onSetMuted: (Bool) -> Void
+
+    @State private var scrubPreview: Double?
+    @State private var scrubSettleTask: Task<Void, Never>?
+
+    var body: some View {
+        GeometryReader { proxy in
+            if Self.splits(proxy.size) {
+                splitLayout
+            } else {
+                stackedLayout
+            }
+        }
+    }
+
+    /// A wide, short iPhone window (the iPhone Duo's open display) puts
+    /// what's playing beside the controls instead of stacking them in its
+    /// height. iPad keeps the stacked remote.
+    static func splits(_ size: CGSize) -> Bool {
+        UIDevice.current.userInterfaceIdiom == .phone
+            && size.width >= 700 && size.width >= size.height * 1.2
+    }
+
+    private var stackedLayout: some View {
+        VStack(spacing: 0) {
+            artwork
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .padding(.vertical, 12)
+            titleBlock
+            playingOnPill.padding(.top, 10)
+            scrubber.padding(.top, 24)
+            transport.padding(.top, 20)
+            volumeRow.padding(.top, 20)
+            secondaryControls.padding(.top, 20)
+            errorRow
+        }
+        .padding(.horizontal, 24)
+        .padding(.bottom, 12)
+    }
+
+    private var splitLayout: some View {
+        HStack(spacing: 48) {
+            VStack(spacing: 0) {
+                Spacer(minLength: 0)
+                artwork
+                titleBlock.padding(.top, 20)
+                playingOnPill.padding(.top, 10)
+                Spacer(minLength: 0)
+            }
+            .frame(maxWidth: .infinity)
+
+            // Controls sit at the bottom, within reach of the thumbs.
+            VStack(spacing: 0) {
+                Spacer(minLength: 0)
+                scrubber
+                transport.padding(.top, 32)
+                volumeRow.padding(.top, 32)
+                secondaryControls.padding(.top, 32)
+                errorRow
+            }
+            .frame(maxWidth: .infinity)
+        }
+        .padding(.horizontal, 32)
+        .padding(.top, 16)
+        .padding(.bottom, 24)
+    }
+
+    @ViewBuilder
+    private var errorRow: some View {
+        if let error = state.error, !error.isEmpty {
+            errorBanner(error).padding(.top, 12)
+        }
+    }
+
+    private var artwork: some View {
+        Group {
+            if let posterURL, !posterURL.isEmpty {
+                AsyncImageView(url: posterURL, contentMode: .fit)
+            } else {
+                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                    .fill(Color.weFlixSurfaceElevated)
+                    .aspectRatio(2.0 / 3.0, contentMode: .fit)
+                    .overlay {
+                        Image(systemName: "tv")
+                            .font(.system(size: 36))
+                            .foregroundStyle(Color.weFlixSecondaryText)
+                    }
+            }
+        }
+        .frame(maxHeight: 300)
+        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+        .shadow(color: .black.opacity(0.4), radius: 18, y: 8)
+    }
+
+    private var titleBlock: some View {
+        VStack(spacing: 4) {
+            Text(state.title.isEmpty ? "Loading" : state.title)
+                .font(.title2.weight(.semibold))
+                .multilineTextAlignment(.center)
+                .lineLimit(2)
+                .foregroundStyle(Color.weFlixOnSurface)
+            if let subtitle = state.subtitle, !subtitle.isEmpty {
+                Text(subtitle)
+                    .font(.subheadline)
+                    .multilineTextAlignment(.center)
+                    .lineLimit(2)
+                    .foregroundStyle(Color.weFlixSecondaryText)
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var playingOnPill: some View {
+        if let targetName, !targetName.isEmpty {
+            HStack(spacing: 6) {
+                Image(systemName: "appletvremote.gen4")
+                    .font(.system(size: 12, weight: .semibold))
+                Text("Playing on \(targetName)")
+                    .font(.caption.weight(.medium))
+            }
+            .foregroundStyle(Color.weFlixSecondaryText)
+            .padding(.horizontal, 12)
+            .padding(.vertical, 6)
+            .background(Capsule().fill(Color.weFlixChromeRestingFill))
+        }
+    }
+
+    private var scrubber: some View {
+        // Ticks only while playing; a paused clock's time doesn't move.
+        TimelineView(.animation(minimumInterval: 0.25, paused: !clock.isPlaying())) { ctx in
+            let live = scrubPreview ?? clock.displayTime(asOf: ctx.date)
+            VStack(spacing: 8) {
+                Slider(
+                    value: Binding(get: { live }, set: { scrubPreview = $0 }),
+                    in: 0...max(state.duration, 1),
+                    onEditingChanged: { editing in
+                        if !editing { commitScrub() }
+                    }
+                )
+                .tint(Color.weFlixOnSurface)
+                .disabled(state.duration <= 0)
+                .accessibilityLabel("Playback position")
+                .accessibilityValue(PlayerTimeFormatter.formatHMS(live))
+
+                HStack {
+                    Text(PlayerTimeFormatter.formatHMS(live))
+                    Spacer()
+                    Text(remainingLabel(live: live))
+                }
+                .font(.caption.monospacedDigit())
+                .foregroundStyle(Color.weFlixSecondaryText)
+            }
+        }
+        // The slider's end-of-edit callback is not guaranteed: a tap that
+        // lands elsewhere while the finger is still down (play/pause, the
+        // mini-bar) can swallow the touch-up, and SwiftUI then never reports
+        // `editing == false`. The preview would stay pinned and every later
+        // drag would be ignored as "still editing". So the value stream is
+        // the commit signal too: once it goes quiet the seek is sent, and the
+        // slider is released whether or not the callback ever comes.
+        .onChange(of: scrubPreview) { _, value in
+            guard value != nil else { return }
+            scrubSettleTask?.cancel()
+            scrubSettleTask = Task { @MainActor in
+                try? await Task.sleep(for: .milliseconds(250))
+                guard !Task.isCancelled else { return }
+                commitScrub()
+            }
+        }
+        .onChange(of: state.contentId) { _, _ in
+            scrubSettleTask?.cancel()
+            scrubPreview = nil
+        }
+    }
+
+    /// Sends the scrubbed position once and releases the slider. Safe to
+    /// call from both the settle timer and the end-of-edit callback: the
+    /// preview is cleared before sending so the second caller finds nothing.
+    private func commitScrub() {
+        scrubSettleTask?.cancel()
+        scrubSettleTask = nil
+        guard let target = scrubPreview else { return }
+        scrubPreview = nil
+        onSeek(target)
+    }
+
+    private func remainingLabel(live: Double) -> String {
+        guard state.duration > 0 else { return PlayerTimeFormatter.formatHMS(state.duration) }
+        return "-" + PlayerTimeFormatter.formatHMS(max(0, state.duration - live))
+    }
+
+    /// The clock already shows the last optimistic seek, so repeated presses
+    /// build on the requested target.
+    private func skip(_ direction: SeekDirection) {
+        let seconds = Double(skipIntervals[direction])
+        onSeek(RelativeSeek.target(
+            current: clock.displayTime(),
+            pending: nil,
+            delta: direction == .backward ? -seconds : seconds,
+            duration: state.duration
+        ))
+    }
+
+    private var transport: some View {
+        HStack(spacing: 28) {
+            if state.hasNextEpisode {
+                Image(systemName: "forward.end.fill")
+                    .font(.system(size: 24, weight: .regular))
+                    .hidden()
+            }
+
+            Button {
+                skip(.backward)
+            } label: {
+                Image(systemName: SeekIntervalLabel.symbolName(.backward, seconds: skipIntervals.backward))
+                    .font(.system(size: 30, weight: .regular))
+            }
+            .accessibilityLabel(SeekIntervalLabel.accessibilityLabel(.backward, seconds: skipIntervals.backward))
+
+            Button {
+                onTogglePlayPause()
+            } label: {
+                ZStack {
+                    Circle().fill(Color.weFlixOnSurface).frame(width: 64, height: 64)
+                    if state.isLoading || state.isBuffering {
+                        ProgressView().tint(Color.weFlixBackground)
+                    } else {
+                        Image(systemName: clock.isPlaying() ? "pause.fill" : "play.fill")
+                            .font(.system(size: 28, weight: .medium))
+                            .foregroundStyle(Color.weFlixBackground)
+                    }
+                }
+            }
+            .accessibilityLabel(clock.isPlaying() ? "Pause" : "Play")
+
+            Button {
+                skip(.forward)
+            } label: {
+                Image(systemName: SeekIntervalLabel.symbolName(.forward, seconds: skipIntervals.forward))
+                    .font(.system(size: 30, weight: .regular))
+            }
+            .accessibilityLabel(SeekIntervalLabel.accessibilityLabel(.forward, seconds: skipIntervals.forward))
+
+            if state.hasNextEpisode {
+                Button { onPlayNext() } label: {
+                    Image(systemName: "forward.end.fill").font(.system(size: 24, weight: .regular))
+                }
+                .accessibilityLabel(state.nextEpisodeTitle.map { "Next: \($0)" } ?? "Next episode")
+            }
+        }
+        .foregroundStyle(Color.weFlixOnSurface)
+        .buttonStyle(.plain)
+    }
+
+    @ViewBuilder
+    private var volumeRow: some View {
+        if volumeIsMuteOnly {
+            muteToggle
+        } else {
+            volumeSlider
+        }
+    }
+
+    private var muteToggle: some View {
+        Button { onSetMuted(!state.isMuted) } label: {
+            Label(state.isMuted ? "Unmute" : "Mute",
+                  systemImage: state.isMuted ? "speaker.slash.fill" : "speaker.wave.2.fill")
+                .font(.subheadline.weight(.semibold))
+                .padding(.horizontal, 18)
+                .padding(.vertical, 10)
+                .background(Capsule().fill(Color.weFlixChromeRestingFill))
+        }
+        .foregroundStyle(Color.weFlixOnSurface)
+        .buttonStyle(.plain)
+    }
+
+    private var volumeSlider: some View {
+        HStack(spacing: 14) {
+            Button { onSetMuted(!state.isMuted) } label: {
+                Image(systemName: state.isMuted || state.volume <= 0.001
+                      ? "speaker.slash.fill" : "speaker.fill")
+                    .font(.system(size: 18, weight: .medium))
+                    .frame(width: 28)
+            }
+            .accessibilityLabel(state.isMuted ? "Unmute" : "Mute")
+
+            Slider(
+                value: Binding(
+                    get: { state.isMuted ? 0 : state.volume },
+                    set: { onSetVolume($0) }
+                ),
+                in: 0...1
+            )
+            .tint(Color.weFlixOnSurface)
+            .accessibilityLabel("Volume")
+            .accessibilityValue("\(Int((state.isMuted ? 0 : state.volume) * 100)) percent")
+
+            Image(systemName: "speaker.wave.3.fill")
+                .font(.system(size: 18, weight: .medium))
+                .frame(width: 28)
+                .foregroundStyle(Color.weFlixOnSurface.opacity(0.55))
+        }
+        .frame(maxWidth: 280)
+        .foregroundStyle(Color.weFlixOnSurface)
+        .buttonStyle(.plain)
+    }
+
+    private var secondaryControls: some View {
+        RemoteOptionMenus(model: RemoteMenuModel(state: state, supportsPlaybackSpeed: supportsPlaybackSpeed),
+                          onCommand: onCommand)
+            .equatable()
+    }
+
+    private func errorBanner(_ message: String) -> some View {
+        Text(message)
+            .font(.footnote)
+            .foregroundStyle(Color.weFlixOnSurface)
+            .multilineTextAlignment(.center)
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 10)
+            .padding(.horizontal, 14)
+            .background(RoundedRectangle(cornerRadius: 12, style: .continuous).fill(Color.weFlixError.opacity(0.9)))
+    }
+}
+
+/// What the remote's option menus show, and nothing that ticks. The TV sends
+/// its full playback state twice a second, and menus built from the whole
+/// state were rebuilt on every frame: an open menu pulsed, and a long one lost
+/// its scroll position or closed. Built from this, a menu changes only when
+/// something it shows changes.
+struct RemoteMenuModel: Equatable {
+    let audioTracks: [WeFlixControlTrack]
+    let subtitleTracks: [WeFlixControlTrack]
+    let selectedAudioTrackId: Int64?
+    let selectedSubtitleTrackId: Int64?
+    let qualityOptions: [WeFlixControlOption]
+    let activeQualityId: String
+    let isQualitySwitching: Bool
+    let playbackSpeed: Double
+    let supportsPlaybackSpeed: Bool
+
+    init(state: WeFlixControlPlaybackState, supportsPlaybackSpeed: Bool = true) {
+        audioTracks = state.audioTracks
+        subtitleTracks = state.subtitleTracks
+        selectedAudioTrackId = state.selectedAudioTrackId
+        selectedSubtitleTrackId = state.selectedSubtitleTrackId
+        qualityOptions = state.qualityOptions
+        activeQualityId = state.activeQualityId
+        isQualitySwitching = state.isQualitySwitching
+        playbackSpeed = state.playbackSpeed
+        self.supportsPlaybackSpeed = supportsPlaybackSpeed
+    }
+}
+
+/// The Quality, Audio, Subtitles and Speed menus. Equality looks only at the
+/// model (the command closure can't be compared), so `.equatable()` skips
+/// re-rendering them while just the playhead moves.
+private struct RemoteOptionMenus: View, Equatable {
+    let model: RemoteMenuModel
+    let onCommand: (WeFlixControlCommand) -> Void
+
+    private let speedOptions: [Double] = [0.75, 1.0, 1.25, 1.5, 2.0]
+
+    static func == (lhs: Self, rhs: Self) -> Bool {
+        lhs.model == rhs.model
+    }
+
+    var body: some View {
+        HStack(alignment: .top, spacing: 8) {
+            if !model.qualityOptions.isEmpty { qualityMenu }
+            if !model.audioTracks.isEmpty { audioMenu }
+            // Subtitle delay and position stay on the TV's own player menu;
+            // from the couch the remote only switches the language.
+            if !model.subtitleTracks.isEmpty { subtitleMenu }
+            if model.supportsPlaybackSpeed { speedMenu }
+        }
+        // These menus open upward from the bottom of the screen, where iOS
+        // would otherwise list their items in reverse.
+        .menuOrder(.fixed)
+    }
+
+    private var audioMenu: some View {
+        Menu {
+            ForEach(model.audioTracks) { track in
+                Button { onCommand(.selectAudioTrack(track.trackId)) } label: {
+                    Label(track.title, systemImage: model.selectedAudioTrackId == track.trackId ? "checkmark" : "waveform")
+                }
+            }
+        } label: { RemoteChipLabel(systemImage: "waveform", caption: "Audio") }
+        .accessibilityValue(model.audioTracks.first(where: { $0.trackId == model.selectedAudioTrackId })?.title ?? "None")
+    }
+
+    private var subtitleMenu: some View {
+        Menu {
+            Button { onCommand(.selectSubtitleTrack(nil)) } label: {
+                Label("Off", systemImage: model.selectedSubtitleTrackId == nil ? "checkmark" : "captions.bubble")
+            }
+            ForEach(model.subtitleTracks) { track in
+                Button { onCommand(.selectSubtitleTrack(track.trackId)) } label: {
+                    Label(track.title, systemImage: model.selectedSubtitleTrackId == track.trackId ? "checkmark" : "captions.bubble")
+                }
+            }
+        } label: { RemoteChipLabel(systemImage: "captions.bubble", caption: "Subtitles") }
+        .accessibilityValue(model.subtitleTracks.first(where: { $0.trackId == model.selectedSubtitleTrackId })?.title ?? "Off")
+    }
+
+    private var qualityMenu: some View {
+        Menu {
+            ForEach(model.qualityOptions) { option in
+                Button { onCommand(.setQuality(option.id)) } label: {
+                    Label(option.label, systemImage: model.activeQualityId == option.id ? "checkmark" : "slider.horizontal.3")
+                }
+            }
+        } label: { RemoteChipLabel(systemImage: "slider.horizontal.3", caption: "Quality") }
+        .accessibilityValue(model.qualityOptions.first(where: { $0.id == model.activeQualityId })?.label ?? model.activeQualityId)
+        .disabled(model.isQualitySwitching)
+    }
+
+    private var speedMenu: some View {
+        Menu {
+            ForEach(speedOptions, id: \.self) { speed in
+                Button { onCommand(.setPlaybackSpeed(speed)) } label: {
+                    Label(speedLabel(speed), systemImage: abs(model.playbackSpeed - speed) < 0.01 ? "checkmark" : "speedometer")
+                }
+            }
+        } label: { RemoteChipLabel(systemImage: "speedometer", caption: "Speed") }
+        .accessibilityValue(speedLabel(model.playbackSpeed))
+    }
+
+    private func speedLabel(_ speed: Double) -> String {
+        "\(speed)×"
+    }
+}
+
+/// The toolbar's "More options" menu. The enclosing view re-renders on every
+/// state frame, so this is compared on what it shows, for the same reason as
+/// `RemoteOptionMenus`.
+private struct RemoteMoreOptionsMenu: View, Equatable {
+    let supportsVideoGravity: Bool
+    let videoGravity: String?
+    let onChooseTV: () -> Void
+    let onStop: () -> Void
+    let onSetVideoGravity: (String) -> Void
+    let onDisconnect: () -> Void
+
+    static func == (lhs: Self, rhs: Self) -> Bool {
+        lhs.supportsVideoGravity == rhs.supportsVideoGravity
+            && lhs.videoGravity == rhs.videoGravity
+    }
+
+    var body: some View {
+        Menu {
+            Button(action: onChooseTV) {
+                Label("Choose a Different TV", systemImage: "tv")
+            }
+            Button(action: onStop) {
+                Label("Stop Playback", systemImage: "stop.fill")
+            }
+            if supportsVideoGravity {
+                Menu {
+                    ForEach(VideoGravity.allCases, id: \.rawValue) { gravity in
+                        Button { onSetVideoGravity(gravity.rawValue) } label: {
+                            Label(gravity.label, systemImage: videoGravity == gravity.rawValue ? "checkmark" : "rectangle.inset.filled")
+                        }
+                    }
+                } label: {
+                    Label("Aspect Ratio", systemImage: "rectangle.inset.filled")
+                }
+            }
+            Divider()
+            Button(role: .destructive, action: onDisconnect) {
+                Label("Disconnect", systemImage: "tv.slash")
+            }
+        } label: {
+            Image(systemName: "ellipsis")
+                .font(.system(size: 16, weight: .semibold))
+        }
+        .accessibilityLabel("More options")
+    }
+}
+
+private struct RemoteChipLabel: View {
+    let systemImage: String
+    let caption: String
+
+    var body: some View {
+        VStack(spacing: 5) {
+            Image(systemName: systemImage)
+                .font(.system(size: 20, weight: .regular))
+            Text(caption)
+                .font(.caption2)
+        }
+        .foregroundStyle(Color.weFlixOnSurface.opacity(0.9))
+        .frame(maxWidth: .infinity)
+        .contentShape(Rectangle())
+    }
+}
+
+#if DEBUG
+private extension WeFlixControlPlaybackState {
+    static func previewPlaying() -> WeFlixControlPlaybackState {
+        WeFlixControlPlaybackState(
+            contentId: "preview", sessionId: "s1", title: "The Bear",
+            subtitle: "Season 3 · Episode 4 · Children",
+            isPlaying: true, isLoading: false, isBuffering: false,
+            currentTime: 1104, duration: 2895,
+            audioTracks: [WeFlixControlTrack(kind: "audio", trackId: 1, title: "English 5.1", detail: "AC-3")],
+            subtitleTracks: [WeFlixControlTrack(kind: "subtitle", trackId: 10, title: "English", detail: nil)],
+            selectedAudioTrackId: 1, selectedSubtitleTrackId: nil,
+            qualityOptions: [WeFlixControlOption(id: "auto", label: "Auto", detail: nil),
+                             WeFlixControlOption(id: "1080", label: "1080p", detail: nil)],
+            activeQualityId: "auto", isQualitySwitching: false,
+            playbackSpeed: 1.0, videoGravity: VideoGravity.fit.rawValue, hdrEnabled: false,
+            supportsVideoGravity: true,
+            volume: 0.8,
+            isMuted: false,
+            hasNextEpisode: true,
+            nextEpisodeTitle: "Forks",
+            error: nil
+        )
+    }
+}
+
+#Preview("Now Playing") {
+    ZStack {
+        WeFlixControlArtworkBackground(urlString: nil)
+        RemoteNowPlayingContent(
+            state: .previewPlaying(),
+            clock: RemotePlaybackClock(),
+            targetName: "Living Room",
+            posterURL: nil,
+            onCommand: { _ in },
+            onTogglePlayPause: {},
+            skipIntervals: SeekIntervalSurface.videoRemoteControl.legacy,
+            onSeek: { _ in },
+            onPlayNext: {},
+            onSetVolume: { _ in },
+            onSetMuted: { _ in }
+        )
+    }
+    .preferredColorScheme(.dark)
+}
+#endif
+#endif

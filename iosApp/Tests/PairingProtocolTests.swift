@@ -1,6 +1,6 @@
 import XCTest
 import Foundation
-@testable import Silo
+@testable import WeFlix
 
 final class PairingProtocolTests: XCTestCase {
     private let encoder = JSONEncoder()

@@ -1,6 +1,6 @@
 //
 //  SubtitleStreamEventTests.swift
-//  SiloTests
+//  WeFlixTests
 //
 //  Decoding tests for the five AI subtitle live-streaming events that ride the
 //  playback control websocket (Milestone 4). Each event is parsed exactly the
@@ -17,7 +17,7 @@
 
 import XCTest
 import Foundation
-@testable import Silo
+@testable import WeFlix
 
 final class SubtitleStreamEventTests: XCTestCase {
 

@@ -113,7 +113,7 @@ struct ProfileSelectionView: View {
                 viewModel.answerRememberOffer(remember: false, router: router)
             }
         } message: {
-            Text("Silo can skip Who's Watching and open this profile when it starts on this Apple TV. You can change this later in Settings > General > Profile Selection.")
+            Text("weflix can skip Who's Watching and open this profile when it starts on this Apple TV. You can change this later in Settings > General > Profile Selection.")
         }
         #endif
     }
@@ -212,9 +212,13 @@ struct ProfileSelectionView: View {
         }
         .safeAreaInset(edge: .top, spacing: 0) {
             MarqueeTopBar {
-                SiloWordmarkView(width: 92)
+                WeFlixWordmarkView(width: 92)
             } trailing: {
-                serverChip
+                // Same reason as the sign-in screen: one shipped server leaves
+                // nothing to switch to, so the chip stays hidden.
+                if DefaultServer.host.isEmpty {
+                    serverChip
+                }
             }
             .padding(.horizontal, 24)
             .padding(.top, 6)
@@ -227,7 +231,7 @@ struct ProfileSelectionView: View {
         Text("Who's watching?")
             .font(.system(size: titleSize, weight: .heavy))
             .kerning(-titleSize * 0.025)
-            .foregroundStyle(Color.siloOnSurface)
+            .foregroundStyle(Color.weFlixOnSurface)
             .lineLimit(1)
             .minimumScaleFactor(0.75)
             .frame(maxWidth: .infinity)
@@ -242,7 +246,7 @@ struct ProfileSelectionView: View {
     private var accountLine: some View {
         Text(viewModel.accountName.map { "Signed in as \($0)" } ?? " ")
             .font(.system(size: MarqueeMetrics.leadFont))
-            .foregroundStyle(Color.siloOnSurface.opacity(0.62))
+            .foregroundStyle(Color.weFlixOnSurface.opacity(0.62))
             .lineLimit(1)
             .frame(maxWidth: .infinity)
             .opacity(viewModel.accountName == nil ? 0 : 1)
@@ -275,12 +279,14 @@ struct ProfileSelectionView: View {
     /// the people.
     private var footerActions: some View {
         HStack(spacing: footerSpacing) {
-            Button {
-                router.navigate(to: .serverList)
-            } label: {
-                Label("Change server", systemImage: "server.rack")
+            if AppVisibility.showsChangeServer {
+                Button {
+                    router.navigate(to: .serverList)
+                } label: {
+                    Label("Change server", systemImage: "server.rack")
+                }
+                .buttonStyle(.marquee(footerKind, fullWidth: false, compact: true))
             }
-            .buttonStyle(.marquee(footerKind, fullWidth: false, compact: true))
 
             Button {
                 #if os(tvOS)

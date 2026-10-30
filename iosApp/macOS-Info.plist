@@ -10,8 +10,10 @@
 	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
+	<key>CFBundleDisplayName</key>
+	<string>WeFlix</string>
 	<key>CFBundleName</key>
-	<string>$(PRODUCT_NAME)</string>
+	<string>weflix</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
@@ -20,10 +22,10 @@
 	<array>
 		<dict>
 			<key>CFBundleURLName</key>
-			<string>org.siloserver.silo.auth-callback</string>
+			<string>me.weflix.auth-callback</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>org.siloserver.silo</string>
+				<string>me.weflix</string>
 			</array>
 		</dict>
 	</array>
@@ -38,17 +40,18 @@
 	</dict>
 	<key>NSBonjourServices</key>
 	<array>
+		<string>_weflix._tcp</string>
 		<string>_silo._tcp</string>
 	</array>
 	<key>NSLocalNetworkUsageDescription</key>
-	<string>Silo uses your local network to find Silo servers.</string>
+	<string>weflix uses your local network to find weflix servers.</string>
 	<key>NSHighResolutionCapable</key>
 	<true/>
 	<key>NSSupportsAutomaticGraphicsSwitching</key>
 	<true/>
-	<key>SiloBuildChannel</key>
-	<string>$(SILO_BUILD_CHANNEL)</string>
-	<key>SiloSourceURL</key>
-	<string>$(SILO_SOURCE_URL)</string>
+	<key>WeFlixBuildChannel</key>
+	<string>$(WEFLIX_BUILD_CHANNEL)</string>
+	<key>WeFlixSourceURL</key>
+	<string>$(WEFLIX_SOURCE_URL)</string>
 </dict>
 </plist>

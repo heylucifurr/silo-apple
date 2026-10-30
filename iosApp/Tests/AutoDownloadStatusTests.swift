@@ -1,6 +1,6 @@
 import Foundation
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 /// The auto-download screens' rules: which episodes a monitor covers, which
 /// state a series reports first, the copy for each, and how the airing

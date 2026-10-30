@@ -1,6 +1,6 @@
 import Foundation
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 /// Media requests on `/api/v2/requests`: wire shapes, exact statuses,
 /// profile scoping, bounded cursor paging, problem copy, and the
@@ -371,7 +371,7 @@ final class RequestsV2Tests: XCTestCase {
     @MainActor
     func testUncertainCreateHoldsTheActionUntilAFreshRead() async throws {
         let tokens = try await tokens()
-        let api = SiloAPI(http: HTTPClient(session: stub.makeSession(), tokenStore: tokens), tokenStore: tokens)
+        let api = WeFlixAPI(http: HTTPClient(session: stub.makeSession(), tokenStore: tokens), tokenStore: tokens)
         let model = RequestDetailViewModel(mediaType: .movie, tmdbId: 949, api: api, cache: RequestDetailCache())
         stub.sequence([
             .json(200, Self.detail),
@@ -399,7 +399,7 @@ final class RequestsV2Tests: XCTestCase {
     @MainActor
     func testDetailOpensTheLibraryOnlyWithoutAnActiveRequest() async throws {
         let tokens = try await tokens()
-        let api = SiloAPI(http: HTTPClient(session: stub.makeSession(), tokenStore: tokens), tokenStore: tokens)
+        let api = WeFlixAPI(http: HTTPClient(session: stub.makeSession(), tokenStore: tokens), tokenStore: tokens)
         let model = RequestDetailViewModel(mediaType: .series, tmdbId: 1399, api: api, cache: RequestDetailCache())
         // A title in the library, with the given request state.
         func inLibrary(_ request: String) -> String {
@@ -431,7 +431,7 @@ final class RequestsV2Tests: XCTestCase {
     @MainActor
     func testFinishedDownloadTheTitleAnnotationMissedIsNotRequestableAgain() async throws {
         let tokens = try await tokens()
-        let api = SiloAPI(http: HTTPClient(session: stub.makeSession(), tokenStore: tokens), tokenStore: tokens)
+        let api = WeFlixAPI(http: HTTPClient(session: stub.makeSession(), tokenStore: tokens), tokenStore: tokens)
         let model = RequestDetailViewModel(mediaType: .movie, tmdbId: 949, api: api, cache: RequestDetailCache())
         // The title reads as requestable, but the user's own request has
         // finished downloading and waits on the library.
@@ -450,7 +450,7 @@ final class RequestsV2Tests: XCTestCase {
     @MainActor
     func testAFailedRequestIsTheStatusAndTheActionReadsRequestAgain() async throws {
         let tokens = try await tokens()
-        let api = SiloAPI(http: HTTPClient(session: stub.makeSession(), tokenStore: tokens), tokenStore: tokens)
+        let api = WeFlixAPI(http: HTTPClient(session: stub.makeSession(), tokenStore: tokens), tokenStore: tokens)
         let model = RequestDetailViewModel(mediaType: .movie, tmdbId: 949, api: api, cache: RequestDetailCache())
         // The server calls the title requestable again: the user's request
         // failed, so it no longer blocks a new one.
@@ -469,7 +469,7 @@ final class RequestsV2Tests: XCTestCase {
     @MainActor
     func testUncertainCancelOnTheDetailPageIsNeverResent() async throws {
         let tokens = try await tokens()
-        let api = SiloAPI(http: HTTPClient(session: stub.makeSession(), tokenStore: tokens), tokenStore: tokens)
+        let api = WeFlixAPI(http: HTTPClient(session: stub.makeSession(), tokenStore: tokens), tokenStore: tokens)
         let model = RequestDetailViewModel(mediaType: .movie, tmdbId: 949, api: api, cache: RequestDetailCache())
         let pendingDetail = Self.detail.replacingOccurrences(of: #""request":{"requestable":true}"#,
             with: #""request":{"requestable":false,"status":"pending","reason":"already_requested","request_id":"request-one"}"#)
@@ -493,7 +493,7 @@ final class RequestsV2Tests: XCTestCase {
     @MainActor
     func testCreateInterruptedByAnOwnerChangeHoldsWithoutReReading() async throws {
         let tokens = try await tokens()
-        let api = SiloAPI(http: HTTPClient(session: stub.makeSession(), tokenStore: tokens), tokenStore: tokens)
+        let api = WeFlixAPI(http: HTTPClient(session: stub.makeSession(), tokenStore: tokens), tokenStore: tokens)
         let model = RequestDetailViewModel(mediaType: .movie, tmdbId: 949, api: api, cache: RequestDetailCache())
         stub.reply(200, Self.detail)
         await model.load()
@@ -528,7 +528,7 @@ final class RequestsV2Tests: XCTestCase {
     @MainActor
     func testCancellingANewerRequestDoesNotBringBackAnOlderDecline() async throws {
         let tokens = try await tokens()
-        let api = SiloAPI(http: HTTPClient(session: stub.makeSession(), tokenStore: tokens), tokenStore: tokens)
+        let api = WeFlixAPI(http: HTTPClient(session: stub.makeSession(), tokenStore: tokens), tokenStore: tokens)
         let cache = RequestDetailCache()
         let model = RequestDetailViewModel(mediaType: .movie, tmdbId: 949, api: api, cache: cache)
         // Declined, requested again, then that second request cancelled.
@@ -548,7 +548,7 @@ final class RequestsV2Tests: XCTestCase {
     @MainActor
     func testAnOldFailureDoesNotOverrideATitleNowInTheLibrary() async throws {
         let tokens = try await tokens()
-        let api = SiloAPI(http: HTTPClient(session: stub.makeSession(), tokenStore: tokens), tokenStore: tokens)
+        let api = WeFlixAPI(http: HTTPClient(session: stub.makeSession(), tokenStore: tokens), tokenStore: tokens)
         let model = RequestDetailViewModel(mediaType: .movie, tmdbId: 949, api: api, cache: RequestDetailCache())
         let inLibrary = Self.detail
             .replacingOccurrences(of: #""availability":"missing""#,
@@ -574,7 +574,7 @@ final class RequestsV2Tests: XCTestCase {
     @MainActor
     func testRequestsNeverReachTheAdminModerationAPI() async throws {
         let tokens = try await tokens()
-        let api = SiloAPI(http: HTTPClient(session: stub.makeSession(), tokenStore: tokens), tokenStore: tokens)
+        let api = WeFlixAPI(http: HTTPClient(session: stub.makeSession(), tokenStore: tokens), tokenStore: tokens)
         stub.reply(path: "/api/v2/requests/status", 200,
             #"{"requests_enabled":true,"rating_restrictions_enforced":false,"revision":"r","state":"available","allowed":true}"#)
         let store = RequestsFeatureStore(api: api)
@@ -664,7 +664,7 @@ final class RequestsV2Tests: XCTestCase {
                              mine: String = #"{"items":[],"page":{"has_more":false}}"#)
         async throws -> (RequestDetailViewModel, RequestsFeatureStore) {
         let tokens = try await tokens()
-        let api = SiloAPI(http: HTTPClient(session: stub.makeSession(), tokenStore: tokens), tokenStore: tokens)
+        let api = WeFlixAPI(http: HTTPClient(session: stub.makeSession(), tokenStore: tokens), tokenStore: tokens)
         stub.reply(path: "/api/v2/requests/status", 200, status)
         stub.reply(path: "/api/v2/requests/detail/movie/949", 200, detail)
         stub.reply(path: "/api/v2/requests/mine", 200, mine)

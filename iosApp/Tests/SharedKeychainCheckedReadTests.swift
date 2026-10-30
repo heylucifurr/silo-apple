@@ -1,7 +1,7 @@
 import Foundation
 import Security
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 /// `getChecked` is the strict read behind canonical session authority. An
 /// item that exists but cannot be decoded is a corrupt record, not an absent

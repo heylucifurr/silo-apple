@@ -224,7 +224,7 @@ enum PosterImageCache {
         ImagePipeline.shared.cache.removeAll(caches: .memory)
     }
 
-    /// Builds before the continuum → silo rename kept the disk cache under
+    /// Builds before the continuum → weFlix rename kept the disk cache under
     /// this name. Reclaim the space off the main thread.
     private static func removeLegacyDataCache() {
         guard let caches = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first else { return }
@@ -250,7 +250,7 @@ enum PosterImageCache {
             config.imageCache = memoryCache
 
             removeLegacyDataCache()
-            if let dataCache = try? DataCache(name: "org.siloserver.silo.posters") {
+            if let dataCache = try? DataCache(name: "me.weflix.posters") {
                 dataCache.sizeLimit = 1_024 * 1024 * 1024
                 config.dataCache = dataCache
             }
@@ -337,8 +337,8 @@ enum PosterImageCache {
     /// state draw inside it). One decode serves them all, so the logo a
     /// marquee showed is already in memory when its detail opens.
     static let titleLogoPointBox = CGSize(
-        width: SiloTheme.Skyline.marqueeLogoMaxWidth,
-        height: SiloTheme.Skyline.marqueeLogoMaxHeightHome
+        width: WeFlixTheme.Skyline.marqueeLogoMaxWidth,
+        height: WeFlixTheme.Skyline.marqueeLogoMaxHeightHome
     )
 
     /// The request every title logo view issues: an aspect-fit decode to

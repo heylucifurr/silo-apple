@@ -280,7 +280,7 @@ struct PlayerView: View {
                                 bufferingPillFocus: $focusedBufferingAction,
                                 showsCornerCapsule: showsWatchPartySyncCapsule,
                                 onToggleTimeDisplayMode: {
-                                    withAnimation(.easeOut(duration: SiloTheme.fastDuration)) {
+                                    withAnimation(.easeOut(duration: WeFlixTheme.fastDuration)) {
                                         timelineTimeDisplayMode.toggle()
                                     }
                                 },
@@ -340,7 +340,7 @@ struct PlayerView: View {
                     #if os(tvOS)
                     // Below the player menu's panel while it is open, so the
                     // pill never covers its tabs.
-                    PlayerNoticeStack(pillMinY: viewModel.isHUDPresented ? Self.playerMenuPanelBottom : SiloTheme.safePadding) {
+                    PlayerNoticeStack(pillMinY: viewModel.isHUDPresented ? Self.playerMenuPanelBottom : WeFlixTheme.safePadding) {
                         if let identity = remoteIdentityNotice {
                             RemotePlaybackIdentityNotice(identity: identity)
                                 .transition(.opacity)
@@ -352,7 +352,7 @@ struct PlayerView: View {
                     // Slides in, and out when its timer runs out; an answer
                     // takes it down at once (see `selectBufferingPrimary`).
                     .animation(.easeOut(duration: 0.2), value: viewModel.showBufferingPill)
-                    .animation(.easeOut(duration: SiloTheme.fastDuration), value: viewModel.isHUDPresented)
+                    .animation(.easeOut(duration: WeFlixTheme.fastDuration), value: viewModel.isHUDPresented)
                     #else
                     // Below the top bar while it shows (two rows in portrait,
                     // one in landscape), so the pill never covers its buttons.
@@ -361,7 +361,7 @@ struct PlayerView: View {
                         PlayerNoticeStack(
                             pillMinY: viewModel.shouldShowMobilePlayerChrome
                                 ? Self.topBarBottom(portrait: portrait)
-                                : SiloTheme.safePadding
+                                : WeFlixTheme.safePadding
                         ) {
                             if let notice = viewModel.presentedNotice {
                                 PlayerNoticeOverlay(notice: notice)
@@ -631,7 +631,7 @@ struct PlayerView: View {
             }
             #endif
         }
-        .siloStatusBarHidden()
+        .weFlixStatusBarHidden()
         #if !os(tvOS)
         .navigationBarHidden(true)
         #endif
@@ -691,7 +691,7 @@ struct PlayerView: View {
         timelinePreviewHideTask?.cancel()
         timelinePreviewHideTask = nil
         timelinePreviewContactCanToggle = isTimelinePreviewVisible
-        withAnimation(.easeOut(duration: SiloTheme.fastDuration)) {
+        withAnimation(.easeOut(duration: WeFlixTheme.fastDuration)) {
             if !isTimelinePreviewVisible {
                 isTimelinePreviewVisible = true
             }
@@ -701,7 +701,7 @@ struct PlayerView: View {
     private func handleTimelinePreviewContactEnded() {
         guard isTimelinePreviewVisible else { return }
         if timelinePreviewContactCanToggle {
-            withAnimation(.easeOut(duration: SiloTheme.fastDuration)) {
+            withAnimation(.easeOut(duration: WeFlixTheme.fastDuration)) {
                 timelineTimeDisplayMode.toggle()
             }
         }
@@ -732,7 +732,7 @@ struct PlayerView: View {
         if immediately {
             isTimelinePreviewVisible = false
         } else {
-            withAnimation(.easeOut(duration: SiloTheme.fastDuration)) {
+            withAnimation(.easeOut(duration: WeFlixTheme.fastDuration)) {
                 isTimelinePreviewVisible = false
             }
             // A dismissed quick preview always starts fresh in duration mode
@@ -822,7 +822,7 @@ struct PlayerView: View {
         // Moves with the controls' own fade.
         .animation(.easeOut(duration: 0.18), value: loadingSpinnerSitsInControls)
         #else
-        .animation(.easeOut(duration: SiloTheme.fastDuration), value: viewModel.isHUDPresented)
+        .animation(.easeOut(duration: WeFlixTheme.fastDuration), value: viewModel.isHUDPresented)
         #endif
         .allowsHitTesting(false)
     }
@@ -911,7 +911,7 @@ struct PlayerView: View {
             .focusSection()
             // The top-trailing corner, below any notice.
             .frame(maxWidth: .infinity, alignment: .trailing)
-            .padding(.horizontal, SiloTheme.safePadding)
+            .padding(.horizontal, WeFlixTheme.safePadding)
             .transition(.move(edge: .top).combined(with: .opacity))
             .playerNoticeStackPill()
         }
@@ -927,7 +927,7 @@ struct PlayerView: View {
             )
             // The top-trailing corner, below any notice.
             .frame(maxWidth: .infinity, alignment: .trailing)
-            .padding(.horizontal, SiloTheme.safePadding)
+            .padding(.horizontal, WeFlixTheme.safePadding)
             .transition(.move(edge: .top).combined(with: .opacity))
             .playerNoticeStackPill()
         }
@@ -988,7 +988,7 @@ struct PlayerView: View {
                 Image(systemName: "xmark")
                     .font(.system(size: 14, weight: .semibold))
                     .foregroundStyle(.white)
-                    .frame(width: SiloTheme.topBarIconHitSize, height: SiloTheme.topBarIconHitSize)
+                    .frame(width: WeFlixTheme.topBarIconHitSize, height: WeFlixTheme.topBarIconHitSize)
             }
             .buttonStyle(MobilePlayerGlassButtonStyle())
             .accessibilityLabel("Close Player")
@@ -1012,10 +1012,10 @@ struct PlayerView: View {
         VStack(spacing: 16) {
             Image(systemName: "exclamationmark.triangle.fill")
                 .font(.system(size: 40))
-                .foregroundStyle(Color.siloError)
+                .foregroundStyle(Color.weFlixError)
 
             Text(error)
-                .font(.siloBody)
+                .font(.weFlixBody)
                 .foregroundStyle(.white)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal)
@@ -1025,12 +1025,12 @@ struct PlayerView: View {
                     Button(viewModel.retryButtonTitle) {
                         viewModel.retry()
                     }
-                    .siloPrimaryButton()
+                    .weFlixPrimaryButton()
                     .frame(minWidth: 140)
                 }
 
                 Button("Go Back") { dismissPlayer() }
-                    .siloPrimaryButton()
+                    .weFlixPrimaryButton()
                     .frame(minWidth: 140)
             }
         }
@@ -1166,7 +1166,7 @@ struct PlayerNextUpScreen: View {
                 // MediaRow insets its header and cards by the safe padding,
                 // so widen its frame by that inset to share the hero's edges.
                 onDeckSection
-                    .frame(width: columnWidth + SiloTheme.safePadding * 2)
+                    .frame(width: columnWidth + WeFlixTheme.safePadding * 2)
                     .id(playerNextUpOnDeckScrollTarget)
             }
         }
@@ -1501,7 +1501,7 @@ struct PlayerNextUpScreen: View {
                         Label("Play Now", systemImage: "play.fill")
                             .frame(maxWidth: .infinity, minHeight: compact ? 24 : 44)
                     }
-                    .siloPrimaryButton(isLoading: viewModel.isStartingNextUp)
+                    .weFlixPrimaryButton(isLoading: viewModel.isStartingNextUp)
                     .frame(minHeight: 44)
                     .accessibilityIdentifier("next-up-play-now")
                 }
@@ -1510,7 +1510,7 @@ struct PlayerNextUpScreen: View {
                         Label("Pick Another", systemImage: "shuffle")
                             .frame(minHeight: compact ? 24 : 44)
                     }
-                    .siloSecondaryButton()
+                    .weFlixSecondaryButton()
                     .frame(minHeight: 44)
                     .disabled(!viewModel.canPickAnotherShufflePick)
                     .accessibilityIdentifier("next-up-pick-another")
@@ -1526,7 +1526,7 @@ struct PlayerNextUpScreen: View {
                         Text("Keep Watching")
                             .frame(maxWidth: .infinity, minHeight: compact ? 24 : 44)
                     }
-                    .siloSecondaryButton()
+                    .weFlixSecondaryButton()
                     .frame(minHeight: 44)
                     .disabled(viewModel.isStartingNextUp)
                 }
@@ -1534,7 +1534,7 @@ struct PlayerNextUpScreen: View {
                     Label("Back", systemImage: "chevron.left")
                         .frame(minHeight: compact ? 24 : 44)
                 }
-                .siloSecondaryButton()
+                .weFlixSecondaryButton()
                 .frame(minHeight: 44)
                 if compact && hasNextEpisode && viewModel.shuffleState == nil { autoPlayToggle }
             }
@@ -1719,13 +1719,13 @@ struct PlayerNextUpScreen: View {
     /// fourth card runs past the column like any other rail.
     private func contentColumnWidth(for proxy: GeometryProxy) -> CGFloat {
         let fourCards = onDeckCardWidth * 4 + tvCardSpacing * 3
-        let available = proxy.size.width - (horizontalPadding + SiloTheme.safePadding) * 2
+        let available = proxy.size.width - (horizontalPadding + WeFlixTheme.safePadding) * 2
         return min(available, fourCards)
     }
 
     /// Matches EpisodeThumbCard, which scales with the Poster Size setting.
     private var onDeckCardWidth: CGFloat {
-        SiloTheme.thumbnailCardWidth * uiCustomization.cardPresentation.posterSize.scale
+        WeFlixTheme.thumbnailCardWidth * uiCustomization.cardPresentation.posterSize.scale
     }
 
     private var isTV: Bool {
@@ -1774,8 +1774,8 @@ private struct AutoPlayToggleButtonBody: View {
             #if os(tvOS)
             .focusEffectDisabled()
             #endif
-            .animation(SiloTheme.springAnimation, value: isFocused)
-            .animation(.easeOut(duration: SiloTheme.fastDuration), value: configuration.isPressed)
+            .animation(WeFlixTheme.springAnimation, value: isFocused)
+            .animation(.easeOut(duration: WeFlixTheme.fastDuration), value: configuration.isPressed)
     }
 }
 

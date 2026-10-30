@@ -16,12 +16,12 @@ struct PlayerBufferingCapsule: View {
                 .scaleEffect(0.9)
 
             Text(message)
-                .font(.siloSmall.weight(.medium))
+                .font(.weFlixSmall.weight(.medium))
                 .foregroundStyle(.white.opacity(0.82))
         }
         .padding(.horizontal, 12)
         .padding(.vertical, 6)
-        .siloPlayerGlass(in: Capsule())
+        .weFlixPlayerGlass(in: Capsule())
         .shadow(color: .black.opacity(0.45), radius: 18, y: 7)
         .padding(.top, 64)
         .padding(.trailing, 80)

@@ -2,12 +2,12 @@
 import AetherEngine
 import Foundation
 
-/// Mirrors Aether's host diagnostics into Silo's consent-gated log ring.
+/// Mirrors Aether's host diagnostics into WeFlix's consent-gated log ring.
 ///
 /// Upstream Aether also writes its original messages to Apple unified logging.
-/// Silo deliberately never harvests that store for a diagnostics bundle. This
+/// WeFlix deliberately never harvests that store for a diagnostics bundle. This
 /// bridge handles only the optional host callback and applies the media
-/// privacy boundary before a line can enter Silo-owned diagnostics.
+/// privacy boundary before a line can enter WeFlix-owned diagnostics.
 enum AetherDiagnosticsBridge {
     /// A static initializer runs exactly once, thread-safely.
     private static let installOnce: Void = {

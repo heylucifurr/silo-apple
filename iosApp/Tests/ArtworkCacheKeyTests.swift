@@ -1,6 +1,6 @@
 import XCTest
 import Nuke
-@testable import Silo
+@testable import WeFlix
 
 final class ArtworkCacheKeyTests: XCTestCase {
     private let revisioned = "https://silo.test/api/v2/artwork/items/42/poster/w500.3f9a1c.webp"
@@ -41,7 +41,7 @@ final class ArtworkCacheKeyTests: XCTestCase {
     /// S3 presigned and Cloudflare token URLs are re-issued as they age;
     /// the path names the bytes and the query only authorizes.
     func testObjectStorageArtworkIsKeyedByPath() throws {
-        let key = "https://bucket.test/silo/items/42/backdrop/original.3f9a1c.webp"
+        let key = "https://bucket.test/weFlix/items/42/backdrop/original.3f9a1c.webp"
         for (first, second) in [
             ("?X-Amz-Date=20261016T000000Z&X-Amz-Signature=abc", "?X-Amz-Date=20261017T000000Z&X-Amz-Signature=def"),
             ("?verify=1800000000-abc%3D", "?verify=1800002700-def%3D"),
@@ -52,7 +52,7 @@ final class ArtworkCacheKeyTests: XCTestCase {
             XCTAssertEqual(ArtworkCacheKey.stableImageID(for: today), key, first)
             XCTAssertEqual(ImageRequest(artwork: today).imageID, ImageRequest(artwork: tomorrow).imageID, first)
         }
-        let subpath = "https://cdn.test/silo/api/v2/artwork/items/42/poster/w500.r1.webp"
+        let subpath = "https://cdn.test/weFlix/api/v2/artwork/items/42/poster/w500.r1.webp"
         XCTAssertEqual(ArtworkCacheKey.stableImageID(for: try url(subpath + "?exp=1&sig=abc")), subpath)
         // A constant item the presigner adds stays; only the signature drops.
         XCTAssertEqual(
@@ -62,7 +62,7 @@ final class ArtworkCacheKeyTests: XCTestCase {
     }
 
     /// A query item that may choose the bytes keeps two URLs apart, even on a
-    /// ladder-shaped path outside Silo's own storage.
+    /// ladder-shaped path outside WeFlix's own storage.
     func testRepresentationQueryStaysInTheIdentity() throws {
         let card = try url("https://plugin.test/art/poster/w500.r1.jpg?variant=card")
         let hero = try url("https://plugin.test/art/poster/w500.r1.jpg?variant=hero&verify=1-abc")

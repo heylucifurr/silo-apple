@@ -98,7 +98,7 @@ end
 # CI restores package downloads at this path; local lanes use Xcode's default
 # when the variable is unset. Every resolve and build must use the same path.
 def source_packages_path
-  value = ENV["SILO_SOURCE_PACKAGES_PATH"].to_s.strip
+  value = ENV["WEFLIX_SOURCE_PACKAGES_PATH"].to_s.strip
   value.empty? ? nil : File.expand_path(value)
 end
 
@@ -127,40 +127,40 @@ def build_number_xcarg
 end
 
 # Returns an xcarg fragment that stamps this build's published source archive
-# (SILO_RELEASE_SOURCE_URL, set by release-source.yml) into SILO_SOURCE_URL. The
+# (WEFLIX_RELEASE_SOURCE_URL, set by release-source.yml) into WEFLIX_SOURCE_URL. The
 # app links it from Settings > About > Source Code; without it the app links
 # the repository. Same threat model as marketing_version_xcarg: the value joins
 # xcodebuild's xcargs as a shell string, so only the exact release-asset shape
 # release-source.yml uploads is accepted. The tag segment allows `+` and its
 # `%2B` encoding for single-platform tags such as v1.4.0+ios.
-SOURCE_ARCHIVE_URL = %r{\Ahttps://github\.com/Silo-Server/silo-apple/releases/download/[A-Za-z0-9._%+-]+/Silo-source-[0-9a-f]{40}\.tar\.gz\z}
+SOURCE_ARCHIVE_URL = %r{\Ahttps://github\.com/Silo-Server/silo-apple/releases/download/[A-Za-z0-9._%+-]+/WeFlix-source-[0-9a-f]{40}\.tar\.gz\z}
 
 def source_url_xcarg
-  value = ENV["SILO_RELEASE_SOURCE_URL"].to_s.strip
+  value = ENV["WEFLIX_RELEASE_SOURCE_URL"].to_s.strip
   return "" if value.empty?
 
   unless value.match?(SOURCE_ARCHIVE_URL)
-    UI.user_error!("Invalid SILO_RELEASE_SOURCE_URL #{value.inspect}; expected a Silo-source-<commit>.tar.gz release asset of Silo-Server/silo-apple")
+    UI.user_error!("Invalid WEFLIX_RELEASE_SOURCE_URL #{value.inspect}; expected a WeFlix-source-<commit>.tar.gz release asset of Silo-Server/silo-apple")
   end
-  "SILO_SOURCE_URL=#{value} "
+  "WEFLIX_SOURCE_URL=#{value} "
 end
 
-# Overrides the SILO_BUILD_CHANNEL build setting (project.yml default: release)
-# for the unsigned sideload lanes. It reaches the app as the SiloBuildChannel
-# Info.plist key and is reported to the server as X-Silo-Client-Channel, so an
+# Overrides the WEFLIX_BUILD_CHANNEL build setting (project.yml default: release)
+# for the unsigned sideload lanes. It reaches the app as the WeFlixBuildChannel
+# Info.plist key and is reported to the server as X-WeFlix-Client-Channel, so an
 # operator can tell a re-signed sideload build from the TestFlight build of the
 # same marketing version + build number. Constant, not env-derived: there is no
 # untrusted input to validate.
-SIDELOAD_CHANNEL_XCARG = "SILO_BUILD_CHANNEL=sideload ".freeze
+SIDELOAD_CHANNEL_XCARG = "WEFLIX_BUILD_CHANNEL=sideload ".freeze
 
 # Turns off the user-independent keychain for the unsigned tvOS sideload lane.
-# SiloTV.xcconfig and SiloTVTopShelf.xcconfig default SILO_USER_INDEPENDENT_KEYCHAIN
+# WeFlixTV.xcconfig and WeFlixTVTopShelf.xcconfig default WEFLIX_USER_INDEPENDENT_KEYCHAIN
 # to YES for builds that carry the user-management entitlement
 # (runs-as-current-user-with-user-independent-keychain). The sideload archive
 # has no entitlements, and re-signers generally cannot grant that one, so the
 # flag goes off here, as Local.xcconfig.sample does for Personal Team builds.
 # Constant, not env-derived, like SIDELOAD_CHANNEL_XCARG.
-TVOS_SIDELOAD_KEYCHAIN_XCARG = "SILO_USER_INDEPENDENT_KEYCHAIN=NO ".freeze
+TVOS_SIDELOAD_KEYCHAIN_XCARG = "WEFLIX_USER_INDEPENDENT_KEYCHAIN=NO ".freeze
 
 # Returns the build number to stamp on a TestFlight build.
 #
@@ -183,7 +183,7 @@ def resolve_build_number(api_key:, app_identifier:, platform:)
   ) + 1
 end
 
-# Regenerates Silo.xcodeproj from project.yml and resolves SPM packages for the
+# Regenerates WeFlix.xcodeproj from project.yml and resolves SPM packages for the
 # given scheme. Shared by the unsigned IPA lanes.
 # Returns the absolute iosApp directory.
 #
@@ -193,7 +193,7 @@ end
 def prepare_xcode_project(scheme:)
   ios_app_dir = File.expand_path("../iosApp", __dir__)
   sh("xcodegen generate --spec '#{ios_app_dir}/project.yml'")
-  resolve_source_packages(project: "#{ios_app_dir}/Silo.xcodeproj", scheme: scheme)
+  resolve_source_packages(project: "#{ios_app_dir}/WeFlix.xcodeproj", scheme: scheme)
   ios_app_dir
 end
 
@@ -277,9 +277,9 @@ end
 
 def testflight_changelog
   changelog = ENV["TESTFLIGHT_CHANGELOG"] || `git log -1 --pretty=format:"%s"`.strip
-  source_url = ENV["SILO_RELEASE_SOURCE_URL"].to_s.strip
+  source_url = ENV["WEFLIX_RELEASE_SOURCE_URL"].to_s.strip
   if testflight_distribution == "external" && source_url.empty?
-    UI.user_error!("Publish the matching release source archive and set SILO_RELEASE_SOURCE_URL before external TestFlight distribution.")
+    UI.user_error!("Publish the matching release source archive and set WEFLIX_RELEASE_SOURCE_URL before external TestFlight distribution.")
   end
   source_url.empty? ? changelog : "#{changelog}\n\nSource and rebuild instructions: #{source_url}"
 end
@@ -305,26 +305,26 @@ TESTFLIGHT_PLATFORMS = {
   ios: {
     match_platform:        "ios",
     build_number_platform: "ios",
-    scheme:                "Silo",
+    scheme:                "WeFlix",
     destination:           "generic/platform=iOS",
     output_directory:      "build/ios",
-    output_name:           "Silo.ipa",
+    output_name:           "WeFlix.ipa",
     targets: {
-      "Silo"                    => "org.siloserver.silo",
-      "SiloNotificationService" => "org.siloserver.silo.NotificationService",
-      "SiloDownloadsActivity"   => "org.siloserver.silo.DownloadsActivity",
+      "WeFlix"                    => "me.weflix",
+      "WeFlixNotificationService" => "me.weflix.NotificationService",
+      "WeFlixDownloadsActivity"   => "me.weflix.DownloadsActivity",
     }.freeze,
   }.freeze,
   tvos: {
     match_platform:        "tvos",
     build_number_platform: "appletvos",
-    scheme:                "SiloTV",
+    scheme:                "WeFlixTV",
     destination:           "generic/platform=tvOS",
     output_directory:      "build/tvos",
-    output_name:           "SiloTV.ipa",
+    output_name:           "WeFlixTV.ipa",
     targets: {
-      "SiloTV"         => "org.siloserver.silo",
-      "SiloTVTopShelf" => "org.siloserver.silo.topshelf",
+      "WeFlixTV"         => "me.weflix",
+      "WeFlixTVTopShelf" => "me.weflix.topshelf",
     }.freeze,
   }.freeze,
 }.freeze
@@ -336,7 +336,7 @@ def testflight_release(platform)
   targets    = config[:targets]
   bundle_ids = targets.values
   app_id     = bundle_ids.first
-  defer_distribution = env_truthy?("SILO_DEFER_TESTFLIGHT_DISTRIBUTION", default: false)
+  defer_distribution = env_truthy?("WEFLIX_DEFER_TESTFLIGHT_DISTRIBUTION", default: false)
   if defer_distribution
     UI.user_error!("MARKETING_VERSION is required for deferred TestFlight upload") unless injected_marketing_version
     UI.user_error!("BUILD_NUMBER is required for deferred TestFlight upload") unless injected_build_number
@@ -357,10 +357,10 @@ def testflight_release(platform)
   # falls back to the latest git commit subject when not set.
   changelog   = testflight_changelog
   ios_app_dir = File.expand_path("../iosApp", __dir__)
-  project     = "#{ios_app_dir}/Silo.xcodeproj"
+  project     = "#{ios_app_dir}/WeFlix.xcodeproj"
   UI.message("TestFlight distribution: #{testflight_upload[:distribution]}")
 
-  # Regenerate Silo.xcodeproj from project.yml first. update_code_signing_settings
+  # Regenerate WeFlix.xcodeproj from project.yml first. update_code_signing_settings
   # below writes each target's profile into the generated project, so xcodegen
   # must not run again after it. match writes nothing to the project: it
   # installs the certs and profiles and records their names in lane_context.
@@ -703,7 +703,7 @@ platform :ios do
     # Linux runner. One number for both platforms, so "1.0.0 (66)" names the
     # same build on iPhone and Apple TV and in the release tag v1.0.0-beta.66.
     api_key = setup_api_key
-    app_id  = "org.siloserver.silo"
+    app_id  = "me.weflix"
 
     latest = %w[ios appletvos].map do |platform|
       latest_testflight_build_number(api_key: api_key, app_identifier: app_id, platform: platform)
@@ -728,16 +728,16 @@ platform :ios do
 
   desc "Build an unsigned iOS IPA for third-party signing / sideloading (no upload)"
   lane :ipa_ios_unsigned do
-    ios_app_dir  = prepare_xcode_project(scheme: "Silo")
+    ios_app_dir  = prepare_xcode_project(scheme: "WeFlix")
     output_dir   = File.expand_path("../build/ios-unsigned", __dir__)
-    archive_path = "#{output_dir}/Silo.xcarchive"
+    archive_path = "#{output_dir}/WeFlix.xcarchive"
 
     # Archive with signing disabled — no certs required. CURRENT_PROJECT_VERSION
     # comes from CI when set; local runs fall back to the project.yml value.
     xcodebuild(
       archive:      true,
-      project:      "#{ios_app_dir}/Silo.xcodeproj",
-      scheme:       "Silo",
+      project:      "#{ios_app_dir}/WeFlix.xcodeproj",
+      scheme:       "WeFlix",
       destination:  "generic/platform=iOS",
       archive_path: archive_path,
       xcargs:       "#{locked_package_xcargs}-showBuildTimingSummary " \
@@ -751,25 +751,25 @@ platform :ios do
 
     package_unsigned_ipa(
       archive_path: archive_path,
-      app_name:     "Silo",
+      app_name:     "WeFlix",
       output_dir:   output_dir,
-      output_ipa:   "Silo-unsigned.ipa"
+      output_ipa:   "WeFlix-unsigned.ipa"
     )
   end
 
   desc "Build an unsigned tvOS IPA for third-party signing / sideloading (no upload)"
   lane :ipa_tvos_unsigned do
-    ios_app_dir  = prepare_xcode_project(scheme: "SiloTV")
+    ios_app_dir  = prepare_xcode_project(scheme: "WeFlixTV")
     output_dir   = File.expand_path("../build/tvos-unsigned", __dir__)
-    archive_path = "#{output_dir}/SiloTV.xcarchive"
+    archive_path = "#{output_dir}/WeFlixTV.xcarchive"
 
-    # The embedded Top Shelf extension is archived as part of SiloTV.app, so no
+    # The embedded Top Shelf extension is archived as part of WeFlixTV.app, so no
     # per-target signing handling is needed here. Re-signers that cannot sign the
     # extension (e.g. free accounts) can strip it before sideloading.
     xcodebuild(
       archive:      true,
-      project:      "#{ios_app_dir}/Silo.xcodeproj",
-      scheme:       "SiloTV",
+      project:      "#{ios_app_dir}/WeFlix.xcodeproj",
+      scheme:       "WeFlixTV",
       destination:  "generic/platform=tvOS",
       archive_path: archive_path,
       xcargs:       "#{locked_package_xcargs}-showBuildTimingSummary " \
@@ -784,9 +784,9 @@ platform :ios do
 
     package_unsigned_ipa(
       archive_path: archive_path,
-      app_name:     "SiloTV",
+      app_name:     "WeFlixTV",
       output_dir:   output_dir,
-      output_ipa:   "SiloTV-unsigned.ipa"
+      output_ipa:   "WeFlixTV-unsigned.ipa"
     )
   end
 

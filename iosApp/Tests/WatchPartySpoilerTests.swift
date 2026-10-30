@@ -1,5 +1,5 @@
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 final class WatchPartySpoilerTests: XCTestCase {
     private let enabled = EpisodeSpoilerSettings(hidesImages: true, hidesOverviews: true)

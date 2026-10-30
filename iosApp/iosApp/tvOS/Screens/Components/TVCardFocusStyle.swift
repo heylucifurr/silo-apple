@@ -46,8 +46,8 @@ private struct TVCardFocusButtonStyleBody: View {
                 y: isFocused ? focusedShadowY : unfocusedShadowY
             )
             .focusEffectDisabled()
-            .animation(.easeOut(duration: SiloTheme.fastDuration), value: isFocused)
-            .animation(.easeOut(duration: SiloTheme.fastDuration), value: configuration.isPressed)
+            .animation(.easeOut(duration: WeFlixTheme.fastDuration), value: isFocused)
+            .animation(.easeOut(duration: WeFlixTheme.fastDuration), value: configuration.isPressed)
     }
 
     private var currentScale: CGFloat {
@@ -80,9 +80,9 @@ private struct TVCardCaptionFocusModifier: ViewModifier {
         content
             .shadow(color: .white.opacity(isFocused ? 0.45 : 0), radius: 10)
             .shadow(color: .white.opacity(isFocused ? 0.25 : 0), radius: 3)
-            .animation(.easeOut(duration: SiloTheme.fastDuration), value: isFocused)
+            .animation(.easeOut(duration: WeFlixTheme.fastDuration), value: isFocused)
             .offset(y: isFocused ? drop : 0)
-            .animation(reduceMotion ? nil : .easeOut(duration: SiloTheme.fastDuration), value: isFocused)
+            .animation(reduceMotion ? nil : .easeOut(duration: WeFlixTheme.fastDuration), value: isFocused)
     }
 }
 
@@ -99,7 +99,7 @@ extension View {
                     lineWidth: isFocused ? lineWidth : 0
                 )
         )
-        .animation(.easeOut(duration: SiloTheme.fastDuration), value: isFocused)
+        .animation(.easeOut(duration: WeFlixTheme.fastDuration), value: isFocused)
     }
 
     /// Focused card title: brighter and heavier than its dimmed neighbours.
@@ -110,9 +110,9 @@ extension View {
             .foregroundStyle(
                 isFocused
                     ? Color.white
-                    : Color.siloOnSurface.opacity(TVCardCaption.unfocusedTitleOpacity)
+                    : Color.weFlixOnSurface.opacity(TVCardCaption.unfocusedTitleOpacity)
             )
-            .animation(.easeOut(duration: SiloTheme.fastDuration), value: isFocused)
+            .animation(.easeOut(duration: WeFlixTheme.fastDuration), value: isFocused)
     }
 
     /// A card's second caption line (year, count, episode) follows the
@@ -122,9 +122,9 @@ extension View {
             .foregroundStyle(
                 isFocused
                     ? Color.white.opacity(0.92)
-                    : Color.siloOnSurface.opacity(TVCardCaption.unfocusedSubtitleOpacity)
+                    : Color.weFlixOnSurface.opacity(TVCardCaption.unfocusedSubtitleOpacity)
             )
-            .animation(.easeOut(duration: SiloTheme.fastDuration), value: isFocused)
+            .animation(.easeOut(duration: WeFlixTheme.fastDuration), value: isFocused)
     }
 
     /// Highlights a focused card's whole caption block with a soft glow and

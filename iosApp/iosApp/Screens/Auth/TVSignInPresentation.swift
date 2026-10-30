@@ -100,7 +100,7 @@ enum TVSignInPresentation {
     }
 
     /// The line under the TV's password form on a server whose discovery
-    /// lists an OAuth provider: those accounts have no Silo password. Nil
+    /// lists an OAuth provider: those accounts have no WeFlix password. Nil
     /// when it lists none. One provider is named; several read as single
     /// sign-on.
     static func phoneHint(_ options: SignInOptions?) -> String? {
@@ -109,5 +109,5 @@ enum TVSignInPresentation {
         return "If you sign in with \(name), use your phone instead."
     }
 
-    static let nearbyHint = "Have Silo on your phone? Open it on the same Wi‑Fi to sign in this TV."
+    static let nearbyHint = "Have weflix on your phone? Open it on the same Wi‑Fi to sign in this TV."
 }

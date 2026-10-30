@@ -1,7 +1,7 @@
 import Foundation
 
-/// `silo://device?server=<server_id>&url=<base>&code=<code>`: the web
-/// approval page's "Open in the Silo app" link for a TV sign-in code.
+/// `weflix://device?server=<server_id>&url=<base>&code=<code>`: the web
+/// approval page's "Open in the weflix app" link for a TV sign-in code.
 ///
 /// A code means nothing without its server, so the link names the server by
 /// its deployment identity (`GET /api/v2/system/identity`) and by an address
@@ -26,11 +26,11 @@ struct DeviceApprovalLink: Identifiable, Equatable, Sendable {
         self.code = DeviceUserCode.normalized(code)
     }
 
-    /// `silo://device?server=&url=&code=` again, to re-handle once the app is
+    /// `weflix://device?server=&url=&code=` again, to re-handle once the app is
     /// ready for it (after adding the server, or signing in to it again).
     var url: URL? {
         var components = URLComponents()
-        components.scheme = SiloURLScheme.current
+        components.scheme = WeFlixURLScheme.current
         components.host = "device"
         components.queryItems = [
             serverId.map { URLQueryItem(name: "server", value: $0) },
@@ -41,7 +41,7 @@ struct DeviceApprovalLink: Identifiable, Equatable, Sendable {
     }
 
     init?(url: URL) {
-        guard SiloURLScheme.isAppURL(url), url.host?.lowercased() == "device",
+        guard WeFlixURLScheme.isAppURL(url), url.host?.lowercased() == "device",
               let components = URLComponents(url: url, resolvingAgainstBaseURL: false) else { return nil }
         func value(_ name: String) -> String? {
             components.queryItems?.first { $0.name == name }?.value

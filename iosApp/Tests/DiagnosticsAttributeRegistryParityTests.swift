@@ -1,6 +1,6 @@
 #if os(iOS) || os(tvOS)
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 /// Gates the three copies of the client-diagnostics attribute registry that
 /// live in this repository against each other:

@@ -35,10 +35,10 @@ struct NowPlayingBarChrome: ViewModifier {
         switch style {
         case .card:
             content
-                .siloGlass(in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+                .weFlixGlass(in: RoundedRectangle(cornerRadius: 14, style: .continuous))
                 .overlay(
                     RoundedRectangle(cornerRadius: 14, style: .continuous)
-                        .strokeBorder(Color.siloOutline, lineWidth: 1)
+                        .strokeBorder(Color.weFlixOutline, lineWidth: 1)
                 )
         case .accessory:
             content

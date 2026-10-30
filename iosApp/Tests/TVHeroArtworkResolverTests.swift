@@ -1,5 +1,5 @@
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 final class TVHeroArtworkResolverTests: XCTestCase {
     private let poster = TVHeroArtwork(url: "https://example.test/poster.jpg", thumbhash: "poster")!

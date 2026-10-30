@@ -15,7 +15,7 @@ spec.loader.exec_module(packaging)
 class SubtitlePackagingTests(unittest.TestCase):
     def test_all_rejected_wrappers_fail_in_exported_ipa(self):
         with tempfile.TemporaryDirectory() as scratch:
-            ipa = Path(scratch) / "SiloTV.ipa"
+            ipa = Path(scratch) / "WeFlixTV.ipa"
             rejected_wrappers = [
                 "Libass", "Libfreetype", "Libfribidi", "Libharfbuzz", "Libunibreak",
                 "fontconfig", "freetype", "fribidi", "harfbuzz", "libpng",
@@ -23,13 +23,13 @@ class SubtitlePackagingTests(unittest.TestCase):
             for name in rejected_wrappers:
                 with self.subTest(framework=name):
                     with zipfile.ZipFile(ipa, "w") as archive:
-                        archive.writestr(f"Payload/SiloTV.app/Frameworks/{name}.framework/Info.plist", "")
+                        archive.writestr(f"Payload/WeFlixTV.app/Frameworks/{name}.framework/Info.plist", "")
                     with self.assertRaisesRegex(ValueError, name):
                         packaging.validate(ipa)
 
     def test_app_keeps_dynamic_media_frameworks_and_subtitle_resource_bundles(self):
         with tempfile.TemporaryDirectory() as scratch:
-            app = Path(scratch) / "SiloTV.app"
+            app = Path(scratch) / "WeFlixTV.app"
             (app / "Frameworks/AetherLibavcodec.framework").mkdir(parents=True)
             (app / "swift-libass_SwiftLibass.bundle").mkdir()
             packaging.validate(app)

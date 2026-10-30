@@ -2,7 +2,7 @@ import Foundation
 import OSLog
 import Synchronization
 
-/// A single Silo server the user has added to the device.
+/// A single WeFlix server the user has added to the device.
 ///
 /// The registry stores one of these per remembered server. Tokens live in
 /// Keychain keyed by `id`, never in the entry itself. The display name is
@@ -122,19 +122,19 @@ enum ServerRegistryError: LocalizedError {
     case persistenceFailed
 
     var errorDescription: String? {
-        "Silo couldn't save the server list. Please try again."
+        "weflix couldn't save the server list. Please try again."
     }
 }
 
-/// Owns the list of known Silo servers and which one is currently
+/// Owns the list of known WeFlix servers and which one is currently
 /// active. Singleton via `.shared`; observed by SwiftUI via `@Observable`.
 ///
 /// Per-server persistence splits across two stores:
-/// - **UserDefaults** (`siloServerRegistry.v1`): the server list and
+/// - **UserDefaults** (`weflixServerRegistry.v1`): the server list and
 ///   active ID on iOS/macOS. tvOS stores the shared list in the
 ///   user-independent Keychain and the active ID in current-user defaults.
-/// - **Keychain** (`SharedKeychain` service `org.siloserver.silo`, account
-///   `org.siloserver.silo.<id>.{accessToken,refreshToken,profileToken}`): per-
+/// - **Keychain** (`SharedKeychain` service `me.weflix`, account
+///   `me.weflix.<id>.{accessToken,refreshToken,profileToken}`): per-
 ///   server tokens, activated by `TokenStore.switchActiveServer`.
 ///
 /// The registry is the single source of truth for URL + name.
@@ -155,15 +155,15 @@ final class ServerRegistry {
         shared.activeServerSnapshot.withLock { $0 }
     }
 
-    static let defaultsKey = "siloServerRegistry.v1"
-    static let migratedKey = "siloServerRegistry.migrated.v1"
+    static let defaultsKey = "weflixServerRegistry.v1"
+    static let migratedKey = "weflixServerRegistry.migrated.v1"
     /// Pre-rename names of the two keys above; `adoptLegacyDefaultsKeys`
     /// moves them once.
     private static let legacyDefaultsKey = "continuumServerRegistry.v1"
     private static let legacyMigratedKey = "continuumServerRegistry.migrated.v1"
     private static let sharedTVRegistryAccount = SharedStorage.keychainAccountPrefix + "serverRegistry.v2"
     private static let logger = Logger(
-        subsystem: Bundle.main.bundleIdentifier ?? "org.siloserver.silo",
+        subsystem: Bundle.main.bundleIdentifier ?? "me.weflix",
         category: "ServerRegistry"
     )
 
@@ -1039,7 +1039,7 @@ final class ServerRegistry {
         }
     }
 
-    // MARK: - Migration from the continuum → silo rename
+    // MARK: - Migration from the continuum → weFlix rename
 
     /// Moves the registry's UserDefaults keys to their post-rename names.
     /// The legacy key is removed only once the current one reads back, and a

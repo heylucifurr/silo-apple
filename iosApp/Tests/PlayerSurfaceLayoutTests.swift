@@ -3,7 +3,7 @@ import AVFoundation
 import Combine
 import SwiftUI
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 @MainActor
 final class PlayerSurfaceLayoutTests: XCTestCase {
@@ -210,7 +210,7 @@ final class PlayerSurfaceLayoutTests: XCTestCase {
             let frames = MobileFrames()
             let viewport = HStack {
                 Button {} label: {
-                    Image(systemName: "xmark").frame(width: SiloTheme.topBarIconHitSize)
+                    Image(systemName: "xmark").frame(width: WeFlixTheme.topBarIconHitSize)
                 }
                 .buttonStyle(MobilePlayerGlassButtonStyle())
                 .onGeometryChange(for: CGRect.self) { $0.frame(in: .named("button-sizing")) } action: { frames.preview = $0 }
@@ -231,8 +231,8 @@ final class PlayerSurfaceLayoutTests: XCTestCase {
             try await settle(window)
             XCTAssertEqual(frames.preview.width, 44, accuracy: 0.5)
             for frame in [frames.preview, frames.panel, frames.rotation] {
-                XCTAssertEqual(frame.height, SiloTheme.topBarIconHitSize, accuracy: 0.5)
-                XCTAssertGreaterThanOrEqual(frame.width, SiloTheme.topBarIconHitSize)
+                XCTAssertEqual(frame.height, WeFlixTheme.topBarIconHitSize, accuracy: 0.5)
+                XCTAssertGreaterThanOrEqual(frame.width, WeFlixTheme.topBarIconHitSize)
             }
         }
     }

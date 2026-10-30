@@ -1,5 +1,5 @@
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 /// Behaviour tests for the player's settings sync: the debounce window, the
 /// bounded retry of a key's latest value and the hold after it (owner decision
@@ -1057,7 +1057,7 @@ final class PlayerSettingsFlushTests: XCTestCase {
         // edit made while the device keeps its own appearance stores.
         await settings.setSubtitleDeviceOverrideEnabled(true)
         // Store every synced key the way this device would have.
-        settings.setQualityPreset(try XCTUnwrap(SiloQualityPresets.preset(id: "1080p-high")))
+        settings.setQualityPreset(try XCTUnwrap(WeFlixQualityPresets.preset(id: "1080p-high")))
         settings.setAudioLanguage("ja")
         settings.setIntroSkipMode(.never)
         settings.setAutoSkipCredits(true)
@@ -1246,7 +1246,7 @@ final class PlayerSettingsFlushTests: XCTestCase {
         // manifest revision instead of being sent.
         await harness.settings.refreshFromServer()
 
-        harness.settings.setQualityPreset(try XCTUnwrap(SiloQualityPresets.preset(id: "1080p-high")))
+        harness.settings.setQualityPreset(try XCTUnwrap(WeFlixQualityPresets.preset(id: "1080p-high")))
         harness.settings.setAudioLanguage("ja")
         harness.settings.setIntroSkipMode(.never)
         harness.settings.setAutoSkipCredits(true)
@@ -1577,7 +1577,7 @@ final class PlayerSettingsFlushTests: XCTestCase {
 
         harness.settings.stageSubtitleAppearance(appearance)
 
-        // Silo Control's position command is synchronous: the edit and
+        // WeFlix Control's position command is synchronous: the edit and
         // handing control back from the system captions both apply before
         // anything suspends. It is a profile edit, not a device override.
         XCTAssertEqual(harness.settings.subtitleAppearance.position, .top)
@@ -1660,7 +1660,7 @@ final class PlayerSettingsFlushTests: XCTestCase {
     /// back to the profile's bitrate cap keeps this device's resolution.
     func testUsingTheProfileSettingForOneQualityPickerClearsOnlyItsKey() async throws {
         let harness = try PlayerSettingsHarness()
-        harness.settings.setQualityPreset(try XCTUnwrap(SiloQualityPresets.preset(id: "720p")))
+        harness.settings.setQualityPreset(try XCTUnwrap(WeFlixQualityPresets.preset(id: "720p")))
         await harness.settings.flushPendingDeviceSettings()
         harness.transport.reset()
         // What the server holds once the cap's device row is gone: this
@@ -2190,7 +2190,7 @@ final class PlayerSettingsFlushTests: XCTestCase {
 
     func testAnOldServerResetAppliesContractDefaultsAndDoesNotQueueDeletes() async throws {
         let harness = try PlayerSettingsHarness()
-        harness.settings.setQualityPreset(try XCTUnwrap(SiloQualityPresets.preset(id: "720p")))
+        harness.settings.setQualityPreset(try XCTUnwrap(WeFlixQualityPresets.preset(id: "720p")))
         harness.settings.setIntroSkipMode(.always)
         harness.settings.setHDREnabled(false)
         var appearance = SubtitleAppearance.default
@@ -2224,7 +2224,7 @@ final class PlayerSettingsFlushTests: XCTestCase {
 
     func testAnUnavailableRefreshKeepsCachedValues() async throws {
         let harness = try PlayerSettingsHarness()
-        harness.settings.setQualityPreset(try XCTUnwrap(SiloQualityPresets.preset(id: "720p")))
+        harness.settings.setQualityPreset(try XCTUnwrap(WeFlixQualityPresets.preset(id: "720p")))
         harness.settings.setIntroSkipMode(.always)
         harness.transport.effectiveError = .transport(description: "offline")
 

@@ -1,9 +1,9 @@
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 /// Which unclean previous runs become an abnormal-exit report. A reboot, an
 /// app update, or a debugger session ends a run without saying anything about
-/// Silo's stability, so those leftovers are dropped on the next launch.
+/// WeFlix's stability, so those leftovers are dropped on the next launch.
 final class ExitSentinelLeftoverPolicyTests: XCTestCase {
     private let environment = ExitSentinelEnvironment(
         bootTime: 1_790_000_000,

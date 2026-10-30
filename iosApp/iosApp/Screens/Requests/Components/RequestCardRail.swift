@@ -4,7 +4,7 @@ import SwiftUI
 /// search section, and My Requests all agree on card geometry.
 enum RequestsUI {
     #if os(tvOS)
-    /// Slightly denser than `SiloTheme.posterCardWidth` so rails fit
+    /// Slightly denser than `WeFlixTheme.posterCardWidth` so rails fit
     /// more titles at 10 feet, matching the search grid's card size.
     static let cardWidth: CGFloat = 220
     static let railSpacing: CGFloat = 32
@@ -13,7 +13,7 @@ enum RequestsUI {
     /// by the rail's scroll bounds — same treatment as `TVSimilarRail`.
     static let railVerticalPadding: CGFloat = 24
     #else
-    static let cardWidth: CGFloat = SiloTheme.posterCardWidth
+    static let cardWidth: CGFloat = WeFlixTheme.posterCardWidth
     static let railSpacing: CGFloat = 12
     static let headerSpacing: CGFloat = 10
     #endif
@@ -66,11 +66,11 @@ struct RequestsSectionHeader: View {
                     Text(label.uppercased())
                         .font(.system(size: labelSize, weight: .bold))
                         .tracking(1.6)
-                        .foregroundColor(.siloOnSurface.opacity(0.55))
+                        .foregroundColor(.weFlixOnSurface.opacity(0.55))
                 }
                 Text(title)
                     .font(.system(size: titleSize, weight: .semibold))
-                    .foregroundColor(.siloOnSurface)
+                    .foregroundColor(.weFlixOnSurface)
                     .lineLimit(1)
             }
 
@@ -84,7 +84,7 @@ struct RequestsSectionHeader: View {
                             .font(.system(size: trailingSize * 0.8, weight: .semibold))
                     }
                     .font(.system(size: trailingSize, weight: .medium))
-                    .foregroundColor(.siloSecondaryText)
+                    .foregroundColor(.weFlixSecondaryText)
                 }
                 #if os(tvOS)
                 .buttonStyle(.plain)

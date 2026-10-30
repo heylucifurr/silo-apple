@@ -1,7 +1,7 @@
 #if os(iOS)
 import SwiftUI
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 final class MainTabLayoutSelectionTests: XCTestCase {
     /// Split View, Slide Over, and resized windows get the iPhone tab bar even

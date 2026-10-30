@@ -13,9 +13,9 @@ import UserNotifications
 enum DownloadNotifier {
     /// Tapping any download notification lands on the Downloads screen via
     /// the same userInfo key the push pipeline uses, so
-    /// `SiloAppDelegate.userNotificationCenter(_:didReceive:)` routes both
+    /// `WeFlixAppDelegate.userNotificationCenter(_:didReceive:)` routes both
     /// kinds through one code path.
-    private static let downloadsDeepLink = "silo://downloads"
+    private static let downloadsDeepLink = "weflix://downloads"
 
     static func downloadCompleted(_ record: DownloadRecord) {
         post(

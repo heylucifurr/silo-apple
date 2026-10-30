@@ -1,6 +1,6 @@
 import XCTest
 import Foundation
-@testable import Silo
+@testable import WeFlix
 
 /// Contract coverage for the offline manifest → player metadata mapping in
 /// `OfflinePlaybackBuilder`.

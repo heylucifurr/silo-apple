@@ -1,6 +1,6 @@
 import Foundation
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 /// `POST /api/v2/sync/progress`: the wire shape, the three dispatch outcomes
 /// of a `non_retryable` operation, and the offline queue rules built on them.

@@ -14,7 +14,7 @@ import Synchronization
 /// The last answer is remembered per server, so a launch sends the right size
 /// immediately instead of holding its first requests behind the probe.
 ///
-/// Not main-actor: its consumer is the `SiloAPI` actor, which reads it while
+/// Not main-actor: its consumer is the `WeFlixAPI` actor, which reads it while
 /// building a request.
 final class ImageSizeCapability: Sendable {
     static let shared = ImageSizeCapability()
@@ -79,7 +79,7 @@ final class ImageSizeCapability: Sendable {
     private let state = Mutex(State())
 
     init(
-        api: SiloAPI = .shared,
+        api: WeFlixAPI = .shared,
         platformPrefersLargeImages: Bool = ImageSizeCapability.platformPrefersLargeImages,
         memory: Memory? = .userDefaults
     ) {

@@ -36,7 +36,7 @@ final class AccountSignInModel {
     /// it does not say (an older server); its guard still applies.
     private(set) var canUnlink: Bool?
     private(set) var connectable: [Connectable] = []
-    /// Whether connecting a network provider keeps the Silo password. False
+    /// Whether connecting a network provider keeps the WeFlix password. False
     /// on servers that predate `network_link_keeps_password`.
     private(set) var networkLinkKeepsPassword = false
     /// Whether the server serves the account's identities at all.
@@ -140,22 +140,22 @@ final class AccountSignInModel {
         }
     }
 
-    /// The Connect sheet's note under the Silo password: what connecting
+    /// The Connect sheet's note under the WeFlix password: what connecting
     /// `item` changes about signing in. OIDC and LDAP links replace the
     /// password; a network link keeps it when the server says so.
     nonisolated static func connectFooter(for item: Connectable, networkLinkKeepsPassword: Bool) -> String {
         switch item.method {
         case .directory:
-            return "Enter your Silo password to confirm. After connecting, you sign in with your \(item.name) username and password instead."
+            return "Enter your weflix password to confirm. After connecting, you sign in with your \(item.name) username and password instead."
         case .network:
             let who = item.provider.networkIdentity?.name.map { "\($0), " } ?? ""
-            let confirm = "Enter your Silo password to confirm. This connects \(who)the \(item.name) account this device belongs to."
+            let confirm = "Enter your weflix password to confirm. This connects \(who)the \(item.name) account this device belongs to."
             if networkLinkKeepsPassword {
                 return "\(confirm) You can then sign in with \(item.name) or your password. \(item.name) sign-in works only when you open this server at its \(item.name) address."
             }
             return "\(confirm) After connecting, you sign in with \(item.name) instead of your password, and only when you open this server at its \(item.name) address."
         case .browser:
-            return "Confirm your Silo password, then sign in with \(item.name). After connecting, you sign in with \(item.name) instead of your password."
+            return "Confirm your weflix password, then sign in with \(item.name). After connecting, you sign in with \(item.name) instead of your password."
         }
     }
 
@@ -168,7 +168,7 @@ final class AccountSignInModel {
                  directory: DirectoryCredentials? = nil) async -> Bool {
         guard !isBusy else { return false }
         guard !password.isEmpty else {
-            errorMessage = "Enter your Silo password."
+            errorMessage = "Enter your weflix password."
             return false
         }
         if provider.isCredentials {
@@ -271,7 +271,7 @@ final class AccountSignInModel {
             case (.connect, "validation_failed", 422) where location == "body.directory_password":
                 return "The directory didn't accept that username and password."
             case (.connect, "validation_failed", 422) where location == "body.password":
-                return "That Silo password is incorrect."
+                return "That weflix password is incorrect."
             case (.connect, "validation_failed", 422):
                 return "Check what you entered, then try again."
             case (.connect, "not_permitted", _), (.connect, "identity_linked_elsewhere", _),
@@ -280,7 +280,7 @@ final class AccountSignInModel {
                 return ExternalSignInError.reasonText(problem.identifier)
             case (.connect, "local_password_required", _), (.connect, "conflict", 409):
                 // The link ticket answers a plain conflict for the same case.
-                return "Your account has no Silo password to confirm with. Ask an administrator to connect the provider."
+                return "Your account has no weflix password to confirm with. Ask an administrator to connect the provider."
             case (.connect, _, 404):
                 return providerGoneMessage
             case (.disconnect, _, 404):
@@ -307,7 +307,7 @@ final class AccountSignInModel {
 extension AccountSignInModel {
     static func live() -> AccountSignInModel {
         AccountSignInModel(
-            api: SiloAPI.shared.apiV2Client,
+            api: WeFlixAPI.shared.apiV2Client,
             tokenStore: .shared,
             link: { provider, password in
                 try await ExternalSignInService.live.link(provider: provider, password: password)

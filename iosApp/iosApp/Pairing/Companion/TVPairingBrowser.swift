@@ -15,7 +15,7 @@ struct DiscoveredTV: Identifiable, Equatable {
     /// TXT `srv`: for a `login` TV, the deployment identity of the server
     /// it is signed out of.
     var serverIdentity: String? = nil
-    /// Found as `_silopair-roku._tcp`: dialed over plain TCP, and signed in
+    /// Found as `_weflixpair-roku._tcp`: dialed over plain TCP, and signed in
     /// to one server only.
     var isRoku = false
     // id-only equality is intentional: `sid`/`state` changes are surfaced via the
@@ -24,7 +24,7 @@ struct DiscoveredTV: Identifiable, Equatable {
     static func == (a: DiscoveredTV, b: DiscoveredTV) -> Bool { a.id == b.id }
 }
 
-/// Browses `_silopair._tcp` and `_silopair-roku._tcp` and publishes the
+/// Browses `_weflixpair._tcp` and `_weflixpair-roku._tcp` and publishes the
 /// discovered TVs as one list. Drives the
 /// hands-off card. Owns the Local Network permission prompt (triggered on
 /// first browse).
@@ -38,14 +38,14 @@ final class TVPairingBrowser {
     private(set) var found: [DiscoveredTV] = []
     private var browsers: [NWBrowser] = []
     private var foundByType: [String: [DiscoveredTV]] = [:]
-    private nonisolated static let serviceTypes = [PairingProtocol.serviceType, PairingProtocol.rokuServiceType]
+    private nonisolated static let serviceTypes = PairingProtocol.browsableServiceTypes
     /// Active between `start()` and `stop()`, so a deliberate stop stays
     /// stopped.
     private let selfHeal: BonjourSelfHeal
     /// True between `start()` and `stop()`. While false, `found` is empty,
     /// which says nothing about any TV. Stored so views observe it.
     private(set) var isBrowsing = false
-    private nonisolated static let logger = Logger(subsystem: "org.siloserver.silo", category: "pairing.browser")
+    private nonisolated static let logger = Logger(subsystem: "me.weflix", category: "pairing.browser")
 
     init(selfHeal: BonjourSelfHeal = BonjourSelfHeal()) {
         self.selfHeal = selfHeal
@@ -138,7 +138,7 @@ final class TVPairingBrowser {
         let id = txt[Key.deviceId] ?? "\(endpoint)"
         return DiscoveredTV(id: id, name: name, state: state, endpoint: endpoint, sid: txt[Key.sessionNonce],
             serverIdentity: ServerIdentity.usable(txt[Key.serverIdentity]),
-            isRoku: serviceType == PairingProtocol.rokuServiceType)
+            isRoku: PairingProtocol.isRokuServiceType(serviceType))
     }
 }
 #endif

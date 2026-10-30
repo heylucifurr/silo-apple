@@ -6,12 +6,24 @@ enum PairingProtocol {
     /// Wire protocol version. Bump on any breaking change to message shapes.
     static let version = 1
     /// Bonjour service type the TV advertises and the phone browses for.
-    static let serviceType = "_silopair._tcp"
+    static let serviceType = "_weflixpair._tcp"
     /// What a Roku advertises instead. Roku has no TLS on sockets an app
     /// listens on, so it takes the same messages over plain TCP; the
     /// separate type keeps phones that only dial TLS from offering it.
     /// silo-roku `docs/companion-pairing.md`.
-    static let rokuServiceType = "_silopair-roku._tcp"
+    static let rokuServiceType = "_weflixpair-roku._tcp"
+    /// Service types this client emitted before the rename. Stock TVs and the
+    /// Android client still advertise these, so the phone browses them too.
+    static let legacyServiceType = "_silopair._tcp"
+    static let legacyRokuServiceType = "_silopair-roku._tcp"
+    /// Every type a phone browses for, new first.
+    static let browsableServiceTypes = [serviceType, legacyServiceType, rokuServiceType, legacyRokuServiceType]
+
+    /// Whether a browsed service type is a Roku's, under either the current or
+    /// the pre-rename advertisement.
+    static func isRokuServiceType(_ serviceType: String) -> Bool {
+        serviceType == rokuServiceType || serviceType == legacyRokuServiceType
+    }
 
     /// Rollout gate for sign-in TVs: whether the TV sign-in screen
     /// advertises `st=login`. Both phone apps must accept `login` TVs before

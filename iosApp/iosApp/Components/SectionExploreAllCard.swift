@@ -9,7 +9,7 @@ import SwiftUI
 struct SectionExploreAllCard: View {
     /// The row's card artwork size.
     let size: CGSize
-    var cornerRadius: CGFloat = SiloTheme.cornerRadius
+    var cornerRadius: CGFloat = WeFlixTheme.cornerRadius
     let rowTitle: String
     /// tvOS: the row's card focus binding, so the card is one more stop in
     /// the row's native focus graph.
@@ -48,18 +48,18 @@ struct SectionExploreAllCard: View {
             Image(systemName: "arrow.right")
                 .font(.system(size: iconSize, weight: .semibold))
                 .frame(width: iconSize * 2.2, height: iconSize * 2.2)
-                .background(Circle().fill(Color.siloOnSurface.opacity(0.12)))
+                .background(Circle().fill(Color.weFlixOnSurface.opacity(0.12)))
             Text(Self.label)
                 .font(labelFont)
                 .lineLimit(1)
                 .minimumScaleFactor(0.8)
         }
-        .foregroundStyle(Color.siloOnSurface)
+        .foregroundStyle(Color.weFlixOnSurface)
         .padding(.horizontal, 8)
         .frame(width: size.width, height: size.height)
         .background(
             RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-                .fill(Color.siloSurfaceElevated)
+                .fill(Color.weFlixSurfaceElevated)
         )
         .overlay(
             RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
@@ -88,7 +88,7 @@ struct SectionExploreAllCard: View {
 
     private var labelFont: Font {
         #if os(tvOS)
-        .siloPosterTitle
+        .weFlixPosterTitle
         #else
         .footnote.weight(.semibold)
         #endif

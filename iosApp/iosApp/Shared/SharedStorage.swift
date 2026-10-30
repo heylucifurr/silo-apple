@@ -16,7 +16,7 @@ import Security
 enum SharedStorage {
     /// Must match the `com.apple.security.application-groups` entitlement
     /// on both the main app and the extension.
-    static let appGroup = "group.org.siloserver.silo"
+    static let appGroup = "group.me.weflix"
 
     /// Must match the `keychain-access-groups` entitlement on both sides.
     /// Resolved from a build-expanded Info.plist value so personal-team
@@ -24,12 +24,12 @@ enum SharedStorage {
     static let keychainAccessGroup = RuntimeConfiguration.sharedKeychainAccessGroup
 
     /// Shared Keychain service name. Same on both sides.
-    static let keychainService = "org.siloserver.silo"
+    static let keychainService = "me.weflix"
 
     /// Every Keychain account the apps own starts with this prefix.
-    static let keychainAccountPrefix = "org.siloserver.silo."
+    static let keychainAccountPrefix = "me.weflix."
 
-    /// Builds before the continuum → silo rename stored every item under
+    /// Builds before the continuum → weFlix rename stored every item under
     /// this service, with `com.continuum.` where accounts now use
     /// `keychainAccountPrefix`. `SharedKeychain`
     /// moves an item to its current name the first time it is read, so
@@ -106,7 +106,7 @@ enum SharedStorage {
 }
 
 enum SideloadKeychainFallbackPolicy {
-    private static let canonicalAccessGroup = "org.siloserver.silo.shared"
+    private static let canonicalAccessGroup = "me.weflix.shared"
 
     static func isEnabled(buildChannel: String, isPreIOS26: Bool) -> Bool {
         buildChannel == "sideload" && isPreIOS26
@@ -135,11 +135,11 @@ enum SideloadKeychainFallbackPolicy {
 
 private enum RuntimeConfiguration {
     private static let logger = Logger(
-        subsystem: Bundle.main.bundleIdentifier ?? "org.siloserver.silo",
+        subsystem: Bundle.main.bundleIdentifier ?? "me.weflix",
         category: "RuntimeConfiguration"
     )
 
-    /// Third-party re-signers commonly cannot preserve Silo's shared
+    /// Third-party re-signers commonly cannot preserve WeFlix's shared
     /// Keychain entitlement. On legacy iOS, keep core authentication usable
     /// by allowing the explicitly stamped sideload build to use the app's
     /// implicit Keychain group when Security reports that exact mismatch.
@@ -147,7 +147,7 @@ private enum RuntimeConfiguration {
     /// behavior.
     static let allowsAppLocalKeychainFallback: Bool = {
         #if os(iOS) && !DEBUG
-        let rawChannel = Bundle.main.object(forInfoDictionaryKey: "SiloBuildChannel") as? String
+        let rawChannel = Bundle.main.object(forInfoDictionaryKey: "WeFlixBuildChannel") as? String
         let buildChannel = rawChannel?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
         let isPreIOS26: Bool
         if #available(iOS 26.0, *) {
@@ -166,9 +166,9 @@ private enum RuntimeConfiguration {
 
     static let sharedKeychainAccessGroup: String? = {
         guard let group = Bundle.main.object(
-            forInfoDictionaryKey: "SiloKeychainAccessGroup"
+            forInfoDictionaryKey: "WeFlixKeychainAccessGroup"
         ) as? String else {
-            logger.error("Missing SiloKeychainAccessGroup Info.plist value; shared auth tokens may not persist.")
+            logger.error("Missing WeFlixKeychainAccessGroup Info.plist value; shared auth tokens may not persist.")
             return nil
         }
         if let resolved = SideloadKeychainFallbackPolicy.resolvedAccessGroup(
@@ -177,18 +177,18 @@ private enum RuntimeConfiguration {
         ) {
             return resolved
         }
-        logger.error("Unexpected SiloKeychainAccessGroup value: \(group, privacy: .public)")
+        logger.error("Unexpected WeFlixKeychainAccessGroup value: \(group, privacy: .public)")
         return nil
     }()
 
     static let usesUserIndependentKeychain: Bool = {
         if let value = Bundle.main.object(
-            forInfoDictionaryKey: "SiloUsesUserIndependentKeychain"
+            forInfoDictionaryKey: "WeFlixUsesUserIndependentKeychain"
         ) as? Bool {
             return value
         }
         guard let value = Bundle.main.object(
-            forInfoDictionaryKey: "SiloUsesUserIndependentKeychain"
+            forInfoDictionaryKey: "WeFlixUsesUserIndependentKeychain"
         ) as? String else {
             return false
         }
@@ -200,7 +200,7 @@ private enum RuntimeConfiguration {
            let prefix = SideloadKeychainFallbackPolicy.teamPrefix(from: group) {
             return prefix
         }
-        logger.error("Could not derive team prefix from SiloKeychainAccessGroup; legacy keychain migration will only try the default access group.")
+        logger.error("Could not derive team prefix from WeFlixKeychainAccessGroup; legacy keychain migration will only try the default access group.")
         return nil
     }()
 }
@@ -268,7 +268,7 @@ struct SharedDefaults: @unchecked Sendable {
 /// it on the Home Screen (i.e. before any user interaction with the app).
 struct SharedKeychain {
     private static let logger = Logger(
-        subsystem: Bundle.main.bundleIdentifier ?? "org.siloserver.silo",
+        subsystem: Bundle.main.bundleIdentifier ?? "me.weflix",
         category: "SharedKeychain"
     )
 
@@ -277,7 +277,7 @@ struct SharedKeychain {
     let audience: KeychainAudience
     let usesUserIndependentKeychain: Bool
     let allowsAppLocalFallback: Bool
-    /// Service that held this keychain's items before the continuum → silo
+    /// Service that held this keychain's items before the continuum → weFlix
     /// rename. Defaults to the legacy service only for the shared service,
     /// so isolated test keychains never read real legacy items.
     let legacyService: String?

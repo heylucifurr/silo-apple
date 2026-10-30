@@ -137,7 +137,7 @@ private struct MacPlayerScreen: View {
                             onPrimary: { viewModel.selectBufferingPrimary() },
                             onSecondary: { viewModel.selectBufferingKeep() }
                         )
-                        .padding(.horizontal, SiloTheme.safePadding)
+                        .padding(.horizontal, WeFlixTheme.safePadding)
                         .transition(.move(edge: .top).combined(with: .opacity))
                         .playerNoticeStackPill()
                     }
@@ -197,7 +197,7 @@ private struct MacPlayerScreen: View {
         .preferredColorScheme(.dark)
         // One header: the window's title bar carries what is playing and its
         // format beside the back button.
-        .navigationTitle(viewModel.title.isEmpty ? "Silo" : viewModel.title)
+        .navigationTitle(viewModel.title.isEmpty ? "weflix" : viewModel.title)
         .navigationSubtitle(viewModel.metadata.badges.joined(separator: " · "))
         .animation(.easeOut(duration: 0.16), value: shouldShowControls)
         .animation(.easeOut(duration: 0.16), value: isOptionsPresented)
@@ -288,10 +288,10 @@ private struct MacPlayerScreen: View {
         VStack(spacing: 16) {
             Image(systemName: "exclamationmark.triangle.fill")
                 .font(.system(size: 40))
-                .foregroundStyle(Color.siloError)
+                .foregroundStyle(Color.weFlixError)
 
             Text(error)
-                .font(.siloBody)
+                .font(.weFlixBody)
                 .foregroundStyle(.white)
                 .multilineTextAlignment(.center)
                 .frame(maxWidth: 520)
@@ -302,8 +302,8 @@ private struct MacPlayerScreen: View {
                         viewModel.retry()
                     }
                     .buttonStyle(.borderedProminent)
-                    .tint(.siloOnSurface)
-                    .foregroundStyle(Color.siloBackground)
+                    .tint(.weFlixOnSurface)
+                    .foregroundStyle(Color.weFlixBackground)
                 }
 
                 Button("Close") {

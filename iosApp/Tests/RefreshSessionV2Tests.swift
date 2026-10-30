@@ -1,6 +1,6 @@
 import Foundation
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 /// Token refresh runs on `POST /api/v2/auth/refresh` for both the ordinary
 /// and the captured-identity (scoped) request paths. Only a rejected
@@ -74,7 +74,7 @@ final class RefreshSessionV2Tests: XCTestCase {
 
     private func observeSessionExpiry() -> (count: ExpiryCounter, token: NSObjectProtocol) {
         let count = ExpiryCounter()
-        let token = NotificationCenter.default.addObserver(forName: .siloSessionExpired, object: nil,
+        let token = NotificationCenter.default.addObserver(forName: .weFlixSessionExpired, object: nil,
             queue: nil) { _ in count.increment() }
         return (count, token)
     }

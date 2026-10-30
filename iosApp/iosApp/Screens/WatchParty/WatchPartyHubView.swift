@@ -26,11 +26,11 @@ struct WatchPartyHubView: View {
                     #if os(tvOS)
                     // Nothing else here can hold focus while the party starts;
                     // without an owner Menu cannot leave a slow request.
-                    ProgressView().tint(Color.siloSecondaryText)
+                    ProgressView().tint(Color.weFlixSecondaryText)
                         .tvPageFocusOwner(focusRequest: 0, isTopMenuFocused: false,
                                           accessibilityLabel: "Starting your party", onMoveUp: nil)
                     #else
-                    ProgressView().tint(Color.siloSecondaryText)
+                    ProgressView().tint(Color.weFlixSecondaryText)
                         .accessibilityLabel("Starting your party")
                     #endif
                 }
@@ -236,10 +236,10 @@ private struct WatchPartyEntryView: View {
                 .font(.system(size: WatchPartyMetrics.heroTitle, weight: .bold))
                 .tracking(-WatchPartyMetrics.heroTitle * 0.02)
                 .lineSpacing(-WatchPartyMetrics.heroTitle * 0.05)
-                .foregroundStyle(Color.siloOnSurface)
+                .foregroundStyle(Color.weFlixOnSurface)
             Text("Pick a title, share the code, and everyone's playback stays in step.")
                 .font(.system(size: WatchPartyMetrics.body))
-                .foregroundStyle(Color.siloSecondaryText)
+                .foregroundStyle(Color.weFlixSecondaryText)
                 .fixedSize(horizontal: false, vertical: true)
         }
         .multilineTextAlignment(.leading)
@@ -275,7 +275,7 @@ private struct WatchPartyEntryView: View {
                 if session.wasReplaced {
                     Text("Rejoining here disconnects this profile's other device from the party.")
                         .font(.system(size: WatchPartyMetrics.caption))
-                        .foregroundStyle(Color.siloSecondaryText)
+                        .foregroundStyle(Color.weFlixSecondaryText)
                 }
             }
         }
@@ -316,8 +316,8 @@ private struct WatchPartyEntryView: View {
                 .font(.system(size: 17, weight: .medium, design: .monospaced))
                 .padding(.horizontal, 14)
                 .frame(height: 52)
-                .background(RoundedRectangle(cornerRadius: 14, style: .continuous).fill(Color.siloChromeRestingFill))
-                .overlay(RoundedRectangle(cornerRadius: 14, style: .continuous).stroke(Color.siloChromeRestingBorder, lineWidth: 1))
+                .background(RoundedRectangle(cornerRadius: 14, style: .continuous).fill(Color.weFlixChromeRestingFill))
+                .overlay(RoundedRectangle(cornerRadius: 14, style: .continuous).stroke(Color.weFlixChromeRestingBorder, lineWidth: 1))
                 #endif
                 .accessibilityIdentifier("watchParty.invitation")
                 #if os(tvOS)
@@ -329,7 +329,7 @@ private struct WatchPartyEntryView: View {
             }
             .labelStyle(.iconOnly)
             .buttonBorderShape(.roundedRectangle(radius: 14))
-            .tint(Color.siloChromeRestingFill)
+            .tint(Color.weFlixChromeRestingFill)
             #endif
         }
     }
@@ -455,7 +455,7 @@ struct WatchPartyLobbyView: View {
                 phoneLobby(room)
                 #endif
             }
-            .animation(.easeOut(duration: SiloTheme.normalDuration), value: room.selectedContentId)
+            .animation(.easeOut(duration: WeFlixTheme.normalDuration), value: room.selectedContentId)
         }
     }
 
@@ -523,14 +523,14 @@ struct WatchPartyLobbyView: View {
             case .connected:
                 let here = room.members.filter(\.connected).count
                 return (.requestEmerald, here <= 1 ? "Open" : "\(here) here")
-            case .connecting: return (.siloSecondaryText, "Connecting")
+            case .connecting: return (.weFlixSecondaryText, "Connecting")
             case .reconnecting: return (.requestAmber, "Reconnecting")
             case .ended, .failed, .idle: return (.requestRose, "Disconnected")
             }
         }()
         return HStack(spacing: 6) {
             Circle().fill(color).frame(width: WatchPartyMetrics.caption * 0.55, height: WatchPartyMetrics.caption * 0.55)
-            Text(text).font(.system(size: WatchPartyMetrics.caption)).foregroundStyle(Color.siloSecondaryText)
+            Text(text).font(.system(size: WatchPartyMetrics.caption)).foregroundStyle(Color.weFlixSecondaryText)
         }
         .accessibilityElement(children: .combine)
     }
@@ -562,41 +562,41 @@ struct WatchPartyLobbyView: View {
                 Text("What are we watching?")
                     .font(.system(size: titleSize, weight: .bold))
                     .tracking(-titleSize * 0.02)
-                    .foregroundStyle(Color.siloOnSurface)
+                    .foregroundStyle(Color.weFlixOnSurface)
                 Text(room.selfCanManageRoom ? "Everyone votes. You start the leader." : "Tap a title to vote. \(hostName(room)) starts the winner.")
                     .font(.system(size: WatchPartyMetrics.body))
-                    .foregroundStyle(Color.siloSecondaryText)
+                    .foregroundStyle(Color.weFlixSecondaryText)
             } else if let item = displayedItem {
                 WatchPartyEyebrow(text: room.phase == .playing ? "Now watching · together" : "Up next · together")
                 Text(item.title)
                     .font(.system(size: titleSize, weight: .bold))
                     .tracking(-titleSize * 0.02)
-                    .foregroundStyle(Color.siloOnSurface)
+                    .foregroundStyle(Color.weFlixOnSurface)
                     .lineLimit(3)
                     .minimumScaleFactor(0.7)
                 factsLine(item)
                 Text(room.selfRole == .host ? "You chose this" : "\(hostName(room)) chose this")
                     .font(.system(size: WatchPartyMetrics.caption))
-                    .foregroundStyle(Color.siloSecondaryText.opacity(0.7))
+                    .foregroundStyle(Color.weFlixSecondaryText.opacity(0.7))
             } else if room.selectedContentId != nil {
                 WatchPartyEyebrow(text: room.phase == .playing ? "Now watching · together" : "Up next · together")
                 Text(session.selectedItemUnavailable ? "A title you can't see" : "Loading title…")
                     .font(.system(size: titleSize, weight: .bold))
-                    .foregroundStyle(Color.siloSecondaryText)
+                    .foregroundStyle(Color.weFlixSecondaryText)
                 Text(room.selfRole == .host ? "You chose this" : "\(hostName(room)) chose this")
                     .font(.system(size: WatchPartyMetrics.caption))
-                    .foregroundStyle(Color.siloSecondaryText.opacity(0.7))
+                    .foregroundStyle(Color.weFlixSecondaryText.opacity(0.7))
             } else {
                 WatchPartyEyebrow(text: "Your party is open")
                 Text(room.selfCanManageRoom ? "Pick something\nto watch" : "Waiting for\n\(hostName(room))")
                     .font(.system(size: titleSize, weight: .bold))
                     .tracking(-titleSize * 0.02)
-                    .foregroundStyle(Color.siloOnSurface)
+                    .foregroundStyle(Color.weFlixOnSurface)
                 Text(room.selfCanManageRoom
                      ? "Friends can join now with the code. They'll see your pick the moment you choose."
                      : "\(hostName(room)) is choosing what to watch. You'll see it here the moment they do.")
                     .font(.system(size: WatchPartyMetrics.body))
-                    .foregroundStyle(Color.siloSecondaryText)
+                    .foregroundStyle(Color.weFlixSecondaryText)
                     .fixedSize(horizontal: false, vertical: true)
             }
         }
@@ -608,18 +608,18 @@ struct WatchPartyLobbyView: View {
                 Text(subtitle)
             }
             ForEach(Array(item.factsLine.enumerated()), id: \.offset) { index, fact in
-                if index > 0 || item.subtitle?.isEmpty == false { Text("·").foregroundStyle(Color.siloSecondaryText.opacity(0.5)) }
+                if index > 0 || item.subtitle?.isEmpty == false { Text("·").foregroundStyle(Color.weFlixSecondaryText.opacity(0.5)) }
                 Text(fact)
             }
             ForEach(item.qualityChips, id: \.self) { chip in
                 Text(chip)
                     .font(.system(size: WatchPartyMetrics.caption * 0.85, weight: .semibold))
                     .padding(.horizontal, 6).padding(.vertical, 2)
-                    .overlay(RoundedRectangle(cornerRadius: 4).stroke(Color.siloSecondaryText.opacity(0.5), lineWidth: 1))
+                    .overlay(RoundedRectangle(cornerRadius: 4).stroke(Color.weFlixSecondaryText.opacity(0.5), lineWidth: 1))
             }
         }
         .font(.system(size: WatchPartyMetrics.body - 1))
-        .foregroundStyle(Color.siloSecondaryText)
+        .foregroundStyle(Color.weFlixSecondaryText)
         .lineLimit(1)
     }
 
@@ -729,7 +729,7 @@ struct WatchPartyLobbyView: View {
         if let text {
             Text(text)
                 .font(.system(size: WatchPartyMetrics.caption))
-                .foregroundStyle(Color.siloSecondaryText.opacity(0.7))
+                .foregroundStyle(Color.weFlixSecondaryText.opacity(0.7))
                 .multilineTextAlignment(.center)
                 .fixedSize(horizontal: false, vertical: true)
         }
@@ -744,7 +744,7 @@ struct WatchPartyLobbyView: View {
                 VStack(alignment: .leading, spacing: 24) {
                     HStack {
                         Button { openSheet(.invite) } label: { WatchPartyCodePill(code: room.code) }
-                            .buttonStyle(.siloFlat)
+                            .buttonStyle(.weFlixFlat)
                         connectionDot(room)
                         Spacer()
                         hostMenu(room)
@@ -836,10 +836,10 @@ struct WatchPartyLobbyView: View {
         } label: {
             Image(systemName: "ellipsis")
                 .font(.system(size: 17, weight: .semibold))
-                .foregroundStyle(Color.siloOnSurface)
+                .foregroundStyle(Color.weFlixOnSurface)
                 .frame(width: 36, height: 36)
-                .background(Circle().fill(Color.siloChromeRestingFill))
-                .overlay(Circle().stroke(Color.siloChromeRestingBorder, lineWidth: 1))
+                .background(Circle().fill(Color.weFlixChromeRestingFill))
+                .overlay(Circle().stroke(Color.weFlixChromeRestingBorder, lineWidth: 1))
         }
         .disabled(session.locksControls)
         .accessibilityLabel("Party options")
@@ -856,7 +856,7 @@ struct WatchPartyLobbyView: View {
                 HStack(spacing: 18) {
                     Text("Watch Party")
                         .font(.system(size: 26, weight: .semibold))
-                        .foregroundStyle(Color.siloOnSurface)
+                        .foregroundStyle(Color.weFlixOnSurface)
                     connectionDot(room)
                 }
                 Spacer()
@@ -896,7 +896,7 @@ struct WatchPartyLobbyView: View {
                             Text(overview)
                                 .font(.system(size: 24))
                                 .lineSpacing(6)
-                                .foregroundStyle(Color.siloSecondaryText)
+                                .foregroundStyle(Color.weFlixSecondaryText)
                                 .lineLimit(3)
                         }
                         statusBanner(room)
@@ -978,7 +978,7 @@ struct WatchPartyLobbySuggestions: View {
                 Spacer(minLength: 12)
                 Text(room.selfCanManageRoom ? "Queue one to put it up next." : "The host decides what plays.")
                     .font(.system(size: WatchPartyMetrics.caption))
-                    .foregroundStyle(Color.siloSecondaryText)
+                    .foregroundStyle(Color.weFlixSecondaryText)
                     .lineLimit(1)
             }
             #if os(tvOS)
@@ -1021,16 +1021,16 @@ private struct WatchPartySuggestionRow: View {
                              hidesStill: suggestion.hidesPoster(with: EpisodeSpoilerPreferences.shared.settings))
             VStack(alignment: .leading, spacing: 3) {
                 Text(suggestion.title).font(.system(size: 15, weight: .semibold)).lineLimit(1)
-                    .foregroundStyle(Color.siloOnSurface)
+                    .foregroundStyle(Color.weFlixOnSurface)
                 Text([suggestion.subtitle, suggestion.note.isEmpty ? nil : "“\(suggestion.note)”"].compactMap { $0 }
                     .filter { !$0.isEmpty }.joined(separator: " · "))
-                    .font(.system(size: 12)).foregroundStyle(Color.siloSecondaryText).lineLimit(1)
+                    .font(.system(size: 12)).foregroundStyle(Color.weFlixSecondaryText).lineLimit(1)
             }
             Spacer(minLength: 4)
             if isQueued {
                 Text("Up next")
                     .font(.system(size: 13, weight: .semibold))
-                    .foregroundStyle(Color.siloSecondaryText)
+                    .foregroundStyle(Color.weFlixSecondaryText)
                     .padding(.horizontal, 8)
             } else if canQueue {
                 Button(queueLabel) { onQueue(suggestion) }
@@ -1040,8 +1040,8 @@ private struct WatchPartySuggestionRow: View {
             }
         }
         .padding(8)
-        .background(RoundedRectangle(cornerRadius: 14, style: .continuous).fill(Color.siloChromeRestingFill))
-        .overlay(RoundedRectangle(cornerRadius: 14, style: .continuous).stroke(Color.siloChromeRestingBorder, lineWidth: 1))
+        .background(RoundedRectangle(cornerRadius: 14, style: .continuous).fill(Color.weFlixChromeRestingFill))
+        .overlay(RoundedRectangle(cornerRadius: 14, style: .continuous).stroke(Color.weFlixChromeRestingBorder, lineWidth: 1))
         .contextMenu {
             if session.canRemoveSuggestion(suggestion) {
                 Button(role: .destructive) { Task { await session.deleteSuggestion(id: suggestion.id) } } label: {
@@ -1077,12 +1077,12 @@ private struct WatchPartySuggestionCard: View {
                 WatchPartyPoster(url: suggestion.posterUrl, width: Self.poster.width, cornerRadius: 10,
                              hidesStill: suggestion.hidesPoster(with: EpisodeSpoilerPreferences.shared.settings))
                     .overlay(RoundedRectangle(cornerRadius: 10, style: .continuous)
-                        .stroke(isFocused ? Color.siloOnSurface : Color.siloChromeRestingBorder, lineWidth: isFocused ? 5 : 1)
+                        .stroke(isFocused ? Color.weFlixOnSurface : Color.weFlixChromeRestingBorder, lineWidth: isFocused ? 5 : 1)
                         .padding(isFocused ? -8 : 0))
                     .scaleEffect(isFocused ? 1.05 : 1)
-                    .animation(.easeOut(duration: SiloTheme.fastDuration), value: isFocused)
+                    .animation(.easeOut(duration: WeFlixTheme.fastDuration), value: isFocused)
             }
-            .buttonStyle(.siloFlat)
+            .buttonStyle(.weFlixFlat)
             .focused($isFocused)
             .disabled(!canQueue && !session.canRemoveSuggestion(suggestion))
             .accessibilityLabel(canQueue ? "\(queueLabel) \(suggestion.title)" : suggestion.title)
@@ -1092,7 +1092,7 @@ private struct WatchPartySuggestionCard: View {
                 }
             }
             Text(suggestion.title).font(.system(size: 20, weight: .semibold)).lineLimit(1)
-                .foregroundStyle(Color.siloOnSurface)
+                .foregroundStyle(Color.weFlixOnSurface)
                 .frame(width: Self.poster.width, alignment: .leading)
         }
     }
@@ -1118,7 +1118,7 @@ struct WatchPartyBallot: View {
                     WatchPartyCandidateCard(session: session, room: room, suggestion: suggestion, isLeader: suggestion.id == leaderID)
                 }
                 Button(action: onSuggest) { WatchPartySuggestCardLabel() }
-                    .buttonStyle(.siloFlat)
+                    .buttonStyle(.weFlixFlat)
                     .accessibilityIdentifier("watchParty.suggest")
             }
             .padding(.vertical, 20)
@@ -1133,19 +1133,19 @@ struct WatchPartyBallot: View {
             if session.votes.rows.isEmpty {
                 Text("Nothing suggested yet. Anyone can add a title.")
                     .font(.system(size: WatchPartyMetrics.caption))
-                    .foregroundStyle(Color.siloSecondaryText)
+                    .foregroundStyle(Color.weFlixSecondaryText)
                     .frame(maxWidth: .infinity, alignment: .leading)
             }
             Button(action: onSuggest) {
                 Label("Suggest a title", systemImage: "plus")
                     .font(.system(size: 15, weight: .medium))
-                    .foregroundStyle(Color.siloSecondaryText)
+                    .foregroundStyle(Color.weFlixSecondaryText)
                     .frame(maxWidth: .infinity, minHeight: 44)
                     .overlay(RoundedRectangle(cornerRadius: 14, style: .continuous)
                         .strokeBorder(style: StrokeStyle(lineWidth: 1, dash: [5, 4]))
-                        .foregroundStyle(Color.siloSecondaryText.opacity(0.5)))
+                        .foregroundStyle(Color.weFlixSecondaryText.opacity(0.5)))
             }
-            .buttonStyle(.siloFlat)
+            .buttonStyle(.weFlixFlat)
             .disabled(session.locksControls)
             .accessibilityIdentifier("watchParty.suggest")
         }
@@ -1165,10 +1165,10 @@ private struct WatchPartyVoteBadge: View {
                 .tracking(1)
                 .opacity(0.6)
         }
-        .foregroundStyle(isLeader ? Color.black : Color.siloOnSurface)
+        .foregroundStyle(isLeader ? Color.black : Color.weFlixOnSurface)
         .padding(.horizontal, 12).padding(.vertical, 6)
-        .background(Capsule().fill(isLeader ? Color.siloOnSurface : Color.black.opacity(0.7)))
-        .overlay(Capsule().stroke(isLeader ? Color.clear : Color.siloChromeRestingBorder, lineWidth: 1))
+        .background(Capsule().fill(isLeader ? Color.weFlixOnSurface : Color.black.opacity(0.7)))
+        .overlay(Capsule().stroke(isLeader ? Color.clear : Color.weFlixChromeRestingBorder, lineWidth: 1))
         .accessibilityLabel("\(count) \(count == 1 ? "vote" : "votes")")
     }
 }
@@ -1188,19 +1188,19 @@ private struct WatchPartyCandidateRow: View {
                              hidesStill: suggestion.hidesPoster(with: EpisodeSpoilerPreferences.shared.settings))
             VStack(alignment: .leading, spacing: 3) {
                 Text(suggestion.title).font(.system(size: 15, weight: .semibold)).lineLimit(1)
-                    .foregroundStyle(Color.siloOnSurface)
+                    .foregroundStyle(Color.weFlixOnSurface)
                 Text([suggestion.subtitle, suggestion.note.isEmpty ? nil : "“\(suggestion.note)”"].compactMap { $0 }
                     .filter { !$0.isEmpty }.joined(separator: " · "))
-                    .font(.system(size: 12)).foregroundStyle(Color.siloSecondaryText).lineLimit(1)
+                    .font(.system(size: 12)).foregroundStyle(Color.weFlixSecondaryText).lineLimit(1)
             }
             Spacer(minLength: 4)
             VStack(spacing: 2) {
                 Text("\(suggestion.voteCount)")
                     .font(.system(size: 20, weight: .bold, design: .monospaced))
-                    .foregroundStyle(Color.siloOnSurface)
+                    .foregroundStyle(Color.weFlixOnSurface)
                 Text(suggestion.voteCount == 1 ? "VOTE" : "VOTES")
                     .font(.system(size: 10, weight: .semibold)).tracking(1)
-                    .foregroundStyle(Color.siloSecondaryText)
+                    .foregroundStyle(Color.weFlixSecondaryText)
             }
             .frame(minWidth: 48)
             Button {
@@ -1208,21 +1208,21 @@ private struct WatchPartyCandidateRow: View {
             } label: {
                 Image(systemName: personalVote == nil ? "clock" : personalVote == true ? "checkmark" : "plus")
                     .font(.system(size: 18, weight: .semibold))
-                    .foregroundStyle(personalVote == true ? Color.black : Color.siloSecondaryText)
+                    .foregroundStyle(personalVote == true ? Color.black : Color.weFlixSecondaryText)
                     .frame(width: 44, height: 44)
                     .background(RoundedRectangle(cornerRadius: 12, style: .continuous)
-                        .fill(personalVote == true ? Color.siloOnSurface : Color.clear))
+                        .fill(personalVote == true ? Color.weFlixOnSurface : Color.clear))
                     .overlay(RoundedRectangle(cornerRadius: 12, style: .continuous)
-                        .stroke(personalVote == true ? Color.clear : Color.siloOutline, lineWidth: 1))
+                        .stroke(personalVote == true ? Color.clear : Color.weFlixOutline, lineWidth: 1))
             }
-            .buttonStyle(.siloFlat)
+            .buttonStyle(.weFlixFlat)
             .disabled(personalVote == nil || session.locksControls || session.connection != .connected)
             .accessibilityLabel(personalVote == nil ? "Loading your vote" : personalVote == true ? "Remove vote for \(suggestion.title)" : "Vote for \(suggestion.title)")
         }
         .padding(8)
-        .background(RoundedRectangle(cornerRadius: 14, style: .continuous).fill(isLeader ? Color.siloChromeSelectedFill : Color.siloChromeRestingFill))
+        .background(RoundedRectangle(cornerRadius: 14, style: .continuous).fill(isLeader ? Color.weFlixChromeSelectedFill : Color.weFlixChromeRestingFill))
         .overlay(RoundedRectangle(cornerRadius: 14, style: .continuous)
-            .stroke(isLeader ? Color.siloOnSurface.opacity(0.35) : Color.siloChromeRestingBorder, lineWidth: 1))
+            .stroke(isLeader ? Color.weFlixOnSurface.opacity(0.35) : Color.weFlixChromeRestingBorder, lineWidth: 1))
         .contextMenu {
             if room.selfCanManageRoom, room.selectionMode == .hostPick || session.capabilities?.voteHostOverride == true {
                 Button { Task { await session.promoteSuggestion(id: suggestion.id) } } label: {
@@ -1262,7 +1262,7 @@ private struct WatchPartyCandidateCard: View {
                     WatchPartyVoteBadge(count: suggestion.voteCount, isLeader: isLeader)
                         .padding(16)
                     if personalVote == true {
-                        Circle().fill(Color.siloOnSurface)
+                        Circle().fill(Color.weFlixOnSurface)
                             .overlay { Image(systemName: "checkmark").font(.system(size: 22, weight: .heavy)).foregroundStyle(.black) }
                             .frame(width: 44, height: 44)
                             .padding(16)
@@ -1270,13 +1270,13 @@ private struct WatchPartyCandidateCard: View {
                     }
                 }
                 .overlay(RoundedRectangle(cornerRadius: 12, style: .continuous)
-                    .stroke(isFocused ? Color.siloOnSurface : (isLeader ? Color.siloOnSurface.opacity(0.35) : Color.siloChromeRestingBorder),
+                    .stroke(isFocused ? Color.weFlixOnSurface : (isLeader ? Color.weFlixOnSurface.opacity(0.35) : Color.weFlixChromeRestingBorder),
                             lineWidth: isFocused ? 6 : 1)
                     .padding(isFocused ? -10 : 0))
                 .scaleEffect(isFocused ? 1.05 : 1)
-                .animation(.easeOut(duration: SiloTheme.fastDuration), value: isFocused)
+                .animation(.easeOut(duration: WeFlixTheme.fastDuration), value: isFocused)
             }
-            .buttonStyle(.siloFlat)
+            .buttonStyle(.weFlixFlat)
             .focused($isFocused)
             .disabled(personalVote == nil || session.locksControls || session.connection != .connected)
             .accessibilityLabel(personalVote == nil ? "Loading your vote" : personalVote == true ? "Remove vote for \(suggestion.title)" : "Vote for \(suggestion.title)")
@@ -1290,9 +1290,9 @@ private struct WatchPartyCandidateCard: View {
             }
             VStack(alignment: .leading, spacing: 4) {
                 Text(suggestion.title).font(.system(size: 26, weight: .semibold)).lineLimit(1)
-                    .foregroundStyle(Color.siloOnSurface)
+                    .foregroundStyle(Color.weFlixOnSurface)
                 Text(suggestion.note.isEmpty ? (suggestion.subtitle.isEmpty ? " " : suggestion.subtitle) : "“\(suggestion.note)”")
-                    .font(.system(size: 20)).foregroundStyle(Color.siloSecondaryText).lineLimit(1)
+                    .font(.system(size: 20)).foregroundStyle(Color.weFlixSecondaryText).lineLimit(1)
             }
             .frame(width: WatchPartyMetrics.ballotPoster.width, alignment: .leading)
         }
@@ -1304,19 +1304,19 @@ private struct WatchPartySuggestCardLabel: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 18) {
             RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .fill(isFocused ? Color.siloChromeSelectedFill : Color.clear)
+                .fill(isFocused ? Color.weFlixChromeSelectedFill : Color.clear)
                 .overlay(RoundedRectangle(cornerRadius: 12, style: .continuous)
                     .strokeBorder(style: StrokeStyle(lineWidth: isFocused ? 4 : 2, dash: isFocused ? [] : [10, 8]))
-                    .foregroundStyle(isFocused ? Color.siloOnSurface : Color.siloSecondaryText.opacity(0.5)))
-                .overlay { Image(systemName: "plus").font(.system(size: 72, weight: .ultraLight)).foregroundStyle(isFocused ? Color.siloOnSurface : Color.siloSecondaryText) }
+                    .foregroundStyle(isFocused ? Color.weFlixOnSurface : Color.weFlixSecondaryText.opacity(0.5)))
+                .overlay { Image(systemName: "plus").font(.system(size: 72, weight: .ultraLight)).foregroundStyle(isFocused ? Color.weFlixOnSurface : Color.weFlixSecondaryText) }
                 .frame(width: WatchPartyMetrics.ballotPoster.width, height: WatchPartyMetrics.ballotPoster.height)
                 .scaleEffect(isFocused ? 1.05 : 1)
             VStack(alignment: .leading, spacing: 4) {
-                Text("Suggest a title").font(.system(size: 26, weight: .semibold)).foregroundStyle(Color.siloSecondaryText)
-                Text("Anyone can add one").font(.system(size: 20)).foregroundStyle(Color.siloSecondaryText.opacity(0.7))
+                Text("Suggest a title").font(.system(size: 26, weight: .semibold)).foregroundStyle(Color.weFlixSecondaryText)
+                Text("Anyone can add one").font(.system(size: 20)).foregroundStyle(Color.weFlixSecondaryText.opacity(0.7))
             }
         }
-        .animation(.easeOut(duration: SiloTheme.fastDuration), value: isFocused)
+        .animation(.easeOut(duration: WeFlixTheme.fastDuration), value: isFocused)
         .focusEffectDisabled()
     }
 }
@@ -1334,7 +1334,7 @@ private struct WatchPartyHostControlsOverlay: View {
         ZStack {
             Color.black.opacity(0.62).ignoresSafeArea().onTapGesture(perform: dismiss)
             VStack(alignment: .leading, spacing: 18) {
-                Text("Party options").font(.system(size: 38, weight: .semibold)).foregroundStyle(Color.siloOnSurface)
+                Text("Party options").font(.system(size: 38, weight: .semibold)).foregroundStyle(Color.weFlixOnSurface)
                 if room.selfCanManageRoom {
                     if room.phase == .lobby, session.capabilities?.selectionModeSwitch == true {
                         row("Who chooses", value: room.selectionMode == .vote ? "Everyone votes" : "Host chooses", id: .mode) {
@@ -1354,8 +1354,8 @@ private struct WatchPartyHostControlsOverlay: View {
             }
             .padding(48)
             .frame(width: 900)
-            .background(RoundedRectangle(cornerRadius: 30, style: .continuous).fill(Color.siloSurfaceElevated))
-            .overlay(RoundedRectangle(cornerRadius: 30, style: .continuous).strokeBorder(Color.siloChromeRestingBorder, lineWidth: 1))
+            .background(RoundedRectangle(cornerRadius: 30, style: .continuous).fill(Color.weFlixSurfaceElevated))
+            .overlay(RoundedRectangle(cornerRadius: 30, style: .continuous).strokeBorder(Color.weFlixChromeRestingBorder, lineWidth: 1))
             .focusSection()
             .defaultFocus($focused, .close, priority: .userInitiated)
         }

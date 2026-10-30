@@ -1,5 +1,5 @@
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 /// Where subtitle display edits are saved (silo-server#1157): appearance and
 /// timing follow the profile to every device, unless this device keeps its own

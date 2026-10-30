@@ -26,7 +26,7 @@ struct PhoneCastRail: View {
             .padding(.vertical, 4)
             .phoneMediaRailBounds()
         }
-        .contentMargins(.horizontal, SiloTheme.safePadding, for: .scrollContent)
+        .contentMargins(.horizontal, WeFlixTheme.safePadding, for: .scrollContent)
         .mediaRailScrolling()
         // Cards widen with the text; past AX2 one name would fill the screen.
         .dynamicTypeSize(...DynamicTypeSize.accessibility2)
@@ -50,14 +50,14 @@ private struct PhoneCastCard: View {
                 photo
                 VStack(spacing: 2) {
                     Text(member.name)
-                        .siloScaledFont(size: 12, weight: .semibold, relativeTo: .caption)
-                        .foregroundColor(.siloOnSurface)
+                        .weFlixScaledFont(size: 12, weight: .semibold, relativeTo: .caption)
+                        .foregroundColor(.weFlixOnSurface)
                         .lineLimit(2, reservesSpace: true)
                         .multilineTextAlignment(.center)
                     if let character = member.character, !character.isEmpty {
                         Text(character)
-                            .siloScaledFont(size: 11, relativeTo: .caption2)
-                            .foregroundColor(.siloSecondaryText)
+                            .weFlixScaledFont(size: 11, relativeTo: .caption2)
+                            .foregroundColor(.weFlixSecondaryText)
                             .lineLimit(1)
                             .multilineTextAlignment(.center)
                     }
@@ -71,13 +71,13 @@ private struct PhoneCastCard: View {
 
     private var photo: some View {
         ZStack {
-            Color.siloSurfaceElevated
+            Color.weFlixSurfaceElevated
             if let url = member.photoUrl, !url.isEmpty {
                 AsyncImageView(url: url, contentMode: .fill)
             } else {
                 Image(systemName: "person.fill")
                     .font(.system(size: photoSize * 0.4))
-                    .foregroundColor(.siloSecondaryText)
+                    .foregroundColor(.weFlixSecondaryText)
             }
         }
         .frame(width: photoSize, height: photoSize)

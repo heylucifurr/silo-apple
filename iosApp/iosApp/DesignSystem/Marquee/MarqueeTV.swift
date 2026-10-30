@@ -16,7 +16,7 @@ struct MarqueeCodeTiles: View {
     var body: some View {
         Text(code.uppercased())
             .font(.system(size: 72, weight: .bold, design: .monospaced))
-            .foregroundStyle(Color.siloOnSurface)
+            .foregroundStyle(Color.weFlixOnSurface)
             .lineLimit(1)
             .minimumScaleFactor(0.4)
             .frame(maxWidth: maxWidth)
@@ -39,7 +39,7 @@ struct MarqueeWaitingDots: View {
         HStack(spacing: size) {
             ForEach(0..<count, id: \.self) { index in
                 Circle()
-                    .fill(Color.siloOnSurface.opacity(index <= phase ? 0.9 : 0.22))
+                    .fill(Color.weFlixOnSurface.opacity(index <= phase ? 0.9 : 0.22))
                     .frame(width: size, height: size)
             }
         }
@@ -62,7 +62,7 @@ struct MarqueeWaitingDots: View {
 struct MarqueeTVSetupSteps: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 30) {
-            step(1, "Open Silo on your phone") { SetupAppIcon() }
+            step(1, "Open weflix on your phone") { SetupAppIcon() }
             step(2, "Tap Set Up") { SetupCardPicture() }
             step(3, "Finish on your phone") { SetupDonePicture() }
         }
@@ -84,14 +84,14 @@ struct MarqueeTVSetupSteps: View {
                         .font(.system(size: 28, weight: .heavy))
                         .foregroundStyle(.black)
                         .frame(width: 52, height: 52)
-                        .background(Circle().fill(Color.siloOnSurface))
+                        .background(Circle().fill(Color.weFlixOnSurface))
                         .shadow(color: .black.opacity(0.5), radius: 7, y: 6)
                         .offset(x: -16, y: -16)
                 }
             Text(title)
                 .font(.system(size: 38, weight: .bold))
                 .kerning(-0.4)
-                .foregroundStyle(Color.siloOnSurface)
+                .foregroundStyle(Color.weFlixOnSurface)
                 .fixedSize(horizontal: false, vertical: true)
         }
         .accessibilityElement(children: .ignore)
@@ -99,16 +99,16 @@ struct MarqueeTVSetupSteps: View {
     }
 }
 
-/// The Silo app icon: the mark on the deep blue field.
+/// The WeFlix app icon: the mark on the deep blue field.
 private struct SetupAppIcon: View {
     var body: some View {
         // The icon draws the mark at 84% of its height.
-        Image("SiloMark")
+        Image("WeFlixMark")
             .resizable()
             .scaledToFit()
             .frame(height: 77)
             .frame(width: 92, height: 92)
-            .background(RoundedRectangle(cornerRadius: 22, style: .continuous).fill(Color.siloIconField))
+            .background(RoundedRectangle(cornerRadius: 22, style: .continuous).fill(Color.weFlixIconField))
             .overlay(
                 RoundedRectangle(cornerRadius: 22, style: .continuous)
                     .strokeBorder(Color.white.opacity(0.18), lineWidth: 1)
@@ -116,7 +116,7 @@ private struct SetupAppIcon: View {
     }
 }
 
-/// The setup card Silo shows on a nearby phone, with its Set Up button ringed.
+/// The setup card WeFlix shows on a nearby phone, with its Set Up button ringed.
 private struct SetupCardPicture: View {
     var body: some View {
         VStack(spacing: 8) {
@@ -127,8 +127,8 @@ private struct SetupCardPicture: View {
                 .foregroundStyle(.black)
                 .frame(maxWidth: .infinity)
                 .frame(height: 30)
-                .background(Capsule().fill(Color.siloOnSurface))
-                .overlay(Capsule().strokeBorder(Color.siloBrandOrange.opacity(0.85), lineWidth: 4).padding(-4))
+                .background(Capsule().fill(Color.weFlixOnSurface))
+                .overlay(Capsule().strokeBorder(Color.weFlixBrandOrange.opacity(0.85), lineWidth: 4).padding(-4))
         }
         .padding(.horizontal, 12)
         .padding(.top, 14)
@@ -147,10 +147,10 @@ private struct SetupDonePicture: View {
     var body: some View {
         Image(systemName: "checkmark")
             .font(.system(size: 44, weight: .bold))
-            .foregroundStyle(Color.siloSuccess)
+            .foregroundStyle(Color.weFlixSuccess)
             .frame(width: 96, height: 96)
-            .background(Circle().fill(Color.siloSuccess.opacity(0.16)))
-            .overlay(Circle().strokeBorder(Color.siloSuccess, lineWidth: 3))
+            .background(Circle().fill(Color.weFlixSuccess.opacity(0.16)))
+            .overlay(Circle().strokeBorder(Color.weFlixSuccess, lineWidth: 3))
     }
 }
 
@@ -159,7 +159,7 @@ private struct SetupDonePicture: View {
 /// A large symbol in a glass circle, for card states without a QR or code.
 struct MarqueeTVCardSymbol: View {
     let systemImage: String
-    var tint: Color = .siloOnSurface
+    var tint: Color = .weFlixOnSurface
     var size: CGFloat = 112
 
     var body: some View {
@@ -186,7 +186,7 @@ struct MarqueeTVBody: View {
     var body: some View {
         Text(text)
             .font(.system(size: size))
-            .foregroundStyle(Color.siloOnSurface.opacity(0.62))
+            .foregroundStyle(Color.weFlixOnSurface.opacity(0.62))
             .lineSpacing(4)
             .fixedSize(horizontal: false, vertical: true)
     }

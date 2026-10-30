@@ -194,10 +194,10 @@ struct TrackSelectionSheet: View {
                         Text(result.text)
                     } icon: {
                         Image(systemName: result.isWarning ? "exclamationmark.triangle.fill" : "checkmark.circle")
-                            .foregroundStyle(result.isWarning ? Color.siloWarning : Color.secondary)
+                            .foregroundStyle(result.isWarning ? Color.weFlixWarning : Color.secondary)
                     }
                     .font(.footnote)
-                    .foregroundStyle(result.isWarning ? Color.siloWarning : Color.secondary)
+                    .foregroundStyle(result.isWarning ? Color.weFlixWarning : Color.secondary)
                 }
                 if let error = entry.error {
                     Text(error)

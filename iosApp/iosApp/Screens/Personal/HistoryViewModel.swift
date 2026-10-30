@@ -54,9 +54,9 @@ class HistoryViewModel {
         do {
             let page: CatalogListPage
             if let nextPage {
-                page = try await SiloAPI.shared.nextCatalogPage(nextPage)
+                page = try await WeFlixAPI.shared.nextCatalogPage(nextPage)
             } else {
-                page = try await SiloAPI.shared.catalogPage(.history(limit: pageSize))
+                page = try await WeFlixAPI.shared.catalogPage(.history(limit: pageSize))
             }
             if nextPage != nil, !page.startsOver {
                 items.append(contentsOf: page.response.items)

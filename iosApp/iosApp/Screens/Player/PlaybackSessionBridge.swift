@@ -197,7 +197,7 @@ actor PlaybackV3CapabilityGate {
     init(
         tokenStore: TokenStore = .shared,
         fetch: @escaping @Sendable (CapturedOrdinaryRequestAuth) async throws -> APIv2PlaybackCapabilities = {
-            try await SiloAPI.shared.apiV2Client.playbackCapabilities(auth: $0)
+            try await WeFlixAPI.shared.apiV2Client.playbackCapabilities(auth: $0)
         }
     ) {
         self.tokenStore = tokenStore
@@ -436,7 +436,7 @@ actor PlaybackSessionBridge {
     }
 
     private let logger = Logger(
-        subsystem: Bundle.main.bundleIdentifier ?? "org.siloserver.silo",
+        subsystem: Bundle.main.bundleIdentifier ?? "me.weflix",
         category: "Playback"
     )
 
@@ -814,7 +814,7 @@ actor PlaybackSessionBridge {
         startsAtFirstPart: Bool = false
     ) async throws -> PreparedPlayback {
         logger.info("Fetching watch detail for \(contentId, privacy: .public)")
-        let watchDetail = try await SiloAPI.shared.watchDetail(contentId: contentId, libraryId: libraryId)
+        let watchDetail = try await WeFlixAPI.shared.watchDetail(contentId: contentId, libraryId: libraryId)
         logger.info("Got \(watchDetail.versions.count) versions, type=\(watchDetail.type, privacy: .public)")
 
         guard !watchDetail.versions.isEmpty else {
@@ -1449,7 +1449,7 @@ actor PlaybackSessionBridge {
             try await authority.reportRouteEvent(event)
         } catch {
             Logger(
-                subsystem: Bundle.main.bundleIdentifier ?? "org.siloserver.silo",
+                subsystem: Bundle.main.bundleIdentifier ?? "me.weflix",
                 category: "Playback"
             ).warning(
                 "Protocol V3 terminal-start route event failed: \(MediaLogRedactor.sanitize(error), privacy: .public)"
@@ -1684,7 +1684,7 @@ actor PlaybackSessionBridge {
             learnedLimit: buffering.learnedLimit,
             observedThroughputKbps: buffering.observedThroughputKbps
         )
-        let response = try await SiloAPI.shared.apiV2Client.replanPlayback(
+        let response = try await WeFlixAPI.shared.apiV2Client.replanPlayback(
             sessionID: currentSessionId,
             request,
             installationID: authority.installationID,
@@ -2088,7 +2088,7 @@ actor PlaybackSessionBridge {
             let sample = try PlaybackSequencedSample(
                 sequence: progressSequence.next(for: sid), position: position, isPaused: isPaused
             )
-            _ = try await SiloAPI.shared.apiV2Client.updatePlaybackProgress(
+            _ = try await WeFlixAPI.shared.apiV2Client.updatePlaybackProgress(
                 sessionID: sid,
                 sample: sample,
                 installationID: authority.installationID,
@@ -2140,7 +2140,7 @@ actor PlaybackSessionBridge {
         ) else { return false }
         // Sent once: `syncProgress` is non_retryable, so an unanswered write
         // is reported as a failure and never re-sent.
-        let outcome = await SiloAPI.shared.apiV2Client.syncProgress([item])
+        let outcome = await WeFlixAPI.shared.apiV2Client.syncProgress([item])
         if let failure = outcome.failureSummary {
             logger.warning(
                 "syncProgress failed for \(contentId, privacy: .public) at \(position, privacy: .public): \(failure, privacy: .public)"

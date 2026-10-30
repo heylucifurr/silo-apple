@@ -1,7 +1,7 @@
 import Foundation
 import UserNotifications
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 final class ApplePushRegistrationTests: XCTestCase {
     func testTokenHexEncodesToLowercasePaddedHex() {
@@ -10,9 +10,9 @@ final class ApplePushRegistrationTests: XCTestCase {
         XCTAssertEqual(ApplePushRegistrationWire.tokenHex(from: data), "00010f10abff")
     }
 
-    func testEmptyBundleIdentifiersFallBackToSiloTopic() {
-        XCTAssertEqual(ApplePushRegistrationWire.topic(bundleIdentifier: nil), "org.siloserver.silo")
-        XCTAssertEqual(ApplePushRegistrationWire.topic(bundleIdentifier: "   "), "org.siloserver.silo")
+    func testEmptyBundleIdentifiersFallBackToWeFlixTopic() {
+        XCTAssertEqual(ApplePushRegistrationWire.topic(bundleIdentifier: nil), "me.weflix")
+        XCTAssertEqual(ApplePushRegistrationWire.topic(bundleIdentifier: "   "), "me.weflix")
         XCTAssertEqual(ApplePushRegistrationWire.topic(bundleIdentifier: "org.example.app"), "org.example.app")
     }
 
@@ -73,7 +73,7 @@ final class ApplePushRegistrationTests: XCTestCase {
         """.data(using: .utf8)!
         let response = try JSONDecoder().decode(ApplePushDisplayResponse.self, from: json)
         let content = UNMutableNotificationContent()
-        content.title = "Silo"
+        content.title = "weflix"
         content.body = "New notification available"
         content.userInfo = ["silo_delivery_id": "delivery-1"]
 
@@ -324,7 +324,7 @@ final class ApplePushRegistrationTests: XCTestCase {
 
     /// The extension and the app share these records. The app must read
     /// back what the extension wrote, once, including outcomes recorded at
-    /// the same moment, and a phone that rarely opens Silo keeps only the
+    /// the same moment, and a phone that rarely opens WeFlix keeps only the
     /// newest pushes.
     func testDisplayOutcomeLogHandsTheNewestExtensionOutcomesToTheAppOnce() throws {
         let directory = FileManager.default.temporaryDirectory
@@ -496,11 +496,11 @@ final class ApplePushRegistrationTests: XCTestCase {
         }
 
         let disguised = try XCTUnwrap(ApplePushDeepLinkCoordinator.deepLinkURL(from: [
-            "silo_url": "silo://item/movie-1?push_server_id=deployment-b&push_profile_id=profile-b",
+            "silo_url": "weflix://item/movie-1?push_server_id=deployment-b&push_profile_id=profile-b",
             "silo_server_id": "deployment-a", "silo_profile_id": "profile-a",
         ]))
         let doubled = try XCTUnwrap(URL(string:
-            "silo://item/movie-1?push_server_id=deployment-a&push_profile_id=profile-a&push_server_id=deployment-b"))
+            "weflix://item/movie-1?push_server_id=deployment-a&push_profile_id=profile-a&push_server_id=deployment-b"))
 
         XCTAssertTrue(opens(link, server("deployment-a"), "profile-a"))
         XCTAssertTrue(opens(disguised, server("deployment-a"), "profile-a"))
@@ -544,8 +544,8 @@ final class ApplePushRegistrationTests: XCTestCase {
             ApplePushDeepLinkCoordinator.admission(for: url, profileInUse: profileInUse, activeServer: server,
                 activeProfileID: profileID, targets: targets)
         }
-        let approval = try pushLink("silo://device?server=deployment-z&code=ABCD2345")
-        let party = try pushLink("silo://watch-party?server=https%3A%2F%2Fz.example&token=join-1")
+        let approval = try pushLink("weflix://device?server=deployment-z&code=ABCD2345")
+        let party = try pushLink("weflix://watch-party?server=https%3A%2F%2Fz.example&token=join-1")
         XCTAssertNotNil(DeviceApprovalLink(url: approval))
         XCTAssertNotNil(WatchPartyInvitation(url: party))
 
@@ -554,7 +554,7 @@ final class ApplePushRegistrationTests: XCTestCase {
             XCTAssertEqual(admission(link, profileInUse: true), .open)
             XCTAssertEqual(admission(link, profileInUse: true, profileID: "profile-b"), .drop)
         }
-        let plainApproval = try XCTUnwrap(URL(string: "silo://device?server=deployment-z&code=ABCD2345"))
+        let plainApproval = try XCTUnwrap(URL(string: "weflix://device?server=deployment-z&code=ABCD2345"))
         XCTAssertEqual(admission(plainApproval, profileInUse: false), .open)
     }
 
@@ -606,17 +606,17 @@ final class ApplePushRegistrationTests: XCTestCase {
         let itemURL = try XCTUnwrap(ApplePushDeepLinkCoordinator.deepLinkURL(from: [
             "silo_url": "/item/episode-1"
         ]))
-        XCTAssertEqual(itemURL.absoluteString, "silo://item/episode-1")
+        XCTAssertEqual(itemURL.absoluteString, "weflix://item/episode-1")
 
         let absoluteURL = try XCTUnwrap(
             ApplePushDeepLinkCoordinator.deepLinkURL(fromDisplayURL: "https://silo.example.test/item/movie-123?from=push")
         )
-        XCTAssertEqual(absoluteURL.absoluteString, "silo://item/movie-123")
+        XCTAssertEqual(absoluteURL.absoluteString, "weflix://item/movie-123")
 
         let existingURL = try XCTUnwrap(
-            ApplePushDeepLinkCoordinator.deepLinkURL(fromDisplayURL: "silo://play/episode-1")
+            ApplePushDeepLinkCoordinator.deepLinkURL(fromDisplayURL: "weflix://play/episode-1")
         )
-        XCTAssertEqual(existingURL.absoluteString, "silo://play/episode-1")
+        XCTAssertEqual(existingURL.absoluteString, "weflix://play/episode-1")
         let legacyURL = try XCTUnwrap(
             ApplePushDeepLinkCoordinator.deepLinkURL(fromDisplayURL: "continuum://play/episode-1")
         )
@@ -628,7 +628,7 @@ final class ApplePushRegistrationTests: XCTestCase {
         let forwardedURL = try XCTUnwrap(
             ApplePushDeepLinkCoordinator.deepLinkURL(fromDisplayURL: "/settings/notifications")
         )
-        XCTAssertEqual(forwardedURL.absoluteString, "silo://settings/notifications")
+        XCTAssertEqual(forwardedURL.absoluteString, "weflix://settings/notifications")
 
         XCTAssertNil(ApplePushDeepLinkCoordinator.deepLinkURL(fromDisplayURL: "/item"))
         XCTAssertNil(ApplePushDeepLinkCoordinator.deepLinkURL(fromDisplayURL: "   "))

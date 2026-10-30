@@ -1,6 +1,6 @@
 import XCTest
 
-@testable import Silo
+@testable import WeFlix
 
 /// The stepped opacity pickers on tvOS (player HUD and Settings) build their
 /// options from ``SubtitleAppearance/opacityPickerValues(current:lowest:step:)``;

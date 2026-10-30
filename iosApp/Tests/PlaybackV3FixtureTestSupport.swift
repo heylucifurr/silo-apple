@@ -1,6 +1,6 @@
 import Foundation
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 enum PlaybackV3FixtureTestSupport {
     /// The production decoder, so a date or artwork field the client would

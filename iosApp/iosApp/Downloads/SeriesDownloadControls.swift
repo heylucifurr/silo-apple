@@ -27,12 +27,12 @@ struct SeriesDownloadButton: View {
             VStack(spacing: 6) {
                 Image(systemName: isMonitored ? "arrow.down.circle.fill" : "arrow.down.to.line")
                     .font(.system(size: 19, weight: .regular))
-                    .foregroundColor(Color.siloOnSurface)
+                    .foregroundColor(Color.weFlixOnSurface)
                     .frame(width: 42, height: 42)
                     .background(Circle().fill(Color.white.opacity(isMonitored ? 0.18 : 0.10)))
                 Text("Download")
-                    .siloScaledFont(size: 10, weight: .medium, relativeTo: .caption2)
-                    .foregroundColor(Color.siloOnSurface.opacity(isMonitored ? 0.92 : 0.6))
+                    .weFlixScaledFont(size: 10, weight: .medium, relativeTo: .caption2)
+                    .foregroundColor(Color.weFlixOnSurface.opacity(isMonitored ? 0.92 : 0.6))
                     .phoneActionCaption()
             }
             .frame(maxWidth: .infinity, minHeight: 58)

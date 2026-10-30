@@ -96,7 +96,7 @@ final class SectionItemLimitSupport: Sendable {
     }
 
     /// Re-read the active server's capability.
-    func refresh(api: SiloAPI = .shared) async {
+    func refresh(api: WeFlixAPI = .shared) async {
         guard let probe = try? await api.homeSectionItemLimitMax() else { return }
         record(probe.max, serverID: probe.serverID)
     }

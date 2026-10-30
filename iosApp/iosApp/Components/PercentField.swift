@@ -59,7 +59,7 @@ struct PercentField: View {
                 }
                 #endif
             Text("%")
-                .foregroundStyle(Color.siloSecondaryText)
+                .foregroundStyle(Color.weFlixSecondaryText)
         }
         .onAppear { draft = String(value) }
         .onChange(of: value) { _, newValue in

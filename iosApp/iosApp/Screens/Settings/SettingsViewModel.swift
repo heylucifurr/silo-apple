@@ -40,26 +40,26 @@ final class SettingsViewModel {
 
     /// The Resolution picker's value.
     var qualityResolutionLabel: String {
-        SiloQualityPresets.resolutionLabel(PlayerSettings.shared.preferredQualityResolution)
+        WeFlixQualityPresets.resolutionLabel(PlayerSettings.shared.preferredQualityResolution)
     }
 
     /// The Maximum Bitrate picker's value.
     var maxBitrateLabel: String {
-        SiloQualityPresets.bitrateLabel(PlayerSettings.shared.maxBitrateKbps)
+        WeFlixQualityPresets.bitrateLabel(PlayerSettings.shared.maxBitrateKbps)
     }
 
     /// The Maximum Bitrate picker's caps, including a stored cap no choice
     /// covers so it stays visible and selected.
     var maxBitrateChoicesKbps: [Int] {
-        SiloQualityPresets.bitrateChoices(including: PlayerSettings.shared.maxBitrateKbps)
+        WeFlixQualityPresets.bitrateChoices(including: PlayerSettings.shared.maxBitrateKbps)
     }
 
     /// What the two quality pickers mean for playback.
     var qualityFooterText: String {
         let resolution = PlayerSettings.shared.preferredQualityResolution
-        var text = resolution == SiloQualityPresets.resolutionAuto
+        var text = resolution == WeFlixQualityPresets.resolutionAuto
             ? "Plays the original file whenever your device and connection can handle it."
-            : "Plays the original file up to \(SiloQualityPresets.resolutionLabel(resolution)). Larger files are converted."
+            : "Plays the original file up to \(WeFlixQualityPresets.resolutionLabel(resolution)). Larger files are converted."
         if PlayerSettings.shared.maxBitrateKbps != nil {
             text += " Files above this bitrate are converted to fit."
         }
@@ -83,6 +83,14 @@ final class SettingsViewModel {
 
     /// The manifest's label and description for `playback.buffering_quality_mode`.
     static let bufferingQualityTitle = "Lower quality when buffering"
+    /// Mirrors the server settings contract's `description` for
+    /// `playback.buffering_quality_mode` verbatim: on a server without the key
+    /// the contract's copy is what the row shows, and
+    /// `SettingsConformanceTests.testTheBufferingQualityModeMatchesTheVendoredManifest`
+    /// guards that agreement. `Tests/Fixtures/SettingsContract/SOURCE` says not
+    /// to hand-edit the vendored manifest, so this text follows the contract
+    /// rather than the app's brand — rebrand it only after the server's
+    /// contract does.
     static let bufferingQualityDescription =
         "What Silo does on Auto when playback keeps buffering. Silo always asks before lowering a quality you picked."
 
@@ -247,7 +255,7 @@ final class SettingsViewModel {
         if let profileName = activeProfile?.name, !profileName.isEmpty {
             return profileName
         }
-        return userInfo?.username ?? "Silo"
+        return userInfo?.username ?? "weflix"
     }
 
     var accountSubtitle: String {
@@ -331,7 +339,7 @@ final class SettingsViewModel {
         prefs.bindProfile(id: AuthService.shared.profileId)
         await PlayerSettings.shared.refreshFromServer()
 
-        async let user: UserInfo? = try? SiloAPI.shared.currentUser()
+        async let user: UserInfo? = try? WeFlixAPI.shared.currentUser()
         async let profiles: [UserProfile] = (try? AuthService.shared.getProfiles()) ?? []
 
         let (loadedUser, loadedProfiles) = await (user, profiles)
@@ -354,7 +362,7 @@ final class SettingsViewModel {
 
     /// Apply a shared preset to the cellular pair.
     func setCellularQualityPreset(_ presetId: String) {
-        guard let preset = SiloQualityPresets.preset(id: presetId) else { return }
+        guard let preset = WeFlixQualityPresets.preset(id: presetId) else { return }
         PlayerSettings.shared.setCellularQualityPreset(preset)
     }
 
@@ -462,7 +470,7 @@ final class SettingsViewModel {
             ? await TokenStore.shared.captureOrdinaryRequestAuth()
             : nil
         let connection: APIv2PlaybackConnection? = if let auth {
-            try? await SiloAPI.shared.apiV2Client.playbackConnection(auth: auth)
+            try? await WeFlixAPI.shared.apiV2Client.playbackConnection(auth: auth)
         } else {
             nil
         }
@@ -487,7 +495,7 @@ final class SettingsViewModel {
             guard let auth = await TokenStore.shared.captureOrdinaryRequestAuth() else {
                 throw HTTPError.requestIdentityChanged
             }
-            try await SiloAPI.shared.apiV2Client.resetPlaybackLearnedLimit(auth: auth)
+            try await WeFlixAPI.shared.apiV2Client.resetPlaybackLearnedLimit(auth: auth)
             learnedConnectionLimit = nil
             // The server's Auto budget counted the limit. Not awaited, so the
             // caller can move focus off the Reset row before it can vanish.
@@ -743,7 +751,7 @@ final class SettingsViewModel {
         }
         switch setting {
         case .resolution:
-            guard SiloQualityPresets.resolutionChoices.contains(tag) else { return }
+            guard WeFlixQualityPresets.resolutionChoices.contains(tag) else { return }
             PlayerSettings.shared.setQualityResolution(tag)
         case .maxBitrate:
             if tag == Self.noBitrateLimitTag {

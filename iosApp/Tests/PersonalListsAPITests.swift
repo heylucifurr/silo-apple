@@ -1,11 +1,11 @@
 import Foundation
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 /// Favorites and watchlist screens read the whole list from
 /// `/api/v2/favorites` and `/api/v2/watchlist` by cursor, with no item cap.
 final class PersonalListsAPITests: XCTestCase {
-    private func client(stub: APIv2TestStub) async throws -> (SiloAPI, TokenStore) {
+    private func client(stub: APIv2TestStub) async throws -> (WeFlixAPI, TokenStore) {
         let name = "PersonalListsAPITests.\(UUID().uuidString)"
         let suite = try XCTUnwrap(UserDefaults(suiteName: name))
         addTeardownBlock { UserDefaults().removePersistentDomain(forName: name) }
@@ -15,7 +15,7 @@ final class PersonalListsAPITests: XCTestCase {
         await tokens.setServerUrl("https://lists.example")
         await tokens.setProfileId("profile-one")
         let http = HTTPClient(session: stub.makeSession(), tokenStore: tokens)
-        return (SiloAPI(http: http, tokenStore: tokens), tokens)
+        return (WeFlixAPI(http: http, tokenStore: tokens), tokens)
     }
 
     private func page(_ ids: [String], next: String?) -> String {

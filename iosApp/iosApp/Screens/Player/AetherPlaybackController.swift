@@ -7,7 +7,7 @@ import MediaPlayer
 import UIKit
 #endif
 
-/// Silo's single production boundary around AetherEngine.
+/// WeFlix's single production boundary around AetherEngine.
 ///
 /// Product/session state stays outside this type. Media load, transport, and
 /// engine observation enter the app through this one generation-fenced owner.
@@ -100,7 +100,7 @@ final class AetherPlaybackController {
     /// Keeps a showing track's cues on screen while it is fetched again.
     let cueHold = SubtitleCueHold()
     /// Registers this engine with the process-wide audio-session ownership
-    /// registry for its lifetime. Silo runs two `AetherEngine`s (audiobooks and
+    /// registry for its lifetime. WeFlix runs two `AetherEngine`s (audiobooks and
     /// video); without this claim the audio controller would read itself as the
     /// sole live engine and deactivate the shared `AVAudioSession` on its own
     /// teardown, cutting video playback off mid-stream. The claim also carries
@@ -727,7 +727,7 @@ final class AetherPlaybackController {
             return appTrackID
         }
         // Aether publishes its inventory synchronously before returning the
-        // new id. Publish to Silo only after the alias and fonts are ready;
+        // new id. Publish to WeFlix only after the alias and fonts are ready;
         // otherwise inventory reconciliation can try to register it again.
         isRegisteringExternalSubtitle = true
         let registered = engine.addExternalSubtitleTrack(track)
@@ -838,7 +838,7 @@ final class AetherPlaybackController {
         // Leaving video is the app's last use of the shared `AVAudioSession` unless an
         // audiobook is live. Aether never releases the session unless the host opts in
         // per teardown (#215, README "Who owns the audio session"), and a session left
-        // active keeps whatever Silo interrupted — another app's music, a podcast —
+        // active keeps whatever WeFlix interrupted — another app's music, a podcast —
         // paused or ducked for the rest of the process's life. Opting in here releases
         // it with `.notifyOthersOnDeactivation` so that audio resumes, and also closes
         // the E-AC-3/Atmos passthrough render ring the flag exists for. Gated on no
@@ -914,7 +914,7 @@ final class AetherPlaybackController {
         if isHLSSubtitleRendition(appTrackID: id) {
             return hlsSubtitleRenditionEngineID
         }
-        // A Silo sidecar id is not an Aether id. Passing an unaliased value
+        // A WeFlix sidecar id is not an Aether id. Passing an unaliased value
         // through reaches Aether as an unknown external id and is silently
         // ignored, leaving the previously selected subtitle on screen.
         guard !SubtitleTrackIdSpace.isSidecar(id) else { return nil }
@@ -967,7 +967,7 @@ final class AetherPlaybackController {
             guard displaySleepActivity == nil else { return }
             displaySleepActivity = ProcessInfo.processInfo.beginActivity(
                 options: [.idleDisplaySleepDisabled, .idleSystemSleepDisabled],
-                reason: "Silo video playback"
+                reason: "weflix video playback"
             )
         } else if displaySleepActivity != nil, displaySleepReleaseTask == nil {
             // The engine stays paused or idle between episodes until the

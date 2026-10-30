@@ -2,7 +2,7 @@
 import AppKit
 
 extension BandwidthProbeScheduler {
-    /// Treats Silo as in the background while it is hidden or every window it
+    /// Treats WeFlix as in the background while it is hidden or every window it
     /// could play in is minimized or closed. Called once at launch; the
     /// scheduler lives as long as the app.
     func followMacVisibility() {

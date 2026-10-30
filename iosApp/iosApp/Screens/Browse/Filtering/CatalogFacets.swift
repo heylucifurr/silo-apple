@@ -106,7 +106,7 @@ final class FacetLoader {
     private func fetch(libraryId: Int?, includeTechnical: Bool, key: String) async throws -> APIv2CatalogFilters {
         if let existing = inFlight[key] { return try await existing.value }
         let task = Task {
-            try await SiloAPI.shared.catalogFilters(libraryId: libraryId, includeTechnical: includeTechnical)
+            try await WeFlixAPI.shared.catalogFilters(libraryId: libraryId, includeTechnical: includeTechnical)
         }
         inFlight[key] = task
         do {

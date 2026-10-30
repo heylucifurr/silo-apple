@@ -140,7 +140,7 @@ private struct MarqueeButtonBody: View {
         .marqueePressHaptic(configuration.isPressed, kind == .primary ? .impact(weight: .medium) : .impact(weight: .light))
         #if os(tvOS)
         .focusEffectDisabled()
-        .animation(SiloTheme.springAnimation, value: isFocused)
+        .animation(WeFlixTheme.springAnimation, value: isFocused)
         #endif
     }
 
@@ -162,25 +162,25 @@ private struct MarqueeButtonBody: View {
     private var inkColor: Color {
         if isFocusedTV { return .black }
         switch kind {
-        case .primary: return isTV ? Color.siloOnSurface : .black
-        case .glass: return Color.siloOnSurface
-        case .plain: return Color.siloOnSurface.opacity(0.62)
+        case .primary: return isTV ? Color.weFlixOnSurface : .black
+        case .glass: return Color.weFlixOnSurface
+        case .plain: return Color.weFlixOnSurface.opacity(0.62)
         }
     }
 
     @ViewBuilder
     private var background: some View {
         if isFocusedTV {
-            Capsule().fill(Color.siloOnSurface)
+            Capsule().fill(Color.weFlixOnSurface)
         } else {
             switch kind {
             case .primary where !isTV:
-                Capsule().fill(Color.siloOnSurface)
+                Capsule().fill(Color.weFlixOnSurface)
             case .primary, .glass:
                 Capsule()
                     .fill(Color.white.opacity(0.08))
                     .overlay(Capsule().strokeBorder(Color.white.opacity(0.14), lineWidth: 1))
-                    .siloGlass(in: Capsule())
+                    .weFlixGlass(in: Capsule())
             case .plain:
                 Color.clear
             }
@@ -226,15 +226,15 @@ private struct MarqueeIconButtonBody: View {
 
     var body: some View {
         configuration.label
-            .foregroundStyle(focused ? Color.black : Color.siloOnSurface)
+            .foregroundStyle(focused ? Color.black : Color.weFlixOnSurface)
             .background {
                 if focused {
-                    Circle().fill(Color.siloOnSurface)
+                    Circle().fill(Color.weFlixOnSurface)
                 } else {
                     Circle()
                         .fill(Color.white.opacity(0.08))
                         .overlay(Circle().strokeBorder(Color.white.opacity(0.14), lineWidth: 1))
-                        .siloGlass(in: Circle())
+                        .weFlixGlass(in: Circle())
                 }
             }
             .scaleEffect(focused ? 1.08 : 1)
@@ -242,7 +242,7 @@ private struct MarqueeIconButtonBody: View {
             .marqueePressHaptic(configuration.isPressed)
             #if os(tvOS)
             .focusEffectDisabled()
-            .animation(SiloTheme.springAnimation, value: isFocused)
+            .animation(WeFlixTheme.springAnimation, value: isFocused)
             #endif
     }
 
@@ -267,14 +267,14 @@ struct MarqueeHeadline: View {
             Text(title)
                 .font(.system(size: MarqueeMetrics.heroFont, weight: .heavy))
                 .kerning(-MarqueeMetrics.heroFont * 0.025)
-                .foregroundStyle(Color.siloOnSurface)
+                .foregroundStyle(Color.weFlixOnSurface)
                 .multilineTextAlignment(textAlignment)
                 .fixedSize(horizontal: false, vertical: true)
                 .accessibilityAddTraits(.isHeader)
             if let lead {
                 Text(lead)
                     .font(.system(size: MarqueeMetrics.leadFont))
-                    .foregroundStyle(Color.siloOnSurface.opacity(0.62))
+                    .foregroundStyle(Color.weFlixOnSurface.opacity(0.62))
                     .multilineTextAlignment(textAlignment)
                     .lineSpacing(2)
                     .fixedSize(horizontal: false, vertical: true)
@@ -310,7 +310,7 @@ struct MarqueeErrorText: View {
             Image(systemName: "exclamationmark.circle")
         }
         .font(.system(size: font))
-        .foregroundStyle(Color.siloErrorInk)
+        .foregroundStyle(Color.weFlixErrorInk)
         .frame(maxWidth: .infinity, alignment: .leading)
         .accessibilityElement(children: .combine)
         .accessibilityLabel("Error: \(text)")
@@ -379,7 +379,7 @@ struct MarqueeServerMark: View {
                 .overlay(
                     Image(systemName: "server.rack")
                         .font(.system(size: size * 0.42))
-                        .foregroundStyle(Color.siloOnSurface.opacity(0.62))
+                        .foregroundStyle(Color.weFlixOnSurface.opacity(0.62))
                 )
         }
     }
@@ -414,11 +414,11 @@ struct MarqueeServerCard: View {
                 VStack(alignment: .leading, spacing: 2) {
                     Text(name)
                         .font(.system(size: nameFont, weight: .bold))
-                        .foregroundStyle(Color.siloOnSurface)
+                        .foregroundStyle(Color.weFlixOnSurface)
                         .lineLimit(1)
                     Text(address)
                         .font(.system(size: addressFont))
-                        .foregroundStyle(Color.siloOnSurface.opacity(0.4))
+                        .foregroundStyle(Color.weFlixOnSurface.opacity(0.4))
                         .lineLimit(1)
                         .truncationMode(.middle)
                 }
@@ -431,11 +431,11 @@ struct MarqueeServerCard: View {
                 Divider().overlay(Color.white.opacity(0.08)).padding(.top, gap)
                 HStack(spacing: 8) {
                     Circle()
-                        .fill(status.tone == .live ? Color.siloStatusLive : Color.siloStatusWarning)
+                        .fill(status.tone == .live ? Color.weFlixStatusLive : Color.weFlixStatusWarning)
                         .frame(width: dot, height: dot)
                     Text(status.text)
                         .font(.system(size: addressFont))
-                        .foregroundStyle(Color.siloOnSurface.opacity(0.4))
+                        .foregroundStyle(Color.weFlixOnSurface.opacity(0.4))
                 }
                 .padding(.top, gap * 0.8)
             }
@@ -448,7 +448,7 @@ struct MarqueeServerCard: View {
                     RoundedRectangle(cornerRadius: corner, style: .continuous)
                         .strokeBorder(Color.white.opacity(0.14), lineWidth: 1)
                 )
-                .siloGlass(in: RoundedRectangle(cornerRadius: corner, style: .continuous))
+                .weFlixGlass(in: RoundedRectangle(cornerRadius: corner, style: .continuous))
         }
         .accessibilityElement(children: .combine)
         .accessibilityLabel("\(name), \(address)\(badge.map { ", \($0.text)" } ?? "")\(status.map { ", \($0.text)" } ?? "")")
@@ -485,13 +485,13 @@ struct MarqueeBadge: View {
         }
         .font(.system(size: font, weight: .semibold))
         .kerning(0.8)
-        .foregroundStyle(warning ? Color.siloStatusWarning : Color.siloOnSurface)
+        .foregroundStyle(warning ? Color.weFlixStatusWarning : Color.weFlixOnSurface)
         .padding(.horizontal, font * 0.9)
         .frame(height: font * 2.1)
         .background(
             Capsule()
-                .fill(warning ? Color.siloStatusWarning.opacity(0.08) : Color.black.opacity(0.45))
-                .overlay(Capsule().strokeBorder(warning ? Color.siloStatusWarning.opacity(0.35) : Color.white.opacity(0.14), lineWidth: 1))
+                .fill(warning ? Color.weFlixStatusWarning.opacity(0.08) : Color.black.opacity(0.45))
+                .overlay(Capsule().strokeBorder(warning ? Color.weFlixStatusWarning.opacity(0.35) : Color.white.opacity(0.14), lineWidth: 1))
         )
         .fixedSize()
     }
@@ -514,12 +514,12 @@ struct MarqueeServerChipLabel: View {
             MarqueeServerMark(name: name, imageURL: markURL, size: markSize)
             Text(name)
                 .font(.system(size: font, weight: .semibold))
-                .foregroundStyle(Color.siloOnSurface)
+                .foregroundStyle(Color.weFlixOnSurface)
                 .lineLimit(1)
             if showsChevron {
                 Image(systemName: "chevron.down")
                     .font(.system(size: font - 3, weight: .semibold))
-                    .foregroundStyle(Color.siloOnSurface.opacity(0.4))
+                    .foregroundStyle(Color.weFlixOnSurface.opacity(0.4))
             }
         }
         .padding(.leading, 6)
@@ -529,7 +529,7 @@ struct MarqueeServerChipLabel: View {
             Capsule()
                 .fill(Color.white.opacity(0.08))
                 .overlay(Capsule().strokeBorder(Color.white.opacity(0.14), lineWidth: 1))
-                .siloGlass(in: Capsule())
+                .weFlixGlass(in: Capsule())
         )
     }
 
@@ -665,7 +665,7 @@ struct MarqueeLabeledDivider: View {
             line
             Text(text)
                 .font(.system(size: font))
-                .foregroundStyle(Color.siloOnSurface.opacity(0.4))
+                .foregroundStyle(Color.weFlixOnSurface.opacity(0.4))
                 .fixedSize()
             line
         }

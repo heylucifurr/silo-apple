@@ -140,20 +140,20 @@ struct TVLibraryBrowseView: View {
                 let read = try await StartupContentPrefetcher.fetchLibrarySectionsRead(libraryId: library.id)
                 let visibleRows = read.response.sections.filter { !$0.isFeatured }
                 let scoped = try await mediaScope.refillSections(visibleRows) { [libraryID = library.id] (row: ResolvedSection, cursor: APIv2CatalogContinuation?) in
-                    guard await SiloAPI.shared.isCurrentOwner(read.auth) else { throw HTTPError.requestIdentityChanged }
+                    guard await WeFlixAPI.shared.isCurrentOwner(read.auth) else { throw HTTPError.requestIdentityChanged }
                     let page: CatalogListPage
-                    if let cursor { page = try await SiloAPI.shared.nextCatalogPage(cursor) }
+                    if let cursor { page = try await WeFlixAPI.shared.nextCatalogPage(cursor) }
                     else {
                         var query = APIv2CatalogQuery()
                         query.source = "section"; query.scope = "library"
                         query.libraryId = String(libraryID); query.sectionId = row.id; query.limit = 100
-                        page = try await SiloAPI.shared.catalogPage(query)
+                        page = try await WeFlixAPI.shared.catalogPage(query)
                     }
-                    guard await SiloAPI.shared.isCurrentOwner(read.auth) else { throw HTTPError.requestIdentityChanged }
+                    guard await WeFlixAPI.shared.isCurrentOwner(read.auth) else { throw HTTPError.requestIdentityChanged }
                     return LibraryScopedPage(items: page.response.items.map { SectionItem(browseItem: $0) },
                                              next: page.continuation, startsOver: page.startsOver)
                 }
-                guard await SiloAPI.shared.isCurrentOwner(read.auth) else { throw HTTPError.requestIdentityChanged }
+                guard await WeFlixAPI.shared.isCurrentOwner(read.auth) else { throw HTTPError.requestIdentityChanged }
                 guard requestGeneration == loadGeneration, !Task.isCancelled else { return }
                 sections = scoped.map(\.section)
                 scopeIncomplete = scoped.contains { $0.incomplete }
@@ -162,7 +162,7 @@ struct TVLibraryBrowseView: View {
                 }
             } else {
                 let read = try await StartupContentPrefetcher.fetchLibrarySectionsRead(libraryId: library.id)
-                guard await SiloAPI.shared.isCurrentOwner(read.auth) else { throw HTTPError.requestIdentityChanged }
+                guard await WeFlixAPI.shared.isCurrentOwner(read.auth) else { throw HTTPError.requestIdentityChanged }
                 guard requestGeneration == loadGeneration, !Task.isCancelled else { return }
                 sections = read.response.sections
             }
@@ -185,13 +185,13 @@ private struct TVLibraryBrowseLoadingView: View {
 
     var body: some View {
         ZStack(alignment: .topLeading) {
-            Color.siloBackground
+            Color.weFlixBackground
 
             LinearGradient(
                 colors: [
-                    Color.siloSurfaceElevated.opacity(0.72),
-                    Color.siloBackground.opacity(0.88),
-                    Color.siloBackground,
+                    Color.weFlixSurfaceElevated.opacity(0.72),
+                    Color.weFlixBackground.opacity(0.88),
+                    Color.weFlixBackground,
                 ],
                 startPoint: .topTrailing,
                 endPoint: .bottomLeading
@@ -202,7 +202,7 @@ private struct TVLibraryBrowseLoadingView: View {
                 Spacer(minLength: 24)
                 rowPlaceholder
             }
-            .padding(.horizontal, SiloTheme.Skyline.safeAreaX)
+            .padding(.horizontal, WeFlixTheme.Skyline.safeAreaX)
             .padding(.top, 188)
             .padding(.bottom, 34)
         }
@@ -238,7 +238,7 @@ private struct TVLibraryBrowseLoadingView: View {
 
                 Text("Loading \(libraryName)")
                     .font(.system(size: 20, weight: .medium))
-                    .foregroundStyle(Color.siloOnSurface.opacity(0.72))
+                    .foregroundStyle(Color.weFlixOnSurface.opacity(0.72))
             }
             .padding(.top, 4)
         }

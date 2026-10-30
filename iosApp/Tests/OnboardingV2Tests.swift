@@ -1,6 +1,6 @@
 import Foundation
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 /// The onboarding tour on the v2 wire: the state read's strong `ETag` is the
 /// only `If-Match` a progress write sends, the write is a single-dispatch

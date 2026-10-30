@@ -39,9 +39,9 @@ struct CollectionsView: View {
                 groupSupportNotice(message)
             }
         }
-        .siloPageBackground()
+        .weFlixPageBackground()
         .navigationTitle("Collections")
-        .siloNavigationTitleDisplayMode(.large)
+        .weFlixNavigationTitleDisplayMode(.large)
         .toolbar {
             #if os(macOS)
             if viewModel.canManageGroups {
@@ -50,7 +50,7 @@ struct CollectionsView: View {
                         viewModel.pendingGroupAction = .create
                     } label: {
                         Image(systemName: "folder.badge.plus")
-                            .foregroundColor(.siloPrimary)
+                            .foregroundColor(.weFlixPrimary)
                     }
                 }
             }
@@ -59,7 +59,7 @@ struct CollectionsView: View {
                     viewModel.showCreateSheet = true
                 } label: {
                     Image(systemName: "plus")
-                        .foregroundColor(.siloPrimary)
+                        .foregroundColor(.weFlixPrimary)
                 }
             }
             #else
@@ -69,7 +69,7 @@ struct CollectionsView: View {
                         viewModel.pendingGroupAction = .create
                     } label: {
                         Image(systemName: "folder.badge.plus")
-                            .foregroundColor(.siloPrimary)
+                            .foregroundColor(.weFlixPrimary)
                     }
                 }
             }
@@ -78,7 +78,7 @@ struct CollectionsView: View {
                     viewModel.showCreateSheet = true
                 } label: {
                     Image(systemName: "plus")
-                        .foregroundColor(.siloPrimary)
+                        .foregroundColor(.weFlixPrimary)
                 }
             }
             #endif
@@ -105,13 +105,13 @@ struct CollectionsView: View {
                 Section {
                     if section.collections.isEmpty {
                         Text(emptyGroupHint)
-                            .font(.siloSmall)
-                            .foregroundColor(.siloSecondaryText)
-                            .listRowBackground(Color.siloSurface)
+                            .font(.weFlixSmall)
+                            .foregroundColor(.weFlixSecondaryText)
+                            .listRowBackground(Color.weFlixSurface)
                     } else {
                         ForEach(section.collections) { collection in
                             collectionRow(collection)
-                                .listRowBackground(Color.siloSurface)
+                                .listRowBackground(Color.weFlixSurface)
                                 #if !os(tvOS)
                                 .swipeActions(edge: .trailing, allowsFullSwipe: false) {
                                     Button(role: .destructive) {
@@ -125,7 +125,7 @@ struct CollectionsView: View {
                                         } label: {
                                             Label("Move", systemImage: "folder")
                                         }
-                                        .tint(.siloPrimary)
+                                        .tint(.weFlixPrimary)
                                     }
                                 }
                                 #endif
@@ -141,7 +141,7 @@ struct CollectionsView: View {
         #else
         .listStyle(.insetGrouped)
         #endif
-        .siloScrollContentBackgroundHidden()
+        .weFlixScrollContentBackgroundHidden()
     }
 
     /// tvOS has no Move action, so it only notes the group is empty.
@@ -157,8 +157,8 @@ struct CollectionsView: View {
     private func sectionHeader(_ section: UserCollectionSection) -> some View {
         HStack {
             Text(section.name)
-                .font(.siloCaption)
-                .foregroundColor(.siloSecondaryText)
+                .font(.weFlixCaption)
+                .foregroundColor(.weFlixSecondaryText)
             Spacer()
             if viewModel.canManageGroups, let groupId = section.groupId,
                let group = viewModel.groups.first(where: { $0.id == groupId }) {
@@ -175,7 +175,7 @@ struct CollectionsView: View {
                     }
                 } label: {
                     Image(systemName: "ellipsis.circle")
-                        .foregroundColor(.siloSecondaryText)
+                        .foregroundColor(.weFlixSecondaryText)
                 }
             }
         }
@@ -184,19 +184,19 @@ struct CollectionsView: View {
     /// The capability read failed: groups can't be managed until it is
     /// retried, but nothing concludes they are unsupported.
     private func groupSupportNotice(_ message: String) -> some View {
-        HStack(spacing: SiloTheme.padding) {
+        HStack(spacing: WeFlixTheme.padding) {
             Text(message)
-                .font(.siloCaption)
-                .foregroundColor(.siloSecondaryText)
+                .font(.weFlixCaption)
+                .foregroundColor(.weFlixSecondaryText)
             Spacer()
             Button("Retry") {
                 Task { await viewModel.retryGroupSupport() }
             }
-            .foregroundColor(.siloPrimary)
+            .foregroundColor(.weFlixPrimary)
         }
-        .padding(.horizontal, SiloTheme.padding)
+        .padding(.horizontal, WeFlixTheme.padding)
         .padding(.vertical, 8)
-        .background(Color.siloSurface)
+        .background(Color.weFlixSurface)
     }
 
     private func collectionRow(_ collection: UserCollection) -> some View {
@@ -206,19 +206,19 @@ struct CollectionsView: View {
             HStack {
                 VStack(alignment: .leading, spacing: 4) {
                     Text(collection.name)
-                        .font(.siloBody)
-                        .foregroundColor(.siloOnSurface)
+                        .font(.weFlixBody)
+                        .foregroundColor(.weFlixOnSurface)
 
                     Text(rowSubtitle(for: collection))
-                        .font(.siloCaption)
-                        .foregroundColor(.siloSecondaryText)
+                        .font(.weFlixCaption)
+                        .foregroundColor(.weFlixSecondaryText)
                 }
 
                 Spacer()
 
                 Image(systemName: "chevron.right")
-                    .font(.siloCaption)
-                    .foregroundColor(.siloSecondaryText)
+                    .font(.weFlixCaption)
+                    .foregroundColor(.weFlixSecondaryText)
             }
             .padding(.vertical, 4)
         }
@@ -236,39 +236,39 @@ struct CollectionsView: View {
 
     private var createSheet: some View {
         NavigationStack {
-            VStack(spacing: SiloTheme.largePadding) {
+            VStack(spacing: WeFlixTheme.largePadding) {
                 TextField("Collection name", text: $viewModel.newCollectionName)
-                    .textFieldStyle(SiloTextFieldStyle())
+                    .textFieldStyle(WeFlixTextFieldStyle())
 
                 if let message = viewModel.createError {
                     Text(message)
-                        .font(.siloCaption)
-                        .foregroundColor(.siloError)
+                        .font(.weFlixCaption)
+                        .foregroundColor(.weFlixError)
                         .frame(maxWidth: .infinity, alignment: .leading)
                 }
 
                 Button("Create Collection") {
                     Task { await viewModel.createCollection() }
                 }
-                .siloPrimaryButton()
+                .weFlixPrimaryButton()
                 .disabled(viewModel.isSaving
                     || viewModel.newCollectionName.trimmingCharacters(in: .whitespaces).isEmpty)
 
                 Spacer()
             }
-            .padding(SiloTheme.padding)
-            .siloSheetBackground()
+            .padding(WeFlixTheme.padding)
+            .weFlixSheetBackground()
             .navigationTitle("New Collection")
-            .siloNavigationTitleDisplayMode(.inline)
+            .weFlixNavigationTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") {
                         viewModel.showCreateSheet = false
                     }
-                    .foregroundColor(.siloSecondaryText)
+                    .foregroundColor(.weFlixSecondaryText)
                 }
             }
-            .siloNavigationBarSurfaceBackground()
+            .weFlixNavigationBarSurfaceBackground()
         }
         .presentationDetents([.medium])
     }
@@ -289,20 +289,20 @@ private struct GroupActionSheet: View {
     var body: some View {
         NavigationStack {
             content
-                .siloSheetBackground()
-                .siloNavigationTitleDisplayMode(.inline)
+                .weFlixSheetBackground()
+                .weFlixNavigationTitleDisplayMode(.inline)
                 .toolbar {
                     ToolbarItem(placement: .cancellationAction) {
                         Button("Cancel") { dismiss() }
-                            .foregroundColor(.siloSecondaryText)
+                            .foregroundColor(.weFlixSecondaryText)
                     }
                     ToolbarItem(placement: .confirmationAction) {
                         Button(confirmLabel) { Task { await confirm() } }
-                            .foregroundColor(.siloPrimary)
+                            .foregroundColor(.weFlixPrimary)
                             .disabled(!canConfirm)
                     }
                 }
-                .siloNavigationBarSurfaceBackground()
+                .weFlixNavigationBarSurfaceBackground()
         }
         .presentationDetents([.medium])
         .task {
@@ -325,32 +325,32 @@ private struct GroupActionSheet: View {
         case .rename(let group):
             nameForm(title: "Rename “\(group.name)”", prompt: "Group name")
         case .delete(let group):
-            VStack(spacing: SiloTheme.padding) {
+            VStack(spacing: WeFlixTheme.padding) {
                 Text("Delete “\(group.name)”?")
-                    .font(.siloTitle)
-                    .foregroundStyle(Color.siloOnSurface)
+                    .font(.weFlixTitle)
+                    .foregroundStyle(Color.weFlixOnSurface)
                 Text("Collections in this group will move to Ungrouped. This cannot be undone.")
-                    .font(.siloBody)
-                    .foregroundStyle(Color.siloSecondaryText)
+                    .font(.weFlixBody)
+                    .foregroundStyle(Color.weFlixSecondaryText)
                     .multilineTextAlignment(.center)
                 errorBanner
                 Spacer()
             }
-            .padding(SiloTheme.padding)
+            .padding(WeFlixTheme.padding)
             .navigationTitle("Delete group")
         case .deleteCollection(let collection):
-            VStack(spacing: SiloTheme.padding) {
+            VStack(spacing: WeFlixTheme.padding) {
                 Text("Delete “\(collection.name)”?")
-                    .font(.siloTitle)
-                    .foregroundStyle(Color.siloOnSurface)
+                    .font(.weFlixTitle)
+                    .foregroundStyle(Color.weFlixOnSurface)
                 Text("This cannot be undone.")
-                    .font(.siloBody)
-                    .foregroundStyle(Color.siloSecondaryText)
+                    .font(.weFlixBody)
+                    .foregroundStyle(Color.weFlixSecondaryText)
                     .multilineTextAlignment(.center)
                 errorBanner
                 Spacer()
             }
-            .padding(SiloTheme.padding)
+            .padding(WeFlixTheme.padding)
             .navigationTitle("Delete collection")
         case .move(let collection):
             VStack(spacing: 0) {
@@ -361,14 +361,14 @@ private struct GroupActionSheet: View {
                         } label: {
                             moveOptionRow(label: "Ungrouped", selected: pendingMoveTarget == nil)
                         }
-                        .listRowBackground(Color.siloSurface)
+                        .listRowBackground(Color.weFlixSurface)
                         ForEach(viewModel.groups) { group in
                             Button {
                                 pendingMoveTarget = group.id
                             } label: {
                                 moveOptionRow(label: group.name, selected: pendingMoveTarget == group.id)
                             }
-                            .listRowBackground(Color.siloSurface)
+                            .listRowBackground(Color.weFlixSurface)
                         }
                     }
                 }
@@ -377,23 +377,23 @@ private struct GroupActionSheet: View {
                 #else
                 .listStyle(.insetGrouped)
                 #endif
-                .siloScrollContentBackgroundHidden()
+                .weFlixScrollContentBackgroundHidden()
                 errorBanner
-                    .padding(.horizontal, SiloTheme.padding)
-                    .padding(.bottom, SiloTheme.padding)
+                    .padding(.horizontal, WeFlixTheme.padding)
+                    .padding(.bottom, WeFlixTheme.padding)
             }
             .navigationTitle("Move collection")
         }
     }
 
     private func nameForm(title: String, prompt: String) -> some View {
-        VStack(spacing: SiloTheme.largePadding) {
+        VStack(spacing: WeFlixTheme.largePadding) {
             TextField(prompt, text: $name)
-                .textFieldStyle(SiloTextFieldStyle())
+                .textFieldStyle(WeFlixTextFieldStyle())
             errorBanner
             Spacer()
         }
-        .padding(SiloTheme.padding)
+        .padding(WeFlixTheme.padding)
         .navigationTitle(title)
     }
 
@@ -401,15 +401,15 @@ private struct GroupActionSheet: View {
     private var errorBanner: some View {
         if let message = viewModel.groupError {
             Text(message)
-                .font(.siloCaption)
-                .foregroundColor(.siloError)
+                .font(.weFlixCaption)
+                .foregroundColor(.weFlixError)
                 .frame(maxWidth: .infinity, alignment: .leading)
         }
         if viewModel.editorNeedsReload {
             Button("Reload") {
                 Task { await viewModel.loadEditor() }
             }
-            .foregroundColor(.siloPrimary)
+            .foregroundColor(.weFlixPrimary)
             .disabled(viewModel.isLoadingEditor)
             .frame(maxWidth: .infinity, alignment: .leading)
         }
@@ -418,12 +418,12 @@ private struct GroupActionSheet: View {
     private func moveOptionRow(label: String, selected: Bool) -> some View {
         HStack {
             Text(label)
-                .font(.siloBody)
-                .foregroundColor(.siloOnSurface)
+                .font(.weFlixBody)
+                .foregroundColor(.weFlixOnSurface)
             Spacer()
             if selected {
                 Image(systemName: "checkmark")
-                    .foregroundColor(.siloPrimary)
+                    .foregroundColor(.weFlixPrimary)
             }
         }
     }
@@ -495,7 +495,7 @@ private class LibraryCollectionsViewModel {
         error = nil
 
         do {
-            let response = try await SiloAPI.shared.libraryCollections(libraryId: libraryId)
+            let response = try await WeFlixAPI.shared.libraryCollections(libraryId: libraryId)
             let resolved = response.resolvedSections
             ResponseCache.shared.set(resolved, for: key)
             sections = resolved
@@ -541,13 +541,13 @@ struct LibraryCollectionsView: View {
         Group {
             if !viewModel.isEmpty {
                 ScrollView(.vertical, showsIndicators: false) {
-                    VStack(alignment: .leading, spacing: SiloTheme.padding) {
+                    VStack(alignment: .leading, spacing: WeFlixTheme.padding) {
                         ForEach(viewModel.sections) { section in
                             sectionView(section)
                         }
                     }
-                    .padding(SiloTheme.padding)
-                    .padding(.bottom, SiloTheme.largePadding)
+                    .padding(WeFlixTheme.padding)
+                    .padding(.bottom, WeFlixTheme.largePadding)
                 }
                 .reportsPageChromeScroll()
             } else if let error = viewModel.error {
@@ -562,7 +562,7 @@ struct LibraryCollectionsView: View {
                 )
             }
         }
-        .siloPageBackground()
+        .weFlixPageBackground()
         .task(id: libraryId) {
             await viewModel.loadCollections(libraryId: libraryId)
         }
@@ -576,8 +576,8 @@ struct LibraryCollectionsView: View {
         VStack(alignment: .leading, spacing: 12) {
             if !section.name.isEmpty {
                 Text(section.name)
-                    .font(.siloTitle)
-                    .foregroundColor(.siloOnSurface)
+                    .font(.weFlixTitle)
+                    .foregroundColor(.weFlixOnSurface)
             }
             LazyVGrid(columns: columns, spacing: 16) {
                 ForEach(section.collections) { collection in
@@ -655,10 +655,10 @@ private struct LibraryCollectionCard: View {
 
     private var cardWidth: CGFloat {
         cardWidthOverride
-            ?? (SiloTheme.posterCardWidth * uiCustomization.cardPresentation.posterSize.scale)
+            ?? (WeFlixTheme.posterCardWidth * uiCustomization.cardPresentation.posterSize.scale)
     }
     private var cardHeight: CGFloat {
-        cardWidth * (SiloTheme.posterCardHeight / SiloTheme.posterCardWidth)
+        cardWidth * (WeFlixTheme.posterCardHeight / WeFlixTheme.posterCardWidth)
     }
 
     var body: some View {
@@ -668,7 +668,7 @@ private struct LibraryCollectionCard: View {
 
                 if showItemCount {
                     Text(countLabel)
-                        .font(.siloSmall)
+                        .font(.weFlixSmall)
                         .foregroundColor(.white)
                         .padding(.horizontal, 8)
                         .padding(.vertical, 5)
@@ -678,11 +678,11 @@ private struct LibraryCollectionCard: View {
                 }
             }
             .frame(width: cardWidth, height: cardHeight)
-            .clipShape(RoundedRectangle(cornerRadius: SiloTheme.smallCornerRadius))
+            .clipShape(RoundedRectangle(cornerRadius: WeFlixTheme.smallCornerRadius))
 
             Text(collection.name)
-                .font(.siloCaption)
-                .foregroundStyle(Color.siloOnSurface)
+                .font(.weFlixCaption)
+                .foregroundStyle(Color.weFlixOnSurface)
                 #if os(iOS)
                 // One line, like the 2:3 cards in the other iOS grids.
                 .lineLimit(1)
@@ -691,8 +691,8 @@ private struct LibraryCollectionCard: View {
                 #endif
 
             Text(typeLabel)
-                .font(.siloSmall)
-                .foregroundStyle(Color.siloSecondaryText)
+                .font(.weFlixSmall)
+                .foregroundStyle(Color.weFlixSecondaryText)
                 .lineLimit(1)
         }
         .frame(width: cardWidth, alignment: .leading)
@@ -710,10 +710,10 @@ private struct LibraryCollectionCard: View {
             .frame(width: cardWidth, height: cardHeight)
         } else {
             ZStack {
-                Color.siloSurfaceVariant
+                Color.weFlixSurfaceVariant
                 Image(systemName: "square.stack.3d.up.fill")
                     .font(.system(size: 28, weight: .semibold))
-                    .foregroundColor(.siloSecondaryText)
+                    .foregroundColor(.weFlixSecondaryText)
             }
             .frame(width: cardWidth, height: cardHeight)
         }
@@ -771,13 +771,13 @@ struct LibraryCollectionDetailView: View {
                 )
             }
         }
-        .siloPageBackground()
+        .weFlixPageBackground()
         // Collection items can live in other libraries, and a library-scoped
         // item read 404s for those. Keep cards and play actions unscoped, like
         // the web client.
         .environment(\.browseLibraryId, nil)
         .navigationTitle(title ?? "Collection")
-        .siloNavigationTitleDisplayMode(.large)
+        .weFlixNavigationTitleDisplayMode(.large)
         .task(id: "\(libraryId)-\(collectionId)-\(mediaScope?.rawValue ?? "all")-\(kind?.rawValue ?? "regular")") {
             await loadItems(reset: true)
         }
@@ -789,16 +789,16 @@ struct LibraryCollectionDetailView: View {
 
     private var content: some View {
         ScrollView(.vertical, showsIndicators: false) {
-            VStack(alignment: .leading, spacing: SiloTheme.padding) {
-                HStack(spacing: SiloTheme.padding) {
+            VStack(alignment: .leading, spacing: WeFlixTheme.padding) {
+                HStack(spacing: WeFlixTheme.padding) {
                     if offersShuffle {
                         ShuffleButton(isStarting: shuffleLauncher.isStarting) {
                             shuffleLauncher.start(ShuffleScopeRequest(kind: shuffleKind, id: collectionId), router: router)
                         }
                     }
                     Text(countLabel)
-                        .font(.siloCaption)
-                        .foregroundColor(.siloSecondaryText)
+                        .font(.weFlixCaption)
+                        .foregroundColor(.weFlixSecondaryText)
                 }
                 #if os(tvOS)
                 // Up from any grid column reaches the Shuffle button.
@@ -818,9 +818,9 @@ struct LibraryCollectionDetailView: View {
                     }
                 )
             }
-            .padding(.horizontal, SiloTheme.padding)
-            .padding(.top, SiloTheme.smallPadding)
-            .padding(.bottom, SiloTheme.largePadding)
+            .padding(.horizontal, WeFlixTheme.padding)
+            .padding(.top, WeFlixTheme.smallPadding)
+            .padding(.bottom, WeFlixTheme.largePadding)
         }
     }
 

@@ -69,7 +69,7 @@ final class PlanSummaryJournal {
     #if os(macOS)
     /// Posted on the main thread as the Mac app is asked to quit, before it
     /// waits for ``waitForWork(upTo:)``: players end their plans then.
-    static let appWillQuit = Notification.Name("SiloPlanSummaryAppWillQuit")
+    static let appWillQuit = Notification.Name("WeFlixPlanSummaryAppWillQuit")
     /// How long a quitting Mac waits for summaries on their way.
     static let quitWait: Duration = .seconds(2)
     #endif
@@ -82,7 +82,7 @@ final class PlanSummaryJournal {
     /// Running summaries this run kept. Their plans may still be playing,
     /// so a replay leaves them; a plan's final summary may be replayed.
     private var runningThisRun: Set<String> = []
-    private static let logger = Logger(subsystem: "org.siloserver.silo", category: "PlanSummary")
+    private static let logger = Logger(subsystem: "me.weflix", category: "PlanSummary")
 
     init(
         defaults: UserDefaults = .standard,
@@ -117,7 +117,7 @@ final class PlanSummaryJournal {
     func record(sending: Bool, _ build: @escaping Build) {
         let id = UUID()
         #if os(iOS) || os(tvOS)
-        let background = BackgroundWork(name: "SiloPlanSummary")
+        let background = BackgroundWork(name: "WeFlixPlanSummary")
         #endif
         inFlight[id] = Task { [weak self] in
             if let built = await build(), let self {

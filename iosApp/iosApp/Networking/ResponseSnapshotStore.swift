@@ -23,7 +23,7 @@ enum ResponseSnapshotStore {
     /// Bound per scope; the least recently written snapshots go first.
     static let maxSnapshotsPerScope = 32
 
-    private static let queue = DispatchQueue(label: "org.siloserver.silo.response-snapshots", qos: .utility)
+    private static let queue = DispatchQueue(label: "me.weflix.response-snapshots", qos: .utility)
 
     /// A file name is one path component, limited to 255 bytes. A grid key
     /// with many filter selections can encode longer; that grid is not saved.

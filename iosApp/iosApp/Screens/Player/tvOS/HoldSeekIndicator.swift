@@ -57,7 +57,7 @@ struct HoldSeekIndicator: View {
         }
         .padding(.horizontal, 28)
         .padding(.vertical, 16)
-        .siloPlayerGlass(
+        .weFlixPlayerGlass(
             in: Capsule(style: .continuous),
             tint: Color.black.opacity(0.35)
         )

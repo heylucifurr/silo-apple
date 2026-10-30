@@ -92,7 +92,7 @@ struct TVSkylineSectionFeed: View {
 
             // Floats over the band above the row; never focusable or hit-testable.
             TVSkylineMarquee(model: marqueeModel, scale: marqueeScale)
-            .offset(y: SiloTheme.Skyline.landingContentVerticalOffset)
+            .offset(y: WeFlixTheme.Skyline.landingContentVerticalOffset)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .environment(\.browseLibraryId, marqueeModel.libraryId)
@@ -139,19 +139,19 @@ struct TVSkylineSectionFeed: View {
     @ViewBuilder
     private var scrollingRows: some View {
         GeometryReader { proxy in
-            let bandHeight = proxy.size.height * SiloTheme.Skyline.rowBandHeightFraction
+            let bandHeight = proxy.size.height * WeFlixTheme.Skyline.rowBandHeightFraction
             // Position the focusable viewport with layout, not a render
             // offset. Its bottom must match the screen's bottom: otherwise
             // tvOS can resolve directional clicks against offscreen space
             // while a swipe still pans far enough to reveal the next target.
             let bandTop = min(
                 proxy.size.height,
-                max(0, proxy.size.height - bandHeight + SiloTheme.Skyline.landingContentVerticalOffset)
+                max(0, proxy.size.height - bandHeight + WeFlixTheme.Skyline.landingContentVerticalOffset)
             )
             let visibleBandHeight = max(0, proxy.size.height - bandTop)
             let trailingPreviewPadding = max(
                 0,
-                visibleBandHeight - SiloTheme.Skyline.rowBandBottomInset
+                visibleBandHeight - WeFlixTheme.Skyline.rowBandBottomInset
             )
 
             ScrollView(.vertical, showsIndicators: false) {
@@ -160,7 +160,7 @@ struct TVSkylineSectionFeed: View {
                 // traverse offscreen card, image, and button subgraphs.
                 // The native scroll container loads directional targets;
                 // its viewport uses the corrected layout frames above.
-                LazyVStack(alignment: .leading, spacing: SiloTheme.Skyline.rowBandPreviewSpacing) {
+                LazyVStack(alignment: .leading, spacing: WeFlixTheme.Skyline.rowBandPreviewSpacing) {
                     ForEach(Array(sections.enumerated()), id: \.element.id) { index, section in
                         featuredRow(section, index: index)
                             .fixedSize(horizontal: false, vertical: true)
@@ -221,8 +221,8 @@ struct TVSkylineSectionFeed: View {
             },
             // The marquee keeps the last card it previewed.
             onExploreAllFocus: { focusRestorationOwnerSectionId = section.id },
-            cardWidth: SiloTheme.Skyline.densePosterCardWidth,
-            cardVerticalPadding: SiloTheme.Skyline.rowBandCardVerticalPadding,
+            cardWidth: WeFlixTheme.Skyline.densePosterCardWidth,
+            cardVerticalPadding: WeFlixTheme.Skyline.rowBandCardVerticalPadding,
             focusRestorationOwner: Binding(
                 get: { focusRestorationOwnerSectionId == section.id },
                 set: { ownsRestoration in
@@ -246,7 +246,7 @@ struct TVSkylineSectionFeed: View {
             MediaRow.cardArtwork(
                 for: item,
                 layout: SectionRow.layout(for: section),
-                cardWidth: SiloTheme.Skyline.densePosterCardWidth
+                cardWidth: WeFlixTheme.Skyline.densePosterCardWidth
             )
         }
     }
@@ -311,7 +311,7 @@ struct TVSkylineSectionFeed: View {
         in section: ResolvedSection
     ) -> [String] {
         guard let index = section.items.firstIndex(where: { $0.id == item.id }) else { return [] }
-        let radius = SiloTheme.Skyline.marqueeNeighborBackdropPrefetchRadius
+        let radius = WeFlixTheme.Skyline.marqueeNeighborBackdropPrefetchRadius
         let window = section.items.indices.clamped(to: (index - radius)..<(index + radius + 1))
         return window.compactMap { neighborIndex -> String? in
             guard neighborIndex != index else { return nil }
@@ -374,7 +374,7 @@ struct TVSkylineBackdrop: View {
             artworkURL: model.backdropURL,
             artworkThumbhash: model.backdropThumbhash,
             isVisible: model.backdropURL != nil,
-            crossfadeDuration: SiloTheme.Skyline.marqueeCrossfadeDuration
+            crossfadeDuration: WeFlixTheme.Skyline.marqueeCrossfadeDuration
         )
     }
 }

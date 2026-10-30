@@ -51,7 +51,7 @@ struct TopShelfItem: Decodable {
         return posterUrl
     }
 
-    /// Matches `SiloMediaType.isEpisode`, which the extension does not compile.
+    /// Matches `WeFlixMediaType.isEpisode`, which the extension does not compile.
     var isEpisode: Bool {
         ["episode", "episodes"].contains(type.trimmingCharacters(in: .whitespacesAndNewlines).lowercased())
     }

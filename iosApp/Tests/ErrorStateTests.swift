@@ -1,5 +1,5 @@
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 /// `ErrorState` keeps the status of a v2 failure, so a v2 401 or 404 gets the
 /// same headline, actions and retry treatment as the v1 `HTTPError` did. A 403

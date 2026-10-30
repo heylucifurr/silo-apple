@@ -76,16 +76,8 @@ func macSidebarSections(
 /// Media-type icon for a library row. Mixed libraries match both the movie
 /// and series categories, so they are checked first.
 func macSidebarIcon(for library: Library) -> (icon: String, selectedIcon: String) {
-    if library.isMixedLibrary {
-        return (library.navigationIcon, library.selectedNavigationIcon)
-    }
-    let categories: [PrimaryMenuBuiltin] = [.movies, .series, .audiobooks]
-    if let category = categories.first(where: {
-        libraryMatchesPrimaryMenuCategory(library, category: $0)
-    }) {
-        return (category.navigationIcon, category.navigationIcon)
-    }
-    return (library.navigationIcon, library.selectedNavigationIcon)
+    // The shared rule, so the sidebar and the bottom bar cannot disagree.
+    menuIconNames(for: library)
 }
 
 /// The sidebar row to highlight for the page in view.

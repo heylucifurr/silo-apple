@@ -1,5 +1,5 @@
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 /// The synchronous capture gate is evaluated by `DiagTrace.shouldCapture` on
 /// every instrumented call — including the verbose lines it then suppresses, of

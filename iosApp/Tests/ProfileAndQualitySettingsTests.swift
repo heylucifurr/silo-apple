@@ -1,5 +1,5 @@
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 /// Tests for the two things C2c moved onto the canonical settings contract:
 /// the shared quality presets (`playback.preferred_quality` +
@@ -37,7 +37,7 @@ final class ProfileAndQualitySettingsTests: XCTestCase {
         )
         XCTAssertEqual(
             PlaybackLanguageOption.languageIdentity("Original"),
-            PlaybackLanguageOption.languageIdentity("X-Silo-Original")
+            PlaybackLanguageOption.languageIdentity("X-silo-Original")
         )
     }
 
@@ -84,7 +84,7 @@ final class ProfileAndQualitySettingsTests: XCTestCase {
     ]
 
     func testEveryPresetResolutionIsAContractEnumMember() {
-        for preset in SiloQualityPresets.all {
+        for preset in WeFlixQualityPresets.all {
             XCTAssertTrue(
                 Self.contractResolutions.contains(preset.resolution),
                 "preset \(preset.id) sends resolution \(preset.resolution), which the contract's enum does not define"
@@ -93,7 +93,7 @@ final class ProfileAndQualitySettingsTests: XCTestCase {
     }
 
     func testEveryPresetBitrateIsWithinTheContractsBounds() {
-        for preset in SiloQualityPresets.all {
+        for preset in WeFlixQualityPresets.all {
             guard let bitrate = preset.bitrateKbps else { continue }
             // The manifest declares minimum 100, maximum 200000 on
             // playback.max_bitrate_kbps.
@@ -118,8 +118,8 @@ final class ProfileAndQualitySettingsTests: XCTestCase {
             ("480p", "480p", "480p", 1_500),
         ]
 
-        XCTAssertEqual(SiloQualityPresets.all.count, expected.count)
-        for (actual, want) in zip(SiloQualityPresets.all, expected) {
+        XCTAssertEqual(WeFlixQualityPresets.all.count, expected.count)
+        for (actual, want) in zip(WeFlixQualityPresets.all, expected) {
             XCTAssertEqual(actual.id, want.id)
             XCTAssertEqual(actual.label, want.label, "\(want.id) label")
             XCTAssertEqual(actual.resolution, want.resolution, "\(want.id) resolution")
@@ -128,8 +128,8 @@ final class ProfileAndQualitySettingsTests: XCTestCase {
     }
 
     func testEveryPresetRoundTripsFromItsStoredPair() {
-        for preset in SiloQualityPresets.all {
-            let recovered = SiloQualityPresets.preset(
+        for preset in WeFlixQualityPresets.all {
+            let recovered = WeFlixQualityPresets.preset(
                 resolution: preset.resolution,
                 bitrateKbps: preset.bitrateKbps
             )
@@ -140,43 +140,43 @@ final class ProfileAndQualitySettingsTests: XCTestCase {
     /// Two presets share the `1080p` resolution and differ only by bitrate, so
     /// a lookup that ignored the bitrate axis would collapse them.
     func testPresetsAreDistinguishedByBothAxes() {
-        XCTAssertEqual(SiloQualityPresets.preset(resolution: "1080p", bitrateKbps: 10_000)?.id, "1080p-high")
-        XCTAssertEqual(SiloQualityPresets.preset(resolution: "1080p", bitrateKbps: 6_000)?.id, "1080p")
-        XCTAssertEqual(SiloQualityPresets.preset(resolution: "1080p", bitrateKbps: 3_000)?.id, "1080p-low")
+        XCTAssertEqual(WeFlixQualityPresets.preset(resolution: "1080p", bitrateKbps: 10_000)?.id, "1080p-high")
+        XCTAssertEqual(WeFlixQualityPresets.preset(resolution: "1080p", bitrateKbps: 6_000)?.id, "1080p")
+        XCTAssertEqual(WeFlixQualityPresets.preset(resolution: "1080p", bitrateKbps: 3_000)?.id, "1080p-low")
     }
 
     /// A pair no preset covers must report itself rather than resolve to a
     /// nearby preset: showing "1080p" for a stored 1080p/8000 would tell the
     /// user their cap is 6 Mbps when it is 8.
     func testAPairNoPresetCoversHasNoPresetAndDescribesItself() {
-        XCTAssertNil(SiloQualityPresets.preset(resolution: "1080p", bitrateKbps: 8_000))
-        XCTAssertEqual(SiloQualityPresets.describe(resolution: "1080p", bitrateKbps: 8_000), "1080p at 8 Mbps")
-        XCTAssertEqual(SiloQualityPresets.describe(resolution: "720p", bitrateKbps: 1_800), "720p at 1.8 Mbps")
+        XCTAssertNil(WeFlixQualityPresets.preset(resolution: "1080p", bitrateKbps: 8_000))
+        XCTAssertEqual(WeFlixQualityPresets.describe(resolution: "1080p", bitrateKbps: 8_000), "1080p at 8 Mbps")
+        XCTAssertEqual(WeFlixQualityPresets.describe(resolution: "720p", bitrateKbps: 1_800), "720p at 1.8 Mbps")
         // A covered pair answers with the preset's own label.
-        XCTAssertEqual(SiloQualityPresets.describe(resolution: "720p", bitrateKbps: 4_000), "720p High")
-        XCTAssertEqual(SiloQualityPresets.describe(resolution: "auto", bitrateKbps: nil), "Auto")
-        XCTAssertEqual(SiloQualityPresets.describe(resolution: "2160p", bitrateKbps: nil), "4K")
+        XCTAssertEqual(WeFlixQualityPresets.describe(resolution: "720p", bitrateKbps: 4_000), "720p High")
+        XCTAssertEqual(WeFlixQualityPresets.describe(resolution: "auto", bitrateKbps: nil), "Auto")
+        XCTAssertEqual(WeFlixQualityPresets.describe(resolution: "2160p", bitrateKbps: nil), "4K")
     }
 
     /// Legacy compound spellings reduce to the contract's enum. The bitrate
     /// half is dropped rather than guessed at — the bitrate axis carries it,
     /// and inventing a cap would silently throttle playback.
     func testCompoundLegacyResolutionsNormalizeToContractMembers() {
-        XCTAssertEqual(SiloQualityPresets.normalizeResolution("1080p-high"), "1080p")
-        XCTAssertEqual(SiloQualityPresets.normalizeResolution("720p-medium"), "720p")
-        XCTAssertEqual(SiloQualityPresets.normalizeResolution("1080p-8"), "1080p")
-        XCTAssertEqual(SiloQualityPresets.normalizeResolution("4k"), "2160p")
-        XCTAssertEqual(SiloQualityPresets.normalizeResolution("uhd"), "2160p")
-        XCTAssertEqual(SiloQualityPresets.normalizeResolution("  1080P  "), "1080p")
+        XCTAssertEqual(WeFlixQualityPresets.normalizeResolution("1080p-high"), "1080p")
+        XCTAssertEqual(WeFlixQualityPresets.normalizeResolution("720p-medium"), "720p")
+        XCTAssertEqual(WeFlixQualityPresets.normalizeResolution("1080p-8"), "1080p")
+        XCTAssertEqual(WeFlixQualityPresets.normalizeResolution("4k"), "2160p")
+        XCTAssertEqual(WeFlixQualityPresets.normalizeResolution("uhd"), "2160p")
+        XCTAssertEqual(WeFlixQualityPresets.normalizeResolution("  1080P  "), "1080p")
         // 328p and 420p predate the contract's ladder and have no member.
-        XCTAssertEqual(SiloQualityPresets.normalizeResolution("328p"), "auto")
-        XCTAssertEqual(SiloQualityPresets.normalizeResolution(nil), "auto")
-        XCTAssertEqual(SiloQualityPresets.normalizeResolution(""), "auto")
-        XCTAssertEqual(SiloQualityPresets.normalizeResolution("1440p"), "auto")
+        XCTAssertEqual(WeFlixQualityPresets.normalizeResolution("328p"), "auto")
+        XCTAssertEqual(WeFlixQualityPresets.normalizeResolution(nil), "auto")
+        XCTAssertEqual(WeFlixQualityPresets.normalizeResolution(""), "auto")
+        XCTAssertEqual(WeFlixQualityPresets.normalizeResolution("1440p"), "auto")
 
-        for resolution in SiloQualityPresets.all.map(\.resolution) {
+        for resolution in WeFlixQualityPresets.all.map(\.resolution) {
             XCTAssertTrue(
-                Self.contractResolutions.contains(SiloQualityPresets.normalizeResolution(resolution)),
+                Self.contractResolutions.contains(WeFlixQualityPresets.normalizeResolution(resolution)),
                 "normalizing \(resolution) escaped the contract's enum"
             )
         }
@@ -186,7 +186,7 @@ final class ProfileAndQualitySettingsTests: XCTestCase {
 
     func testApplyingAPresetWritesBothAxes() async throws {
         let harness = try PlayerSettingsHarness()
-        let preset = try XCTUnwrap(SiloQualityPresets.preset(id: "720p-high"))
+        let preset = try XCTUnwrap(WeFlixQualityPresets.preset(id: "720p-high"))
 
         harness.settings.setQualityPreset(preset)
         await harness.settings.flushPendingDeviceSettings()
@@ -203,11 +203,11 @@ final class ProfileAndQualitySettingsTests: XCTestCase {
     func testAnUncappedPresetClearsTheBitrateAxis() async throws {
         let harness = try PlayerSettingsHarness()
 
-        harness.settings.setQualityPreset(try XCTUnwrap(SiloQualityPresets.preset(id: "480p")))
+        harness.settings.setQualityPreset(try XCTUnwrap(WeFlixQualityPresets.preset(id: "480p")))
         await harness.settings.flushPendingDeviceSettings()
         harness.transport.reset()
 
-        harness.settings.setQualityPreset(try XCTUnwrap(SiloQualityPresets.preset(id: "2160p")))
+        harness.settings.setQualityPreset(try XCTUnwrap(WeFlixQualityPresets.preset(id: "2160p")))
         await harness.settings.flushPendingDeviceSettings()
 
         let byKey = harness.transport.writesByKey()
@@ -222,7 +222,7 @@ final class ProfileAndQualitySettingsTests: XCTestCase {
     /// that stored the *id* would reinterpret the user's choice depending on
     /// which table read it back.
     func testEveryPresetSurvivesAServerRoundTrip() async throws {
-        for preset in SiloQualityPresets.all {
+        for preset in WeFlixQualityPresets.all {
             let harness = try PlayerSettingsHarness()
             harness.settings.setQualityPreset(preset)
             await harness.settings.flushPendingDeviceSettings()
@@ -333,9 +333,9 @@ final class ProfileAndQualitySettingsTests: XCTestCase {
             XCTAssertEqual(harness.settings.preferredQualityLabel, label)
             XCTAssertEqual(harness.settings.currentQualityPreset?.id, bitrate == nil ? "auto" : nil)
         }
-        XCTAssertNil(SiloQualityPresets.preset(id: "original"))
-        XCTAssertEqual(SiloQualityPresets.describe(resolution: "original", bitrateKbps: 6_000),
-                       SiloQualityPresets.describe(resolution: "auto", bitrateKbps: 6_000))
+        XCTAssertNil(WeFlixQualityPresets.preset(id: "original"))
+        XCTAssertEqual(WeFlixQualityPresets.describe(resolution: "original", bitrateKbps: 6_000),
+                       WeFlixQualityPresets.describe(resolution: "auto", bitrateKbps: 6_000))
         XCTAssertEqual(APIv2QualityPreference(wireValue: "original"), .auto)
         XCTAssertEqual(APIv2QualityPreference(wireValue: "original").wireValue, "auto")
     }
@@ -406,9 +406,9 @@ final class ProfileAndQualitySettingsTests: XCTestCase {
         harness.transport.effective = Self.qualityRows(resolution: "2160p", bitrateKbps: 3_000)
         await harness.settings.refreshFromServer()
 
-        XCTAssertEqual(SiloQualityPresets.resolutionLabel(harness.settings.preferredQualityResolution), "4K")
-        XCTAssertEqual(SiloQualityPresets.bitrateLabel(harness.settings.maxBitrateKbps), "3 Mbps")
-        let choices = SiloQualityPresets.bitrateChoices(including: harness.settings.maxBitrateKbps)
+        XCTAssertEqual(WeFlixQualityPresets.resolutionLabel(harness.settings.preferredQualityResolution), "4K")
+        XCTAssertEqual(WeFlixQualityPresets.bitrateLabel(harness.settings.maxBitrateKbps), "3 Mbps")
+        let choices = WeFlixQualityPresets.bitrateChoices(including: harness.settings.maxBitrateKbps)
         XCTAssertEqual(
             choices,
             [200_000, 100_000, 60_000, 40_000, 20_000, 15_000, 10_000, 6_000, 4_000, 3_000, 2_000, 1_500]
@@ -416,17 +416,17 @@ final class ProfileAndQualitySettingsTests: XCTestCase {
         XCTAssertEqual(harness.settings.preferredQualityLabel, "4K at 3 Mbps")
 
         // A cap a choice already covers is not listed twice.
-        XCTAssertEqual(SiloQualityPresets.bitrateChoices(including: 6_000), SiloQualityPresets.bitrateChoicesKbps)
-        XCTAssertEqual(SiloQualityPresets.bitrateChoices(including: nil), SiloQualityPresets.bitrateChoicesKbps)
-        XCTAssertEqual(SiloQualityPresets.bitrateLabel(nil), "No limit")
+        XCTAssertEqual(WeFlixQualityPresets.bitrateChoices(including: 6_000), WeFlixQualityPresets.bitrateChoicesKbps)
+        XCTAssertEqual(WeFlixQualityPresets.bitrateChoices(including: nil), WeFlixQualityPresets.bitrateChoicesKbps)
+        XCTAssertEqual(WeFlixQualityPresets.bitrateLabel(nil), "No limit")
     }
 
     func testEveryResolutionChoiceIsAContractMemberThatRoundTrips() {
-        for resolution in SiloQualityPresets.resolutionChoices {
+        for resolution in WeFlixQualityPresets.resolutionChoices {
             XCTAssertTrue(Self.contractResolutions.contains(resolution), resolution)
-            XCTAssertEqual(SiloQualityPresets.normalizeResolution(resolution), resolution)
+            XCTAssertEqual(WeFlixQualityPresets.normalizeResolution(resolution), resolution)
         }
-        XCTAssertFalse(SiloQualityPresets.resolutionChoices.contains("original"))
+        XCTAssertFalse(WeFlixQualityPresets.resolutionChoices.contains("original"))
     }
 
     // MARK: - Cellular quality
@@ -459,7 +459,7 @@ final class ProfileAndQualitySettingsTests: XCTestCase {
 
         await harness.settings.refreshFromServer()
         harness.transport.reset()
-        harness.settings.setCellularQualityPreset(try XCTUnwrap(SiloQualityPresets.preset(id: "auto")))
+        harness.settings.setCellularQualityPreset(try XCTUnwrap(WeFlixQualityPresets.preset(id: "auto")))
         await harness.settings.flushPendingDeviceSettings()
 
         let byKey = harness.transport.writesByKey()
@@ -490,7 +490,7 @@ final class ProfileAndQualitySettingsTests: XCTestCase {
         await harness.settings.refreshFromServer()
         XCTAssertFalse(harness.transport.effectiveCalls().contains { $0.contains(.playbackCellularPreferredQuality) })
 
-        let preset = try XCTUnwrap(SiloQualityPresets.preset(id: "1080p"))
+        let preset = try XCTUnwrap(WeFlixQualityPresets.preset(id: "1080p"))
         harness.settings.setCellularQualityPreset(preset)
         await harness.settings.flushPendingDeviceSettings()
         XCTAssertTrue(harness.transport.writes().isEmpty, "nothing an older server would refuse is sent")
@@ -517,7 +517,7 @@ final class ProfileAndQualitySettingsTests: XCTestCase {
     /// launch), a change waits rather than risking a refusal.
     func testACellularChangeWaitsForTheServersRevision() async throws {
         let harness = try PlayerSettingsHarness()
-        harness.settings.setCellularQualityPreset(try XCTUnwrap(SiloQualityPresets.preset(id: "480p")))
+        harness.settings.setCellularQualityPreset(try XCTUnwrap(WeFlixQualityPresets.preset(id: "480p")))
         await harness.settings.flushPendingDeviceSettings()
         XCTAssertTrue(harness.transport.writes().isEmpty)
 
@@ -533,7 +533,7 @@ final class ProfileAndQualitySettingsTests: XCTestCase {
         let harness = try PlayerSettingsHarness()
         harness.transport.revision = SettingKey.cellularQualityRevision - 1
         await harness.settings.refreshFromServer()
-        harness.settings.setCellularQualityPreset(try XCTUnwrap(SiloQualityPresets.preset(id: "480p")))
+        harness.settings.setCellularQualityPreset(try XCTUnwrap(WeFlixQualityPresets.preset(id: "480p")))
         await harness.settings.flushPendingDeviceSettings()
 
         await harness.settings.useProfileSetting(.cellularQuality)
@@ -587,7 +587,7 @@ final class ProfileAndQualitySettingsTests: XCTestCase {
         await settings.refreshFromServer()
 
         transport.failNextWrites(100, with: .transport(description: "offline"))
-        settings.setCellularQualityPreset(try XCTUnwrap(SiloQualityPresets.preset(id: "1080p")))
+        settings.setCellularQualityPreset(try XCTUnwrap(WeFlixQualityPresets.preset(id: "1080p")))
         await settings.flushPendingDeviceSettings()
         try await waitUntil("the change is held") {
             Set(settings.heldDeviceSettingKeys).isSuperset(of: SettingKey.playerCellularQualitySettings)

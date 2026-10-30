@@ -30,17 +30,17 @@ struct PhoneTrailerStatusPill: View {
             if isFetching {
                 ProgressView()
                     .controlSize(.small)
-                    .tint(.siloOnSurface)
+                    .tint(.weFlixOnSurface)
             } else {
                 Image(systemName: "info.circle")
-                    .siloScaledFont(size: 13, weight: .semibold, relativeTo: .footnote)
-                    .foregroundColor(.siloOnSurface)
+                    .weFlixScaledFont(size: 13, weight: .semibold, relativeTo: .footnote)
+                    .foregroundColor(.weFlixOnSurface)
             }
 
             Text(message)
-                .font(.siloCaption)
+                .font(.weFlixCaption)
                 .fontWeight(.semibold)
-                .foregroundColor(.siloOnSurface)
+                .foregroundColor(.weFlixOnSurface)
                 .lineLimit(dynamicTypeSize.isAccessibilitySize ? nil : 1)
                 .minimumScaleFactor(0.85)
         }

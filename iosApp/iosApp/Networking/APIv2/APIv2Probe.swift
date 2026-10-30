@@ -76,7 +76,7 @@ struct APIv2Probe: Sendable {
     /// text Go's `http.NotFound` writes (`"404 page not found"`, optional
     /// trailing newline). A 404 carrying anything else — an HTML error page
     /// from a reverse proxy, a JSON problem from some other service, an empty
-    /// body — is an ordinary HTTP failure: it does not prove a Silo v1 server
+    /// body — is an ordinary HTTP failure: it does not prove a WeFlix v1 server
     /// answered, so it must not tell the user to update one.
     static func isLegacyNotFound(body: String?) -> Bool {
         guard let body else { return false }

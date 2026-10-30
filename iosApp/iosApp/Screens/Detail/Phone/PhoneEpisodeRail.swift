@@ -53,7 +53,7 @@ struct PhoneEpisodeRail: View {
                 }
             }
             .scrollTargetLayout()
-            .padding(.horizontal, HorizontalMediaRailLayout.isPhone ? 0 : SiloTheme.safePadding)
+            .padding(.horizontal, HorizontalMediaRailLayout.isPhone ? 0 : WeFlixTheme.safePadding)
             .padding(.vertical, 4)
             .phoneMediaRailBounds()
         }
@@ -106,7 +106,7 @@ struct PhoneEpisodeRail: View {
 
 extension PhoneEpisodeRail {
     private var leadingContentMargin: CGFloat {
-        HorizontalMediaRailLayout.isPhone ? SiloTheme.safePadding : 0
+        HorizontalMediaRailLayout.isPhone ? WeFlixTheme.safePadding : 0
     }
 
     private var trailingContentMargin: CGFloat {
@@ -240,7 +240,7 @@ private struct PhoneEpisodeCard: View {
                 HStack(spacing: 6) {
                     Text(metadataLine)
                         .font(.caption.weight(.medium))
-                        .foregroundStyle(Color.siloSecondaryText)
+                        .foregroundStyle(Color.weFlixSecondaryText)
                         .lineLimit(dynamicTypeSize.isAccessibilitySize ? nil : 1)
                         .multilineTextAlignment(.leading)
                     if showsMachineTranslationMarker {
@@ -257,7 +257,7 @@ private struct PhoneEpisodeCard: View {
                let overview = episode.overview, !overview.isEmpty {
                 let description = Text(overview)
                     .font(.caption)
-                    .foregroundStyle(Color.siloSecondaryText)
+                    .foregroundStyle(Color.weFlixSecondaryText)
                     .lineSpacing(2)
                     .multilineTextAlignment(.leading)
                 if dynamicTypeSize.isAccessibilitySize {
@@ -279,7 +279,7 @@ private struct PhoneEpisodeCard: View {
     }
 
     private var titleColor: Color {
-        isCurrent ? .siloOnSurface : Color.siloOnSurface.opacity(0.92)
+        isCurrent ? .weFlixOnSurface : Color.weFlixOnSurface.opacity(0.92)
     }
 
     private var nowViewingTag: some View {

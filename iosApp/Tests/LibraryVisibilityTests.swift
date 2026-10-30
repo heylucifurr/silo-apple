@@ -1,6 +1,6 @@
 import XCTest
 import Foundation
-@testable import Silo
+@testable import WeFlix
 
 final class LibraryVisibilityTests: XCTestCase {
     func testLibrariesResponseOnlyIncludesSupportedAppleLibraryTypes() {
@@ -21,10 +21,10 @@ final class LibraryVisibilityTests: XCTestCase {
     }
 
     func testLibraryVisibilityUsesExplicitAudiobookLibraryTypesOnly() {
-        XCTAssertTrue(SiloMediaType.isSupportedLibrary("audiobook"))
-        XCTAssertTrue(SiloMediaType.isSupportedLibrary("audiobooks"))
-        XCTAssertFalse(SiloMediaType.isSupportedLibrary("book"))
-        XCTAssertFalse(SiloMediaType.isSupportedLibrary("books"))
+        XCTAssertTrue(WeFlixMediaType.isSupportedLibrary("audiobook"))
+        XCTAssertTrue(WeFlixMediaType.isSupportedLibrary("audiobooks"))
+        XCTAssertFalse(WeFlixMediaType.isSupportedLibrary("book"))
+        XCTAssertFalse(WeFlixMediaType.isSupportedLibrary("books"))
     }
 
     func testSectionsResponseStripsItemsFromHiddenLibraryTypes() {

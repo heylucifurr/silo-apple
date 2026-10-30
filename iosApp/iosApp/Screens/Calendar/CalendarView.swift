@@ -47,7 +47,7 @@ struct CalendarView: View {
         #if os(tvOS)
         ZStack(alignment: .top) {
             TVRootHeroBackdrop(
-                tints: .flat(.siloBackground),
+                tints: .flat(.weFlixBackground),
                 artworkURL: nil,
                 artworkThumbhash: nil,
                 isVisible: false
@@ -61,7 +61,7 @@ struct CalendarView: View {
         // No standalone title bar: the search / profile actions live inside
         // the floating calendar card so the agenda reclaims that height.
         phoneContent
-            .siloPageBackground()
+            .weFlixPageBackground()
         #if os(iOS)
             .toolbar(.hidden, for: .navigationBar)
         #endif
@@ -81,19 +81,19 @@ struct CalendarView: View {
                         selected: viewModel.filter,
                         onSelect: { viewModel.select(filter: $0) }
                     )
-                    .padding(.horizontal, SiloTheme.safePadding)
-                    .padding(.top, SiloTheme.smallPadding)
-                    .padding(.bottom, SiloTheme.padding)
+                    .padding(.horizontal, WeFlixTheme.safePadding)
+                    .padding(.top, WeFlixTheme.smallPadding)
+                    .padding(.bottom, WeFlixTheme.padding)
                     .frame(maxWidth: .infinity, alignment: .leading)
 
                     shelfArea(proxy: proxy)
                 }
-                .padding(.bottom, SiloTheme.largePadding)
+                .padding(.bottom, WeFlixTheme.largePadding)
             }
             .safeAreaInset(edge: .top, spacing: 0) {
                 phoneWeekStrip(proxy: proxy)
             }
-            .siloScrollEdgeEffect()
+            .weFlixScrollEdgeEffect()
         }
     }
 
@@ -107,16 +107,16 @@ struct CalendarView: View {
 
                 Text(viewModel.week.monthLabel)
                     .font(.system(size: 17, weight: .semibold))
-                    .foregroundColor(.siloOnSurface)
+                    .foregroundColor(.weFlixOnSurface)
 
                 if !viewModel.isCurrentWeek {
                     Button("Today") { returnToToday(proxy: proxy) }
                         .font(.system(size: 13, weight: .semibold))
-                        .foregroundColor(.siloOnSurface)
+                        .foregroundColor(.weFlixOnSurface)
                         .buttonStyle(.plain)
                         .padding(.horizontal, 12)
                         .frame(height: 30)
-                        .siloGlass(in: .capsule)
+                        .weFlixGlass(in: .capsule)
                         .accessibilityLabel("Jump to today")
                 }
 
@@ -125,7 +125,7 @@ struct CalendarView: View {
                 TabTopBarActions(
                     onSearch: { router.navigate(to: .search) },
                     onOpenSettings: { router.navigate(to: .settings) },
-                    onOpenRequests: { router.navigate(to: .requestsHub) },
+                    onOpenDownloads: { router.navigate(to: .downloads) },
                     onSwitchProfile: {
                         router.switchProfile()
                     },
@@ -149,14 +149,14 @@ struct CalendarView: View {
         }
         .padding(.horizontal, 14)
         .padding(.vertical, 12)
-        .siloGlass(in: RoundedRectangle(cornerRadius: 26, style: .continuous))
+        .weFlixGlass(in: RoundedRectangle(cornerRadius: 26, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 26, style: .continuous)
                 .strokeBorder(Color.white.opacity(0.08), lineWidth: 1)
         )
-        .padding(.horizontal, SiloTheme.safePadding)
-        .padding(.top, SiloTheme.smallPadding)
-        .padding(.bottom, SiloTheme.smallPadding)
+        .padding(.horizontal, WeFlixTheme.safePadding)
+        .padding(.top, WeFlixTheme.smallPadding)
+        .padding(.bottom, WeFlixTheme.smallPadding)
         .frame(maxWidth: .infinity)
     }
 
@@ -174,7 +174,7 @@ struct CalendarView: View {
             }) else { return }
             viewModel.selectDay(today)
             DispatchQueue.main.async {
-                withAnimation(SiloTheme.springAnimation) {
+                withAnimation(WeFlixTheme.springAnimation) {
                     proxy.scrollTo(today, anchor: .top)
                 }
             }
@@ -198,7 +198,7 @@ struct CalendarView: View {
                         focusRequest: entryFocusRequest,
                         onMoveUp: onTopMenuFocusRequest
                     )
-                    .padding(.horizontal, SiloTheme.safePadding)
+                    .padding(.horizontal, WeFlixTheme.safePadding)
 
                     CalendarWeekStrip(
                         week: viewModel.week,
@@ -216,7 +216,7 @@ struct CalendarView: View {
                     shelfArea(proxy: proxy)
                 }
                 .padding(.top, TVTopMenuLayout.contentTopInset)
-                .padding(.bottom, SiloTheme.largePadding)
+                .padding(.bottom, WeFlixTheme.largePadding)
                 .id(Self.topContentId)
             }
             .modifier(TVMenuEntryScroll(request: focusRequest, isTopMenuFocused: isTopMenuFocused) { entryFocusRequest = $0 })
@@ -271,22 +271,22 @@ struct CalendarView: View {
         VStack(spacing: 12) {
             Image(systemName: "calendar.badge.exclamationmark")
                 .font(.system(size: 44))
-                .foregroundColor(.siloOnSurface.opacity(0.3))
+                .foregroundColor(.weFlixOnSurface.opacity(0.3))
 
             Text(emptyTitle)
-                .font(.siloSubheadline)
-                .foregroundColor(.siloOnSurface)
+                .font(.weFlixSubheadline)
+                .foregroundColor(.weFlixOnSurface)
 
             Text(emptySubtitle)
-                .font(.siloCaption)
-                .foregroundColor(.siloSecondaryText)
+                .font(.weFlixCaption)
+                .foregroundColor(.weFlixSecondaryText)
                 .multilineTextAlignment(.center)
-                .padding(.horizontal, SiloTheme.largePadding)
+                .padding(.horizontal, WeFlixTheme.largePadding)
 
             // Every view links to the other two, which also gives tvOS
             // focus a target below the week strip so d-pad down from it
             // doesn't dead-end.
-            HStack(spacing: SiloTheme.padding) {
+            HStack(spacing: WeFlixTheme.padding) {
                 ForEach(viewModel.filter.emptyStateLinks) { filter in
                     Button {
                         viewModel.select(filter: filter)
@@ -295,12 +295,12 @@ struct CalendarView: View {
                         Text(filter.displayLabel)
                             .frame(maxWidth: .infinity)
                     }
-                    .siloPrimaryButton()
+                    .weFlixPrimaryButton()
                     .frame(width: emptyButtonWidth)
                     .accessibilityLabel("Show \(filter.displayLabel)")
                 }
             }
-            .padding(.top, SiloTheme.smallPadding)
+            .padding(.top, WeFlixTheme.smallPadding)
         }
         .frame(maxWidth: .infinity, minHeight: 320)
         #if os(tvOS)
@@ -341,7 +341,7 @@ struct CalendarView: View {
         #if os(tvOS)
         return 6
         #else
-        return SiloTheme.padding
+        return WeFlixTheme.padding
         #endif
     }
 
@@ -349,7 +349,7 @@ struct CalendarView: View {
 
     private func selectDay(_ day: Date, proxy: ScrollViewProxy) {
         viewModel.selectDay(day)
-        withAnimation(SiloTheme.springAnimation) {
+        withAnimation(WeFlixTheme.springAnimation) {
             proxy.scrollTo(day, anchor: .top)
         }
         #if os(tvOS)

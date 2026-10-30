@@ -1,8 +1,8 @@
 import Foundation
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
-/// The `SiloAPI` profile and user-library calls on `/api/v2`: the wire shape
+/// The `WeFlixAPI` profile and user-library calls on `/api/v2`: the wire shape
 /// each one sends, the status it accepts, and what the new-profile form
 /// reports for each way the `non_retryable` create can fail. Owner fencing
 /// for these client methods is covered by `CatalogV2Tests`.
@@ -14,11 +14,11 @@ final class ProfilesV2Tests: XCTestCase {
         stub = APIv2TestStub()
     }
 
-    private func api(profileId: String? = nil) async throws -> SiloAPI {
+    private func api(profileId: String? = nil) async throws -> WeFlixAPI {
         try await client(profileId: profileId).api
     }
 
-    private func client(profileId: String? = nil) async throws -> (api: SiloAPI, tokens: TokenStore) {
+    private func client(profileId: String? = nil) async throws -> (api: WeFlixAPI, tokens: TokenStore) {
         let name = "ProfilesV2Tests.\(UUID().uuidString)"
         let suite = try XCTUnwrap(UserDefaults(suiteName: name))
         addTeardownBlock { UserDefaults().removePersistentDomain(forName: name) }
@@ -27,7 +27,7 @@ final class ProfilesV2Tests: XCTestCase {
         await tokens.switchActiveServer(serverId: "test-server")
         await tokens.setServerUrl("https://profiles.example")
         if let profileId { await tokens.setProfileId(profileId) }
-        return (SiloAPI(http: HTTPClient(session: stub.makeSession(), tokenStore: tokens), tokenStore: tokens), tokens)
+        return (WeFlixAPI(http: HTTPClient(session: stub.makeSession(), tokenStore: tokens), tokenStore: tokens), tokens)
     }
 
     private func profileJSON(id: String = "p-owner") throws -> String {
@@ -314,7 +314,7 @@ final class ProfilesV2Tests: XCTestCase {
         XCTAssertEqual(stub.requests.count, 1)
     }
 
-    private func createFailure(_ api: SiloAPI) async -> CreateProfileFailure {
+    private func createFailure(_ api: WeFlixAPI) async -> CreateProfileFailure {
         do {
             _ = try await api.createProfile(name: "Kid", avatarEmoji: nil, pin: nil, isChild: false)
             XCTFail("Expected the create to fail")

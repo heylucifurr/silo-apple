@@ -1,7 +1,7 @@
 import XCTest
 import SwiftUI
 import Nuke
-@testable import Silo
+@testable import WeFlix
 
 /// The retry schedule as a visible `AsyncImageView` runs it, against artwork
 /// that keeps answering 503. `ArtworkRetryPolicyTests` covers the policy.

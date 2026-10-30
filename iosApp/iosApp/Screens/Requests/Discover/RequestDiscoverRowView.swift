@@ -25,18 +25,18 @@ private struct PhoneRequestDiscoverRowView: View {
 
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: SiloTheme.largePadding) {
+            VStack(alignment: .leading, spacing: WeFlixTheme.largePadding) {
                 content
             }
-            .padding(.horizontal, SiloTheme.padding)
-            .padding(.top, SiloTheme.smallPadding)
-            .padding(.bottom, SiloTheme.largePadding)
+            .padding(.horizontal, WeFlixTheme.padding)
+            .padding(.top, WeFlixTheme.smallPadding)
+            .padding(.bottom, WeFlixTheme.largePadding)
             .frame(maxWidth: .infinity, alignment: .leading)
         }
-        .siloPageBackground()
+        .weFlixPageBackground()
         .navigationTitle(viewModel.title)
-        .siloNavigationTitleDisplayMode(.large)
-        .siloToolbarColorSchemeDark()
+        .weFlixNavigationTitleDisplayMode(.large)
+        .weFlixToolbarColorSchemeDark()
         .task {
             if viewModel.results.isEmpty { await viewModel.loadMore() }
         }

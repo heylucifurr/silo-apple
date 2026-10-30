@@ -1,5 +1,5 @@
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 /// Online playback may trust Aether's load-time probe; downloads must retain
 /// enough bounded evidence to be safe without a server replan.

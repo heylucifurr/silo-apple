@@ -138,7 +138,7 @@ enum ApplePlaybackV3PlanAdapter {
             }
         }
         if let correction = plan.runtimeCorrections.first {
-            // Runtime correction tokens belonged to the removed Silo
+            // Runtime correction tokens belonged to the removed WeFlix
             // playback implementation. Aether performs recovery internally.
             throw ApplePlaybackV3PlanError.unsupportedRuntimeCorrection(correction)
         }

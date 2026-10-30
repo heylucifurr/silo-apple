@@ -1,6 +1,6 @@
 import Foundation
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 /// Home and library rows hold at most `SectionRowLimit.cards` cards, and only
 /// a server that advertises `item_limit` is sent it.
@@ -19,7 +19,7 @@ final class SectionRowLimitTests: XCTestCase {
         SectionItemLimitSupport(memory: .init(load: { _ in nil }, save: { _, _ in }))
     }
 
-    private func client(stub: APIv2TestStub, support: SectionItemLimitSupport) async throws -> SiloAPI {
+    private func client(stub: APIv2TestStub, support: SectionItemLimitSupport) async throws -> WeFlixAPI {
         let name = "SectionRowLimitTests.\(UUID().uuidString)"
         let suite = try XCTUnwrap(UserDefaults(suiteName: name))
         addTeardownBlock { UserDefaults().removePersistentDomain(forName: name) }
@@ -29,7 +29,7 @@ final class SectionRowLimitTests: XCTestCase {
         await tokens.setServerUrl("https://rows.example")
         await tokens.setProfileId("profile-one")
         let http = HTTPClient(session: stub.makeSession(), tokenStore: tokens)
-        return SiloAPI(http: http, tokenStore: tokens, sectionItemLimitSupport: support)
+        return WeFlixAPI(http: http, tokenStore: tokens, sectionItemLimitSupport: support)
     }
 
     private func sectionReads(_ stub: APIv2TestStub) -> [StubURLProtocol.Request] {

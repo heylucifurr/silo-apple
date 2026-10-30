@@ -153,7 +153,7 @@ final class ProfilePrefsEditor {
     static let serverUpgradeMessage = """
         This server is too old to store playback preferences. \
         Playback still works using this device's defaults. \
-        Ask your server administrator to update Silo.
+        Ask your server administrator to update weflix.
         """
 
     private let writer: ProfileSettingsWriter

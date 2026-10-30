@@ -1,6 +1,6 @@
 import Foundation
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 #if canImport(Network)
 import Network
@@ -37,7 +37,7 @@ final class TVSignInTests: XCTestCase {
         // A web approval link from an older server reaches the field as its
         // `initialCode` and still enables Continue.
         let link = try XCTUnwrap(DeviceApprovalLink(url: XCTUnwrap(URL(string:
-            "silo://device?url=http://10.0.0.2:8090&code=ABCD-EFGH"))))
+            "weflix://device?url=http://10.0.0.2:8090&code=ABCD-EFGH"))))
         XCTAssertEqual(link.code, "ABCDEFGH")
         let field = DeviceUserCode.entryText(link.code)
         XCTAssertEqual(field, "ABCD EFGH")
@@ -52,12 +52,12 @@ final class TVSignInTests: XCTestCase {
         XCTAssertEqual(TVSignInPresentation.typedURL("https://silo.example.com/activate"), "silo.example.com/activate")
         XCTAssertEqual(TVSignInPresentation.typedURL("HTTPS://silo.example.com/activate/"), "silo.example.com/activate")
         XCTAssertEqual(TVSignInPresentation.typedURL("http://192.168.1.4:8090/activate/"), "http://192.168.1.4:8090/activate")
-        XCTAssertEqual(TVSignInPresentation.typedURL("", complete: "https://media.example.com/silo/activate?code=48217730"),
-            "media.example.com/silo/activate", "a blank verification_uri falls back to the QR URL without its query")
+        XCTAssertEqual(TVSignInPresentation.typedURL("", complete: "https://media.example.com/weFlix/activate?code=48217730"),
+            "media.example.com/weFlix/activate", "a blank verification_uri falls back to the QR URL without its query")
         // Android's DeviceCodeFormat.host rule: the port stays, with or
         // without a scheme.
         XCTAssertEqual(TVSignInPresentation.host(of: "http://192.168.1.4:8090/"), "192.168.1.4:8090")
-        XCTAssertEqual(TVSignInPresentation.host(of: " 192.168.1.4:8090/silo?x=1"), "192.168.1.4:8090")
+        XCTAssertEqual(TVSignInPresentation.host(of: " 192.168.1.4:8090/weFlix?x=1"), "192.168.1.4:8090")
         XCTAssertEqual(TVSignInPresentation.host(of: "https://silo.example.com"), "silo.example.com")
         XCTAssertEqual(TVSignInPresentation.qrAccessibilityPrefix(typedURL: "silo.example.com/activate"),
             "Sign-in QR code. Or go to silo.example.com slash activate and enter ")
@@ -92,15 +92,15 @@ final class TVSignInTests: XCTestCase {
 
     func testDeviceLinksCarryTheServerIdentityAddressAndCode() throws {
         let link = try XCTUnwrap(DeviceApprovalLink(url: XCTUnwrap(URL(string:
-            "silo://device?server=3f2a9d5e&url=https%3A%2F%2Fsilo.example.com%2F&code=4821-7730"))))
+            "weflix://device?server=3f2a9d5e&url=https%3A%2F%2Fsilo.example.com%2F&code=4821-7730"))))
         XCTAssertEqual(link.serverId, "3f2a9d5e")
         XCTAssertEqual(link.serverURL, "https://silo.example.com")
         XCTAssertEqual(link.code, "48217730")
-        XCTAssertNil(DeviceApprovalLink(url: try XCTUnwrap(URL(string: "silo://device?code=48217730"))),
+        XCTAssertNil(DeviceApprovalLink(url: try XCTUnwrap(URL(string: "weflix://device?code=48217730"))),
             "a bare code means nothing without its server")
-        XCTAssertNil(DeviceApprovalLink(url: try XCTUnwrap(URL(string: "silo://device?server=x&url=javascript:alert(1)&code="))))
-        XCTAssertNil(DeviceApprovalLink(url: try XCTUnwrap(URL(string: "silo://item/abc?code=1"))))
-        let urlOnly = try XCTUnwrap(DeviceApprovalLink(url: XCTUnwrap(URL(string: "silo://device?url=http://10.0.0.2:8090&code=11112222"))))
+        XCTAssertNil(DeviceApprovalLink(url: try XCTUnwrap(URL(string: "weflix://device?server=x&url=javascript:alert(1)&code="))))
+        XCTAssertNil(DeviceApprovalLink(url: try XCTUnwrap(URL(string: "weflix://item/abc?code=1"))))
+        let urlOnly = try XCTUnwrap(DeviceApprovalLink(url: XCTUnwrap(URL(string: "weflix://device?url=http://10.0.0.2:8090&code=11112222"))))
         XCTAssertNil(urlOnly.serverId)
         XCTAssertEqual(urlOnly.serverURL, "http://10.0.0.2:8090")
     }
@@ -110,7 +110,7 @@ final class TVSignInTests: XCTestCase {
             lastUsedAt: Date(), verifiedServerId: "srv-home")
         let unverified = ServerEntry(id: "lan", url: "http://192.168.1.4:8090", fetchedName: "Lan", profileId: nil, lastUsedAt: Date())
         func link(_ query: String) throws -> DeviceApprovalLink {
-            try XCTUnwrap(DeviceApprovalLink(url: XCTUnwrap(URL(string: "silo://device?\(query)"))))
+            try XCTUnwrap(DeviceApprovalLink(url: XCTUnwrap(URL(string: "weflix://device?\(query)"))))
         }
         let probes: [String: ServerIdentityProbeResult] = [
             "http://192.168.1.4:8090": .identity("srv-lan"),
@@ -149,7 +149,7 @@ final class TVSignInTests: XCTestCase {
         let other = ServerEntry(id: "other", url: "https://other.example", fetchedName: "Other", profileId: nil,
             lastUsedAt: Date(), verifiedServerId: "srv-other")
         func link(_ query: String) throws -> DeviceApprovalLink {
-            try XCTUnwrap(DeviceApprovalLink(url: XCTUnwrap(URL(string: "silo://device?\(query)"))))
+            try XCTUnwrap(DeviceApprovalLink(url: XCTUnwrap(URL(string: "weflix://device?\(query)"))))
         }
         let probe: (String) async -> ServerIdentityProbeResult = { url in
             switch url {
@@ -220,7 +220,7 @@ final class TVSignInTests: XCTestCase {
         XCTAssertNil(CompanionPairingOffer.make(for: legacyTV, signedIn: []), "a signed-out phone offers nothing")
     }
 
-    /// A Roku advertises the same record under `_silopair-roku._tcp` and is
+    /// A Roku advertises the same record under `_weflixpair-roku._tcp` and is
     /// dialed without TLS (silo-roku `docs/companion-pairing.md`).
     func testRokusAreFoundUnderTheirOwnTypeAndDialedOverPlainTCP() throws {
         let endpoint = NWEndpoint.hostPort(host: "192.168.1.20", port: 52827)
@@ -260,7 +260,7 @@ final class TVSignInTests: XCTestCase {
         api.lookups = [
             DeviceLookupResponse(matchCode: "warm pony", deviceName: "Living Room", devicePlatform: "tvos", status: "pending",
                 clientPurpose: "device_login", temporary: false, userCode: "4821-7730", ipAddressHint: "192.168.1.x",
-                requestedAt: requestedAt, serverId: "srv-home", serverName: "Silo Home"),
+                requestedAt: requestedAt, serverId: "srv-home", serverName: "weflix Home"),
             DeviceLookupResponse(matchCode: "warm pony", deviceName: "Living Room", devicePlatform: "tvos", status: "approved"),
             DeviceLookupResponse(matchCode: "warm pony", deviceName: "Living Room", devicePlatform: "tvos", status: "consumed"),
         ]
@@ -268,7 +268,7 @@ final class TVSignInTests: XCTestCase {
         await model.lookUp()
         guard case .review(let request) = model.phase else { return XCTFail("\(model.phase)") }
         XCTAssertEqual(request, TVApprovalRequest(code: "4821 7730", deviceName: "Living Room", platformLabel: "Apple TV",
-            serverName: "Silo Home", serverHost: "home.example", accountName: "laura", networkHint: "192.168.1.x",
+            serverName: "weflix Home", serverHost: "home.example", accountName: "laura", networkHint: "192.168.1.x",
             requestedAt: requestedAt))
         XCTAssertEqual(api.lookedUpCodes.first, "48217730")
 

@@ -79,7 +79,7 @@ struct RequestMediaCard: View {
     }
 
     private var height: CGFloat {
-        width * (SiloTheme.posterCardHeight / SiloTheme.posterCardWidth)
+        width * (WeFlixTheme.posterCardHeight / WeFlixTheme.posterCardWidth)
     }
 
     var body: some View {
@@ -131,16 +131,16 @@ struct RequestMediaCard: View {
                     .padding(badgeInset)
             }
         }
-        .clipShape(RoundedRectangle(cornerRadius: SiloTheme.cornerRadius))
+        .clipShape(RoundedRectangle(cornerRadius: WeFlixTheme.cornerRadius))
     }
 
     private var posterPlaceholder: some View {
         ZStack {
-            Rectangle().fill(Color.siloSurfaceElevated)
+            Rectangle().fill(Color.weFlixSurfaceElevated)
             Text(title)
-                .font(.siloCaption)
+                .font(.weFlixCaption)
                 .fontWeight(.semibold)
-                .foregroundColor(.siloSecondaryText)
+                .foregroundColor(.weFlixSecondaryText)
                 .multilineTextAlignment(.center)
                 .padding(12)
         }
@@ -150,8 +150,8 @@ struct RequestMediaCard: View {
     private var caption: some View {
         VStack(alignment: .leading, spacing: 4) {
             Text(title)
-                .font(.siloSubheadline)
-                .foregroundColor(.siloOnSurface)
+                .font(.weFlixSubheadline)
+                .foregroundColor(.weFlixOnSurface)
                 #if os(tvOS)
                 .lineLimit(1)
                 .truncationMode(.tail)
@@ -163,8 +163,8 @@ struct RequestMediaCard: View {
                 RequestStatusLabel(progress: progress)
             } else if let year, year > 0 {
                 Text(String(year))
-                    .font(.siloCaption)
-                    .foregroundColor(.siloSecondaryText)
+                    .font(.weFlixCaption)
+                    .foregroundColor(.weFlixSecondaryText)
             }
         }
         .frame(width: width, alignment: .leading)

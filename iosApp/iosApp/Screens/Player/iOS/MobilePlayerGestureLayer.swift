@@ -397,7 +397,7 @@ struct MobilePlayerGestureLayer: View {
         }
         .foregroundStyle(.white)
         .frame(width: 74, height: 74)
-        .siloPlayerGlass(in: Circle())
+        .weFlixPlayerGlass(in: Circle())
     }
 
     private func gravityToastChip(for gravity: VideoGravity) -> some View {
@@ -410,7 +410,7 @@ struct MobilePlayerGestureLayer: View {
         .foregroundStyle(.white)
         .padding(.horizontal, 14)
         .padding(.vertical, 8)
-        .siloPlayerGlass(in: Capsule())
+        .weFlixPlayerGlass(in: Capsule())
     }
 
     private func gravityToastIcon(for gravity: VideoGravity) -> String {
@@ -431,7 +431,7 @@ struct MobilePlayerGestureLayer: View {
         .foregroundStyle(.white)
         .padding(.horizontal, 14)
         .padding(.vertical, 8)
-        .siloPlayerGlass(in: Capsule())
+        .weFlixPlayerGlass(in: Capsule())
     }
 
     private func gaugeChip(for adjustment: EdgeAdjustment) -> some View {
@@ -450,7 +450,7 @@ struct MobilePlayerGestureLayer: View {
         .foregroundStyle(.white)
         .padding(.horizontal, 20)
         .padding(.vertical, 12)
-        .siloPlayerGlass(in: Capsule())
+        .weFlixPlayerGlass(in: Capsule())
     }
 
     private func gaugeIcon(for adjustment: EdgeAdjustment, fraction: Double) -> Image {

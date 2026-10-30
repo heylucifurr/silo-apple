@@ -1,7 +1,7 @@
 #if os(iOS)
 import SwiftUI
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 /// The iPhone Duo's folded screen is 466 x 678pt with the time and connection
 /// status in an 84pt column down its right side and no inset across the top.

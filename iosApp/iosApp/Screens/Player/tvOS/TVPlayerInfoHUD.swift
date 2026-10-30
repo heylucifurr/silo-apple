@@ -191,8 +191,8 @@ struct TVPlayerInfoHUD: View {
         // Glass carries enough light that the panel lifts off the video
         // without extra dark tint; the stroke + shadow still define the
         // edge over a fully-black frame. Low-power TVs draw a flat
-        // translucent fill instead (see siloPlayerGlass).
-        .siloPlayerGlass(in: RoundedRectangle(cornerRadius: 28, style: .continuous))
+        // translucent fill instead (see weFlixPlayerGlass).
+        .weFlixPlayerGlass(in: RoundedRectangle(cornerRadius: 28, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 28, style: .continuous)
                 .stroke(Color.white.opacity(0.14), lineWidth: 1)
@@ -290,8 +290,8 @@ private struct HUDTabPillBody: View {
             .contentShape(Capsule())
             .scaleEffect(configuration.isPressed ? 0.97 : 1)
             .focusEffectDisabled()
-            .animation(.easeOut(duration: SiloTheme.fastDuration), value: isFocused)
-            .animation(.easeOut(duration: SiloTheme.fastDuration), value: isSelected)
+            .animation(.easeOut(duration: WeFlixTheme.fastDuration), value: isFocused)
+            .animation(.easeOut(duration: WeFlixTheme.fastDuration), value: isSelected)
     }
 
     private var foreground: Color {
@@ -372,7 +372,7 @@ private struct HUDScrollablePane<Content: View>: View {
                     .padding(-10)
             )
             .scaleEffect(isFocused ? 1.01 : 1)
-            .animation(.easeOut(duration: SiloTheme.fastDuration), value: isFocused)
+            .animation(.easeOut(duration: WeFlixTheme.fastDuration), value: isFocused)
             .accessibilityLabel(accessibilityLabel)
             .onMoveCommand { direction in
                 handleMove(direction, proxy: proxy)
@@ -413,7 +413,7 @@ private struct HUDScrollablePane<Content: View>: View {
         guard nextIndex != scrollTargetIndex else { return }
         scrollTargetIndex = nextIndex
 
-        withAnimation(.easeOut(duration: SiloTheme.fastDuration)) {
+        withAnimation(.easeOut(duration: WeFlixTheme.fastDuration)) {
             proxy.scrollTo(scrollTargetIDs[nextIndex], anchor: .top)
         }
     }
@@ -477,8 +477,8 @@ private struct HUDRowButtonBody: View {
             .contentShape(RoundedRectangle(cornerRadius: cornerRadius, style: .continuous))
             .scaleEffect(configuration.isPressed ? 0.98 : 1)
             .focusEffectDisabled()
-            .animation(.easeOut(duration: SiloTheme.fastDuration), value: isFocused)
-            .animation(.easeOut(duration: SiloTheme.fastDuration), value: configuration.isPressed)
+            .animation(.easeOut(duration: WeFlixTheme.fastDuration), value: isFocused)
+            .animation(.easeOut(duration: WeFlixTheme.fastDuration), value: configuration.isPressed)
     }
 
     private var background: Color {
@@ -917,7 +917,7 @@ private struct VideoPane: View {
                 )
             }
         }
-        .animation(.easeOut(duration: SiloTheme.fastDuration), value: activePicker?.id)
+        .animation(.easeOut(duration: WeFlixTheme.fastDuration), value: activePicker?.id)
     }
 
     private var qualityValue: String {
@@ -1061,7 +1061,7 @@ private struct HUDPickerDialog: View {
         .padding(.horizontal, 34)
         .padding(.vertical, 28)
         .frame(width: 620, alignment: .topLeading)
-        .siloPlayerGlass(in: RoundedRectangle(cornerRadius: 28, style: .continuous))
+        .weFlixPlayerGlass(in: RoundedRectangle(cornerRadius: 28, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 28, style: .continuous)
                 .stroke(Color.white.opacity(0.18), lineWidth: 1)
@@ -1417,7 +1417,7 @@ private struct SubtitleAppearanceDialog: View {
             .padding(.horizontal, 34)
             .padding(.vertical, 28)
             .frame(width: 720, alignment: .topLeading)
-            .siloPlayerGlass(in: RoundedRectangle(cornerRadius: 28, style: .continuous))
+            .weFlixPlayerGlass(in: RoundedRectangle(cornerRadius: 28, style: .continuous))
             .overlay(
                 RoundedRectangle(cornerRadius: 28, style: .continuous)
                     .stroke(Color.white.opacity(0.18), lineWidth: 1)
@@ -1438,7 +1438,7 @@ private struct SubtitleAppearanceDialog: View {
                 )
             }
         }
-        .animation(.easeOut(duration: SiloTheme.fastDuration), value: activePicker?.id)
+        .animation(.easeOut(duration: WeFlixTheme.fastDuration), value: activePicker?.id)
         // Defensive: the picker's own exit handler consumes Menu while it has
         // focus, but if focus ever escapes it we still want Menu to close the
         // picker, not tear down the whole dialog.
@@ -1525,7 +1525,7 @@ private struct HUDCircleButtonBody: View {
             .contentShape(Circle())
             .scaleEffect(configuration.isPressed ? 0.96 : 1)
             .focusEffectDisabled()
-            .animation(.easeOut(duration: SiloTheme.fastDuration), value: isFocused)
+            .animation(.easeOut(duration: WeFlixTheme.fastDuration), value: isFocused)
     }
 }
 
@@ -1653,10 +1653,10 @@ private struct SubtitlesPane: View {
             }
 
         }
-        .animation(.easeOut(duration: SiloTheme.fastDuration), value: showAppearanceDialog)
-        .animation(.easeOut(duration: SiloTheme.fastDuration), value: activePicker?.id)
-        .animation(.easeOut(duration: SiloTheme.fastDuration), value: showAITranslateMenu)
-        .animation(.easeOut(duration: SiloTheme.fastDuration), value: showSubtitleSearchMenu)
+        .animation(.easeOut(duration: WeFlixTheme.fastDuration), value: showAppearanceDialog)
+        .animation(.easeOut(duration: WeFlixTheme.fastDuration), value: activePicker?.id)
+        .animation(.easeOut(duration: WeFlixTheme.fastDuration), value: showAITranslateMenu)
+        .animation(.easeOut(duration: WeFlixTheme.fastDuration), value: showSubtitleSearchMenu)
         // The HUD rail selects panes on focus. Keep it out of the focus graph
         // while a dialog replaces its rows during search or other actions.
         .onChange(of: hasPresentedOverlay, initial: true) { _, presented in
@@ -1908,7 +1908,7 @@ private struct SubtitlesPane: View {
     private func timingNote(_ entry: SubtitleSyncModel.Entry, canSync: Bool) -> (text: String, color: Color)? {
         if let error = entry.error { return (error, Color(red: 1, green: 0.55, blue: 0.55)) }
         if let result = entry.result {
-            return (result.text, result.isWarning ? Color.siloWarning.opacity(0.9) : .white.opacity(0.55))
+            return (result.text, result.isWarning ? Color.weFlixWarning.opacity(0.9) : .white.opacity(0.55))
         }
         if canSync, !entry.isInProgress { return (entry.actionNote, .white.opacity(0.45)) }
         return nil

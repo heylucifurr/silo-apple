@@ -1,6 +1,6 @@
 //
 //  PlaybackNetworkQuality.swift
-//  Silo (iOS + tvOS + macOS)
+//  WeFlix (iOS + tvOS + macOS)
 //
 //  Which quality pair playback asks for on the current connection.
 //
@@ -69,7 +69,7 @@ final class PlaybackNetworkMonitor: @unchecked Sendable {
             monitor.pathUpdateHandler = { [weak self] path in
                 self?.update(path)
             }
-            monitor.start(queue: DispatchQueue(label: "org.siloserver.silo.playback-network-path"))
+            monitor.start(queue: DispatchQueue(label: "me.weflix.playback-network-path"))
             self.monitor = monitor
         }
     }

@@ -80,7 +80,7 @@ enum TrailerRail {
 
     /// Merge an item's remote videos and local extras into one ordered rail.
     ///
-    /// Local extras come first: they play in Silo, while remote videos hand
+    /// Local extras come first: they play in WeFlix, while remote videos hand
     /// off to the YouTube app. Remote videos follow in server order (trailers
     /// first, official first), preserved verbatim. When `allowRemote` is
     /// false (e.g. tvOS without the YouTube app installed) remote entries are

@@ -2,7 +2,7 @@ import SwiftUI
 
 // MARK: - Variants
 //
-// Placement of Silo's cool signal glow. The canvas stays mostly black so the
+// Placement of WeFlix's cool signal glow. The canvas stays mostly black so the
 // first-run screens transition naturally into the signed-in experience.
 
 struct AuroraVariant {

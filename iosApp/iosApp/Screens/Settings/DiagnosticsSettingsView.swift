@@ -20,8 +20,8 @@ struct DiagnosticsSettingsView: View {
         }
         .settingsListChrome()
         .navigationTitle("Diagnostics")
-        .siloNavigationTitleDisplayMode(.inline)
-        .siloToolbarColorSchemeDark()
+        .weFlixNavigationTitleDisplayMode(.inline)
+        .weFlixToolbarColorSchemeDark()
         .task {
             await model.load(profile: profile)
             selectedMode = model.consentMode
@@ -46,14 +46,14 @@ struct DiagnosticsSettingsView: View {
                 Text("Showing the last known diagnostics state. Reports stay on this device while the server is offline.")
             }
         }
-        .listRowBackground(Color.siloGroupedCell)
+        .listRowBackground(Color.weFlixGroupedCell)
     }
 
     private var preferencesSection: some View {
         Section {
             Picker("Send Reports To", selection: $selectedDestination) {
-                Text("Silo Diagnostics").tag(DiagnosticsDestinationChoice.hosted)
-                Text("My Silo Server").tag(DiagnosticsDestinationChoice.selfHosted)
+                Text("weflix Diagnostics").tag(DiagnosticsDestinationChoice.hosted)
+                Text("My weflix Server").tag(DiagnosticsDestinationChoice.selfHosted)
             }
             .onChange(of: selectedDestination) { oldValue, newValue in
                 guard oldValue != newValue, newValue != model.selectedDestination else { return }
@@ -61,7 +61,7 @@ struct DiagnosticsSettingsView: View {
             }
 
             Toggle("Debug Logging", isOn: $model.debugLoggingEnabled)
-                .tint(.siloSwitchOn)
+                .tint(.weFlixSwitchOn)
 
             Picker("Crash Reports", selection: $selectedMode) {
                 Text("Ask").tag(DiagnosticsConsentChoice.ask)
@@ -94,7 +94,7 @@ struct DiagnosticsSettingsView: View {
                 Button("Cancel", role: .cancel, action: cancelModeChange)
             } message: {
                 if model.selectedDestination == .hosted {
-                    Text("Pending local reports will be deleted. Reports already received by Silo Diagnostics will also be queued for deletion. The in-memory basic log will continue running and is never sent without an explicit action.")
+                    Text("Pending local reports will be deleted. Reports already received by weflix Diagnostics will also be queued for deletion. The in-memory basic log will continue running and is never sent without an explicit action.")
                 } else {
                     Text("Pending reports for this server account will be deleted. The in-memory basic log will continue running and is never sent without an explicit action.")
                 }
@@ -108,7 +108,7 @@ struct DiagnosticsSettingsView: View {
                 Text("Crash report consent is tied to this server account. Debug logging is a setting for this device.")
             }
         }
-        .listRowBackground(Color.siloGroupedCell)
+        .listRowBackground(Color.weFlixGroupedCell)
     }
 
     private var pendingSection: some View {
@@ -133,7 +133,7 @@ struct DiagnosticsSettingsView: View {
         } header: {
             Text("Pending Reports (\(model.pendingReports.count))")
         }
-        .listRowBackground(Color.siloGroupedCell)
+        .listRowBackground(Color.weFlixGroupedCell)
     }
 
     private var manualSection: some View {
@@ -169,7 +169,7 @@ struct DiagnosticsSettingsView: View {
                 Text("A manual report includes device capability details, recent playback session identifiers, and recent diagnostic logs for this server.")
             }
         }
-        .listRowBackground(Color.siloGroupedCell)
+        .listRowBackground(Color.weFlixGroupedCell)
     }
 
     private var sentHistorySection: some View {
@@ -194,7 +194,7 @@ struct DiagnosticsSettingsView: View {
                 }
             }
         }
-        .listRowBackground(Color.siloGroupedCell)
+        .listRowBackground(Color.weFlixGroupedCell)
     }
 
     private func requestModeChange(_ mode: DiagnosticsConsentChoice) {

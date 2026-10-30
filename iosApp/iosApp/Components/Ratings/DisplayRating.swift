@@ -1,6 +1,6 @@
 import Foundation
 
-/// One external rating as Silo shows it: the source's mark and the score on
+/// One external rating as WeFlix shows it: the source's mark and the score on
 /// the source's own scale ("IMDb 8.5", "RT 93%").
 ///
 /// Item detail from a current server carries the list already chosen, ordered
@@ -48,7 +48,7 @@ extension DisplayRating {
     }
 
     /// The one rating a card-sized summary shows (the tvOS focus marquee):
-    /// IMDb, or TMDB when there is no IMDb score. Every Silo client follows
+    /// IMDb, or TMDB when there is no IMDb score. Every WeFlix client follows
     /// the same rule.
     static func primaryCard(imdb: Double?, tmdb: Double?) -> DisplayRating? {
         Self.imdb(imdb) ?? Self.tmdb(tmdb)

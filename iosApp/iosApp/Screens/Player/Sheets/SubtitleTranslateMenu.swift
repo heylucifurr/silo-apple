@@ -1,6 +1,6 @@
 //
 //  SubtitleTranslateMenu.swift
-//  Silo (iOS + tvOS)
+//  WeFlix (iOS + tvOS)
 //
 //  In-player "AI subtitles" menu. One-tap, Ray-style: the user picks a single
 //  target language and the menu picks the method automatically — translate an
@@ -135,7 +135,7 @@ struct SubtitleTranslateMenu: View {
     /// One-line explainer under the title / list — sets the expectation that the
     /// single language tap does everything, without a wizard.
     private var explainer: String {
-        "Pick a language. Silo translates an existing subtitle when it can, or transcribes the audio."
+        "Pick a language. weflix translates an existing subtitle when it can, or transcribes the audio."
     }
 
     // MARK: - Language routing
@@ -297,7 +297,7 @@ struct SubtitleTranslateMenu: View {
             title: title,
             subtitle: isBusy ? "Preparing your subtitles"
                 : controller.phase == .failed ? "AI subtitles could not finish"
-                : "Choose a language. Silo translates existing subtitles or transcribes the audio.",
+                : "Choose a language. weflix translates existing subtitles or transcribes the audio.",
             backHint: "Back to Subtitles",
             onDismiss: onDismiss
         ) {
@@ -407,11 +407,11 @@ struct SubtitleTranslateMenu: View {
                             Text(explainer)
                         }
                     }
-                    .siloGroupedListStyle()
+                    .weFlixGroupedListStyle()
                 }
             }
             .navigationTitle(title)
-            .siloNavigationTitleDisplayMode(.inline)
+            .weFlixNavigationTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Done") { onDismiss() }
@@ -556,7 +556,7 @@ private extension SubtitleTranslateMenu {
                     .foregroundStyle(.white.opacity(0.5))
                 Text(quotaText)
                     .font(.system(size: 16))
-                    .foregroundStyle(isQuotaExhausted ? Color.siloWarning : .white.opacity(0.6))
+                    .foregroundStyle(isQuotaExhausted ? Color.weFlixWarning : .white.opacity(0.6))
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 6)
@@ -566,7 +566,7 @@ private extension SubtitleTranslateMenu {
                     .foregroundStyle(.secondary)
                 Spacer()
                 Text(quotaText)
-                    .foregroundStyle(isQuotaExhausted ? Color.siloWarning : .secondary)
+                    .foregroundStyle(isQuotaExhausted ? Color.weFlixWarning : .secondary)
             }
             .font(.footnote)
             #endif

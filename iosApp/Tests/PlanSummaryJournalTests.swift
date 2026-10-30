@@ -1,5 +1,5 @@
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 /// Plan summaries kept on the device for when the app ends before its plan:
 /// the server repo's buffering-quality spec, *Telemetry*.

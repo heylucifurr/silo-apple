@@ -17,11 +17,11 @@ final class RequestDiscoverRowViewModel {
     private(set) var moreFailed = false
 
     private let key: String
-    private let api: SiloAPI
+    private let api: WeFlixAPI
     private var nextPage: Int? = 1
     private var seen = Set<String>()
 
-    init(key: String, title: String, api: SiloAPI = .shared) {
+    init(key: String, title: String, api: WeFlixAPI = .shared) {
         self.key = key
         self.title = title
         self.api = api

@@ -1,5 +1,5 @@
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 /// A reconnect reconcile reads the file's markers while live
 /// `markers_updated` events can still arrive. Neither may hide the other.

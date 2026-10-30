@@ -21,7 +21,7 @@ extension APIv2Client {
     /// bundle part. Expects 201.
     func uploadDiagnosticsReport(manifestData: Data, bundleData: Data,
                                  auth: CapturedOrdinaryRequestAuth) async throws -> DiagnosticsUploadResponse {
-        let boundary = "SiloDiagnostics-\(UUID().uuidString)"
+        let boundary = "weflixDiagnostics-\(UUID().uuidString)"
         let body = HTTPClient.multipartBody(parts: [
             HTTPMultipartPart(name: "manifest", filename: "manifest.json", contentType: "application/json",
                               data: manifestData),

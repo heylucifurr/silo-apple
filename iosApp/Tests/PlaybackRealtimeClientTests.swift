@@ -1,6 +1,6 @@
 import Foundation
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 /// The control socket connects with a single-use v2 ticket, so every connect
 /// and reconnect mints its own under the session's owner and installation.

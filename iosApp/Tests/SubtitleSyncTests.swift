@@ -1,6 +1,6 @@
 import Foundation
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 /// Server subtitle sync on the player: the status line, when a timing change
 /// makes the player fetch a track's cues again, the sync card, the realtime
@@ -93,7 +93,7 @@ final class SubtitleSyncTests: XCTestCase {
         XCTAssertEqual(result(.identity, Self.job(status: "no_match"))?.isWarning, true)
         XCTAssertEqual(result(.identity, Self.job(status: "failed", failure: "unavailable")),
                        .init(text: "The server is busy. Try again in a few minutes.", isWarning: true))
-        XCTAssertEqual(SubtitleSyncLabel.failure("no_audio"), "This video has no audio Silo can read.")
+        XCTAssertEqual(SubtitleSyncLabel.failure("no_audio"), "This video has no audio weflix can read.")
         XCTAssertEqual(SubtitleSyncLabel.failure("subtitle_changed"), "The subtitle changed while it was syncing. Try again.")
         XCTAssertEqual(SubtitleSyncLabel.failure(nil), "Sync failed. Try again.")
         XCTAssertEqual(SubtitleSyncLabel.actionNote(isExternal: true),

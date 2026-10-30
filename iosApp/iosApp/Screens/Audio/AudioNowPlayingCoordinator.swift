@@ -25,7 +25,7 @@ final class AudioNowPlayingCoordinator {
     }
 
     private static let logger = Logger(
-        subsystem: Bundle.main.bundleIdentifier ?? "org.siloserver.silo",
+        subsystem: Bundle.main.bundleIdentifier ?? "me.weflix",
         category: "AudioNowPlaying"
     )
 
@@ -53,7 +53,7 @@ final class AudioNowPlayingCoordinator {
     #if os(iOS) || os(tvOS)
     /// Binds to Aether's player-scoped centers when available. Turning off
     /// automatic publication is intentional: Aether's player clock is local
-    /// to one audiobook file, while Silo publishes a stitched whole-book
+    /// to one audiobook file, while WeFlix publishes a stitched whole-book
     /// duration and playhead across file boundaries.
     func attach(session: MPNowPlayingSession?, handlers: Handlers) {
         self.handlers = handlers

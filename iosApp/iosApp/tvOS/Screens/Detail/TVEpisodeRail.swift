@@ -479,7 +479,7 @@ private struct TVAnchoredEpisodeButtonStyle: ButtonStyle {
             .opacity(configuration.isPressed ? 0.96 : 1)
             .focusEffectDisabled()
             .animation(
-                .easeOut(duration: SiloTheme.fastDuration),
+                .easeOut(duration: WeFlixTheme.fastDuration),
                 value: configuration.isPressed
             )
     }
@@ -747,12 +747,12 @@ private struct EpisodeCardLabel: View {
                     captionLine(
                         metadata,
                         font: .system(size: usesAnchoredStyle ? 17 : 18, weight: .medium),
-                        color: .siloSecondaryText,
+                        color: .weFlixSecondaryText,
                         height: TVEpisodeCardCaptionMetrics.metadataHeight
                     )
                 }
             }
-            .animation(.easeOut(duration: SiloTheme.fastDuration), value: isFocused)
+            .animation(.easeOut(duration: WeFlixTheme.fastDuration), value: isFocused)
         }
         .frame(width: cardWidth, alignment: .leading)
     }
@@ -775,13 +775,13 @@ private struct EpisodeCardLabel: View {
     }
 
     private var titleColor: Color {
-        if isCurrent { return .siloOnSurface }
-        return isFocused ? .siloOnSurface : Color.siloOnSurface.opacity(0.92)
+        if isCurrent { return .weFlixOnSurface }
+        return isFocused ? .weFlixOnSurface : Color.weFlixOnSurface.opacity(0.92)
     }
 
     private var still: some View {
         ZStack(alignment: .bottom) {
-            Color.siloSurfaceElevated
+            Color.weFlixSurfaceElevated
                 .frame(width: cardWidth, height: stillHeight)
 
             AsyncImageView(
@@ -900,7 +900,7 @@ struct TVEpisodeRailPlaceholder: View {
                 ForEach(0..<4, id: \.self) { _ in
                     VStack(alignment: .leading, spacing: TVEpisodeCardCaptionMetrics.gap) {
                         RoundedRectangle(cornerRadius: 18)
-                            .fill(Color.siloSurfaceElevated)
+                            .fill(Color.weFlixSurfaceElevated)
                             .frame(width: cardWidth, height: stillHeight)
                         VStack(alignment: .leading, spacing: 13) {
                             RoundedRectangle(cornerRadius: 4)

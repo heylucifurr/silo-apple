@@ -16,12 +16,12 @@ struct SubtitleSyncIndicator: View {
             VStack(alignment: .leading, spacing: Metrics.lineSpacing) {
                 Text(notice.title)
                     .font(Metrics.titleFont)
-                    .foregroundStyle(Color.siloOnSurface)
+                    .foregroundStyle(Color.weFlixOnSurface)
                     .fixedSize(horizontal: false, vertical: true)
                 if let detail = notice.detail {
                     Text(detail)
                         .font(Metrics.detailFont)
-                        .foregroundStyle(Color.siloSecondaryText)
+                        .foregroundStyle(Color.weFlixSecondaryText)
                         .fixedSize(horizontal: false, vertical: true)
                 }
                 if notice.tone == .progress, let percent = notice.percent {
@@ -35,7 +35,7 @@ struct SubtitleSyncIndicator: View {
                 Button(action: onDismiss) {
                     Image(systemName: "xmark")
                         .font(.caption.weight(.semibold))
-                        .foregroundStyle(Color.siloSecondaryText)
+                        .foregroundStyle(Color.weFlixSecondaryText)
                         .frame(width: 24, height: 24)
                         .contentShape(Rectangle())
                 }
@@ -46,7 +46,7 @@ struct SubtitleSyncIndicator: View {
         }
         .padding(Metrics.padding)
         .frame(width: Metrics.width)
-        .siloPlayerGlass(
+        .weFlixPlayerGlass(
             in: RoundedRectangle(cornerRadius: Metrics.cornerRadius, style: .continuous),
             tint: accent.opacity(0.16)
         )
@@ -91,8 +91,8 @@ struct SubtitleSyncIndicator: View {
     private var accent: Color {
         switch notice.tone {
         case .progress: return .white
-        case .success: return .siloSwitchOn
-        case .warning: return .siloWarning
+        case .success: return .weFlixSwitchOn
+        case .warning: return .weFlixWarning
         case .info: return Color(red: 0.49, green: 0.83, blue: 0.99)
         }
     }
@@ -138,7 +138,7 @@ struct SubtitleSyncProgressBar: View {
                 .tint(.white.opacity(0.85))
             Text("\(percent)%")
                 .font(Metrics.font.monospacedDigit())
-                .foregroundStyle(Color.siloSecondaryText)
+                .foregroundStyle(Color.weFlixSecondaryText)
                 .frame(minWidth: Metrics.labelWidth, alignment: .trailing)
         }
         .accessibilityElement(children: .ignore)

@@ -42,10 +42,10 @@ struct SectionCatalogView: View {
                 )
             }
         }
-        .siloPageBackground()
+        .weFlixPageBackground()
         .environment(\.browseLibraryId, libraryId)
         .navigationTitle(target.title)
-        .siloNavigationTitleDisplayMode(.large)
+        .weFlixNavigationTitleDisplayMode(.large)
         #if os(iOS)
         .toolbar {
             if let onClose {
@@ -69,11 +69,11 @@ struct SectionCatalogView: View {
 
     private var content: some View {
         ScrollView(.vertical, showsIndicators: false) {
-            VStack(alignment: .leading, spacing: SiloTheme.padding) {
+            VStack(alignment: .leading, spacing: WeFlixTheme.padding) {
                 if let countLabel {
                     Text(countLabel)
-                        .font(.siloCaption)
-                        .foregroundColor(.siloSecondaryText)
+                        .font(.weFlixCaption)
+                        .foregroundColor(.weFlixSecondaryText)
                 }
 
                 CatalogGrid(
@@ -89,9 +89,9 @@ struct SectionCatalogView: View {
                     }
                 )
             }
-            .padding(.horizontal, SiloTheme.padding)
-            .padding(.top, SiloTheme.smallPadding)
-            .padding(.bottom, SiloTheme.largePadding)
+            .padding(.horizontal, WeFlixTheme.padding)
+            .padding(.top, WeFlixTheme.smallPadding)
+            .padding(.bottom, WeFlixTheme.largePadding)
         }
     }
 

@@ -36,7 +36,7 @@ struct DownloadsSettingsView: View {
     private var heldProgressFooter: String {
         let count = manager.heldProgressCount
         let subject = count == 1 ? "1 offline watch position" : "\(count) offline watch positions"
-        return "\(subject) may not have reached the server. Silo won't send them again. Playing the download again replaces them."
+        return "\(subject) may not have reached the server. weflix won't send them again. Playing the download again replaces them."
     }
 
     /// The server on this device the group belongs to, if any.
@@ -51,7 +51,7 @@ struct DownloadsSettingsView: View {
     private func detail(for group: DownloadStorageReclaim.OtherStorage) -> String {
         if group.isActiveServer { return "Other profiles on this server" }
         if server(for: group) != nil { return "Another server you've added" }
-        return group.serverURL == nil ? "Not used by this version of Silo" : "A server no longer on this device"
+        return group.serverURL == nil ? "Not used by this version of weflix" : "A server no longer on this device"
     }
 
     /// Spells out when the data belongs to a profile or server the user can
@@ -72,7 +72,7 @@ struct DownloadsSettingsView: View {
         Form {
             Section {
                 Toggle("Download over Wi-Fi only", isOn: $settings.wifiOnly)
-                    .tint(.siloSwitchOn)
+                    .tint(.weFlixSwitchOn)
                 Picker("Simultaneous Downloads", selection: $settings.simultaneousDownloads) {
                     ForEach(DownloadSettings.simultaneousDownloadChoices, id: \.self) { count in
                         Text("\(count)").tag(count)
@@ -98,11 +98,11 @@ struct DownloadsSettingsView: View {
                     Text(qualityFooter)
                 }
             }
-            .listRowBackground(Color.siloGroupedCell)
+            .listRowBackground(Color.weFlixGroupedCell)
 
             Section("Monitoring Defaults") {
                 Toggle("Delete after watching", isOn: $settings.defaultDeleteWatched)
-                    .tint(.siloSwitchOn)
+                    .tint(.weFlixSwitchOn)
                 Stepper(
                     settings.defaultMaxStorageGB == 0
                         ? "Storage limit: Unlimited"
@@ -112,11 +112,11 @@ struct DownloadsSettingsView: View {
                     step: 5
                 )
             }
-            .listRowBackground(Color.siloGroupedCell)
+            .listRowBackground(Color.weFlixGroupedCell)
 
             Section {
                 Toggle("Keep watched downloads", isOn: $settings.keepWatchedDownloads)
-                    .tint(.siloSwitchOn)
+                    .tint(.weFlixSwitchOn)
             } header: {
                 Text("Cleanup")
             } footer: {
@@ -126,14 +126,14 @@ struct DownloadsSettingsView: View {
                 Text("When off, the Downloads tab suggests freeing up space by removing items you've finished watching.")
                 #endif
             }
-            .listRowBackground(Color.siloGroupedCell)
+            .listRowBackground(Color.weFlixGroupedCell)
 
             Section("Storage") {
                 HStack {
                     Text("Used")
                     Spacer()
                     Text(DownloadFormatting.bytes(manager.totalBytesUsed))
-                        .foregroundColor(.siloSecondaryText)
+                        .foregroundColor(.weFlixSecondaryText)
                 }
                 if manager.hasRecords {
                     Button(role: .destructive) {
@@ -143,7 +143,7 @@ struct DownloadsSettingsView: View {
                     }
                 }
             }
-            .listRowBackground(Color.siloGroupedCell)
+            .listRowBackground(Color.weFlixGroupedCell)
 
             if !manager.otherDownloadStorage.isEmpty {
                 Section {
@@ -155,11 +155,11 @@ struct DownloadsSettingsView: View {
                                     .truncationMode(.middle)
                                 Text(detail(for: group))
                                     .font(.caption)
-                                    .foregroundColor(.siloSecondaryText)
+                                    .foregroundColor(.weFlixSecondaryText)
                             }
                             Spacer()
                             Text(DownloadFormatting.bytes(group.bytes))
-                                .foregroundColor(.siloSecondaryText)
+                                .foregroundColor(.weFlixSecondaryText)
                             Button("Remove", role: .destructive) {
                                 pendingOtherRemoval = group
                             }
@@ -169,9 +169,9 @@ struct DownloadsSettingsView: View {
                 } header: {
                     Text("Other Download Data")
                 } footer: {
-                    Text("Saved for other servers, other profiles, or by other versions of Silo. It doesn't appear in Downloads for this profile.")
+                    Text("Saved for other servers, other profiles, or by other versions of weflix. It doesn't appear in Downloads for this profile.")
                 }
-                .listRowBackground(Color.siloGroupedCell)
+                .listRowBackground(Color.weFlixGroupedCell)
             }
 
             if manager.heldProgressCount > 0 {
@@ -184,7 +184,7 @@ struct DownloadsSettingsView: View {
                 } footer: {
                     Text(heldProgressFooter)
                 }
-                .listRowBackground(Color.siloGroupedCell)
+                .listRowBackground(Color.weFlixGroupedCell)
             }
         }
         .navigationTitle("Downloads")
@@ -199,7 +199,7 @@ struct DownloadsSettingsView: View {
         .navigationBarTitleDisplayMode(.inline)
         #endif
         .settingsListChrome()
-        .siloToolbarColorSchemeDark()
+        .weFlixToolbarColorSchemeDark()
         // Centered alert: a confirmation dialog anchors to the whole form
         // and appears at the top of the page.
         .alert(

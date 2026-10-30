@@ -1,5 +1,5 @@
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 /// Emission-time path templating for the `network.path` attribute.
 ///
@@ -9,7 +9,7 @@ import XCTest
 /// bundle — so `assertCollectorWouldAccept` reimplements its rules and every
 /// case asserts the *output* passes them, not merely that it changed.
 final class DiagnosticsPathTemplateTests: XCTestCase {
-    // MARK: - Real Silo routes
+    // MARK: - Real WeFlix routes
 
     func testStaticRoutesArePreserved() {
         // Readable routes are the entire point of templating; over-templating a
@@ -42,7 +42,7 @@ final class DiagnosticsPathTemplateTests: XCTestCase {
     }
 
     func testStaticRoutesTheCollectorWouldRejectAreTemplated() {
-        // These are real, fully static Silo routes whose segments happen to
+        // These are real, fully static WeFlix routes whose segments happen to
         // match PRIVATE_ID_SEGMENT (`library-…`, `subtitle-…`). The collector
         // cannot tell them from ids, so the helper must template them or the
         // whole report is lost to a route name.

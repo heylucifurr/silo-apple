@@ -1,6 +1,6 @@
 import Foundation
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 /// Loads the vendored API v2 fixtures (Tests/Fixtures/APIv2) and decodes them
 /// with the production decoder — never a test-only lenient one.

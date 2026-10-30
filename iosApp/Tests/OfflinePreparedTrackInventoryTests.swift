@@ -1,5 +1,5 @@
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 /// Offline playback of a server-prepared MP4: every source audio track, timed
 /// text inside the file, and ASS/PGS sidecars from the manifest.

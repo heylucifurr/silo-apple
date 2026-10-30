@@ -1,13 +1,13 @@
-Silo Open-Source Acknowledgements
+WeFlix Open-Source Acknowledgements
 ================================
 
-This Silo build includes the components listed below. Their complete license
+This WeFlix build includes the components listed below. Their complete license
 texts are bundled beside this file and are available from Settings > About >
 Acknowledgements.
 
 AetherEngine
   Revision: df72cc59606ec823ce6a5231a53d7eee385ed72e (upstream release
-  7.47.0 and upstream main through commit def48fe8, plus Silo patches for
+  7.47.0 and upstream main through commit def48fe8, plus WeFlix patches for
   subtitle renditions, source timing, primary ASS routing with normalized
   secondary/PiP text, refreshable authorization for native HLS, sidecar
   subtitles and fonts, truncated sidecar refetch, dense subtitle catch-up,
@@ -51,7 +51,7 @@ FFmpegBuild and embedded media frameworks
   commit IDs; the dereferenced commits recorded here pin the exact sources if
   those tags ever move.
 
-LibTrueHD / truehd (formerly SiloObjectAudio)
+LibTrueHD / truehd (formerly WeFlixObjectAudio)
   Revision: 73bee84d7ac7b8619db570e36490b92761fe91a6 (release 3.1.0)
   License: MIT for the C API, framer, and build and verification scripts
   (LibTrueHD-MIT.txt)
@@ -86,11 +86,11 @@ ThumbHash decoder
   Revision: a652ce6ed691242f459f468f0a8756cda3b90a82
   License: MIT
   Source: https://github.com/evanw/thumbhash/tree/a652ce6ed691242f459f468f0a8756cda3b90a82
-  Silo includes an adapted copy of the reference Swift decode path with input
+  WeFlix includes an adapted copy of the reference Swift decode path with input
   validation, cross-platform image creation, and a bounded asynchronous cache.
 
 SMBClient 0.3.1 is present in SwiftPM's resolution graph only because
-AetherEngine publishes a separate optional AetherEngineSMB product. Silo links
+AetherEngine publishes a separate optional AetherEngineSMB product. WeFlix links
 the AetherEngine product, not AetherEngineSMB, so SMBClient is not included in
 these shipped-component notices.
 
@@ -126,7 +126,7 @@ SwiftAssRenderer, SwiftLibass, and local ASS rendering
 
   FriBidi is statically linked. App and library source, a revision
   manifest, and instructions for rebuilding with a modified library are
-  published as Silo-source-<app-commit>.tar.gz at:
+  published as WeFlix-source-<app-commit>.tar.gz at:
   https://github.com/Silo-Server/silo-apple/releases
   Each TestFlight build places the archive on its vX.Y.Z-beta.<build>
   release (earlier builds used a source-<app-commit> release), and each

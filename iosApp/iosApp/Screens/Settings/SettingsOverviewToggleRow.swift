@@ -13,10 +13,10 @@ struct SettingsOverviewToggleRow: View {
                 SettingsIconTile(systemImage: systemImage)
 
                 Text(title)
-                    .foregroundStyle(Color.siloOnSurface)
+                    .foregroundStyle(Color.weFlixOnSurface)
             }
         }
-        .tint(.siloSwitchOn)
+        .tint(.weFlixSwitchOn)
         .accessibilityLabel(title)
         .accessibilityHint(subtitle)
     }

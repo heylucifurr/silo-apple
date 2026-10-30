@@ -1,5 +1,5 @@
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 /// The classification layer that stands between `HTTPClient` and the
 /// diagnostics ring: path hardening, decode-failure rendering, and the
@@ -77,7 +77,7 @@ final class HTTPClientDiagnosticsClassificationTests: XCTestCase {
     }
 
     func testAbsoluteURLsContributeOnlyTheirPath() {
-        // The host is the single most identifying thing in a Silo request, and
+        // The host is the single most identifying thing in a WeFlix request, and
         // a self-hosted server's hostname is often the user's own domain.
         assertPath(
             url: "https://media.example.com:8096/api/v2/catalog/items/12345?tag=abc#z",
@@ -101,7 +101,7 @@ final class HTTPClientDiagnosticsClassificationTests: XCTestCase {
         XCTAssertEqual(HTTPDiagnosticsPath.attribute(for: nil), "{id}")
     }
 
-    func testEveryRealSiloRouteShapeIsAcceptedByTheCollectorRules() {
+    func testEveryRealWeFlixRouteShapeIsAcceptedByTheCollectorRules() {
         // Runtime substitutions for the interpolated segments real call sites
         // build, including the shapes most likely to slip through.
         let identifiers = [
@@ -140,7 +140,7 @@ final class HTTPClientDiagnosticsClassificationTests: XCTestCase {
             "http://192.168.1.50:8096",
             "https://media.internal:8443",
             "http://localhost:8080",
-            "https://host.example.com/silo",
+            "https://host.example.com/weFlix",
         ] {
             let actual = HTTPDiagnosticsPath.attribute(
                 for: URL(string: origin + "/api/v2/auth/refresh")
@@ -163,7 +163,7 @@ final class HTTPClientDiagnosticsClassificationTests: XCTestCase {
         // hostname candidate. Module qualification and generics survive as
         // underscores, which keeps the model identifiable.
         XCTAssertEqual(HTTPDecodingDiagnostics.typeName("MediaItem"), "MediaItem")
-        XCTAssertEqual(HTTPDecodingDiagnostics.typeName("Silo.MediaItem"), "Silo_MediaItem")
+        XCTAssertEqual(HTTPDecodingDiagnostics.typeName("WeFlix.MediaItem"), "WeFlix_MediaItem")
         XCTAssertEqual(HTTPDecodingDiagnostics.typeName("Array<MediaItem>"), "Array_MediaItem")
         XCTAssertEqual(
             HTTPDecodingDiagnostics.typeName("Dictionary<String, JSONValue>"),
@@ -261,7 +261,7 @@ final class HTTPClientDiagnosticsClassificationTests: XCTestCase {
 
     func testRenderedDecodeMessagesAreAcceptedByTheTextRules() {
         let types = [
-            "MediaItem", "Swift.Array<Silo.MediaItem>", "SettingsValuesResponse",
+            "MediaItem", "Swift.Array<WeFlix.MediaItem>", "SettingsValuesResponse",
             "session_abcdefgh", "550e8400-e29b-41d4-a716-446655440000", "",
         ]
         let paths: [[CodingKey]] = [

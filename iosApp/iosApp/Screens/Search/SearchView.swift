@@ -24,11 +24,11 @@ struct SearchView: View {
 
     var body: some View {
         ScrollView {
-            VStack(spacing: SiloTheme.padding) {
+            VStack(spacing: WeFlixTheme.padding) {
                 if shouldShowFilters {
                     mediaTypeFilter
                     #if os(tvOS)
-                        .padding(.horizontal, SiloTheme.padding)
+                        .padding(.horizontal, WeFlixTheme.padding)
                         // The picker is a centered 760pt pill inside a
                         // 1600pt column. Stretch its focus section across
                         // the full row so up-moves from the grid's outer
@@ -37,7 +37,7 @@ struct SearchView: View {
                         .frame(maxWidth: .infinity)
                         .focusSection()
                     #elseif os(macOS)
-                        .padding(.horizontal, SiloTheme.padding)
+                        .padding(.horizontal, WeFlixTheme.padding)
                     #endif
                 }
 
@@ -48,25 +48,25 @@ struct SearchView: View {
                 // server has requests disabled.
                 RequestSearchSectionView(viewModel: requestsViewModel)
             }
-            .padding(.horizontal, SiloTheme.padding)
+            .padding(.horizontal, WeFlixTheme.padding)
             #if os(tvOS)
-            .padding(.top, usesTVTopMenuInset ? TVTopMenuLayout.contentTopInset : SiloTheme.padding)
+            .padding(.top, usesTVTopMenuInset ? TVTopMenuLayout.contentTopInset : WeFlixTheme.padding)
             #else
-            .padding(.top, SiloTheme.smallPadding)
+            .padding(.top, WeFlixTheme.smallPadding)
             #endif
 #if os(tvOS)
-            .siloFormWidth(tvSearchContentWidth)
+            .weFlixFormWidth(tvSearchContentWidth)
 #endif
         }
-        .siloPageBackground()
+        .weFlixPageBackground()
         #if os(tvOS)
         .safeAreaPadding(.horizontal, tvSearchSafeHorizontalPadding)
         #endif
         .navigationTitle("Search")
-        .siloNavigationTitleDisplayMode(.inline)
-        .siloToolbarColorSchemeDark()
-        .siloNavigationBarSurfaceBackground()
-        .siloSearchable(text: $viewModel.query, prompt: searchPrompt)
+        .weFlixNavigationTitleDisplayMode(.inline)
+        .weFlixToolbarColorSchemeDark()
+        .weFlixNavigationBarSurfaceBackground()
+        .weFlixSearchable(text: $viewModel.query, prompt: searchPrompt)
         #if os(iOS)
         .searchFocused($isSearchFieldFocused)
         .task {
@@ -167,12 +167,12 @@ struct SearchView: View {
                 Spacer(minLength: 80)
                 EmptyStateView(
                     icon: "magnifyingglass",
-                    title: "Search Silo",
+                    title: "Search weflix",
                     subtitle: "Find movies, series, and people"
                 )
             }
         case .results:
-            VStack(alignment: .leading, spacing: SiloTheme.padding) {
+            VStack(alignment: .leading, spacing: WeFlixTheme.padding) {
                 if !viewModel.people.isEmpty {
                     peopleSection
                 }
@@ -193,7 +193,7 @@ struct SearchView: View {
         HStack {
             Spacer()
             ProgressView()
-                .tint(.siloOnSurface)
+                .tint(.weFlixOnSurface)
                 .padding()
             Spacer()
         }
@@ -221,16 +221,16 @@ struct SearchView: View {
             PhoneSectionHeader(title: "People")
             PhoneCastRail(cast: people, onTap: openPerson)
                 // The rail insets its own cards, so let it scroll edge to edge.
-                .padding(.horizontal, -SiloTheme.padding)
+                .padding(.horizontal, -WeFlixTheme.padding)
         }
         #endif
     }
 
     private var titleResults: some View {
-        VStack(alignment: .leading, spacing: SiloTheme.padding) {
+        VStack(alignment: .leading, spacing: WeFlixTheme.padding) {
             Text("\(viewModel.total) result\(viewModel.total == 1 ? "" : "s")")
-                .font(.siloCaption)
-                .foregroundColor(.siloSecondaryText)
+                .font(.weFlixCaption)
+                .foregroundColor(.weFlixSecondaryText)
 
 #if os(tvOS)
             TVCatalogGrid(
@@ -288,7 +288,7 @@ struct SearchView: View {
         }
         .pickerStyle(.segmented)
 #if os(tvOS)
-        .siloFormWidth(tvFilterWidth)
+        .weFlixFormWidth(tvFilterWidth)
 #endif
     }
 

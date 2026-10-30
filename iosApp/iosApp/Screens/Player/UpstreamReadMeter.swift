@@ -1,6 +1,6 @@
 import Foundation
 
-/// What the engine's reader receives from the Silo origin, for the buffering
+/// What the engine's reader receives from the WeFlix origin, for the buffering
 /// controller: when the plan's media data last arrived, and the rate it
 /// arrived at (the spec's *Playback samples*).
 ///

@@ -1,7 +1,7 @@
 #if os(iOS) || os(tvOS)
 import Foundation
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 private let capabilitiesPath = "/api/v2/diagnostics/capabilities"
 

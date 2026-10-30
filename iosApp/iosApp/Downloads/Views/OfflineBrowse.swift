@@ -31,7 +31,7 @@ struct OfflineSeriesBrowseView: View {
                 )
             }
         }
-        .siloPageBackground()
+        .weFlixPageBackground()
         .navigationTitle(group?.title ?? "Series")
         #if os(iOS)
         .navigationBarTitleDisplayMode(.inline)
@@ -67,7 +67,7 @@ struct OfflineSeriesBrowseView: View {
             }
             Button("Keep", role: .cancel) {}
         }
-        .siloToolbarColorSchemeDark()
+        .weFlixToolbarColorSchemeDark()
     }
 
     private func content(_ group: DownloadSeriesGroup) -> some View {
@@ -120,15 +120,15 @@ struct OfflineSeriesBrowseView: View {
                     } label: {
                         Text(season.isSpecials ? "Specials" : "Season \(season.seasonNumber)")
                             .font(.system(size: 13.5, weight: .semibold))
-                            .foregroundColor(isSelected ? .siloOnSurface : .siloSecondaryText)
+                            .foregroundColor(isSelected ? .weFlixOnSurface : .weFlixSecondaryText)
                             .padding(.horizontal, 14)
                             .padding(.vertical, 8)
                             .background(
                                 Capsule()
-                                    .fill(isSelected ? Color.siloChromeSelectedFill : Color.siloChromeRestingFill)
+                                    .fill(isSelected ? Color.weFlixChromeSelectedFill : Color.weFlixChromeRestingFill)
                                     .overlay(
                                         Capsule().stroke(
-                                            isSelected ? Color.siloChromeSelectedBorder : Color.siloChromeRestingBorder,
+                                            isSelected ? Color.weFlixChromeSelectedBorder : Color.weFlixChromeRestingBorder,
                                             lineWidth: 1
                                         )
                                     )
@@ -146,11 +146,11 @@ struct OfflineSeriesBrowseView: View {
         HStack {
             Text("Episodes")
                 .font(.system(size: 16, weight: .bold))
-                .foregroundColor(.siloOnSurface)
+                .foregroundColor(.weFlixOnSurface)
             Spacer()
             Text("\(season.episodeCount) on this device · \(DownloadFormatting.bytes(season.totalBytes))")
                 .font(.system(size: 11.5))
-                .foregroundColor(.siloOnSurface.opacity(0.38))
+                .foregroundColor(.weFlixOnSurface.opacity(0.38))
         }
         .padding(.horizontal, 20)
         .padding(.top, 18)
@@ -214,18 +214,18 @@ struct OfflineDownloadDetailView: View {
                 content(record)
             } else {
                 EmptyStateView(icon: "arrow.down.circle", title: "Download Removed", subtitle: nil)
-                    .siloPageBackground()
+                    .weFlixPageBackground()
             }
         }
         .navigationTitle("")
         #if os(iOS)
         .navigationBarTitleDisplayMode(.inline)
         #endif
-        .siloNavigationBarBackgroundHidden()
+        .weFlixNavigationBarBackgroundHidden()
         .task {
             if manifest == nil, let record { manifest = await manager.loadManifest(for: record) }
         }
-        .siloToolbarColorSchemeDark()
+        .weFlixToolbarColorSchemeDark()
     }
 
     private func content(_ record: DownloadRecord) -> some View {
@@ -240,7 +240,7 @@ struct OfflineDownloadDetailView: View {
                 VStack(alignment: .leading, spacing: 32) {
                     hero(record, backdrop: backdrop, poster: poster)
                     downloadSection(record)
-                        .padding(.horizontal, SiloTheme.safePadding)
+                        .padding(.horizontal, WeFlixTheme.safePadding)
                 }
                 .padding(.bottom, 40)
             }
@@ -320,11 +320,11 @@ struct OfflineDownloadDetailView: View {
                         Text(row.0.uppercased())
                             .font(.system(size: 11, weight: .bold))
                             .tracking(1.2)
-                            .foregroundColor(.siloOnSurface.opacity(0.5))
+                            .foregroundColor(.weFlixOnSurface.opacity(0.5))
                             .frame(width: 100, alignment: .leading)
                         Text(row.1)
                             .font(.system(size: 14))
-                            .foregroundColor(.siloOnSurface)
+                            .foregroundColor(.weFlixOnSurface)
                             .frame(maxWidth: .infinity, alignment: .leading)
                     }
                     .padding(.vertical, 12)
@@ -462,16 +462,16 @@ private struct OfflineBrowseHero: View {
                     HStack(spacing: 7) {
                         Text(eyebrow)
                             .font(.system(size: 11.5, weight: .semibold))
-                            .foregroundColor(.siloSecondaryText)
+                            .foregroundColor(.weFlixSecondaryText)
                         if isMonitored {
                             Image(systemName: "antenna.radiowaves.left.and.right")
                                 .font(.system(size: 10, weight: .semibold))
-                                .foregroundColor(.siloOnSurface)
+                                .foregroundColor(.weFlixOnSurface)
                         }
                     }
                     Text(title)
                         .font(.system(size: 24, weight: .bold))
-                        .foregroundColor(.siloOnSurface)
+                        .foregroundColor(.weFlixOnSurface)
                         .lineLimit(2)
                 }
             }
@@ -482,13 +482,13 @@ private struct OfflineBrowseHero: View {
                 Text(availability)
                     .font(.system(size: 11.5, weight: .semibold))
             }
-            .foregroundColor(.siloOnSurface)
+            .foregroundColor(.weFlixOnSurface)
             .padding(.horizontal, 11)
             .padding(.vertical, 6)
             .background(
                 Capsule()
-                    .fill(Color.siloChromeSelectedFill)
-                    .overlay(Capsule().stroke(Color.siloChromeSelectedBorder, lineWidth: 1))
+                    .fill(Color.weFlixChromeSelectedFill)
+                    .overlay(Capsule().stroke(Color.weFlixChromeSelectedBorder, lineWidth: 1))
             )
 
             Button(action: onPlay) {
@@ -499,7 +499,7 @@ private struct OfflineBrowseHero: View {
                 .font(.system(size: 15))
                 .frame(maxWidth: .infinity)
                 .frame(height: 48)
-                .background(Color.siloOnSurface)
+                .background(Color.weFlixOnSurface)
                 .foregroundColor(.black)
                 .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
             }
@@ -508,7 +508,7 @@ private struct OfflineBrowseHero: View {
         .padding(20)
         .background(
             LinearGradient(
-                colors: [Color.siloSurfaceVariant, Color.siloBackground],
+                colors: [Color.weFlixSurfaceVariant, Color.weFlixBackground],
                 startPoint: .top,
                 endPoint: .bottom
             )

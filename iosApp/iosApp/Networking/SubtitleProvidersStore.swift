@@ -47,9 +47,9 @@ final class SubtitleProvidersStore {
     /// flag.
     private var generation = 0
 
-    private let api: SiloAI
+    private let api: WeFlixAI
 
-    init(api: SiloAI = .shared) {
+    init(api: WeFlixAI = .shared) {
         self.api = api
     }
 

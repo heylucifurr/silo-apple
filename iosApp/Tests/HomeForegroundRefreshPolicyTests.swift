@@ -1,5 +1,5 @@
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 final class HomeForegroundRefreshPolicyTests: XCTestCase {
     private let now = Date(timeIntervalSince1970: 1_800_000_000)

@@ -1,6 +1,6 @@
 //
 //  SubtitleSearchMenu.swift
-//  Silo (iOS + tvOS)
+//  WeFlix (iOS + tvOS)
 //
 //  In-player external subtitle search (OpenSubtitles / SubDL / Subsource via
 //  silo-server). Android/web parity: pick a language (the profile's preferred
@@ -123,7 +123,7 @@ struct SubtitleSearchMenu: View {
     private var title: String { "Search Subtitles" }
 
     private var explainer: String {
-        "Pick a language and Silo searches its subtitle providers for this video."
+        "Pick a language and weflix searches its subtitle providers for this video."
     }
 
     // MARK: - Languages
@@ -250,9 +250,9 @@ struct SubtitleSearchMenu: View {
 
     private func scoreColor(_ score: Double) -> Color {
         switch SubtitleSearchScoreTier(score: score) {
-        case .good: return .siloSuccess
-        case .fair: return .siloWarning
-        case .poor: return .siloError
+        case .good: return .weFlixSuccess
+        case .fair: return .weFlixWarning
+        case .poor: return .weFlixError
         }
     }
 
@@ -436,7 +436,7 @@ struct SubtitleSearchMenu: View {
         ForEach(warnings, id: \.self) { warning in
             Label(warning, systemImage: "exclamationmark.triangle")
                 .font(.system(size: 20))
-                .foregroundStyle(Color.siloWarning)
+                .foregroundStyle(Color.weFlixWarning)
                 .padding(.horizontal, 16)
                 .padding(.vertical, 4)
         }
@@ -622,7 +622,7 @@ struct SubtitleSearchMenu: View {
                 }
             }
             .navigationTitle(phase == .results ? "Results" : title)
-            .siloNavigationTitleDisplayMode(.inline)
+            .weFlixNavigationTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     // Leaving is blocked while a download is in flight, as on
@@ -660,7 +660,7 @@ struct SubtitleSearchMenu: View {
                 Text(explainer)
             }
         }
-        .siloGroupedListStyle()
+        .weFlixGroupedListStyle()
     }
 
     @ViewBuilder
@@ -693,7 +693,7 @@ struct SubtitleSearchMenu: View {
                     ForEach(warnings, id: \.self) { warning in
                         Label(warning, systemImage: "exclamationmark.triangle")
                             .font(.footnote)
-                            .foregroundStyle(Color.siloWarning)
+                            .foregroundStyle(Color.weFlixWarning)
                     }
                 }
             }
@@ -711,7 +711,7 @@ struct SubtitleSearchMenu: View {
                 }
             }
         }
-        .siloGroupedListStyle()
+        .weFlixGroupedListStyle()
     }
 
     @ViewBuilder
@@ -826,7 +826,7 @@ struct SubtitleLanguageChoices {
     @MainActor
     static func scroll(_ proxy: ScrollViewProxy, to target: String, animated: Bool) {
         if animated {
-            withAnimation(.easeOut(duration: SiloTheme.fastDuration)) {
+            withAnimation(.easeOut(duration: WeFlixTheme.fastDuration)) {
                 proxy.scrollTo(target, anchor: .center)
             }
         } else {

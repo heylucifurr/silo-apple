@@ -1,5 +1,5 @@
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 /// The detail page and the player describe the same track the same way.
 final class TrackLabelsTests: XCTestCase {

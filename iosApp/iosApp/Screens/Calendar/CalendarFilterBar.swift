@@ -51,7 +51,7 @@ struct CalendarFilterBar: View {
         .overlay(
             Capsule(style: .continuous).strokeBorder(Color.white.opacity(0.10), lineWidth: 1)
         )
-        .animation(SiloTheme.springAnimation, value: selected)
+        .animation(WeFlixTheme.springAnimation, value: selected)
         .accessibilityElement(children: .contain)
     }
 
@@ -63,19 +63,19 @@ struct CalendarFilterBar: View {
             Text(filter.displayLabel)
                 .font(segmentFont)
                 .lineLimit(1)
-                .foregroundColor(isSelected ? Color.siloBackground : Color.siloOnSurface.opacity(0.6))
+                .foregroundColor(isSelected ? Color.weFlixBackground : Color.weFlixOnSurface.opacity(0.6))
                 .padding(.horizontal, segmentHorizontalPadding)
                 .frame(height: segmentHeight)
                 .background {
                     if isSelected {
                         Capsule(style: .continuous)
-                            .fill(Color.siloOnSurface)
+                            .fill(Color.weFlixOnSurface)
                             .matchedGeometryEffect(id: "calendarFilterPill", in: pillNamespace)
                     }
                 }
                 .contentShape(Capsule(style: .continuous))
         }
-        .buttonStyle(.siloFlat)
+        .buttonStyle(.weFlixFlat)
         .accessibilityAddTraits(isSelected ? .isSelected : [])
     }
     #endif
@@ -90,7 +90,7 @@ struct CalendarFilterBar: View {
             }
         }
         .padding(containerPadding)
-        .siloGlass(in: .capsule)
+        .weFlixGlass(in: .capsule)
         // Full-width focus section: the capsule only occupies the leading
         // corner, and a narrow section can't catch up-moves from day
         // buttons on the right side of the strip below — the focus engine
@@ -133,21 +133,21 @@ struct CalendarFilterBar: View {
                 )
                 .scaleEffect(isFocused ? 1.05 : 1.0)
         }
-        .buttonStyle(.siloFlat)
+        .buttonStyle(.weFlixFlat)
         .focused($focusedFilter, equals: filter)
-        .animation(SiloTheme.springAnimation, value: isFocused)
+        .animation(WeFlixTheme.springAnimation, value: isFocused)
         .animation(.easeInOut(duration: 0.15), value: isSelected)
         .accessibilityAddTraits(isSelected ? .isSelected : [])
     }
 
     private func foreground(isSelected: Bool, isFocused: Bool) -> Color {
-        if isFocused || isSelected { return .siloBackground }
-        return .siloOnSurface.opacity(0.7)
+        if isFocused || isSelected { return .weFlixBackground }
+        return .weFlixOnSurface.opacity(0.7)
     }
 
     private func fill(isSelected: Bool, isFocused: Bool) -> Color {
-        if isFocused { return Color.siloOnSurface.opacity(0.96) }
-        if isSelected { return Color.siloOnSurface.opacity(0.88) }
+        if isFocused { return Color.weFlixOnSurface.opacity(0.96) }
+        if isSelected { return Color.weFlixOnSurface.opacity(0.88) }
         return .clear
     }
     #endif

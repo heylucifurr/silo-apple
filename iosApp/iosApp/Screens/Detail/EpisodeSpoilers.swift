@@ -1,6 +1,6 @@
 //
 //  EpisodeSpoilers.swift
-//  Silo (iOS + tvOS + macOS)
+//  WeFlix (iOS + tvOS + macOS)
 //
 //  Spoiler protection for unwatched episodes
 //  (`catalog.hide_unwatched_episode_{images,overviews}`, contract revision
@@ -87,11 +87,11 @@ struct EpisodeSpoilerSettings: Codable, Hashable, Sendable {
 }
 
 extension BrowseItem {
-    var isEpisodeItem: Bool { SiloMediaType.isEpisode(type) }
+    var isEpisodeItem: Bool { WeFlixMediaType.isEpisode(type) }
 }
 
 extension SectionItem {
-    var isEpisodeItem: Bool { SiloMediaType.isEpisode(type) }
+    var isEpisodeItem: Bool { WeFlixMediaType.isEpisode(type) }
 }
 
 /// How strongly a hidden still is blurred. Web blurs with a 24px standard

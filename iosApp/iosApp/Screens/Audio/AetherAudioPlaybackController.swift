@@ -144,10 +144,10 @@ final class AetherAudioPlaybackController {
         generation &+= 1
         activeLoadEpoch = nil
         guard let engine else { return }
-        // AVAudioSession is process-global and Silo runs a second AetherEngine for video.
+        // AVAudioSession is process-global and WeFlix runs a second AetherEngine for video.
         // Let this teardown release the session only when no *other* claim is actually
         // holding audio: a playing or paused video engine, or an open remote, keeps it;
-        // an idle or ended video engine does not, so whatever Silo interrupted (another
+        // an idle or ended video engine does not, so whatever WeFlix interrupted (another
         // app's audio) can resume. Decided per stop because the other claims come and
         // go with the player screen and the remote. `sessionClaim` is set alongside
         // `engine`; should it ever be missing, keep the session (the conservative side).

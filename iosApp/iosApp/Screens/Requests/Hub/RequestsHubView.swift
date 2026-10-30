@@ -23,19 +23,19 @@ private struct PhoneRequestsHubView: View {
 
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: SiloTheme.largePadding) {
+            VStack(alignment: .leading, spacing: WeFlixTheme.largePadding) {
                 content
             }
-            .padding(.horizontal, SiloTheme.padding)
-            .padding(.top, SiloTheme.smallPadding)
-            .padding(.bottom, SiloTheme.largePadding)
+            .padding(.horizontal, WeFlixTheme.padding)
+            .padding(.top, WeFlixTheme.smallPadding)
+            .padding(.bottom, WeFlixTheme.largePadding)
             .frame(maxWidth: .infinity, alignment: .leading)
         }
-        .siloPageBackground()
+        .weFlixPageBackground()
         .navigationTitle("Requests")
-        .siloNavigationTitleDisplayMode(.large)
-        .siloToolbarColorSchemeDark()
-        .siloSearchable(text: $viewModel.query, prompt: "Search movies & series")
+        .weFlixNavigationTitleDisplayMode(.large)
+        .weFlixToolbarColorSchemeDark()
+        .weFlixSearchable(text: $viewModel.query, prompt: "Search movies & series")
         .task {
             await viewModel.load()
         }
@@ -103,10 +103,10 @@ private struct PhoneRequestsHubView: View {
             )
             .padding(.top, 80)
         } else {
-            VStack(alignment: .leading, spacing: SiloTheme.padding) {
+            VStack(alignment: .leading, spacing: WeFlixTheme.padding) {
                 Text("\(viewModel.searchTotal) result\(viewModel.searchTotal == 1 ? "" : "s")")
-                    .font(.siloCaption)
-                    .foregroundColor(.siloSecondaryText)
+                    .font(.weFlixCaption)
+                    .foregroundColor(.weFlixSecondaryText)
                 searchGrid(placeholderCount: 0)
             }
         }
@@ -150,7 +150,7 @@ private struct PhoneRequestsHubView: View {
                 VStack(alignment: .leading, spacing: 6) {
                     Text(title)
                         .font(.subheadline.weight(.semibold))
-                        .foregroundColor(.siloOnSurface)
+                        .foregroundColor(.weFlixOnSurface)
                     if !parts.isEmpty {
                         HStack(spacing: 12) {
                             ForEach(parts, id: \.1) { tint, text in
@@ -161,23 +161,23 @@ private struct PhoneRequestsHubView: View {
                             }
                         }
                         .font(.caption)
-                        .foregroundColor(.siloSecondaryText)
+                        .foregroundColor(.weFlixSecondaryText)
                     }
                 }
                 Spacer(minLength: 8)
                 Image(systemName: "chevron.right")
                     .font(.footnote.weight(.semibold))
-                    .foregroundColor(.siloSecondaryText)
+                    .foregroundColor(.weFlixSecondaryText)
             }
             .padding(.horizontal, 14)
             .padding(.vertical, 12)
             .background(
                 RoundedRectangle(cornerRadius: 18, style: .continuous)
-                    .fill(Color.siloChromeRestingFill)
+                    .fill(Color.weFlixChromeRestingFill)
             )
             .overlay(
                 RoundedRectangle(cornerRadius: 18, style: .continuous)
-                    .stroke(Color.siloChromeRestingBorder, lineWidth: 1)
+                    .stroke(Color.weFlixChromeRestingBorder, lineWidth: 1)
             )
         }
         .buttonStyle(.plain)

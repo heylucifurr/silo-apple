@@ -1,7 +1,7 @@
 import Foundation
 import OSLog
 
-/// Removes, once, the downloads that earlier versions of Silo saved on this
+/// Removes, once, the downloads that earlier versions of WeFlix saved on this
 /// device. Their store, manifests and resume data carry identifiers and URLs
 /// from the previous server API, so this version deletes them instead of
 /// migrating them and tells the user once.
@@ -44,7 +44,7 @@ struct LegacyDownloadStorage: Sendable {
     static let noticeMessage = "Downloads from earlier versions were removed. Download them again to watch offline."
 
     private static let logger = Logger(
-        subsystem: Bundle.main.bundleIdentifier ?? "org.siloserver.silo",
+        subsystem: Bundle.main.bundleIdentifier ?? "me.weflix",
         category: "Downloads"
     )
 

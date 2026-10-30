@@ -97,8 +97,8 @@ struct TVSimilarRail: View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: cardSpacing) {
                 ForEach(0..<4, id: \.self) { _ in
-                    RoundedRectangle(cornerRadius: SiloTheme.cornerRadius)
-                        .fill(Color.siloSurfaceElevated)
+                    RoundedRectangle(cornerRadius: WeFlixTheme.cornerRadius)
+                        .fill(Color.weFlixSurfaceElevated)
                         .frame(
                             width: cardWidth,
                             height: cardWidth * 1.5
@@ -155,7 +155,7 @@ struct TVSimilarRail: View {
         }
 
         do {
-            let cards = try await SiloAPI.shared.recommendationsSimilar(
+            let cards = try await WeFlixAPI.shared.recommendationsSimilar(
                 contentId: contentId,
                 limit: 12
             )

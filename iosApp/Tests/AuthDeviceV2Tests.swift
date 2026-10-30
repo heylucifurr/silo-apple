@@ -1,6 +1,6 @@
 import Foundation
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 /// Public and account-scoped auth operations on the v2 wire: no bearer on
 /// public paths, no refresh replay of a single-dispatch auth mutation, and
@@ -85,14 +85,14 @@ final class AuthDeviceV2Tests: XCTestCase {
     /// recognise the auth endpoints under it, or a bearer leaks onto them.
     func testPublicAuthPathsCarryNoBearerUnderAServerBasePath() async throws {
         let (api, tokens) = try await harness()
-        await tokens.setServerUrl("https://auth.example/silo")
+        await tokens.setServerUrl("https://auth.example/weFlix")
         _ = await tokens.saveTokens(accessToken: "old", refreshToken: "refresh")
         let identityValue = await tokens.refreshAccountIdentity()
         let identity = try XCTUnwrap(identityValue)
         stub.reply(200, #"{"status":"pending","poll_after":5,"profile_id":"","profile_token":"","temporary":false}"#)
         _ = try await api.pollDeviceLogin(deviceCode: "secret", expectedAccount: identity)
         let request = try XCTUnwrap(stub.requests.last)
-        XCTAssertEqual(request.path, "/silo/api/v2/auth/device/poll")
+        XCTAssertEqual(request.path, "/weFlix/api/v2/auth/device/poll")
         XCTAssertNil(request.header("authorization"), "a prefixed public auth path still carries no bearer")
         XCTAssertNil(request.header("x-profile-token"))
     }
@@ -109,12 +109,12 @@ final class AuthDeviceV2Tests: XCTestCase {
     ) {
         let device = AppleDeviceIdentity.current
         let label = "\(request.method) \(request.path)"
-        XCTAssertEqual(request.header("X-Silo-Device-Id"), device.id, label, file: file, line: line)
-        XCTAssertEqual(request.header("X-Silo-Device-Name"), device.name, label, file: file, line: line)
-        XCTAssertEqual(request.header("X-Silo-Device-Platform"), device.platform, label, file: file, line: line)
-        XCTAssertEqual(request.header("X-Silo-Client-Family"), device.clientFamily, label, file: file, line: line)
-        XCTAssertEqual(request.header("X-Silo-Client"), device.clientName, label, file: file, line: line)
-        XCTAssertEqual(request.header("X-Silo-Client-Version"), device.appVersion, label, file: file, line: line)
+        XCTAssertEqual(request.header("X-WeFlix-Device-Id"), device.id, label, file: file, line: line)
+        XCTAssertEqual(request.header("X-WeFlix-Device-Name"), device.name, label, file: file, line: line)
+        XCTAssertEqual(request.header("X-WeFlix-Device-Platform"), device.platform, label, file: file, line: line)
+        XCTAssertEqual(request.header("X-WeFlix-Client-Family"), device.clientFamily, label, file: file, line: line)
+        XCTAssertEqual(request.header("X-WeFlix-Client"), device.clientName, label, file: file, line: line)
+        XCTAssertEqual(request.header("X-WeFlix-Client-Version"), device.appVersion, label, file: file, line: line)
         XCTAssertNil(request.header("authorization"), label, file: file, line: line)
         XCTAssertNil(request.header("x-profile-id"), label, file: file, line: line)
         XCTAssertNil(request.header("x-profile-token"), label, file: file, line: line)
@@ -222,7 +222,7 @@ final class AuthDeviceV2Tests: XCTestCase {
         XCTAssertEqual(stub.requests.last?.header("authorization"), "Bearer acc")
     }
 
-    // MARK: SiloRemote handoff
+    // MARK: WeFlixRemote handoff
 
     private func handoffOwner(_ tokens: TokenStore) async throws -> (HTTPRequestIdentity, CapturedOrdinaryRequestAuth) {
         try await tokens.installAccountSession(accessToken: "acc", refreshToken: "ref", accountID: "1")
@@ -356,7 +356,7 @@ final class AuthDeviceV2Tests: XCTestCase {
     // MARK: Logout
 
     /// v2 logout refuses `X-Profile-Id`. Neither the persistent session's
-    /// profile nor a SiloRemote temporary scope's profile proof may ride along.
+    /// profile nor a WeFlixRemote temporary scope's profile proof may ride along.
     func testLogoutSendsOnlyTheBearer() async throws {
         let (api, tokens) = try await harness()
         try await tokens.installAccountSession(accessToken: "acc", refreshToken: "ref", accountID: "1")
@@ -446,7 +446,7 @@ final class AuthDeviceV2Tests: XCTestCase {
         let limited = LoginViewModel.message(for: try problem(429, "rate_limited"))
         XCTAssertEqual(Set([wrongPassword, disabled, invalid, limited]).count, 4, "each rejection reads differently")
         XCTAssertFalse([wrongPassword, disabled, invalid, limited].contains("server detail"))
-        // A bare 401/403 is not Silo's login answer (a proxy or WAF sent it),
+        // A bare 401/403 is not WeFlix's login answer (a proxy or WAF sent it),
         // so it must not blame the credentials or the account.
         for code in [401, 403] {
             let bare = LoginViewModel.message(for: APIv2Error.httpStatus(code))
@@ -543,7 +543,7 @@ final class AuthDeviceV2Tests: XCTestCase {
         XCTAssertNil(stub.requests.first?.header("authorization"), "the capability is read without credentials")
     }
 
-    /// A temporary session belongs to a SiloRemote handoff. Sign-in refuses
+    /// A temporary session belongs to a WeFlixRemote handoff. Sign-in refuses
     /// it and installs nothing.
     @MainActor
     func testQRSignInRefusesATemporaryApproval() async throws {

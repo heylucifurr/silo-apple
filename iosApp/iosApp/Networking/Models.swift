@@ -218,7 +218,7 @@ struct SectionItem: Codable, Identifiable, Hashable {
     }
 }
 
-enum SiloMediaType {
+enum WeFlixMediaType {
     private static func normalized(_ type: String) -> String {
         type.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
     }
@@ -314,7 +314,7 @@ enum SiloMediaType {
 }
 
 extension BrowseItem {
-    var isAudiobook: Bool { SiloMediaType.isAudiobook(type) }
+    var isAudiobook: Bool { WeFlixMediaType.isAudiobook(type) }
 
     /// Lift a Home row into the catalog shape for Watch Party's picker, which
     /// opens a confirmation page from a `BrowseItem`. Every field the two
@@ -372,7 +372,7 @@ extension BrowseItem {
 }
 
 extension SectionItem {
-    var isAudiobook: Bool { SiloMediaType.isAudiobook(type) }
+    var isAudiobook: Bool { WeFlixMediaType.isAudiobook(type) }
 }
 
 /// Series and season art an episode card carries next to its own, from servers
@@ -393,14 +393,14 @@ extension EpisodeParentArtwork {
     /// episode's own `backdrop_url`, which is usually a small still. Nil for
     /// other types and on older servers, which keep the existing behavior.
     var episodeSeriesBackdrop: (url: String, thumbhash: String?)? {
-        guard SiloMediaType.isEpisode(type),
+        guard WeFlixMediaType.isEpisode(type),
               let url = seriesBackdropUrl, !url.isEmpty else { return nil }
         return (url, seriesBackdropThumbhash)
     }
 
     /// Portrait art for an episode: its season's poster, else its series'.
     var episodeShowPoster: (url: String, thumbhash: String?)? {
-        guard SiloMediaType.isEpisode(type) else { return nil }
+        guard WeFlixMediaType.isEpisode(type) else { return nil }
         if let url = seasonPosterUrl, !url.isEmpty { return (url, seasonPosterThumbhash) }
         if let url = seriesPosterUrl, !url.isEmpty { return (url, seriesPosterThumbhash) }
         return nil
@@ -484,7 +484,7 @@ struct SectionsResponse: Codable {
     ) -> [ResolvedSection] {
         sections.map { section in
             let kept = section.items.filter {
-                SiloMediaType.isSupportedSectionItem($0.type)
+                WeFlixMediaType.isSupportedSectionItem($0.type)
             }
             guard kept.count != section.items.count else { return section }
             return ResolvedSection(
@@ -619,7 +619,7 @@ struct ItemDetail: Codable {
 
 extension ItemDetail {
     var isAudiobook: Bool {
-        audiobook != nil || SiloMediaType.isAudiobook(type)
+        audiobook != nil || WeFlixMediaType.isAudiobook(type)
     }
 
     /// See `WatchDetail.showsForcedSubtitles`: a missing value is the
@@ -1382,11 +1382,11 @@ struct Library: Codable, Identifiable, Hashable {
     let sortOrder: Int?
     @ArtworkURL var posterUrl: String? = nil
 
-    var isMovieLibrary: Bool { SiloMediaType.isMovieLibrary(type) }
-    var isAudiobookLibrary: Bool { SiloMediaType.isAudiobookLibrary(type) }
-    var isSeriesLibrary: Bool { SiloMediaType.isSeries(type) }
-    var isMixedLibrary: Bool { SiloMediaType.isMixedLibrary(type) }
-    var isSupportedLibrary: Bool { SiloMediaType.isSupportedLibrary(type) }
+    var isMovieLibrary: Bool { WeFlixMediaType.isMovieLibrary(type) }
+    var isAudiobookLibrary: Bool { WeFlixMediaType.isAudiobookLibrary(type) }
+    var isSeriesLibrary: Bool { WeFlixMediaType.isSeries(type) }
+    var isMixedLibrary: Bool { WeFlixMediaType.isMixedLibrary(type) }
+    var isSupportedLibrary: Bool { WeFlixMediaType.isSupportedLibrary(type) }
 
     var navigationIcon: String {
         isMixedLibrary ? "square.stack.3d.up" : "rectangle.stack"
@@ -1398,7 +1398,7 @@ struct Library: Codable, Identifiable, Hashable {
 }
 
 /// The viewer's supported libraries, built from `GET /api/v2/user/libraries`
-/// by `SiloAPI.libraries()`. Not a wire model; the v2 rows are
+/// by `WeFlixAPI.libraries()`. Not a wire model; the v2 rows are
 /// `APIv2UserLibrary`.
 struct LibrariesResponse: Codable {
     let libraries: [Library]
@@ -1494,7 +1494,7 @@ struct LibraryCollection: Codable, Identifiable, Hashable {
     }
 }
 
-/// Runtime-synthesized response from `SiloAPI.libraryCollections`, mapped
+/// Runtime-synthesized response from `WeFlixAPI.libraryCollections`, mapped
 /// from the v2 `APIv2LibraryCollectionTab` at the API boundary.
 struct LibraryCollectionsResponse {
     let collections: [LibraryCollection]

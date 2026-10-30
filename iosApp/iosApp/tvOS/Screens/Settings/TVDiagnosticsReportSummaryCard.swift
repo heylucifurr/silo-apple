@@ -21,10 +21,10 @@ struct TVDiagnosticsReportSummaryCard: View {
             }
         }
         .font(.system(size: 20))
-        .foregroundStyle(Color.siloOnSurface)
+        .foregroundStyle(Color.weFlixOnSurface)
         .padding(24)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Color.siloChromeRestingFill, in: .rect(cornerRadius: 14))
+        .background(Color.weFlixChromeRestingFill, in: .rect(cornerRadius: 14))
         .task {
             summary = await model.summary(for: report)
         }

@@ -1,8 +1,8 @@
 import Foundation
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
-/// `HTTPClient` asserts in DEBUG builds that every Silo server request is a
+/// `HTTPClient` asserts in DEBUG builds that every WeFlix server request is a
 /// `/api/v2` operation or the retained health probe. These cases pin the
 /// predicate behind that assertion.
 final class HTTPClientRequestPathTests: XCTestCase {
@@ -14,7 +14,7 @@ final class HTTPClientRequestPathTests: XCTestCase {
             HTTPClient.refreshPath,
             ConnectionMonitor.healthPath,
         ] {
-            XCTAssertTrue(HTTPClient.isSiloServerPath(path), path)
+            XCTAssertTrue(HTTPClient.isWeFlixServerPath(path), path)
         }
     }
 
@@ -28,7 +28,7 @@ final class HTTPClientRequestPathTests: XCTestCase {
             "/resource",
             "",
         ] {
-            XCTAssertFalse(HTTPClient.isSiloServerPath(path), path)
+            XCTAssertFalse(HTTPClient.isWeFlixServerPath(path), path)
         }
     }
 
@@ -37,7 +37,7 @@ final class HTTPClientRequestPathTests: XCTestCase {
     func testServerBasePathIsNotPartOfTheCheckedRoute() async throws {
         let stub = APIv2TestStub(fallback: .json(200, #"{"status":"ok"}"#))
         let _: HealthStatus = try await HTTPClient(session: stub.makeSession())
-            .getUnauthenticated(serverURL: "https://example.test/silo", path: "/api/v2/system/info")
-        XCTAssertEqual(stub.requestedPaths, ["/silo/api/v2/system/info"])
+            .getUnauthenticated(serverURL: "https://example.test/weFlix", path: "/api/v2/system/info")
+        XCTAssertEqual(stub.requestedPaths, ["/weFlix/api/v2/system/info"])
     }
 }

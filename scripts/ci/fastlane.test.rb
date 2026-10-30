@@ -86,14 +86,14 @@ end
 
 class FastlaneReleaseTest < Minitest::Test
   ENV_KEYS = %w[
-    MARKETING_VERSION BUILD_NUMBER TEAM_ID SILO_SOURCE_PACKAGES_PATH
-    SILO_DEFER_TESTFLIGHT_DISTRIBUTION TESTFLIGHT_DISTRIBUTION
+    MARKETING_VERSION BUILD_NUMBER TEAM_ID WEFLIX_SOURCE_PACKAGES_PATH
+    WEFLIX_DEFER_TESTFLIGHT_DISTRIBUTION TESTFLIGHT_DISTRIBUTION
     TESTFLIGHT_INTERNAL_GROUPS TESTFLIGHT_EXTERNAL_GROUPS
-    TESTFLIGHT_NOTIFY_EXTERNAL_TESTERS TESTFLIGHT_CHANGELOG SILO_RELEASE_SOURCE_URL
+    TESTFLIGHT_NOTIFY_EXTERNAL_TESTERS TESTFLIGHT_CHANGELOG WEFLIX_RELEASE_SOURCE_URL
     APP_STORE_CONNECT_API_KEY_KEY_ID APP_STORE_CONNECT_API_KEY_ISSUER_ID
     APP_STORE_CONNECT_API_KEY_KEY FL_ORIG_DEFAULT_KC FL_ORIG_KC_LIST FL_CI_KEYCHAIN_MANAGED
   ].freeze
-  SOURCE_URL = "https://github.com/Silo-Server/silo-apple/releases/download/v1.4.0/Silo-source-#{'a' * 40}.tar.gz".freeze
+  SOURCE_URL = "https://github.com/Silo-Server/silo-apple/releases/download/v1.4.0/WeFlix-source-#{'a' * 40}.tar.gz".freeze
 
   def setup
     @saved_env = ENV_KEYS.to_h { |key| [key, ENV[key]] }
@@ -101,7 +101,7 @@ class FastlaneReleaseTest < Minitest::Test
     ENV.update(
       "MARKETING_VERSION" => "1.4.0", "BUILD_NUMBER" => "7", "TEAM_ID" => "TESTTEAM",
       "TESTFLIGHT_CHANGELOG" => "Test release", "TESTFLIGHT_DISTRIBUTION" => "external",
-      "TESTFLIGHT_EXTERNAL_GROUPS" => "Public Beta", "SILO_RELEASE_SOURCE_URL" => SOURCE_URL,
+      "TESTFLIGHT_EXTERNAL_GROUPS" => "Public Beta", "WEFLIX_RELEASE_SOURCE_URL" => SOURCE_URL,
       "APP_STORE_CONNECT_API_KEY_KEY_ID" => "TESTKEY",
       "APP_STORE_CONNECT_API_KEY_ISSUER_ID" => "test-issuer",
       "APP_STORE_CONNECT_API_KEY_KEY" => ["test-key"].pack("m0")
@@ -124,10 +124,10 @@ class FastlaneReleaseTest < Minitest::Test
   end
 
   def test_deferred_upload_never_waits_for_changelog_or_distributes
-    ENV["SILO_DEFER_TESTFLIGHT_DISTRIBUTION"] = "true"
+    ENV["WEFLIX_DEFER_TESTFLIGHT_DISTRIBUTION"] = "true"
     @lane.run_lane(:beta_ios)
     options = action_options(:testflight)
-    assert_equal "build/ios/Silo.ipa", options[:ipa]
+    assert_equal "build/ios/WeFlix.ipa", options[:ipa]
     assert_nil options[:changelog]
     assert_nil options[:groups]
     assert_equal false, options[:distribute_external]
@@ -204,7 +204,7 @@ class FastlaneReleaseTest < Minitest::Test
   def test_internal_distribution_preserves_groups_and_disables_notifications
     ENV["TESTFLIGHT_DISTRIBUTION"] = "internal"
     ENV["TESTFLIGHT_INTERNAL_GROUPS"] = "Internal QA"
-    ENV.delete("SILO_RELEASE_SOURCE_URL")
+    ENV.delete("WEFLIX_RELEASE_SOURCE_URL")
     @group.name = "Internal QA"
     @group.is_internal_group = true
     @lane.run_lane(:distribute_ios)
@@ -237,7 +237,7 @@ class FastlaneReleaseTest < Minitest::Test
   end
 
   def test_deferred_upload_requires_pinned_version_and_build_before_actions
-    ENV["SILO_DEFER_TESTFLIGHT_DISTRIBUTION"] = "true"
+    ENV["WEFLIX_DEFER_TESTFLIGHT_DISTRIBUTION"] = "true"
     ENV.delete("BUILD_NUMBER")
     assert_raises(ArgumentError) { @lane.run_lane(:beta_ios) }
     assert_empty @lane.actions
@@ -252,10 +252,10 @@ class FastlaneReleaseTest < Minitest::Test
     assert_raises(ArgumentError) { @lane.run_lane(:distribute_ios) }
     assert_empty @lane.actions
     ENV["TESTFLIGHT_EXTERNAL_GROUPS"] = "Public Beta"
-    ENV.delete("SILO_RELEASE_SOURCE_URL")
+    ENV.delete("WEFLIX_RELEASE_SOURCE_URL")
     assert_raises(ArgumentError) { @lane.run_lane(:distribute_ios) }
     assert_empty @lane.actions
-    ENV["SILO_RELEASE_SOURCE_URL"] = "https://example.com/source.tar.gz"
+    ENV["WEFLIX_RELEASE_SOURCE_URL"] = "https://example.com/source.tar.gz"
     assert_raises(ArgumentError) { @lane.run_lane(:distribute_ios) }
     assert_empty @lane.actions
   end
@@ -353,7 +353,7 @@ class FastlaneReleaseTest < Minitest::Test
 
   def assert_distribution_options(platform)
     options = distribution_options
-    assert_equal "org.siloserver.silo", options[:app_identifier]
+    assert_equal "me.weflix", options[:app_identifier]
     assert_equal platform, options[:app_platform]
     assert_equal "1.4.0", options[:app_version]
     assert_equal "7", options[:build_number]

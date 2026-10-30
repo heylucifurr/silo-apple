@@ -1,6 +1,6 @@
 //
 //  SubtitleAIControllerTests.swift
-//  SiloTests
+//  WeFlixTests
 //
 //  Controller-level tests for the poller-vs-websocket completion race — the
 //  highest-risk seam in the AI subtitle pipeline. The
@@ -18,7 +18,7 @@
 
 import XCTest
 import Foundation
-@testable import Silo
+@testable import WeFlix
 
 @MainActor
 final class SubtitleAIControllerTests: XCTestCase {

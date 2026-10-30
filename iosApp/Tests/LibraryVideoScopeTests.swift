@@ -1,5 +1,5 @@
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 final class LibraryVideoScopeTests: XCTestCase {
     func testRestartThenFailureDoesNotRestoreOldTitlesOrProgress() async throws {
@@ -255,7 +255,7 @@ final class LibraryVideoScopeTests: XCTestCase {
         XCTAssertFalse(LibraryVideoScope.series.contains("audiobook"))
     }
 
-    func testScopesAcceptEverySiloMediaTypeSpelling() {
+    func testScopesAcceptEveryWeFlixMediaTypeSpelling() {
         for type in ["movie", "Movies", "film"] {
             XCTAssertTrue(LibraryVideoScope.movie.contains(type), type)
             XCTAssertFalse(LibraryVideoScope.series.contains(type), type)

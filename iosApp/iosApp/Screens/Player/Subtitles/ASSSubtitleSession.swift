@@ -62,7 +62,7 @@ final class ASSSubtitleSession {
     @ObservationIgnored private var didRecordFrame = false
     @ObservationIgnored private var timelineOffset: Double = 0
     @ObservationIgnored private var stats = RenderStats()
-    private static let logger = Logger(subsystem: "org.siloserver.silo", category: "ASSSubtitles")
+    private static let logger = Logger(subsystem: "me.weflix", category: "ASSSubtitles")
 
     /// Libass renders at most this many pixels. A 4K output shows a 1080p
     /// canvas scaled up: rendering signs at four times the area costs four

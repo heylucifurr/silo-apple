@@ -14,14 +14,14 @@ final class SectionCatalogViewModel {
     private(set) var hasMore = true
     private(set) var totalItems: Int?
 
-    private let api: SiloAPI
+    private let api: WeFlixAPI
     private let tokens: TokenStore
     private var target: SectionCatalogTarget?
     private var owner: CapturedOrdinaryRequestAuth?
     private var continuation: APIv2CatalogContinuation?
     private var generation = 0
 
-    init(api: SiloAPI = .shared, tokens: TokenStore = .shared) {
+    init(api: WeFlixAPI = .shared, tokens: TokenStore = .shared) {
         self.api = api
         self.tokens = tokens
     }

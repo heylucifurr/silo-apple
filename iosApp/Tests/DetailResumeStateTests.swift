@@ -1,5 +1,5 @@
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 /// A detail page that stays open while another device plays must offer and
 /// resume from the server's newer position, not the page's snapshot.

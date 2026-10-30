@@ -1,6 +1,6 @@
 import AetherEngine
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 /// A Watch Party member whose stream reaches end of file must stay movable by
 /// the room, and must not drag the room back to where its stream stopped.

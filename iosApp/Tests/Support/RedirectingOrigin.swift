@@ -1,6 +1,6 @@
 import Foundation
 import Network
-@testable import Silo
+@testable import WeFlix
 
 /// A loopback origin whose connections document redirects to another path,
 /// where a different document waits: a saved address that sends the local
@@ -9,7 +9,7 @@ import Network
 final class RedirectingOrigin: @unchecked Sendable {
     static let elsewherePath = "/elsewhere" + ServerIdentity.connectionsPath
 
-    private let queue = DispatchQueue(label: "SiloTests.RedirectingOrigin")
+    private let queue = DispatchQueue(label: "WeFlixTests.RedirectingOrigin")
     private let listener: NWListener
     private let document: Data
     private var connections: [NWConnection] = []

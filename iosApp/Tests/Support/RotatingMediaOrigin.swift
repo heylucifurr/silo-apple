@@ -49,7 +49,7 @@ final class RotatingMediaOrigin: @unchecked Sendable {
         let segment: Int?
     }
 
-    private let queue = DispatchQueue(label: "SiloTests.RotatingMediaOrigin")
+    private let queue = DispatchQueue(label: "WeFlixTests.RotatingMediaOrigin")
     private let segments: [Data]
     private let subtitle: Data
     private let fonts: Data

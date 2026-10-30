@@ -5,7 +5,7 @@ import SwiftUI
 
 /// Layout constants shared by the Design Lab variants.
 ///
-/// These deliberately diverge from `SiloTheme` in a few places — the
+/// These deliberately diverge from `WeFlixTheme` in a few places — the
 /// divergences *are* the proposal, and each one is called out below so the
 /// reasoning survives the experiment.
 enum HomeFeedMetrics {
@@ -13,7 +13,7 @@ enum HomeFeedMetrics {
     static let posterAspect: CGFloat = 3.0 / 2.0
 
     /// The app-wide poster width, so Home's rows match every other page.
-    static let posterWidth: CGFloat = SiloTheme.posterCardWidth
+    static let posterWidth: CGFloat = WeFlixTheme.posterCardWidth
     /// 16:9 still used by resume rows. Continue Watching is the row people
     /// act on most, so it reads as "one card plus a peek" rather than matching
     /// the poster rows' density — at 184 the stills felt like thumbnails and
@@ -30,7 +30,7 @@ enum HomeFeedMetrics {
     static let posterRadius: CGFloat = 10
     static let stillRadius: CGFloat = 12
 
-    /// Screen gutter. Matches `SiloTheme.safePadding` so variants stay
+    /// Screen gutter. Matches `WeFlixTheme.safePadding` so variants stay
     /// aligned with the rest of the app's chrome.
     static let gutter: CGFloat = 16
     static let cardSpacing: CGFloat = 10
@@ -44,7 +44,7 @@ enum HomeFeedMetrics {
     /// step larger to suit its bigger cards.
     static var captionTitleFont: Font {
         #if os(macOS)
-        .siloCardTitle
+        .weFlixCardTitle
         #else
         .footnote.weight(.semibold)
         #endif
@@ -52,7 +52,7 @@ enum HomeFeedMetrics {
 
     static var captionMetadataFont: Font {
         #if os(macOS)
-        .siloCardMetadata
+        .weFlixCardMetadata
         #else
         .caption2
         #endif
@@ -260,9 +260,9 @@ private struct HomeWatchedCheck: View {
     var body: some View {
         Image(systemName: "checkmark")
             .font(.system(size: 9, weight: .bold))
-            .foregroundStyle(Color.siloBackground)
+            .foregroundStyle(Color.weFlixBackground)
             .frame(width: 18, height: 18)
-            .background(Circle().fill(Color.siloOnSurface))
+            .background(Circle().fill(Color.weFlixOnSurface))
     }
 }
 
@@ -392,7 +392,7 @@ struct HomePosterCard: View {
         VStack(alignment: .leading, spacing: 1) {
             Text(HomeFeedMeta.cardTitle(for: item))
                 .font(HomeFeedMetrics.captionTitleFont)
-                .foregroundStyle(Color.siloOnSurface)
+                .foregroundStyle(Color.weFlixOnSurface)
                 // One line, always. Reserving two lines (as the shipping card
                 // does) makes every row 17pt taller than it needs to be; letting
                 // it wrap makes row baselines ragged. Truncation is the honest
@@ -403,7 +403,7 @@ struct HomePosterCard: View {
             if let secondLine = secondLineOverride ?? HomeFeedMeta.cardSecondLine(for: item) {
                 Text(secondLine)
                     .font(HomeFeedMetrics.captionMetadataFont)
-                    .foregroundStyle(Color.siloOnSurface.opacity(0.5))
+                    .foregroundStyle(Color.weFlixOnSurface.opacity(0.5))
                     .monospacedDigit()
                     .lineLimit(1)
                     .truncationMode(.tail)
@@ -593,7 +593,7 @@ struct HomeStillCard: View {
         }
     }
 
-    private var isDirectlyPlayable: Bool { SiloMediaType.isDirectlyPlayable(item.type) }
+    private var isDirectlyPlayable: Bool { WeFlixMediaType.isDirectlyPlayable(item.type) }
 
     private var playActionName: String { (item.positionSeconds ?? 0) > 0 ? "Resume" : "Play" }
 
@@ -612,7 +612,7 @@ struct HomeStillCard: View {
         VStack(alignment: .leading, spacing: 2) {
             Text(HomeFeedMeta.cardTitle(for: item))
                 .font(HomeFeedMetrics.captionTitleFont)
-                .foregroundStyle(Color.siloOnSurface)
+                .foregroundStyle(Color.weFlixOnSurface)
                 .lineLimit(1)
 
             // Episode code + title (or the year for movies). Space is
@@ -620,7 +620,7 @@ struct HomeStillCard: View {
             // movies keeps one caption height.
             Text(HomeFeedMeta.cardSecondLine(for: item) ?? "")
                 .font(HomeFeedMetrics.captionMetadataFont)
-                .foregroundStyle(Color.siloOnSurface.opacity(0.7))
+                .foregroundStyle(Color.weFlixOnSurface.opacity(0.7))
                 .monospacedDigit()
                 .lineLimit(1, reservesSpace: true)
                 .truncationMode(.tail)
@@ -631,7 +631,7 @@ struct HomeStillCard: View {
                 // a remaining-time caption, including as lazy cards enter/leave.
                 Text(HomeFeedMeta.resumeCaption(for: item) ?? "0m left")
                     .font(HomeFeedMetrics.captionMetadataFont)
-                    .foregroundStyle(Color.siloOnSurface.opacity(0.55))
+                    .foregroundStyle(Color.weFlixOnSurface.opacity(0.55))
                     .lineLimit(1)
                     .opacity(HomeFeedMeta.resumeCaption(for: item) == nil ? 0 : 1)
                     .accessibilityHidden(HomeFeedMeta.resumeCaption(for: item) == nil)
@@ -675,7 +675,7 @@ struct HomeSectionHeader: View {
                         label
                         Image(systemName: "chevron.right")
                             .font(.footnote.weight(.semibold))
-                            .foregroundStyle(Color.siloOnSurface.opacity(0.5))
+                            .foregroundStyle(Color.weFlixOnSurface.opacity(0.5))
                     }
                 }
                 .buttonStyle(.plain)
@@ -694,13 +694,13 @@ struct HomeSectionHeader: View {
         if let icon {
             Image(systemName: icon)
                 .font(.footnote.weight(.semibold))
-                .foregroundStyle(Color.siloOnSurface.opacity(0.85))
+                .foregroundStyle(Color.weFlixOnSurface.opacity(0.85))
         }
 
         Text(title)
-            .font(.siloHeadline)
+            .font(.weFlixHeadline)
             .tracking(-0.3)
-            .foregroundStyle(Color.siloOnSurface)
+            .foregroundStyle(Color.weFlixOnSurface)
             .lineLimit(1)
     }
 }

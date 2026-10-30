@@ -1,8 +1,8 @@
 import Foundation
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
-/// The trusted-origin rule that decides whether the Silo bearer travels with a
+/// The trusted-origin rule that decides whether the WeFlix bearer travels with a
 /// subtitle sidecar. Implicit ports are the interesting case: an explicit `:443`
 /// on one side of the comparison is still the same origin, so the header stays;
 /// dropping it would surface in Aether as a 401 on the sidecar only.

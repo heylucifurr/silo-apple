@@ -56,7 +56,7 @@ enum ArtworkSurface: Sendable {
 
     /// Every title logo decodes into the Home marquee's logo box
     /// (`PosterImageCache.titleLogoPointBox`), so every surface asks for its width.
-    static let tvTitleLogoWidth: CGFloat = SiloTheme.Skyline.marqueeLogoMaxWidth
+    static let tvTitleLogoWidth: CGFloat = WeFlixTheme.Skyline.marqueeLogoMaxWidth
 
     private var tvSlots: ArtworkSlotWidths {
         switch self {
@@ -71,7 +71,7 @@ enum ArtworkSurface: Sendable {
                 photo: TVDetailCastRail.photoSize.width
             )
         case .episodes:
-            ArtworkSlotWidths(still: SiloTheme.thumbnailCardWidth)
+            ArtworkSlotWidths(still: WeFlixTheme.thumbnailCardWidth)
         // Card rails and grids also ask for the hero backdrop: a card's
         // backdrop seeds the detail hero while it loads, and the player's
         // backdrop hint, so it must be the URL detail asks for.
@@ -81,7 +81,7 @@ enum ArtworkSurface: Sendable {
             // The Browse grid's card.
             ArtworkSlotWidths(poster: 260, backdrop: Self.tvHeroBackdropWidth)
         case .lists:
-            ArtworkSlotWidths(poster: SiloTheme.Skyline.densePosterCardWidth, backdrop: Self.tvHeroBackdropWidth)
+            ArtworkSlotWidths(poster: WeFlixTheme.Skyline.densePosterCardWidth, backdrop: Self.tvHeroBackdropWidth)
         case .seasons:
             // tvOS season lists draw no artwork; the Watch Party room shows a
             // season poster at the Browse card's size.

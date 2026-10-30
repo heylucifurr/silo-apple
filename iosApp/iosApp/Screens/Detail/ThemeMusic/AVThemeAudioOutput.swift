@@ -184,7 +184,7 @@ private extension URLSession.AsyncBytes {
 /// the stream itself lacks.
 private final class ThemeMemoryLoader: NSObject, AVAssetResourceLoaderDelegate, @unchecked Sendable {
     private let data: Data
-    private let queue = DispatchQueue(label: "org.siloserver.silo.theme-music.loader")
+    private let queue = DispatchQueue(label: "me.weflix.theme-music.loader")
     let asset: AVURLAsset
 
     init(data: Data) {

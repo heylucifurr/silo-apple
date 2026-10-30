@@ -144,7 +144,7 @@ struct SignInTVView: View {
     }
 }
 
-/// Handles `silo://device?server=&url=&code=` from the web approval page:
+/// Handles `weflix://device?server=&url=&code=` from the web approval page:
 /// finds the saved server with that verified identity, or offers to add it
 /// from the link's address, then shows the approval card.
 struct DeviceLinkApprovalView: View {
@@ -183,18 +183,18 @@ struct DeviceLinkApprovalView: View {
             case .signedOut(let server):
                 NavigationStack {
                     VStack(alignment: .leading, spacing: 16) {
-                        Text("Sign in to \(server.displayName)").font(.siloTitle)
+                        Text("Sign in to \(server.displayName)").font(.weFlixTitle)
                         Text("The TV's code belongs to \(server.displayName), and this device isn't signed in to it. Sign in, then approve the TV.")
-                            .font(.siloBody)
+                            .font(.weFlixBody)
                             .fixedSize(horizontal: false, vertical: true)
                         Button {
                             onSignIn(server, DeviceApprovalLink(server: server, code: link.code))
                         } label: {
-                            Text("Sign in").font(.siloHeadline).frame(maxWidth: .infinity).padding(.vertical, 6)
+                            Text("Sign in").font(.weFlixHeadline).frame(maxWidth: .infinity).padding(.vertical, 6)
                         }
                         .buttonStyle(.borderedProminent)
-                        .tint(.siloOnSurface)
-                        .foregroundStyle(Color.siloBackground)
+                        .tint(.weFlixOnSurface)
+                        .foregroundStyle(Color.weFlixBackground)
                         Spacer()
                     }
                     .padding(20)
@@ -203,18 +203,18 @@ struct DeviceLinkApprovalView: View {
             case .addServer(let url):
                 NavigationStack {
                     VStack(alignment: .leading, spacing: 16) {
-                        Text("Add this server?").font(.siloTitle)
+                        Text("Add this server?").font(.weFlixTitle)
                         Text("The TV's code belongs to \(TVSignInPresentation.host(of: url)), which isn't on this device yet. Add it and sign in, then approve the TV.")
-                            .font(.siloBody)
+                            .font(.weFlixBody)
                             .fixedSize(horizontal: false, vertical: true)
                         Button {
                             onAddServer(url)
                         } label: {
-                            Text("Add server").font(.siloHeadline).frame(maxWidth: .infinity).padding(.vertical, 6)
+                            Text("Add server").font(.weFlixHeadline).frame(maxWidth: .infinity).padding(.vertical, 6)
                         }
                         .buttonStyle(.borderedProminent)
-                        .tint(.siloOnSurface)
-                        .foregroundStyle(Color.siloBackground)
+                        .tint(.weFlixOnSurface)
+                        .foregroundStyle(Color.weFlixBackground)
                         Spacer()
                     }
                     .padding(20)
@@ -224,7 +224,7 @@ struct DeviceLinkApprovalView: View {
                 NavigationStack {
                     VStack(spacing: 14) {
                         Image(systemName: "exclamationmark.triangle.fill").font(.system(size: 36)).foregroundStyle(.yellow)
-                        Text(message).font(.siloBody).multilineTextAlignment(.center)
+                        Text(message).font(.weFlixBody).multilineTextAlignment(.center)
                     }
                     .padding(24)
                     .toolbar { ToolbarItem(placement: .cancellationAction) { Button("Close", action: onClose) } }

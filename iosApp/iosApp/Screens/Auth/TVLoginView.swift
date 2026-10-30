@@ -3,7 +3,7 @@ import SwiftUI
 import UIKit
 
 /// The Apple TV sign-in screen: every way in is visible at once. Scan the
-/// QR code, or type `<host>/activate` and the code, or open Silo on a
+/// QR code, or type `<host>/activate` and the code, or open WeFlix on a
 /// nearby phone (the screen advertises `st=login` on the LAN, behind the
 /// `PairingProtocol.advertisesSignInTVs` rollout gate). A password
 /// is one click away. The code renews itself while the screen is visible;
@@ -158,14 +158,14 @@ struct TVLoginView: View {
                     .padding(.top, 32)
                 Text("Or sign in with your phone")
                     .font(.system(size: 22, weight: .medium))
-                    .foregroundStyle(Color.siloOnSurface.opacity(0.4))
+                    .foregroundStyle(Color.weFlixOnSurface.opacity(0.4))
                     .padding(.top, 30)
             }
             MarqueeTVBody(codeLead)
                 .padding(.top, networkProvider == nil ? 26 : 12)
             Label(TVSignInPresentation.nearbyHint, systemImage: "iphone.gen3")
                 .font(.system(size: 22))
-                .foregroundStyle(Color.siloOnSurface.opacity(0.4))
+                .foregroundStyle(Color.weFlixOnSurface.opacity(0.4))
                 .fixedSize(horizontal: false, vertical: true)
                 .padding(.top, 24)
             codeActions
@@ -249,7 +249,7 @@ struct TVLoginView: View {
             // A long host wraps rather than shrinking past legibility.
             Text(typedURL ?? "")
                 .font(.system(size: 24))
-                .foregroundStyle(Color.siloOnSurface.opacity(0.62))
+                .foregroundStyle(Color.weFlixOnSurface.opacity(0.62))
                 .lineLimit(2)
                 .minimumScaleFactor(0.7)
                 .padding(.top, 18)
@@ -286,7 +286,7 @@ struct TVLoginView: View {
                 }
                 Text(text)
                     .font(.system(size: 24))
-                    .foregroundStyle(Color.siloOnSurface.opacity(0.62))
+                    .foregroundStyle(Color.weFlixOnSurface.opacity(0.62))
                     .fixedSize(horizontal: false, vertical: true)
             }
             .accessibilityElement(children: .combine)
@@ -372,11 +372,11 @@ struct TVLoginView: View {
                     .transition(.opacity)
             }
 
-            // Single sign-on accounts have no Silo password.
+            // Single sign-on accounts have no WeFlix password.
             if let hint = loginVM.phoneHintLine {
                 Text(hint)
                     .font(.system(size: 22))
-                    .foregroundStyle(Color.siloOnSurface.opacity(0.4))
+                    .foregroundStyle(Color.weFlixOnSurface.opacity(0.4))
                     .frame(width: 760, alignment: .leading)
                     .fixedSize(horizontal: false, vertical: true)
                     .padding(.top, 16)
@@ -499,7 +499,7 @@ struct TVLoginView: View {
                     .padding(.top, 34)
                 Text("This Apple TV reached \(server.serverName) through \(networkProvider.map { SignInOptions.providerName(for: $0) } ?? "its network"), which knows who it belongs to.")
                     .font(.system(size: 24))
-                    .foregroundStyle(Color.siloOnSurface.opacity(0.62))
+                    .foregroundStyle(Color.weFlixOnSurface.opacity(0.62))
                     .padding(.top, 14)
             }
         }
@@ -534,7 +534,7 @@ struct TVLoginView: View {
         Text(text)
             .font(.system(size: MarqueeMetrics.heroFont, weight: .heavy))
             .kerning(-2)
-            .foregroundStyle(Color.siloOnSurface)
+            .foregroundStyle(Color.weFlixOnSurface)
             .lineLimit(3)
             .minimumScaleFactor(0.6)
             .fixedSize(horizontal: false, vertical: true)
@@ -681,7 +681,7 @@ struct TVTypeOnPhoneCard: View {
                 .padding(.top, 34)
             Text("When you select a field, a keyboard notification appears on nearby iPhones and iPads. Type there instead of with the remote.")
                 .font(.system(size: 24))
-                .foregroundStyle(Color.siloOnSurface.opacity(0.62))
+                .foregroundStyle(Color.weFlixOnSurface.opacity(0.62))
                 .padding(.top, 14)
         }
     }

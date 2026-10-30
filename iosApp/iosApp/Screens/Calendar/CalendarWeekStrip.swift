@@ -58,7 +58,7 @@ struct CalendarWeekStrip: View {
             phoneNavButton(systemImage: "chevron.right", action: onNextWeek)
                 .accessibilityLabel("Next week")
         }
-        .animation(SiloTheme.springAnimation, value: selectedDay)
+        .animation(WeFlixTheme.springAnimation, value: selectedDay)
     }
 
     private func phoneNavButton(
@@ -68,12 +68,12 @@ struct CalendarWeekStrip: View {
         Button(action: action) {
             Image(systemName: systemImage)
                 .font(.system(size: 13, weight: .semibold))
-                .foregroundColor(.siloOnSurface.opacity(0.8))
+                .foregroundColor(.weFlixOnSurface.opacity(0.8))
                 .frame(width: 30, height: 30)
                 .background(Circle().fill(Color.white.opacity(0.07)))
                 .overlay(Circle().strokeBorder(Color.white.opacity(0.10), lineWidth: 1))
         }
-        .buttonStyle(.siloFlat)
+        .buttonStyle(.weFlixFlat)
     }
     #endif
 
@@ -105,14 +105,14 @@ struct CalendarWeekStrip: View {
             if !isCurrentWeek {
                 Button("Today", action: onToday)
                     .font(todayFont)
-                    .foregroundColor(isFocused(.today) ? .siloBackground : .siloOnSurface)
-                    .buttonStyle(.siloFlat)
+                    .foregroundColor(isFocused(.today) ? .weFlixBackground : .weFlixOnSurface)
+                    .buttonStyle(.weFlixFlat)
                     .padding(.horizontal, todayHorizontalPadding)
                     .frame(height: chevronHeight)
                     .background(
                         Capsule().fill(
                             isFocused(.today)
-                                ? Color.siloOnSurface.opacity(0.94)
+                                ? Color.weFlixOnSurface.opacity(0.94)
                                 : Color.white.opacity(0.08)
                         )
                     )
@@ -125,14 +125,14 @@ struct CalendarWeekStrip: View {
 
             Text(week.monthLabel)
                 .font(monthFont)
-                .foregroundColor(.siloSecondaryText)
+                .foregroundColor(.weFlixSecondaryText)
         }
-        .padding(.horizontal, SiloTheme.safePadding)
+        .padding(.horizontal, WeFlixTheme.safePadding)
         .focusSection()
         // Entering the strip from the filter bar or the first shelf lands
         // on the selected day, not the day button nearest the old focus.
         .defaultFocus($focusedControl, .day(selectedStripDay), priority: .userInitiated)
-        .animation(SiloTheme.springAnimation, value: isCurrentWeek)
+        .animation(WeFlixTheme.springAnimation, value: isCurrentWeek)
         .onChange(of: focusedControl) { oldControl, newControl in
             if oldControl == nil, newControl != nil { onFocusGained?() }
         }
@@ -156,18 +156,18 @@ struct CalendarWeekStrip: View {
             Image(systemName: systemImage)
                 .font(chevronFont)
                 .foregroundColor(
-                    isFocused(control) ? .siloBackground : .siloOnSurface.opacity(0.7)
+                    isFocused(control) ? .weFlixBackground : .weFlixOnSurface.opacity(0.7)
                 )
                 .frame(width: chevronWidth, height: chevronHeight)
                 .background(
                     Circle().fill(
                         isFocused(control)
-                            ? Color.siloOnSurface.opacity(0.94)
+                            ? Color.weFlixOnSurface.opacity(0.94)
                             : Color.white.opacity(0.08)
                     )
                 )
         }
-        .buttonStyle(.siloFlat)
+        .buttonStyle(.weFlixFlat)
         .applyStripFocus(self, control: control)
     }
 
@@ -229,21 +229,21 @@ private struct CalendarRichDayCell: View {
             VStack(spacing: 5) {
                 Text(weekdayLabel)
                     .font(.system(size: 11, weight: .semibold))
-                    .foregroundColor(.siloSecondaryText)
+                    .foregroundColor(.weFlixSecondaryText)
 
                 Text(dayNumber)
                     .font(.system(size: 15, weight: .bold))
-                    .foregroundColor(isSelected ? .siloBackground : .siloOnSurface)
+                    .foregroundColor(isSelected ? .weFlixBackground : .weFlixOnSurface)
                     .frame(width: 34, height: 34)
                     .background(
                         RoundedRectangle(cornerRadius: 11, style: .continuous)
-                            .fill(isSelected ? Color.siloOnSurface : Color.clear)
+                            .fill(isSelected ? Color.weFlixOnSurface : Color.clear)
                     )
                     .overlay(
                         RoundedRectangle(cornerRadius: 11, style: .continuous)
                             .strokeBorder(
                                 isToday && !isSelected
-                                    ? Color.siloOnSurface.opacity(0.45)
+                                    ? Color.weFlixOnSurface.opacity(0.45)
                                     : Color.clear,
                                 lineWidth: 1.5
                             )
@@ -254,7 +254,7 @@ private struct CalendarRichDayCell: View {
             .frame(maxWidth: .infinity)
             .contentShape(Rectangle())
         }
-        .buttonStyle(.siloFlat)
+        .buttonStyle(.weFlixFlat)
         .animation(.easeInOut(duration: 0.15), value: isSelected)
         .accessibilityLabel(accessibilityDescription)
         .accessibilityAddTraits(isSelected ? .isSelected : [])
@@ -265,7 +265,7 @@ private struct CalendarRichDayCell: View {
         if eventCount > 0 {
             Text("\(eventCount)")
                 .font(.system(size: 10, weight: .bold))
-                .foregroundColor(.siloOnSurface.opacity(0.85))
+                .foregroundColor(.weFlixOnSurface.opacity(0.85))
                 .padding(.horizontal, 6)
                 .frame(height: 16)
                 .background(Capsule().fill(Color.white.opacity(0.10)))
@@ -318,11 +318,11 @@ private struct CalendarDayButton: View {
             }
             .frame(width: buttonWidth, height: buttonHeight)
             .background(
-                RoundedRectangle(cornerRadius: SiloTheme.cornerRadius, style: .continuous)
+                RoundedRectangle(cornerRadius: WeFlixTheme.cornerRadius, style: .continuous)
                     .fill(backgroundFill)
             )
             .overlay(
-                RoundedRectangle(cornerRadius: SiloTheme.cornerRadius, style: .continuous)
+                RoundedRectangle(cornerRadius: WeFlixTheme.cornerRadius, style: .continuous)
                     .stroke(
                         isToday && !isSelected && !isFocused
                             ? Color.white.opacity(0.35)
@@ -332,8 +332,8 @@ private struct CalendarDayButton: View {
             )
             .scaleEffect(isFocused ? 1.06 : 1.0)
         }
-        .buttonStyle(.siloFlat)
-        .animation(SiloTheme.springAnimation, value: isFocused)
+        .buttonStyle(.weFlixFlat)
+        .animation(WeFlixTheme.springAnimation, value: isFocused)
         .animation(.easeInOut(duration: 0.15), value: isSelected)
         .accessibilityLabel(accessibilityDescription)
         .accessibilityAddTraits(isSelected ? .isSelected : [])
@@ -355,20 +355,20 @@ private struct CalendarDayButton: View {
     private var inverted: Bool { isSelected || isFocused }
 
     private var primaryColor: Color {
-        inverted ? .siloBackground : .siloOnSurface
+        inverted ? .weFlixBackground : .weFlixOnSurface
     }
 
     private var secondaryColor: Color {
-        inverted ? Color.siloBackground.opacity(0.7) : .siloSecondaryText
+        inverted ? Color.weFlixBackground.opacity(0.7) : .weFlixSecondaryText
     }
 
     private var dotColor: Color {
-        inverted ? .siloBackground : .siloOnSurface.opacity(0.8)
+        inverted ? .weFlixBackground : .weFlixOnSurface.opacity(0.8)
     }
 
     private var backgroundFill: Color {
-        if isFocused { return Color.siloOnSurface.opacity(0.94) }
-        if isSelected { return Color.siloOnSurface.opacity(0.88) }
+        if isFocused { return Color.weFlixOnSurface.opacity(0.94) }
+        if isSelected { return Color.weFlixOnSurface.opacity(0.88) }
         return Color.white.opacity(0.05)
     }
 

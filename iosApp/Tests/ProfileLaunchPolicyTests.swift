@@ -1,5 +1,5 @@
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 final class ProfileLaunchPolicyTests: XCTestCase {
     private let serverID = "server-a"
@@ -603,7 +603,7 @@ final class ProfileLaunchIdentityTests: XCTestCase {
     }
 
     func testAppLocalKeychainFallbackPolicyRecognizesUnsignedArchiveGroup() {
-        let unprefixedGroup = "org.siloserver.silo.shared"
+        let unprefixedGroup = "me.weflix.shared"
 
         XCTAssertEqual(
             SideloadKeychainFallbackPolicy.resolvedAccessGroup(
@@ -735,7 +735,7 @@ final class ProfileLaunchMigrationTests: XCTestCase {
             entries: [ServerEntry(
                 id: serverID,
                 url: "https://silo.example",
-                fetchedName: "Silo",
+                fetchedName: "weflix",
                 profileId: "profile-a",
                 lastUsedAt: Date(timeIntervalSinceReferenceDate: 1)
             )]

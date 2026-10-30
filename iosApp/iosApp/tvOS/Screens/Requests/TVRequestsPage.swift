@@ -67,11 +67,11 @@ struct TVRequestsPage: View {
             if let message = mine.actionErrorMessage {
                 Text(message)
                     .font(.system(size: 22, weight: .semibold))
-                    .foregroundStyle(Color.siloOnSurface)
+                    .foregroundStyle(Color.weFlixOnSurface)
                     .padding(.horizontal, 24)
                     .padding(.vertical, 14)
-                    .background(Capsule().fill(Color.siloGlassStrong))
-                    .padding(.leading, SiloTheme.Skyline.safeAreaX)
+                    .background(Capsule().fill(Color.weFlixGlassStrong))
+                    .padding(.leading, WeFlixTheme.Skyline.safeAreaX)
                     .padding(.bottom, 40)
                     .allowsHitTesting(false)
             }
@@ -197,7 +197,7 @@ struct TVRequestsPage: View {
                 .ignoresSafeArea(edges: .bottom)
 
             TVSkylineMarquee(model: marquee, scale: .home)
-                .offset(y: SiloTheme.Skyline.landingContentVerticalOffset)
+                .offset(y: WeFlixTheme.Skyline.landingContentVerticalOffset)
         }
         .onAppear {
             marquee.resume()
@@ -217,15 +217,15 @@ struct TVRequestsPage: View {
     /// half, so rows appear from the same bottom area as Home.
     private func rowBand(_ rows: [TVRequestRow]) -> some View {
         GeometryReader { proxy in
-            let bandHeight = proxy.size.height * SiloTheme.Skyline.rowBandHeightFraction
+            let bandHeight = proxy.size.height * WeFlixTheme.Skyline.rowBandHeightFraction
             let bandTop = min(
                 proxy.size.height,
-                max(0, proxy.size.height - bandHeight + SiloTheme.Skyline.landingContentVerticalOffset)
+                max(0, proxy.size.height - bandHeight + WeFlixTheme.Skyline.landingContentVerticalOffset)
             )
             let visibleBandHeight = max(0, proxy.size.height - bandTop)
 
             ScrollView(.vertical, showsIndicators: false) {
-                LazyVStack(alignment: .leading, spacing: SiloTheme.Skyline.rowBandPreviewSpacing) {
+                LazyVStack(alignment: .leading, spacing: WeFlixTheme.Skyline.rowBandPreviewSpacing) {
                     ForEach(Array(rows.enumerated()), id: \.element.id) { index, row in
                         rowView(row, isFirstRow: index == 0)
                             .fixedSize(horizontal: false, vertical: true)
@@ -233,7 +233,7 @@ struct TVRequestsPage: View {
                     }
                 }
                 .scrollTargetLayout()
-                .padding(.bottom, max(0, visibleBandHeight - SiloTheme.Skyline.rowBandBottomInset))
+                .padding(.bottom, max(0, visibleBandHeight - WeFlixTheme.Skyline.rowBandBottomInset))
             }
             .scrollTargetBehavior(.viewAligned)
             // Initial resolution lands on the first card; `.automatic`
@@ -261,7 +261,7 @@ struct TVRequestsPage: View {
     private func rowView(_ row: TVRequestRow, isFirstRow: Bool) -> some View {
         VStack(alignment: .leading, spacing: 4) {
             RequestsSectionHeader(label: row.label, title: row.title)
-                .padding(.horizontal, SiloTheme.Skyline.safeAreaX)
+                .padding(.horizontal, WeFlixTheme.Skyline.safeAreaX)
 
             ScrollView(.horizontal, showsIndicators: false) {
                 LazyHStack(alignment: .top, spacing: 40) {
@@ -269,8 +269,8 @@ struct TVRequestsPage: View {
                         card(item, key: row.key(for: item))
                     }
                 }
-                .padding(.horizontal, SiloTheme.Skyline.safeAreaX)
-                .padding(.vertical, SiloTheme.Skyline.rowBandCardVerticalPadding + 12)
+                .padding(.horizontal, WeFlixTheme.Skyline.safeAreaX)
+                .padding(.vertical, WeFlixTheme.Skyline.rowBandCardVerticalPadding + 12)
             }
             .scrollClipDisabled()
         }
@@ -288,7 +288,7 @@ struct TVRequestsPage: View {
         switch item {
         case .record(let record):
             RequestMediaCard(record: record, onTap: { router.openRequestRecord(record) })
-                .cardWidth(SiloTheme.Skyline.densePosterCardWidth)
+                .cardWidth(WeFlixTheme.Skyline.densePosterCardWidth)
                 .focused($focusedKey, id: key)
                 .contextMenu {
                     if RequestDisplayState(record: record).isCancelable, !mine.isCancelUnconfirmed(record) {
@@ -307,7 +307,7 @@ struct TVRequestsPage: View {
                 }
         case .result(let result):
             RequestMediaCard(result: result, onTap: { router.openRequestResult(result) })
-                .cardWidth(SiloTheme.Skyline.densePosterCardWidth)
+                .cardWidth(WeFlixTheme.Skyline.densePosterCardWidth)
                 .focused($focusedKey, id: key)
         }
     }
@@ -371,7 +371,7 @@ struct TVRequestsPage: View {
 
     private func neighborBackdrops(of item: TVRequestItem, in row: TVRequestRow) -> [String] {
         guard let index = row.items.firstIndex(where: { $0.id == item.id }) else { return [] }
-        let radius = SiloTheme.Skyline.marqueeNeighborBackdropPrefetchRadius
+        let radius = WeFlixTheme.Skyline.marqueeNeighborBackdropPrefetchRadius
         return row.items.indices
             .clamped(to: (index - radius)..<(index + radius + 1))
             .filter { $0 != index }
@@ -513,13 +513,13 @@ enum TVRequestItem: Identifiable {
 struct TVRequestsLoadingView: View {
     var body: some View {
         ZStack(alignment: .topLeading) {
-            Color.siloBackground
+            Color.weFlixBackground
 
             LinearGradient(
                 colors: [
-                    Color.siloSurfaceElevated.opacity(0.72),
-                    Color.siloBackground.opacity(0.88),
-                    Color.siloBackground,
+                    Color.weFlixSurfaceElevated.opacity(0.72),
+                    Color.weFlixBackground.opacity(0.88),
+                    Color.weFlixBackground,
                 ],
                 startPoint: .topTrailing,
                 endPoint: .bottomLeading
@@ -528,9 +528,9 @@ struct TVRequestsLoadingView: View {
             VStack(alignment: .leading, spacing: 0) {
                 marqueePlaceholder
                 Spacer(minLength: 24)
-                RequestRailSkeleton(cardCount: 8, cardWidth: SiloTheme.Skyline.densePosterCardWidth)
+                RequestRailSkeleton(cardCount: 8, cardWidth: WeFlixTheme.Skyline.densePosterCardWidth)
             }
-            .padding(.horizontal, SiloTheme.Skyline.safeAreaX)
+            .padding(.horizontal, WeFlixTheme.Skyline.safeAreaX)
             .padding(.top, 188)
             .padding(.bottom, 34)
         }
@@ -562,7 +562,7 @@ struct TVRequestsLoadingView: View {
                     .tint(.white)
                 Text("Loading Requests")
                     .font(.system(size: 20, weight: .medium))
-                    .foregroundStyle(Color.siloOnSurface.opacity(0.72))
+                    .foregroundStyle(Color.weFlixOnSurface.opacity(0.72))
             }
             .padding(.top, 4)
         }

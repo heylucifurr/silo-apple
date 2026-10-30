@@ -9,7 +9,7 @@ enum ProfileLaunchBehavior: String, Codable, CaseIterable, Identifiable, Sendabl
 
     var id: String { rawValue }
 
-    /// How long Silo can be away before Who's Watching is shown again.
+    /// How long WeFlix can be away before Who's Watching is shown again.
     /// `nil` for the untimed behaviors.
     var awayTimeout: TimeInterval? {
         switch self {
@@ -40,11 +40,11 @@ enum ProfileLaunchBehavior: String, Codable, CaseIterable, Identifiable, Sendabl
         case .automatic:
             return "Use the last profile selected on this device. A protected profile can reopen without asking for its PIN."
         case .askEveryLaunch:
-            return "Show Who's Watching whenever you return to Silo."
+            return "Show Who's Watching whenever you return to weflix."
         case .afterOneHour:
-            return "Show Who's Watching when you've been away from Silo for 1 hour."
+            return "Show Who's Watching when you've been away from weflix for 1 hour."
         case .afterTwelveHours:
-            return "Show Who's Watching when you've been away from Silo for 12 hours."
+            return "Show Who's Watching when you've been away from weflix for 12 hours."
         }
     }
 

@@ -1,5 +1,5 @@
 import XCTest
-@testable import Silo
+@testable import WeFlix
 
 /// Independent Swift reference check required by the shared settings contract.
 /// This checks agreement with the server's resolution rules, not an algorithm
@@ -414,7 +414,7 @@ final class SettingsConformanceTests: XCTestCase {
         )
         let minimum = try XCTUnwrap(schema["minimum"] as? Int)
         let maximum = try XCTUnwrap(schema["maximum"] as? Int)
-        for kbps in SiloQualityPresets.bitrateChoicesKbps {
+        for kbps in WeFlixQualityPresets.bitrateChoicesKbps {
             XCTAssertTrue((minimum...maximum).contains(kbps), "\(kbps)")
         }
     }

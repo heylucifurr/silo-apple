@@ -29,9 +29,9 @@ struct CalendarDayShelf: View {
     var body: some View {
         VStack(alignment: .leading, spacing: rowVerticalSpacing) {
             Text(heading)
-                .font(.siloHeadline)
-                .foregroundColor(events.isEmpty ? .siloSecondaryText : .siloOnSurface)
-                .padding(.horizontal, SiloTheme.safePadding)
+                .font(.weFlixHeadline)
+                .foregroundColor(events.isEmpty ? .weFlixSecondaryText : .weFlixOnSurface)
+                .padding(.horizontal, WeFlixTheme.safePadding)
 
             if events.isEmpty {
                 emptyRow
@@ -77,7 +77,7 @@ struct CalendarDayShelf: View {
                 }
             }
             #if os(tvOS)
-            .padding(.horizontal, SiloTheme.safePadding)
+            .padding(.horizontal, WeFlixTheme.safePadding)
             #else
             .scrollTargetLayout()
             #endif
@@ -86,7 +86,7 @@ struct CalendarDayShelf: View {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         #if !os(tvOS)
-        .contentMargins(.horizontal, SiloTheme.safePadding, for: .scrollContent)
+        .contentMargins(.horizontal, WeFlixTheme.safePadding, for: .scrollContent)
         .mediaRailScrolling()
         #endif
         #if os(tvOS)
@@ -102,13 +102,13 @@ struct CalendarDayShelf: View {
     private var emptyRow: some View {
         HStack(spacing: 8) {
             Image(systemName: "moon.stars")
-                .font(.siloCaption)
-                .foregroundColor(.siloSecondaryText.opacity(0.5))
+                .font(.weFlixCaption)
+                .foregroundColor(.weFlixSecondaryText.opacity(0.5))
             Text("Nothing scheduled")
-                .font(.siloCaption)
-                .foregroundColor(.siloSecondaryText)
+                .font(.weFlixCaption)
+                .foregroundColor(.weFlixSecondaryText)
         }
-        .padding(.horizontal, SiloTheme.safePadding)
+        .padding(.horizontal, WeFlixTheme.safePadding)
     }
 
     private var shelfFocusBinding: FocusState<String?>.Binding? {
@@ -125,7 +125,7 @@ struct CalendarDayShelf: View {
         #if os(tvOS)
         return 20
         #else
-        return SiloTheme.smallPadding
+        return WeFlixTheme.smallPadding
         #endif
     }
 
@@ -133,7 +133,7 @@ struct CalendarDayShelf: View {
         #if os(tvOS)
         return 40
         #else
-        return SiloTheme.spacing
+        return WeFlixTheme.spacing
         #endif
     }
 

@@ -15,11 +15,11 @@ extension FramedJSONSession where Message == PairingMessage {
     }
 
     static func tlsParameters() -> NWParameters {
-        SiloLANTLS.parameters(psk: "silo-companion-pairing-v1", identity: "silo-pairing")
+        WeFlixLANTLS.parameters(psk: "silo-companion-pairing-v1", identity: "silo-pairing")
     }
 
     /// TLS-PSK for the Apple and Android TVs; plain TCP for a Roku
-    /// (`_silopair-roku._tcp`), which can't accept TLS. The PSK is public, so
+    /// (`_weflixpair-roku._tcp`), which can't accept TLS. The PSK is public, so
     /// this gives up nothing: no pairing message carries a token, and the
     /// code the person compares is what stops an impostor.
     static func parameters(isRoku: Bool) -> NWParameters {
