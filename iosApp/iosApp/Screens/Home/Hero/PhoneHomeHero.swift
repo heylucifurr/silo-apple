@@ -15,11 +15,10 @@ struct PhoneHomeHero: View {
     /// The hero band's height. Measured from the page so the hero can bleed to
     /// the very top and still leave the next row peeking, as Prime's does.
     var height: CGFloat
-    /// Opens the player for a title the library owns.
-    var onPlay: (SectionItem) -> Void
     /// Opens the title's page (item detail, or the title page for a coming-soon
-    /// title).
-    var onMoreInfo: (SectionItem) -> Void
+    /// title). The hero carries no buttons — a tap anywhere on it does this,
+    /// as Prime's mobile hero does.
+    var onOpen: (SectionItem) -> Void
 
     @Environment(\.scenePhase) private var scenePhase
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
@@ -57,6 +56,9 @@ struct PhoneHomeHero: View {
             .clipped()
             .background(Color.weFlixPageCanvas)
             .contentShape(Rectangle())
+            // No call to action: the whole hero is the target. The page dots and
+            // the mute control keep their own taps.
+            .onTapGesture { onOpen(item) }
             // Off-screen, background, Low Power, and Reduce Motion all stop the
             // clip and the advance timer.
             .onChange(of: autoplaysTrailer) { _, playing in
@@ -89,7 +91,8 @@ struct PhoneHomeHero: View {
                 if index >= ids.count { index = max(0, ids.count - 1) }
             }
             .accessibilityElement(children: .contain)
-            .accessibilityLabel("Featured")
+            .accessibilityLabel("Featured, \(item.title)")
+            .accessibilityAction(named: Text("Show details")) { onOpen(item) }
         }
     }
 
@@ -203,7 +206,6 @@ struct PhoneHomeHero: View {
                     )
             }
 
-            actions(for: item)
             footer(for: item)
         }
         .dynamicTypeSize(...DynamicTypeSize.accessibility1)
@@ -238,40 +240,6 @@ struct PhoneHomeHero: View {
         } else {
             name.accessibilityAddTraits(.isHeader)
         }
-    }
-
-    @ViewBuilder
-    private func actions(for item: SectionItem) -> some View {
-        HStack(spacing: WeFlixTheme.spacing) {
-            // A curated title the library lacks has nothing to play; its badge
-            // carries the state and More Info opens its page. A series has
-            // nothing to play directly either.
-            if !item.isComingSoon, WeFlixMediaType.isDirectlyPlayable(item.type) {
-                Button { onPlay(item) } label: {
-                    Label("Play", systemImage: "play.fill")
-                        .font(.weFlixBody.weight(.semibold))
-                        .foregroundStyle(Color.weFlixBackground)
-                        .padding(.horizontal, WeFlixTheme.largePadding)
-                        .padding(.vertical, 16)
-                        .background(Capsule().fill(Color.weFlixPrimary))
-                        .contentShape(Capsule())
-                }
-                .accessibilityLabel("Play \(item.title)")
-            }
-
-            Button { onMoreInfo(item) } label: {
-                Label("More Info", systemImage: "info.circle")
-                    .font(.weFlixBody.weight(.semibold))
-                    .foregroundStyle(Color.weFlixOnSurface)
-                    .padding(.horizontal, WeFlixTheme.largePadding)
-                    .padding(.vertical, 16)
-                    .background(Capsule().fill(Color.white.opacity(0.18)))
-                    .contentShape(Capsule())
-            }
-            .accessibilityLabel("More info about \(item.title)")
-        }
-        .buttonStyle(.weFlixFlat)
-        .padding(.top, WeFlixTheme.smallPadding)
     }
 
     /// Page dots plus the mute toggle for the clip.

@@ -102,5 +102,7 @@ catalog item detail.
 - `SectionItem`: `availability`, `tmdbId`, `heroVideoUrl`, `releaseDate` (all
   additive, optional — unknown/absent fields never break other rows).
 - A Home hero carousel for iOS/iPadOS and tvOS that reuses `AsyncImageView`,
-  AVFoundation (muted clip), `WeFlixTheme`, and the existing routes
-  (`presentPlayer` for Play, `Route.requestDetail` for More Info).
+  AVFoundation (muted clip), `WeFlixTheme`, and the existing routes.
+- The iOS/iPadOS hero has no call-to-action buttons: a tap anywhere on it opens
+  the title's page through `Route.card` — the title page for an unowned card, the
+  item page for an owned one — which is how Prime's mobile hero behaves.

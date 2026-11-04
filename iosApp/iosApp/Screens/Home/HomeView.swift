@@ -293,8 +293,7 @@ struct HomeView: View {
             PhoneHomeHero(
                 section: section,
                 height: max(320, pageHeight * PhoneHomeHero.heightFraction),
-                onPlay: { play($0) },
-                onMoreInfo: { navigateToDetail($0.contentId, $0) }
+                onOpen: { navigateToDetail($0.contentId, $0) }
             )
         } else {
             feedRow(section)
@@ -393,16 +392,6 @@ struct HomeView: View {
                 destinationContentId: destinationContentId,
                 sectionItem: item
             )
-        )
-    }
-
-    /// Plays a title the library owns, from the hero's Play button.
-    private func play(_ item: SectionItem) {
-        router.presentPlayer(
-            contentId: item.contentId,
-            resumePosition: item.positionSeconds,
-            posterURL: item.posterUrl,
-            backdropURL: item.backdropUrl
         )
     }
 

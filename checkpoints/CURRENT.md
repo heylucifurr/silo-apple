@@ -30,8 +30,10 @@ way.
   `HeroTrailerPlayer.swift` (AVFoundation clip host). Styled to Prime Video's
   mobile hero: bleeds under the status bar, ~90% of the page height so only the
   next row peeks, Prime's metadata track (year · runtime · 2 genres · cert, no
-  rating), a three-line synopsis whose last line fades, borderless translucent
-  pills, larger page dots, and a mute control only while the clip is running.
+  rating), a three-line synopsis whose last line fades, larger page dots, and a
+  mute control only while the clip is running. It carries **no buttons** — a tap
+  anywhere on the hero opens the title, so an unowned card opens its title page
+  and an owned one its item page.
   The height is measured from the page (`GeometryReader` in `HomeView`) rather
   than `containerRelativeFrame`, so it is deterministic and renderable.
 - **New tvOS hero** — `tvOS/Components/TVFeaturedHero.swift` (single composite
@@ -50,15 +52,16 @@ way.
 | 3 | macOS build (scheme WeFlixMac) | Swift sources compile (82 compile jobs); the build then fails at `CompileAssetCatalogVariant` — a local `actool`/`ibtoold` plug-in load failure ("A required plugin failed to load", also "CoreSimulator is out of date"), unrelated to this change |
 | 4 | New warnings vs baseline | none introduced (2 iOS, 3 tvOS are pre-existing) |
 | 5 | Existing tests (`WeFlixTests`, iPhone 17 / iOS 27 sim) | 3659 tests, 6 failures — all pre-existing and independent of the change: `CalendarTimeZoneTests` is date-dependent (its assertion only holds in some weeks) and two `SubtitleDisplayScopeTests` are about subtitle-appearance stores. None reference the changed code |
-| 6 | Hero shows admin order, dots/counter | not verified (no live server) |
-| 7 | Trailer autoplay / mute / backdrop-only | not verified (no live server) |
-| 8 | Coming-soon details opens (no "not found") | not verified (no live server) |
-| 9 | In-library title shows Play and plays | not verified (no live server) |
-| 10 | Flag off → no hero, no broken row | not verified (no live server) |
-| 11 | Other rows/library/playback unchanged | by construction (unchanged code paths) |
-| 12 | TV D-pad through hero and rows | not verified (no live server / no device) |
+| 6 | Hero shows admin order, dots/counter | pass — live run on the iPhone 17 sim: 5 slides, accessibility reports "Slide 1…5 of 5", auto-advance walked 01 → 02 → 03 while it sat idle |
+| 7 | Trailer autoplay / mute / backdrop-only | partial — the clip is attached and the "Unmute trailer" control shows only while it runs; audio not audibly checked |
+| 8 | Coming-soon details opens (no "not found") | not verified — the hero is tappable (accessibility exposes "Show details"), but the tooling here has no tap action, so a human must confirm |
+| 9 | In-library title | by design there is no Play button; a tap opens its item page |
+| 10 | Flag off → no hero, no broken row | not verified |
+| 11 | Other rows/library/playback unchanged | pass — the live run showed Continue Watching beneath the hero, untouched |
+| 12 | TV D-pad through hero and rows | not verified (no device) |
 | 13 | silo-server `git status` unchanged | pass |
-| 14 | Rendered iOS hero (scratch `ImageRenderer` test at 393×852, since removed) | pass — matches the Prime reference: eyebrow, title, "2026 · 1h 57m · Mystery · Thriller · R", faded 3-line synopsis, Play + More Info pills (coming-soon variant shows badge + More Info only), 5 page dots, next row peeking |
+| 14 | Rendered iOS hero (scratch `ImageRenderer` test at 393×852, since removed) | pass — eyebrow, title, "2026 · 1h 57m · Mystery · Thriller · R", faded 3-line synopsis, 5 page dots, next row peeking, and no CTA |
+| 15 | Live iOS hero on the iPhone 17 sim against Luther's server | pass — real backdrop under the WEFLIX header, "FEATURED — NO. 02 / Other Mommy / 2026 · 1h 33m · R / Coming soon", faded synopsis, dots, mute control, no buttons |
 
 Builds are compile-only evidence on simulators with no server configured; the
 behavioural checks need a running silo-server and a curated Most Anticipated
