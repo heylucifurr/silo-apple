@@ -27,7 +27,13 @@ way.
   `TVFeaturedHero` over the Skyline feed; taps go through `Route.card`.
 - **New iOS/iPadOS hero** — `Screens/Home/Hero/PhoneHomeHero.swift`, with
   `HomeHeroContent.swift` (formatting), `HeroTitleLogo.swift`,
-  `HeroTrailerPlayer.swift` (AVFoundation clip host).
+  `HeroTrailerPlayer.swift` (AVFoundation clip host). Styled to Prime Video's
+  mobile hero: bleeds under the status bar, ~90% of the page height so only the
+  next row peeks, Prime's metadata track (year · runtime · 2 genres · cert, no
+  rating), a three-line synopsis whose last line fades, borderless translucent
+  pills, larger page dots, and a mute control only while the clip is running.
+  The height is measured from the page (`GeometryReader` in `HomeView`) rather
+  than `containerRelativeFrame`, so it is deterministic and renderable.
 - **New tvOS hero** — `tvOS/Components/TVFeaturedHero.swift` (single composite
   focus owner: Left/Right page, Select opens the page, Play/Pause toggles the
   clip, Up → menu, Down → rows).
@@ -52,6 +58,7 @@ way.
 | 11 | Other rows/library/playback unchanged | by construction (unchanged code paths) |
 | 12 | TV D-pad through hero and rows | not verified (no live server / no device) |
 | 13 | silo-server `git status` unchanged | pass |
+| 14 | Rendered iOS hero (scratch `ImageRenderer` test at 393×852, since removed) | pass — matches the Prime reference: eyebrow, title, "2026 · 1h 57m · Mystery · Thriller · R", faded 3-line synopsis, Play + More Info pills (coming-soon variant shows badge + More Info only), 5 page dots, next row peeking |
 
 Builds are compile-only evidence on simulators with no server configured; the
 behavioural checks need a running silo-server and a curated Most Anticipated

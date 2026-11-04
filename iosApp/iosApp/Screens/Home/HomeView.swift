@@ -219,19 +219,26 @@ struct HomeView: View {
 
     #if os(iOS)
     private var scrollContent: some View {
-        feedScrollView(topSafeAreaInset: 0)
+        // A leading hero bleeds to the very top, under the status bar, so the
+        // feed measures the full height there. With no hero the page keeps its
+        // safe area, as before.
+        let leadsWithHero = feedSections.first?.isFeatured == true
+        return GeometryReader { geometry in
+            feedScrollView(topSafeAreaInset: 0, pageHeight: geometry.size.height)
+        }
+        .ignoresSafeArea(edges: leadsWithHero ? .top : [])
     }
     #elseif os(macOS)
     private var scrollContent: some View {
         GeometryReader { geometry in
-            feedScrollView(topSafeAreaInset: geometry.safeAreaInsets.top)
+            feedScrollView(topSafeAreaInset: geometry.safeAreaInsets.top, pageHeight: geometry.size.height)
                 .weFlixScrollEdgeEffect()
         }
     }
     #endif
 
     #if !os(tvOS)
-    private func feedScrollView(topSafeAreaInset: CGFloat) -> some View {
+    private func feedScrollView(topSafeAreaInset: CGFloat, pageHeight: CGFloat) -> some View {
         let sections = feedSections
         // A hero at the top bleeds to the page's edge, so the pinned-header
         // runway is dropped and the hero takes back the stack's leading gap.
@@ -246,8 +253,12 @@ struct HomeView: View {
                 }
 
                 ForEach(sections) { section in
-                    feedSection(section, leadsPage: section.id == sections.first?.id)
-                        .onAppear { warmRows(after: section) }
+                    feedSection(
+                        section,
+                        leadsPage: section.id == sections.first?.id,
+                        pageHeight: pageHeight
+                    )
+                    .onAppear { warmRows(after: section) }
                 }
             }
             .padding(.bottom, HomeFeedMetrics.bottomRunway)
@@ -267,7 +278,7 @@ struct HomeView: View {
     }
 
     @ViewBuilder
-    private func feedSection(_ section: ResolvedSection, leadsPage: Bool) -> some View {
+    private func feedSection(_ section: ResolvedSection, leadsPage: Bool, pageHeight: CGFloat) -> some View {
         #if os(macOS)
         if leadsPage, section.isFeatured {
             MacFeaturedHero(section: section)
@@ -281,6 +292,7 @@ struct HomeView: View {
         if leadsPage, section.isFeatured {
             PhoneHomeHero(
                 section: section,
+                height: max(320, pageHeight * PhoneHomeHero.heightFraction),
                 onPlay: { play($0) },
                 onMoreInfo: { navigateToDetail($0.contentId, $0) }
             )

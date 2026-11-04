@@ -20,15 +20,16 @@ enum HomeHeroContent {
         return nil
     }
 
-    /// "2026 · 2h 8m · Action · PG-13", skipping whatever the item does not
-    /// carry. For a coming-soon title the year is its release year.
+    /// The hero's metadata track, as Prime shows it: "2026 · 1h 57m · Mystery ·
+    /// Thriller · R", skipping whatever the item does not carry. For a
+    /// coming-soon title the year is its release year.
+    ///
+    /// Ratings are deliberately left out — the hero keeps year, runtime, up to
+    /// two genres and the certification only.
     static func metadataLine(_ item: SectionItem) -> String? {
         var parts: [String] = []
         if let year = item.year, year > 0 { parts.append(String(year)) }
         if let runtime = MediaTextFormatting.runtime(minutes: item.runtime) { parts.append(runtime) }
-        if let rating = item.ratingImdb, rating > 0 {
-            parts.append("IMDb " + String(format: "%.1f", rating))
-        }
         parts.append(contentsOf: (item.genres ?? []).prefix(2))
         if let contentRating = item.contentRating?.heroNonEmpty { parts.append(contentRating) }
         return parts.isEmpty ? nil : parts.joined(separator: " · ")

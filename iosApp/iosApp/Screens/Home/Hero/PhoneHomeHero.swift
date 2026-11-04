@@ -12,6 +12,9 @@ import SwiftUI
 /// the backdrop alone shows and no error is raised.
 struct PhoneHomeHero: View {
     let section: ResolvedSection
+    /// The hero band's height. Measured from the page so the hero can bleed to
+    /// the very top and still leave the next row peeking, as Prime's does.
+    var height: CGFloat
     /// Opens the player for a title the library owns.
     var onPlay: (SectionItem) -> Void
     /// Opens the title's page (item detail, or the title page for a coming-soon
@@ -49,8 +52,8 @@ struct PhoneHomeHero: View {
                 scrim
                 content(for: item)
             }
-            .frame(height: Self.height)
             .frame(maxWidth: .infinity)
+            .frame(height: height)
             .clipped()
             .background(Color.weFlixPageCanvas)
             .contentShape(Rectangle())
@@ -102,7 +105,7 @@ struct PhoneHomeHero: View {
             }
         }
         .tabViewStyle(.page(indexDisplayMode: .never))
-        .frame(height: Self.height)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
         .accessibilityHidden(true)
     }
 
@@ -129,17 +132,28 @@ struct PhoneHomeHero: View {
             .accessibilityHidden(true)
     }
 
-    /// Fades the artwork into the page canvas so the text stays legible.
+    /// Fades the artwork into the page canvas so the text stays legible, plus a
+    /// gentle top fade that keeps the floating header readable over bright art.
     private var scrim: some View {
-        LinearGradient(
-            stops: [
-                .init(color: .clear, location: 0.28),
-                .init(color: Color.weFlixPageCanvas.opacity(0.55), location: 0.62),
-                .init(color: Color.weFlixPageCanvas, location: 1),
-            ],
-            startPoint: .top,
-            endPoint: .bottom
-        )
+        ZStack {
+            LinearGradient(
+                stops: [
+                    .init(color: Color.black.opacity(0.35), location: 0),
+                    .init(color: .clear, location: 0.26),
+                ],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            LinearGradient(
+                stops: [
+                    .init(color: .clear, location: 0.26),
+                    .init(color: Color.weFlixPageCanvas.opacity(0.55), location: 0.64),
+                    .init(color: Color.weFlixPageCanvas, location: 1),
+                ],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+        }
         .allowsHitTesting(false)
         .accessibilityHidden(true)
     }
@@ -147,7 +161,7 @@ struct PhoneHomeHero: View {
     // MARK: - Content
 
     private func content(for item: SectionItem) -> some View {
-        VStack(alignment: .leading, spacing: 10) {
+        VStack(alignment: .leading, spacing: 12) {
             Text("Featured — No. \(Self.twoDigit(index + 1))")
                 .font(.weFlixCaption.weight(.semibold))
                 .textCase(.uppercase)
@@ -174,6 +188,19 @@ struct PhoneHomeHero: View {
                     .foregroundStyle(Color.weFlixSecondaryText)
                     .lineLimit(3)
                     .fixedSize(horizontal: false, vertical: true)
+                    // The last line of the synopsis fades into the artwork, as
+                    // Prime's does.
+                    .mask(
+                        LinearGradient(
+                            stops: [
+                                .init(color: .black, location: 0),
+                                .init(color: .black, location: 0.8),
+                                .init(color: .clear, location: 1),
+                            ],
+                            startPoint: .top,
+                            endPoint: .bottom
+                        )
+                    )
             }
 
             actions(for: item)
@@ -182,7 +209,7 @@ struct PhoneHomeHero: View {
         .dynamicTypeSize(...DynamicTypeSize.accessibility1)
         .frame(maxWidth: 560, alignment: .leading)
         .padding(.horizontal, HomeFeedMetrics.gutter)
-        .padding(.bottom, WeFlixTheme.padding)
+        .padding(.bottom, WeFlixTheme.largePadding)
         .animation(.easeInOut(duration: WeFlixTheme.slowDuration), value: index)
     }
 
@@ -225,7 +252,7 @@ struct PhoneHomeHero: View {
                         .font(.weFlixBody.weight(.semibold))
                         .foregroundStyle(Color.weFlixBackground)
                         .padding(.horizontal, WeFlixTheme.largePadding)
-                        .padding(.vertical, WeFlixTheme.spacing)
+                        .padding(.vertical, 16)
                         .background(Capsule().fill(Color.weFlixPrimary))
                         .contentShape(Capsule())
                 }
@@ -237,9 +264,8 @@ struct PhoneHomeHero: View {
                     .font(.weFlixBody.weight(.semibold))
                     .foregroundStyle(Color.weFlixOnSurface)
                     .padding(.horizontal, WeFlixTheme.largePadding)
-                    .padding(.vertical, WeFlixTheme.spacing)
-                    .background(Capsule().fill(Color.weFlixChromeSelectedFill))
-                    .overlay(Capsule().stroke(Color.weFlixChromeSelectedBorder))
+                    .padding(.vertical, 16)
+                    .background(Capsule().fill(Color.white.opacity(0.18)))
                     .contentShape(Capsule())
             }
             .accessibilityLabel("More info about \(item.title)")
@@ -260,8 +286,11 @@ struct PhoneHomeHero: View {
                             }
                         } label: {
                             Circle()
-                                .fill(offset == index ? Color.weFlixPrimary : Color.weFlixSecondaryText)
-                                .frame(width: 6, height: 6)
+                                .fill(offset == index ? Color.white : Color.white.opacity(0.35))
+                                .frame(
+                                    width: offset == index ? 8 : 6,
+                                    height: offset == index ? 8 : 6
+                                )
                                 .frame(width: 18, height: 18)
                                 .contentShape(Rectangle())
                         }
@@ -276,7 +305,9 @@ struct PhoneHomeHero: View {
 
             Spacer(minLength: 0)
 
-            if trailer.urlString != nil {
+            // Shown only while the clip is running, as Prime's is: no clip, no
+            // control.
+            if autoplaysTrailer {
                 Button { trailer.toggleMute() } label: {
                     Image(systemName: trailer.isMuted ? "speaker.slash.fill" : "speaker.wave.2.fill")
                         .font(.weFlixBody.weight(.semibold))
@@ -319,9 +350,11 @@ struct PhoneHomeHero: View {
 
     // MARK: - Metrics
 
-    private static let height: CGFloat = 520
+    /// Share of the page height the hero fills. Prime's mobile hero is nearly
+    /// full screen, so the next row only peeks at the bottom.
+    static let heightFraction: CGFloat = 0.9
     private static let advanceSeconds: Double = 8
-    private static let logoSize = CGSize(width: 260, height: 110)
+    private static let logoSize = CGSize(width: 340, height: 150)
 
     static func twoDigit(_ value: Int) -> String {
         value < 10 ? "0\(value)" : "\(value)"
