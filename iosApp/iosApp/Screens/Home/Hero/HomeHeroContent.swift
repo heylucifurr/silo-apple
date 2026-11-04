@@ -62,6 +62,26 @@ enum HomeHeroContent {
         out.setLocalizedDateFormatFromTemplate("d MMM yyyy")
         return out.string(from: date)
     }
+
+    /// A `YYYY-MM-DD` release date as the hero's date line shows it — "7 Oct
+    /// 2026" — or nil when there is none or it cannot be parsed.
+    ///
+    /// A curated title keeps its date even after it has passed: that date is
+    /// when the title opened, and the row is the administrator's list of what
+    /// they are waiting for.
+    static func releaseDateText(_ raw: String?) -> String? {
+        guard let value = raw.flatMap({ $0.heroNonEmpty }) else { return nil }
+        let parser = DateFormatter()
+        parser.locale = Locale(identifier: "en_US_POSIX")
+        parser.timeZone = TimeZone(identifier: "UTC")
+        parser.dateFormat = "yyyy-MM-dd"
+        guard let date = parser.date(from: value) else { return nil }
+        let out = DateFormatter()
+        out.locale = Locale.current
+        out.timeZone = TimeZone(identifier: "UTC")
+        out.setLocalizedDateFormatFromTemplate("MMM d, yyyy")
+        return out.string(from: date)
+    }
 }
 
 extension String {

@@ -7,41 +7,51 @@ checked out on this machine, so Apple only. Branch: `Development`.
 
 Contract and root cause: `docs/integration/coming-soon-hero.md`.
 
-### What changed
+### Hero restyle (Prime card)
 
-A Home row the server flags `featured` now renders as a hero carousel at the top
-of Home on iOS/iPadOS and tvOS, and no longer also renders as a poster row. A
-curated "Most Anticipated" slide the library does not own opens its title page
-instead of the catalog item detail, so it can never end in "not found". macOS
-already had a featured hero; it now routes and gates its Play button the same
-way.
+The phone hero was a full-bleed band; it is now the Prime-style carousel
+**card** the reference calls for.
 
-- **Models** — `iosApp/iosApp/Networking/Models.swift`: `SectionItem` gains
-  additive optional `availability`, `tmdbId`, `releaseDate`, `heroVideoUrl`,
-  plus `isComingSoon`, `comingSoonTmdbId`, `comingSoonMediaType`.
-- **Routing** — `iosApp/iosApp/Navigation/Route.swift`: `Route.card(...)` sends
-  a coming-soon card to `.requestDetail` (the title page the web uses), every
-  other card to `.itemDetail`.
-- **Home** — `iosApp/iosApp/Screens/Home/HomeView.swift`: the first featured
-  section is lifted to the top; iOS renders `PhoneHomeHero`, tvOS renders
-  `TVFeaturedHero` over the Skyline feed; taps go through `Route.card`.
-- **New iOS/iPadOS hero** — `Screens/Home/Hero/PhoneHomeHero.swift`, with
-  `HomeHeroContent.swift` (formatting), `HeroTitleLogo.swift`,
-  `HeroTrailerPlayer.swift` (AVFoundation clip host). Styled to Prime Video's
-  mobile hero: bleeds under the status bar, ~90% of the page height so only the
-  next row peeks, Prime's metadata track (year · runtime · 2 genres · cert, no
-  rating), a three-line synopsis whose last line fades, larger page dots, and a
-  mute control only while the clip is running. It carries **no buttons** — a tap
-  anywhere on the hero opens the title, so an unowned card opens its title page
-  and an owned one its item page.
-  The height is measured from the page (`GeometryReader` in `HomeView`) rather
-  than `containerRelativeFrame`, so it is deterministic and renderable.
-- **New tvOS hero** — `tvOS/Components/TVFeaturedHero.swift` (single composite
-  focus owner: Left/Right page, Select opens the page, Play/Pause toggles the
-  clip, Up → menu, Down → rows).
-- **Theme** — `WeFlixTheme.Skyline.heroHeightFraction`.
-- **macOS** — `macOS/MacFeaturedHero.swift`: Play gated on `!isComingSoon`,
-  More Info routes through `.card`.
+- Inset 16 from each page edge, max width 720 on a tablet, top corners radius
+  20 and square bottom corners, height = width × 0.78.
+- Backdrop and trailer both fill and centre-crop. The backdrop stays until the
+  clip's layer reports a frame (`AVPlayerLayer.isReadyForDisplay`), then the
+  clip crossfades in over 0.3 s.
+- The card's lower 45 % fades to the page colour, so it has no bottom edge; the
+  card itself carries no background colour behind its rounded corners.
+- Title: the item's clear logo (max 60 % of the card width, max height 64,
+  aspect preserved) where the server sends one, else the name at 24 bold over
+  two lines, shadowed, with no strip behind it.
+- Metadata row: white `COMING SOON` pill (curated titles the library lacks
+  only), grey `#3A3A3A` rating pill, runtime in white, year and first genre in
+  grey, separated by spacing alone.
+- Below it a calendar line with the release date.
+- Mute control at the card's top-right: 40 × 40 radius 10, black 45 % with a
+  1 pt white-25 % border, inside a 44 pt target, shown while the clip runs.
+- Page dots centred: the active slide is an 18 × 6 white pill, the rest 6 × 6 at
+  40 % white, 14 below the date line, width animated over 0.2 s.
+- The card carries no buttons — a tap anywhere opens the title.
+
+### What changed earlier in this branch
+
+A Home row the server flags `featured` renders as this hero at the top of Home
+and is no longer also drawn as a poster row. A curated "Most Anticipated" slide
+the library does not own opens its title page instead of the catalog item
+detail, so it can never end in "not found".
+
+- **Models** — `SectionItem` gains additive optional `availability`, `tmdbId`,
+  `releaseDate`, `heroVideoUrl` plus `isComingSoon`, `comingSoonTmdbId`,
+  `comingSoonMediaType`.
+- **Routing** — `Route.card(...)` sends a coming-soon card to `.requestDetail`
+  (the title page the web uses) and every other card to `.itemDetail`.
+- **Home** — the first featured section is lifted to the top; iOS renders
+  `PhoneHomeHero` below the header runway, tvOS renders `TVFeaturedHero` over
+  the Skyline feed.
+- **tvOS** — kept the previous layout and took only the fill/crossfade, the
+  45 % fade, the logo, and the mute control's style (rendered as a
+  non-focusable indicator; see Questions).
+- **macOS** — its existing hero gates Play on `!isComingSoon` and routes More
+  Info through `.card`.
 
 ### Verification
 
@@ -49,42 +59,36 @@ way.
 | --- | --- | --- |
 | 1 | iOS build (scheme WeFlix, iPhone 17 / iOS 27 sim) | pass |
 | 2 | tvOS build (scheme WeFlixTV, Apple TV 4K / tvOS 27 sim) | pass |
-| 3 | macOS build (scheme WeFlixMac) | Swift sources compile (82 compile jobs); the build then fails at `CompileAssetCatalogVariant` — a local `actool`/`ibtoold` plug-in load failure ("A required plugin failed to load", also "CoreSimulator is out of date"), unrelated to this change |
-| 4 | New warnings vs baseline | none introduced (2 iOS, 3 tvOS are pre-existing) |
-| 5 | Existing tests (`WeFlixTests`, iPhone 17 / iOS 27 sim) | 3659 tests, 6 failures — all pre-existing and independent of the change: `CalendarTimeZoneTests` is date-dependent (its assertion only holds in some weeks) and two `SubtitleDisplayScopeTests` are about subtitle-appearance stores. None reference the changed code |
-| 6 | Hero shows admin order, dots/counter | pass — live run on the iPhone 17 sim: 5 slides, accessibility reports "Slide 1…5 of 5", auto-advance walked 01 → 02 → 03 while it sat idle |
-| 7 | Trailer autoplay / mute / backdrop-only | partial — the clip is attached and the "Unmute trailer" control shows only while it runs; audio not audibly checked |
-| 8 | Coming-soon details opens (no "not found") | not verified — the hero is tappable (accessibility exposes "Show details"), but the tooling here has no tap action, so a human must confirm |
-| 9 | In-library title | by design there is no Play button; a tap opens its item page |
-| 10 | Flag off → no hero, no broken row | not verified |
-| 11 | Other rows/library/playback unchanged | pass — the live run showed Continue Watching beneath the hero, untouched |
-| 12 | TV D-pad through hero and rows | not verified (no device) |
+| 3 | macOS build (scheme WeFlixMac) | pass — `xcodebuild ... build` exits 0 |
+| 4 | New warnings vs baseline | none |
+| 5 | Existing tests (`WeFlixTests`, iPhone 17 sim, idle) | 3659 tests, 3 failures — all pre-existing and flaky/date-dependent (`CalendarTimeZoneTests` asserts a day that only matches in some weeks; `AsyncImageViewRetryTests` is a timing test). The 4 `PlayerSurfaceLayoutTests` that failed in a contended run pass in isolation. Nothing new in the changed areas |
+| 6 | Live hero on the iPhone 17 sim against Luther's server | pass — inset rounded card, filled artwork, logo on "Verity" and text on "Other Mommy", `COMING SOON` + `R` + runtime + year, calendar date, centred pill dots, top-right mute control while the clip runs |
+| 7 | Card dissolves into the page, no bottom edge | pass (screenshots) |
+| 8 | Letterboxed clip fills the card | by construction — `AVPlayerLayer.videoGravity = .resizeAspectFill`; the specific reference clip was not replayed |
+| 9 | Mute button inside the card and toggles | inside: pass. Toggling not driven — the tooling here has no tap action |
+| 10 | Dots and swipe | dots pass (centred, active pill, count matches). Swipe not driven; the paged `TabView` is unchanged from the previous build |
+| 11 | Other rows unchanged | pass — Continue Watching and Trending render as before beneath the card |
+| 12 | Side-by-side evidence | `docs/design/hero-after.png` |
 | 13 | silo-server `git status` unchanged | pass |
-| 14 | Rendered iOS hero (scratch `ImageRenderer` test at 393×852, since removed) | pass — eyebrow, title, "2026 · 1h 57m · Mystery · Thriller · R", faded 3-line synopsis, 5 page dots, next row peeking, and no CTA |
-| 15 | Live iOS hero on the iPhone 17 sim against Luther's server | pass — real backdrop under the WEFLIX header, "FEATURED — NO. 02 / Other Mommy / 2026 · 1h 33m · R / Coming soon", faded synopsis, dots, mute control, no buttons |
-
-Builds are compile-only evidence on simulators with no server configured; the
-behavioural checks need a running silo-server and a curated Most Anticipated
-list.
 
 ### Questions for Luther
 
-1. **Known count mismatch.** Admin → Sections reads "Coming Soon · Most
-   anticipated · 12 titles" while the Most Anticipated list holds 5. From the
-   server source, `fetchAnticipated` returns `min(entries, item_limit)` and sets
-   the section's `total_count` to that same number, so the API returns the
-   curated count (5), capped by the row's `item_limit`; the admin's "12" is not
-   the list length. Not confirmed against a live server.
-2. **tvOS Select.** The TV spec says Select opens More info and Play/Pause
-   toggles the clip, so the tvOS hero is one composite focus target with no
-   separate Play button; an in-library title plays from its detail page. If the
-   TV hero should instead offer a Play action directly, say so — it needs a
-   second focus target and the focus model reworked.
-3. **Requests off.** The coming-soon page is `GET /api/v2/requests/detail/...`,
-   which the server refuses while requests are disabled
-   (`ensureRequestsEnabled`). With requests off, a coming-soon item's page would
-   error. A server-side capability-independent title detail (or leaving requests
-   on) is needed; server is out of scope here.
-4. **Trailer audio.** The clip plays through a plain `AVPlayer` with no audio
-   session, so unmuting is best-effort and does not duck theme music. If sound
-   should be guaranteed, that needs the shared audio-session policy.
+1. **`docs/design/hero-reference-prime.png` is missing.** Only
+   `hero-current-android.png` and a pre-existing `hero-after.png` were on disk,
+   so the side-by-side pairs the Android reference with the iOS result. The
+   earlier Android file is kept as `hero-after-android.png`.
+2. **Metadata placement.** The spec puts the metadata row inside the card's
+   fade; the Android reference screenshot puts it below the card. I followed
+   the spec.
+3. **In-library titles.** The spec's item 5 mentions Play "per the existing
+   behaviour", but the hero has carried no buttons since the last change, so an
+   owned title simply drops the `COMING SOON` pill and shows the calendar date.
+4. **Separators and dates.** The metadata uses spacing only (no "·") per the
+   spec's wording; the date line follows the user's locale, so it reads
+   "7 Oct 2026" here rather than the spec image's "Oct 7, 2026".
+5. **tvOS mute.** The TV hero is one composite focus owner and the Siri Remote
+   has no mute button, so the mute control is a non-focusable indicator; a real
+   toggle needs a second focus target and a reworked focus model.
+6. **Requests off.** The coming-soon page is
+   `GET /api/v2/requests/detail/...`, which the server refuses while requests
+   are disabled. Server-side, out of scope here.

@@ -31,6 +31,8 @@ struct TVFeaturedHero: View {
     @State private var trailer = HeroTrailerController()
     /// The viewer pressed Play/Pause: autoplay holds off until they resume.
     @State private var pausedByViewer = false
+    /// The clip has drawn a frame, so its layer can fade in over the backdrop.
+    @State private var trailerHasFrame = false
     /// The logo that has finished loading; until then the name shows as text.
     @State private var loadedLogoURL: String?
 
@@ -46,6 +48,9 @@ struct TVFeaturedHero: View {
         isFocused && !reduceMotion && !pausedByViewer && trailer.urlString != nil
     }
 
+    /// The clip is running and has a frame, so it takes over from the backdrop.
+    private var showsTrailer: Bool { playsTrailer && trailerHasFrame }
+
     var body: some View {
         if let item {
             ZStack(alignment: .bottomLeading) {
@@ -53,6 +58,11 @@ struct TVFeaturedHero: View {
                 trailerLayer
                 scrim
                 content(for: item)
+                if showsTrailer {
+                    muteIndicator
+                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
+                        .padding(WeFlixTheme.smallPadding)
+                }
             }
             .frame(maxWidth: .infinity)
             // A large share of the screen, so the rows below stay in view.
@@ -87,6 +97,7 @@ struct TVFeaturedHero: View {
             .onChange(of: index) { _, _ in
                 loadedLogoURL = nil
                 pausedByViewer = false
+                trailerHasFrame = false
                 trailer.load(urlString: item.heroVideoUrl)
                 if playsTrailer { trailer.play() }
             }
@@ -133,19 +144,23 @@ struct TVFeaturedHero: View {
     }
 
     private var trailerLayer: some View {
-        HeroTrailerLayer(player: reduceMotion ? nil : trailer.player)
-            .id(trailer.urlString ?? "no-clip")
-            .opacity(playsTrailer ? 1 : 0)
-            .animation(.easeInOut(duration: WeFlixTheme.slowDuration), value: playsTrailer)
-            .allowsHitTesting(false)
-            .accessibilityHidden(true)
+        HeroTrailerLayer(
+            player: reduceMotion ? nil : trailer.player,
+            onFirstFrame: { trailerHasFrame = true }
+        )
+        .id(trailer.urlString ?? "no-clip")
+        .opacity(showsTrailer ? 1 : 0)
+        .animation(.easeInOut(duration: Self.trailerCrossfade), value: showsTrailer)
+        .allowsHitTesting(false)
+        .accessibilityHidden(true)
     }
 
+    /// Dissolves the hero's bottom into the page over its lower 45%, so the
+    /// clip and the backdrop meet the rows below with no hard edge.
     private var scrim: some View {
         LinearGradient(
             stops: [
-                .init(color: .clear, location: 0.24),
-                .init(color: Color.weFlixPageCanvas.opacity(0.5), location: 0.6),
+                .init(color: Color.weFlixPageCanvas.opacity(0), location: 0.55),
                 .init(color: Color.weFlixPageCanvas, location: 1),
             ],
             startPoint: .top,
@@ -153,6 +168,23 @@ struct TVFeaturedHero: View {
         )
         .allowsHitTesting(false)
         .accessibilityHidden(true)
+    }
+
+    /// The clip's mute state, in the phone hero's control style. It is not a
+    /// focus target: the hero is one composite focus owner and the Siri Remote
+    /// has no mute button, so this reports the clip's state and Play/Pause keeps
+    /// owning playback.
+    private var muteIndicator: some View {
+        Image(systemName: trailer.isMuted ? "speaker.slash.fill" : "speaker.wave.2.fill")
+            .font(.system(size: 20, weight: .semibold))
+            .foregroundStyle(.white)
+            .frame(width: 40, height: 40)
+            .background(RoundedRectangle(cornerRadius: 10).fill(Color.black.opacity(0.45)))
+            .overlay(
+                RoundedRectangle(cornerRadius: 10)
+                    .stroke(Color.white.opacity(0.25), lineWidth: 1)
+            )
+            .accessibilityHidden(true)
     }
 
     // MARK: - Content
@@ -285,6 +317,7 @@ struct TVFeaturedHero: View {
     // MARK: - Metrics
 
     private static let advanceSeconds: Double = 8
+    private static let trailerCrossfade: Double = 0.3
     private static let logoSize = CGSize(width: 340, height: 140)
 
     static func twoDigit(_ value: Int) -> String {

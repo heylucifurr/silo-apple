@@ -219,44 +219,37 @@ struct HomeView: View {
 
     #if os(iOS)
     private var scrollContent: some View {
-        // A leading hero bleeds to the very top, under the status bar, so the
-        // feed measures the full height there. With no hero the page keeps its
-        // safe area, as before.
-        let leadsWithHero = feedSections.first?.isFeatured == true
-        return GeometryReader { geometry in
-            feedScrollView(topSafeAreaInset: 0, pageHeight: geometry.size.height)
+        GeometryReader { geometry in
+            feedScrollView(topSafeAreaInset: 0, pageWidth: geometry.size.width)
         }
-        .ignoresSafeArea(edges: leadsWithHero ? .top : [])
     }
     #elseif os(macOS)
     private var scrollContent: some View {
         GeometryReader { geometry in
-            feedScrollView(topSafeAreaInset: geometry.safeAreaInsets.top, pageHeight: geometry.size.height)
-                .weFlixScrollEdgeEffect()
+            feedScrollView(
+                topSafeAreaInset: geometry.safeAreaInsets.top,
+                pageWidth: geometry.size.width
+            )
+            .weFlixScrollEdgeEffect()
         }
     }
     #endif
 
     #if !os(tvOS)
-    private func feedScrollView(topSafeAreaInset: CGFloat, pageHeight: CGFloat) -> some View {
+    private func feedScrollView(topSafeAreaInset: CGFloat, pageWidth: CGFloat) -> some View {
         let sections = feedSections
-        // A hero at the top bleeds to the page's edge, so the pinned-header
-        // runway is dropped and the hero takes back the stack's leading gap.
-        let leadsWithHero = sections.first?.isFeatured == true
         return ScrollView(.vertical, showsIndicators: false) {
             LazyVStack(alignment: .leading, spacing: HomeFeedMetrics.sectionSpacing) {
-                // Clear runway under the pinned header so the first row
-                // starts below the wordmark and utilities.
-                if !leadsWithHero {
-                    Color.clear
-                        .frame(height: topRunwaySpacing(topSafeAreaInset: topSafeAreaInset))
-                }
+                // Clear runway under the pinned header so the first row (or the
+                // hero card) starts below the wordmark and utilities.
+                Color.clear
+                    .frame(height: topRunwaySpacing(topSafeAreaInset: topSafeAreaInset))
 
                 ForEach(sections) { section in
                     feedSection(
                         section,
                         leadsPage: section.id == sections.first?.id,
-                        pageHeight: pageHeight
+                        pageWidth: pageWidth
                     )
                     .onAppear { warmRows(after: section) }
                 }
@@ -278,7 +271,7 @@ struct HomeView: View {
     }
 
     @ViewBuilder
-    private func feedSection(_ section: ResolvedSection, leadsPage: Bool, pageHeight: CGFloat) -> some View {
+    private func feedSection(_ section: ResolvedSection, leadsPage: Bool, pageWidth: CGFloat) -> some View {
         #if os(macOS)
         if leadsPage, section.isFeatured {
             MacFeaturedHero(section: section)
@@ -292,7 +285,9 @@ struct HomeView: View {
         if leadsPage, section.isFeatured {
             PhoneHomeHero(
                 section: section,
-                height: max(320, pageHeight * PhoneHomeHero.heightFraction),
+                // The card is inset from the page edges and capped on a tablet;
+                // its height follows from its aspect.
+                cardWidth: max(240, min(pageWidth - 2 * PhoneHomeHero.pageInset, 720)),
                 onOpen: { navigateToDetail($0.contentId, $0) }
             )
         } else {

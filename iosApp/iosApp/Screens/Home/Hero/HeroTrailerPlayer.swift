@@ -103,10 +103,18 @@ final class HeroTrailerController {
 /// replace it without this view reaching into playback state.
 struct HeroTrailerLayer: UIViewRepresentable {
     let player: AVPlayer?
+    /// Called once the layer has a frame to draw, so a card can keep its
+    /// backdrop up until the clip really starts and then crossfade.
+    var onFirstFrame: (() -> Void)? = nil
 
-    func makeUIView(context: Context) -> HeroTrailerHostView { HeroTrailerHostView() }
+    func makeUIView(context: Context) -> HeroTrailerHostView {
+        let view = HeroTrailerHostView()
+        view.onFirstFrame = onFirstFrame
+        return view
+    }
 
     func updateUIView(_ host: HeroTrailerHostView, context: Context) {
+        host.onFirstFrame = onFirstFrame
         if host.playerLayer.player !== player {
             host.playerLayer.player = player
         }
@@ -116,12 +124,25 @@ struct HeroTrailerLayer: UIViewRepresentable {
 final class HeroTrailerHostView: UIView {
     override static var layerClass: AnyClass { AVPlayerLayer.self }
     var playerLayer: AVPlayerLayer { layer as! AVPlayerLayer }
+    var onFirstFrame: (() -> Void)?
+
+    private var readyObservation: NSKeyValueObservation?
+    private var reportedFirstFrame = false
 
     override init(frame: CGRect) {
         super.init(frame: frame)
+        // Fills and centre-crops, so a letterboxed clip leaves no bars.
         playerLayer.videoGravity = .resizeAspectFill
         backgroundColor = .clear
         isUserInteractionEnabled = false
+        readyObservation = playerLayer.observe(\.isReadyForDisplay, options: [.new, .initial]) { [weak self] layer, _ in
+            guard layer.isReadyForDisplay else { return }
+            DispatchQueue.main.async {
+                guard let self, !self.reportedFirstFrame else { return }
+                self.reportedFirstFrame = true
+                self.onFirstFrame?()
+            }
+        }
     }
 
     @available(*, unavailable)
