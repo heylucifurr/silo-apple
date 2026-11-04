@@ -257,6 +257,11 @@ enum WeFlixTheme {
         /// every library Recommended landing retain identical geometry.
         static let landingContentVerticalOffset: CGFloat = 56
 
+        /// Height of the Home featured hero band as a share of the screen
+        /// (§ Home hero). Sized to the Skyline feed's marquee band — which the
+        /// hero covers — so the rows band keeps its position below it.
+        static let heroHeightFraction: CGFloat = 0.56
+
         /// Marquee block bottom inset — Home scale. On a 1080p tvOS canvas,
         /// this lands the marquee's bottom edge at the midpoint so the lower
         /// half can hold the focused row plus a peek of the next row.

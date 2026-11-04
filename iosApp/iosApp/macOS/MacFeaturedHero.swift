@@ -155,8 +155,10 @@ struct MacFeaturedHero: View {
             overview(for: item)
 
             HStack(spacing: WeFlixTheme.spacing) {
-                // A series has nothing to play directly; More Info opens it.
-                if WeFlixMediaType.isDirectlyPlayable(item.type) {
+                // A series has nothing to play directly, and a curated title the
+                // library lacks has nothing to play at all; its badge carries
+                // the state and More Info opens its page.
+                if !item.isComingSoon, WeFlixMediaType.isDirectlyPlayable(item.type) {
                     Button { play(item) } label: {
                         Label("Play", systemImage: "play.fill")
                             .font(.weFlixBody.weight(.semibold))
@@ -404,7 +406,7 @@ struct MacFeaturedHero: View {
 
     private func openDetail(_ item: SectionItem) {
         router.navigate(
-            to: .itemDetail(destinationContentId: item.contentId, sectionItem: item)
+            to: .card(destinationContentId: item.contentId, sectionItem: item)
         )
     }
 

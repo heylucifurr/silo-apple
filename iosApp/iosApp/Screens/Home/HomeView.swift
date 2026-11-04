@@ -19,6 +19,12 @@ struct HomeView: View {
     var onTopMenuFocusRequest: (() -> Void)? = nil
 
     @State private var viewModel = HomeViewModel()
+    #if os(tvOS)
+    /// Tokens that ping-pong focus between the Home hero and the rows below it.
+    /// With no hero they stay untouched and the feed behaves as before.
+    @State private var tvHeroFocusToken = 0
+    @State private var tvFeedFocusToken = 0
+    #endif
     #if !os(tvOS)
     /// Feeds the glass strip behind the floating header as rows scroll under it.
     @State private var chromeScrollState = PageChromeScrollState()
@@ -55,19 +61,7 @@ struct HomeView: View {
         // library Browse tabs; Home supplies only the server-resolved Home rows.
         Group {
             if !viewModel.sections.isEmpty {
-                TVSkylineSectionFeed(
-                    sections: viewModel.sections,
-                    focusRequest: homeFocusRequest,
-                    detailReturnFocusRequest: detailReturnFocusRequest,
-                    isTopMenuFocused: isTopMenuFocused,
-                    onTopMenuFocusRequest: onTopMenuFocusRequest,
-                    onItemTap: navigateToDetail,
-                    onExploreAll: { section in
-                        router.navigate(to: .sectionCatalog(SectionCatalogTarget(section, scope: .home)))
-                    },
-                    onRemoveFromContinueWatching: dismissContinueWatching,
-                    onSetWatched: setWatched
-                )
+                tvFeed
             } else if let error = viewModel.error {
                 ErrorView(
                     state: error,
@@ -239,12 +233,17 @@ struct HomeView: View {
     #if !os(tvOS)
     private func feedScrollView(topSafeAreaInset: CGFloat) -> some View {
         let sections = feedSections
+        // A hero at the top bleeds to the page's edge, so the pinned-header
+        // runway is dropped and the hero takes back the stack's leading gap.
+        let leadsWithHero = sections.first?.isFeatured == true
         return ScrollView(.vertical, showsIndicators: false) {
             LazyVStack(alignment: .leading, spacing: HomeFeedMetrics.sectionSpacing) {
                 // Clear runway under the pinned header so the first row
                 // starts below the wordmark and utilities.
-                Color.clear
-                    .frame(height: topRunwaySpacing(topSafeAreaInset: topSafeAreaInset))
+                if !leadsWithHero {
+                    Color.clear
+                        .frame(height: topRunwaySpacing(topSafeAreaInset: topSafeAreaInset))
+                }
 
                 ForEach(sections) { section in
                     feedSection(section, leadsPage: section.id == sections.first?.id)
@@ -256,16 +255,14 @@ struct HomeView: View {
         .reportsPageChromeScroll(to: chromeScrollState)
     }
 
-    /// The displayed rows in feed order. The Mac draws the first featured
-    /// section as a hero at the top of the page wherever it sits in the Home
-    /// order, as web does; any other featured section stays a row in place.
+    /// The displayed rows in feed order. The first featured section is drawn as
+    /// a hero at the top of the page wherever it sits in the Home order, as web
+    /// does; any other featured section stays a row in place.
     private var feedSections: [ResolvedSection] {
         var sections = viewModel.sections
-        #if os(macOS)
         if let index = sections.firstIndex(where: \.isFeatured), index > 0 {
             sections.insert(sections.remove(at: index), at: 0)
         }
-        #endif
         return sections
     }
 
@@ -277,6 +274,16 @@ struct HomeView: View {
                 // The hero sits flush with the top of the window, so it takes
                 // back the stack's leading gap and the page's top margin.
                 .padding(.top, -(HomeFeedMetrics.sectionSpacing + WeFlixTheme.padding))
+        } else {
+            feedRow(section)
+        }
+        #elseif os(iOS)
+        if leadsPage, section.isFeatured {
+            PhoneHomeHero(
+                section: section,
+                onPlay: { play($0) },
+                onMoreInfo: { navigateToDetail($0.contentId, $0) }
+            )
         } else {
             feedRow(section)
         }
@@ -306,6 +313,56 @@ struct HomeView: View {
     }
     #endif
 
+    #if os(tvOS)
+    /// The rows with the first featured section lifted out as the hero. With no
+    /// featured section, this is exactly the feed as before.
+    private var tvSections: (hero: ResolvedSection?, rows: [ResolvedSection]) {
+        var sections = viewModel.sections
+        guard let index = sections.firstIndex(where: \.isFeatured),
+              !sections[index].items.isEmpty else { return (nil, sections) }
+        let hero = sections.remove(at: index)
+        return (hero, sections)
+    }
+
+    /// The Skyline feed, plus the featured hero over its marquee band when the
+    /// server flags a row. The feed renders full height either way, so its rows
+    /// band is unchanged; the hero covers the marquee area above it.
+    private var tvFeed: some View {
+        let split = tvSections
+        return ZStack(alignment: .top) {
+            TVSkylineSectionFeed(
+                sections: split.rows,
+                focusRequest: split.hero == nil ? homeFocusRequest : tvFeedFocusToken,
+                detailReturnFocusRequest: detailReturnFocusRequest,
+                isTopMenuFocused: isTopMenuFocused,
+                // With a hero, Up at the first row returns to the hero rather
+                // than the top menu; the hero's own Up reaches the menu.
+                onTopMenuFocusRequest: split.hero == nil
+                    ? onTopMenuFocusRequest
+                    : { tvHeroFocusToken += 1 },
+                onItemTap: navigateToDetail,
+                onExploreAll: { section in
+                    router.navigate(to: .sectionCatalog(SectionCatalogTarget(section, scope: .home)))
+                },
+                onRemoveFromContinueWatching: dismissContinueWatching,
+                onSetWatched: setWatched
+            )
+
+            if let hero = split.hero {
+                TVFeaturedHero(
+                    section: hero,
+                    focusRequest: homeFocusRequest,
+                    reclaimRequest: tvHeroFocusToken,
+                    isTopMenuFocused: isTopMenuFocused,
+                    onMoveUp: onTopMenuFocusRequest,
+                    onMoveDown: { tvFeedFocusToken += 1 },
+                    onSelect: { item in navigateToDetail(item.contentId, item) }
+                )
+            }
+        }
+    }
+    #endif
+
     #if !os(tvOS)
     private func refreshHome() async {
         async let homeRefresh: Void = viewModel.loadSections()
@@ -320,10 +377,20 @@ struct HomeView: View {
 
     private func navigateToDetail(_ destinationContentId: String, _ item: SectionItem) {
         router.navigate(
-            to: .itemDetail(
+            to: .card(
                 destinationContentId: destinationContentId,
                 sectionItem: item
             )
+        )
+    }
+
+    /// Plays a title the library owns, from the hero's Play button.
+    private func play(_ item: SectionItem) {
+        router.presentPlayer(
+            contentId: item.contentId,
+            resumePosition: item.positionSeconds,
+            posterURL: item.posterUrl,
+            backdropURL: item.backdropUrl
         )
     }
 

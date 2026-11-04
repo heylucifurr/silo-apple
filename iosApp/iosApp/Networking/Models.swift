@@ -163,6 +163,22 @@ struct SectionItem: Codable, Identifiable, Hashable {
     @ArtworkURL var logoUrl: String? = nil
     let userState: MediaItemUserState?
     let overlaySummary: OverlaySummary?
+    /// A curated "Most Anticipated" slide the library does not own. Present on
+    /// that slide alone ("unreleased", or "released_unowned" from a server that
+    /// can tell a title is obtainable). An owned slide is an ordinary catalog
+    /// card and omits it, so its absence reads as "in the library". Additive:
+    /// every other row leaves it nil and decodes exactly as before.
+    var availability: String? = nil
+    /// The TMDB id of an unowned curated slide, for its title/details page.
+    /// Absent on every other card.
+    var tmdbId: Int? = nil
+    /// Snapshot release date (`YYYY-MM-DD`) of an unowned curated slide, for
+    /// its "Coming soon · <date>" badge.
+    var releaseDate: String? = nil
+    /// A short clip of a title's trailer, for a hero to autoplay muted behind
+    /// its backdrop. Absolute and presigned; absent when the server has no clip
+    /// for the title. Not artwork, so it is not routed through `ArtworkURL`.
+    var heroVideoUrl: String? = nil
     /// This profile's metadata language when the card's description is not
     /// in it yet. Drives the hero's on-view translation.
     var pendingTranslationLanguage: String? = nil
@@ -373,6 +389,33 @@ extension BrowseItem {
 
 extension SectionItem {
     var isAudiobook: Bool { WeFlixMediaType.isAudiobook(type) }
+
+    /// A curated "Most Anticipated" title the library does not own yet. The
+    /// server marks these `unreleased` (or `released_unowned`); the synthetic
+    /// id prefix is the fallback for a response that predates `availability`.
+    /// An owned slide is an ordinary catalog card, so it reads as not
+    /// coming-soon and behaves exactly as before.
+    var isComingSoon: Bool {
+        if let availability { return availability != "in_library" }
+        return contentId.hasPrefix("ext:")
+    }
+
+    /// The TMDB id a coming-soon title's details page opens by: the card's
+    /// `tmdb_id` where present, else parsed from the synthetic `ext:` id.
+    var comingSoonTmdbId: Int? {
+        if let tmdbId { return tmdbId }
+        guard let dash = contentId.lastIndex(of: "-") else { return nil }
+        return Int(contentId[contentId.index(after: dash)...])
+    }
+
+    /// The media type a coming-soon title's details page opens by.
+    var comingSoonMediaType: RequestMediaType? {
+        switch type.lowercased() {
+        case "movie": return .movie
+        case "series": return .series
+        default: return nil
+        }
+    }
 }
 
 /// Series and season art an episode card carries next to its own, from servers

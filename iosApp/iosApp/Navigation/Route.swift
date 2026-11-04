@@ -251,4 +251,28 @@ extension Route {
         return .itemDetail(contentId: browseItem.contentId, libraryId: libraryId)
         #endif
     }
+
+    /// The destination for a Home or hero card.
+    ///
+    /// A curated "Most Anticipated" title the library does not own opens its
+    /// title page — the existing request detail, which the web uses for the same
+    /// card — instead of the catalog item detail. Its synthetic `ext:` content
+    /// id is not a catalog id, so the item detail would answer 404. Every other
+    /// card is unchanged.
+    static func card(
+        destinationContentId: String,
+        sectionItem: SectionItem,
+        libraryId: Int? = nil
+    ) -> Route {
+        if sectionItem.isComingSoon,
+           let tmdbId = sectionItem.comingSoonTmdbId,
+           let mediaType = sectionItem.comingSoonMediaType {
+            return .requestDetail(mediaType: mediaType, tmdbId: tmdbId)
+        }
+        return itemDetail(
+            destinationContentId: destinationContentId,
+            sectionItem: sectionItem,
+            libraryId: libraryId
+        )
+    }
 }

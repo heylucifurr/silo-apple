@@ -97,7 +97,8 @@ struct HomeFeedRow: View {
                                 width: Self.stillWidth,
                                 opensResumeContext: isResume,
                                 onRemoveFromContinueWatching: removalAction(for: item),
-                                onSetWatched: watchedAction(for: item)
+                                onSetWatched: watchedAction(for: item),
+                                onTap: comingSoonAction(for: item)
                             )
                         } else {
                             HomePosterCard(
@@ -108,7 +109,8 @@ struct HomeFeedRow: View {
                                 aspect: isAudiobookRow ? .square : .poster,
                                 episodeAccessibilityLabel: episodeAccessibilityLabel(for: item),
                                 onRemoveFromContinueWatching: removalAction(for: item),
-                                onSetWatched: watchedAction(for: item)
+                                onSetWatched: watchedAction(for: item),
+                                onTap: comingSoonAction(for: item)
                             )
                         }
                     }
@@ -164,6 +166,14 @@ struct HomeFeedRow: View {
     private func watchedAction(for item: SectionItem) -> ((Bool) async -> Bool)? {
         guard let onSetWatched else { return nil }
         return { played in await onSetWatched(item, played) }
+    }
+
+    /// A curated title the library does not own opens its title page rather
+    /// than the catalog item detail, whose synthetic `ext:` id answers 404.
+    /// Every other card keeps the default tap.
+    private func comingSoonAction(for item: SectionItem) -> (() -> Void)? {
+        guard item.isComingSoon else { return nil }
+        return { router.navigate(to: .card(destinationContentId: item.contentId, sectionItem: item)) }
     }
 }
 #endif
