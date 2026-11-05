@@ -80,6 +80,13 @@ An unowned title has no `item_videos` row, so its trailer is TMDB's video
 `anticipated_clips`. Delivery merges both clip stores and the card carries the
 resulting URL as `hero_video_url`.
 
+The value is a **server-relative path**, not an absolute URL (`format:
+uri-reference` on the wire). A client must resolve it against the server origin
+before handing it to a player: a bare `URL(string:)` on it has no scheme or
+host, and `AVPlayer` refuses that with `NSURLErrorUnsupportedURL` (-1002).
+The app decodes it through `@ArtworkURL`, the same origin-resolving hook its
+artwork uses.
+
 ## Root cause of "not found"
 
 1. `ResolvedSection.featured` already decodes into the app (`Models.swift`).

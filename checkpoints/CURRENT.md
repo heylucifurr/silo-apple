@@ -17,6 +17,11 @@ The phone hero was a full-bleed band; it is now the Prime-style carousel
 - Backdrop and trailer both fill and centre-crop. The backdrop stays until the
   clip's layer reports a frame (`AVPlayerLayer.isReadyForDisplay`), then the
   clip crossfades in over 0.3 s.
+- `hero_video_url` arrives as a **server-relative path**, so `SectionItem`
+  decodes it through the same origin-resolving wrapper as the artwork
+  (`@ArtworkURL`). Decoding it as a plain string handed `AVPlayer` a URL with
+  no scheme or host, which it refused with `NSURLErrorUnsupportedURL` (-1002);
+  the clip then sat at "waiting" with nothing on screen.
 - The card's lower 45 % fades to the page colour, so it has no bottom edge; the
   card itself carries no background colour behind its rounded corners.
 - Title: the item's clear logo (max 60 % of the card width, max height 64,
@@ -64,7 +69,8 @@ detail, so it can never end in "not found".
 | 5 | Existing tests (`WeFlixTests`, iPhone 17 sim, idle) | 3659 tests, 3 failures — all pre-existing and flaky/date-dependent (`CalendarTimeZoneTests` asserts a day that only matches in some weeks; `AsyncImageViewRetryTests` is a timing test). The 4 `PlayerSurfaceLayoutTests` that failed in a contended run pass in isolation. Nothing new in the changed areas |
 | 6 | Live hero on the iPhone 17 sim against Luther's server | pass — inset rounded card, filled artwork, logo on "Verity" and text on "Other Mommy", `COMING SOON` + `R` + runtime + year, calendar date, centred pill dots, top-right mute control while the clip runs |
 | 7 | Card dissolves into the page, no bottom edge | pass (screenshots) |
-| 8 | Letterboxed clip fills the card | by construction — `AVPlayerLayer.videoGravity = .resizeAspectFill`; the specific reference clip was not replayed |
+| 8 | Trailer plays | pass — item reaches `readyToPlay`, `rate 1.0`, layer `isReadyForDisplay`, no error; consecutive 1.2 s screenshots of the card differ by 25–52 mean channel whereas the rows below stay at 0.00 |
+| 8a | Letterboxed clip fills the card | by construction — `AVPlayerLayer.videoGravity = .resizeAspectFill`; the specific reference clip was not replayed |
 | 9 | Mute button inside the card and toggles | inside: pass. Toggling not driven — the tooling here has no tap action |
 | 10 | Dots and swipe | dots pass (centred, active pill, count matches). Swipe not driven; the paged `TabView` is unchanged from the previous build |
 | 11 | Other rows unchanged | pass — Continue Watching and Trending render as before beneath the card |

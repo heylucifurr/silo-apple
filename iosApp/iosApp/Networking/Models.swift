@@ -176,9 +176,11 @@ struct SectionItem: Codable, Identifiable, Hashable {
     /// its "Coming soon · <date>" badge.
     var releaseDate: String? = nil
     /// A short clip of a title's trailer, for a hero to autoplay muted behind
-    /// its backdrop. Absolute and presigned; absent when the server has no clip
-    /// for the title. Not artwork, so it is not routed through `ArtworkURL`.
-    var heroVideoUrl: String? = nil
+    /// its backdrop. Presigned; absent when the server has no clip for the
+    /// title. The server sends it as a server-relative path, so it resolves
+    /// through the same decoder hook as the artwork above — without that an
+    /// `AVPlayer` is handed a URL with no host and refuses it.
+    @ArtworkURL var heroVideoUrl: String? = nil
     /// This profile's metadata language when the card's description is not
     /// in it yet. Drives the hero's on-view translation.
     var pendingTranslationLanguage: String? = nil
