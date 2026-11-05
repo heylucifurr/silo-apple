@@ -97,7 +97,13 @@ struct PhoneHomeHero: View {
                 trailer.load(urlString: item.heroVideoUrl)
                 if autoplaysTrailer { trailer.play() } else { trailer.pause() }
             }
-            .task(id: AdvanceTrigger(index: index, autoplays: autoplaysTrailer, count: items.count)) {
+            .task(id: AdvanceTrigger(
+                index: index,
+                mode: advanceMode,
+                count: items.count,
+                isOnScreen: isOnScreen,
+                isActive: scenePhase == .active
+            )) {
                 await advanceAfterDelay()
             }
             .onDisappear { trailer.pause() }
@@ -368,15 +374,42 @@ struct PhoneHomeHero: View {
 
     private struct AdvanceTrigger: Equatable {
         let index: Int
-        let autoplays: Bool
+        let mode: AdvanceMode
         /// Any change to the row's titles restarts the timer, so a pending
         /// advance never acts on titles that have been replaced.
         let count: Int
+        let isOnScreen: Bool
+        let isActive: Bool
+    }
+
+    /// How the card decides to move on.
+    private enum AdvanceMode: Equatable {
+        /// A clip is on screen: the card waits for the clip itself to end, and
+        /// the end-of-item notification calls `advance()`.
+        case clipPlaying
+        /// A clip exists but has not drawn a frame: a bounded wait, so a clip
+        /// that never loads cannot hang the carousel.
+        case clipStarting
+        /// No clip to play (none, or Reduce Motion): the card turns on a timer.
+        case noClip
+    }
+
+    private var advanceMode: AdvanceMode {
+        guard trailer.urlString != nil, !reduceMotion else { return .noClip }
+        return trailerHasFrame ? .clipPlaying : .clipStarting
     }
 
     private func advanceAfterDelay() async {
-        guard autoplaysTrailer, items.count > 1 else { return }
-        try? await Task.sleep(for: .seconds(Self.advanceSeconds))
+        guard items.count > 1, isOnScreen, scenePhase == .active else { return }
+        switch advanceMode {
+        case .clipPlaying:
+            // The clip's own end moves the card on; no timer competes with it.
+            return
+        case .clipStarting:
+            try? await Task.sleep(for: .seconds(Self.clipStartTimeout))
+        case .noClip:
+            try? await Task.sleep(for: .seconds(Self.noClipAdvanceSeconds))
+        }
         guard !Task.isCancelled else { return }
         advance()
     }
@@ -415,7 +448,11 @@ struct PhoneHomeHero: View {
     private static let dotsBottomInset: CGFloat = 16
     private static let maxVisibleDots = 5
     private static let muteButtonSize: CGFloat = 40
-    private static let advanceSeconds: Double = 8
+    /// A card with no clip turns after this; a card whose clip is still loading
+    /// gives up on it after `clipStartTimeout`. A card whose clip is playing is
+    /// left alone until the clip ends.
+    private static let noClipAdvanceSeconds: Double = 8
+    private static let clipStartTimeout: Double = 20
     private static let trailerCrossfade: Double = 0.3
 
     private static let ratingPill = Color(hex: "#3A3A3A")

@@ -106,7 +106,13 @@ struct TVFeaturedHero: View {
                 trailer.load(urlString: item.heroVideoUrl)
                 if playsTrailer { trailer.play() } else { trailer.pause() }
             }
-            .task(id: AdvanceTrigger(index: index, plays: playsTrailer, count: items.count)) {
+            .task(id: AdvanceTrigger(
+                index: index,
+                mode: advanceMode,
+                count: items.count,
+                isFocused: isFocused,
+                pausedByViewer: pausedByViewer
+            )) {
                 await advanceAfterDelay()
             }
             .task(id: ClaimKey(focusRequest: focusRequest, reclaim: reclaimRequest)) {
@@ -280,8 +286,27 @@ struct TVFeaturedHero: View {
 
     private struct AdvanceTrigger: Equatable {
         let index: Int
-        let plays: Bool
+        let mode: AdvanceMode
         let count: Int
+        let isFocused: Bool
+        let pausedByViewer: Bool
+    }
+
+    /// How the hero decides to move on.
+    private enum AdvanceMode: Equatable {
+        /// A clip is on screen: the hero waits for the clip itself to end, and
+        /// the end-of-item notification calls `advance()`.
+        case clipPlaying
+        /// A clip belongs to the card but has not drawn a frame yet: a bounded
+        /// wait, so a clip that never loads cannot hang the carousel.
+        case clipStarting
+        /// No clip to play (none, or Reduce Motion): the hero turns on a timer.
+        case noClip
+    }
+
+    private var advanceMode: AdvanceMode {
+        guard trailer.urlString != nil, !reduceMotion, !pausedByViewer else { return .noClip }
+        return trailerHasFrame ? .clipPlaying : .clipStarting
     }
 
     /// Re-claims focus on entry and whenever the rows hand it back up.
@@ -290,11 +315,20 @@ struct TVFeaturedHero: View {
         let reclaim: Int
     }
 
-    /// ~8s on a slide, or when its clip ends. Only while the clip is running
-    /// (focused, motion allowed), so the hero never turns under a still frame.
+    /// The clip plays to its own end on the focused card; a card with no clip
+    /// turns on a timer instead. A viewer who paused the clip decides when the
+    /// hero moves on.
     private func advanceAfterDelay() async {
-        guard playsTrailer, items.count > 1 else { return }
-        try? await Task.sleep(for: .seconds(Self.advanceSeconds))
+        guard items.count > 1, isFocused, !pausedByViewer else { return }
+        switch advanceMode {
+        case .clipPlaying:
+            // The clip's own end moves the hero on; no timer competes with it.
+            return
+        case .clipStarting:
+            try? await Task.sleep(for: .seconds(Self.clipStartTimeout))
+        case .noClip:
+            try? await Task.sleep(for: .seconds(Self.noClipAdvanceSeconds))
+        }
         guard !Task.isCancelled else { return }
         advance()
     }
@@ -316,7 +350,8 @@ struct TVFeaturedHero: View {
 
     // MARK: - Metrics
 
-    private static let advanceSeconds: Double = 8
+    private static let noClipAdvanceSeconds: Double = 8
+    private static let clipStartTimeout: Double = 20
     private static let trailerCrossfade: Double = 0.3
     private static let logoSize = CGSize(width: 340, height: 140)
 

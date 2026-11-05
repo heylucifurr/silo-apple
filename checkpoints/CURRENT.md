@@ -35,6 +35,10 @@ The phone hero was a full-bleed band; it is now the Prime-style carousel
   1 pt white-25 % border, inside a 44 pt target, shown while the clip runs.
 - Page dots centred: the active slide is an 18 × 6 white pill, the rest 6 × 6 at
   40 % white, 14 below the date line, width animated over 0.2 s.
+- The card lasts as long as its clip: while a clip is on screen no timer competes
+  with it and the end-of-item notification turns the card. A card with no clip
+  (or with Reduce Motion on) turns after 8 s, and a clip that never draws a
+  frame gives up after 20 s so a stuck clip cannot hang the carousel.
 - The card carries no buttons — a tap anywhere opens the title.
 
 ### What changed earlier in this branch
@@ -71,6 +75,7 @@ detail, so it can never end in "not found".
 | 7 | Card dissolves into the page, no bottom edge | pass (screenshots) |
 | 8 | Trailer plays | pass — item reaches `readyToPlay`, `rate 1.0`, layer `isReadyForDisplay`, no error; consecutive 1.2 s screenshots of the card differ by 25–52 mean channel whereas the rows below stay at 0.00 |
 | 8a | Letterboxed clip fills the card | by construction — `AVPlayerLayer.videoGravity = .resizeAspectFill`; the specific reference clip was not replayed |
+| 8b | Card lasts as long as the clip | pass — logged clip durations 129.6 s and 106.3 s, and the card turned only at a clip's end (`HEROADV` between the two), never at a fixed 8 s |
 | 9 | Mute button inside the card and toggles | inside: pass. Toggling not driven — the tooling here has no tap action |
 | 10 | Dots and swipe | dots pass (centred, active pill, count matches). Swipe not driven; the paged `TabView` is unchanged from the previous build |
 | 11 | Other rows unchanged | pass — Continue Watching and Trending render as before beneath the card |
